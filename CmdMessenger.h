@@ -55,7 +55,7 @@ enum
 
 class CmdMessenger
 {
-protected:
+private:
 
   // **** Private variables *** 
   
@@ -181,7 +181,7 @@ public:
     if (!startCommand) {
 		sendCmdStart (cmdId);
 		sendCmdArg (arg);
-		sendCmdEnd (reqAc, ackCmdId, timeout);
+		return sendCmdEnd (reqAc, ackCmdId, timeout);
 	}
   }
   
@@ -196,7 +196,7 @@ public:
     if (!startCommand) {
 		sendCmdStart (cmdId);
 		sendCmdBinArg (arg);
-		sendCmdEnd (reqAc, ackCmdId, timeout);
+		return sendCmdEnd (reqAc, ackCmdId, timeout);
 	}
   }
 

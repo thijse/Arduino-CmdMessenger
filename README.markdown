@@ -4,12 +4,15 @@ A serial messaging library for the Arduino and .NET/Mono platform
 
 ## Introduction
 
-CmdMessenger is a messaging library afor the Arduino Platform (and .NET/Mono platform). It has uses the serial port as its transport layer** 
+CmdMessenger is a messaging library for the Arduino Platform (and .NET/Mono platform). Ituses the serial port as it's transport layer** 
 
-The default message format is:
+The message format is:
 ```
 Cmd Id, param 1, [...] , param N;
 ```
+
+Although the field separator ',' and command separator ';' can be changed
+
 The library can
 * both send and receive of commands 
 * Both write and read multiple arguments
@@ -102,7 +105,7 @@ Since we have not been able to check it wil Max/MaxMSP, the example was removed.
 * Sending of common type arguments (float, int, char)
 * Multi-argument commands
 * Escaping of special characters in strings
-* Sending of binary data of any type (uses escaping, Base-64 anymor not necessary) 
+* Sending of binary data of any type (uses escaping, no need for Base-64 Encoding) 
 * Bugfixes 
 * Added code documentation
 * Added multiple samples
