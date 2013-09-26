@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="BinaryConverter.cs" />
     <Compile Include="CmdMessenger.cs" />
+    <Compile Include="CommandQueue.cs" />
     <Compile Include="ReceivedCommand.cs" />
     <Compile Include="Escaped.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

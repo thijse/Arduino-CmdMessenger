@@ -23,10 +23,16 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace CommandMessenger
 {
+    public enum ConcurrencyPriority
+    {
+        Send,
+        Receive
+    }
     /// <summary> Command messenger main class  </summary>
     public class CmdMessenger : IDisposable
     {
@@ -64,6 +70,10 @@ namespace CommandMessenger
         /// <summary> Gets or sets the currently sent line. </summary>
         /// <value> The currently sent line. </value>
         public String CurrentSentLine { get; private set; }
+
+
+
+        public ConcurrencyPriority Priority { get; private set; }
 
         private Control _controlToInvokeOn; // The control to invoke the callback on
 
@@ -171,10 +181,16 @@ namespace CommandMessenger
         /// <param name="e"> Event information. </param>
         private void NewSerialDataReceived(object sender, EventArgs e)
         {
-            lock (_processSerialDataLock)
+            // Var lock can result in deadlocks, instead we do a soft enforcement of synced sent/receive order
+            var synced = Monitor.TryEnter(_processSerialDataLock, 100);
+            try
             {
                 ProcessLines();
                 InvokeEvent(NewLinesReceived);
+            }
+            finally
+            {
+                if (synced) Monitor.Exit(_processSerialDataLock);
             }
         }
 
@@ -304,7 +320,9 @@ namespace CommandMessenger
         {
             // Disable listening, all callbacks are disabled until after command was sent
 
-            lock (_processSerialDataLock)
+            // Var lock can result in deadlocks, instead we do a soft enforcement of synced sent/receive order
+            var synced = Monitor.TryEnter(_processSerialDataLock, 100); 
+            try
             {
                 _communications.NewLineReceived -= NewSerialDataReceived;
 
@@ -328,6 +346,10 @@ namespace CommandMessenger
                 _communications.NewLineReceived += NewSerialDataReceived;
 
                 return ackCommand;
+            }
+            finally
+            {
+                if (synced) Monitor.Exit(_processSerialDataLock);
             }
         }
 

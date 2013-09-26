@@ -35,5 +35,17 @@ namespace CommandMessenger
         /// <summary> Gets the seconds since 1 Jan 1970. </summary>
         /// <value> The seconds since 1 Jan 1970. </value>
         public static long Seconds { get { return (long)((DateTime.Now.ToUniversalTime() - Jan1St1970).TotalSeconds); } }
+
+        // Returns if it has been more than interval (in ms) ago. Used for periodic actions
+        public static bool HasExpired(ref long prevTime, long interval)
+        {
+            var millis = Millis;
+            if (millis - prevTime > interval)
+            {
+                prevTime = millis;
+                return true;
+            }
+            return false;
+        }
     }
 }
