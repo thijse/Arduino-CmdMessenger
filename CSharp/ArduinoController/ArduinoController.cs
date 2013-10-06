@@ -8,6 +8,7 @@
 
 using System;
 using CommandMessenger;
+using CommandMessenger.TransportLayer;
 
 namespace ArduinoController
 {
@@ -24,7 +25,7 @@ namespace ArduinoController
         // This class (kind of) contains presentation logic, and domain model.
         // ChartForm.cs contains the view components 
 
-        private SerialPortManager _serialPortManager;
+        private CommunicationManager _serialPortManager;
         private CmdMessenger      _cmdMessenger;
         private ControllerForm _controllerForm;
 
@@ -37,7 +38,7 @@ namespace ArduinoController
             _controllerForm = controllerForm;
             
             // Create Serial Port object
-            _serialPortManager = new SerialPortManager
+            _serialPortManager = new CommunicationManager
             {
                 CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200 } // object initializer
             };
@@ -123,7 +124,8 @@ namespace ArduinoController
             var command = new SendCommand((int)Command.SetLedFrequency,ledFrequency);
 
             // Send command
-            _cmdMessenger.SendCommand(command);
+           // _cmdMessenger.QueueCommand(command);
+            _cmdMessenger.QueueCommand(new CollapseCommandStrategy(command));
         }
 
         public void SetLedState(bool ledState)

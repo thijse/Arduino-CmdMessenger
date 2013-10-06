@@ -20,19 +20,15 @@
  */
 #endregion
 using System;
+using System.Linq;
 
 namespace CommandMessenger
 {
     /// <summary> A command received from CmdMessenger </summary>
-    public class ReceivedCommand
+    public class ReceivedCommand : Command
     {
-        private readonly string[] _arguments;   // The arguments
-        private int _parameter; // The parameter
-        private bool _dumped = true;	// true to dumped
-
-        /// <summary> Gets or sets the time stamp. </summary>
-        /// <value> The time stamp. </value>
-        public long TimeStamp { get; set; }
+        private int _parameter=-1; // The parameter
+        private bool _dumped = true;	// true if parameter has been dumped
 
         /// <summary> Default constructor. </summary>
         public ReceivedCommand()
@@ -40,41 +36,26 @@ namespace CommandMessenger
         }
 
         /// <summary> Constructor. </summary>
-        /// <param name="arguments"> All command arguments, first one is command ID </param>
-        public ReceivedCommand(string[] arguments)
+        /// <param name="rawArguments"> All command arguments, first one is command ID </param>
+        public ReceivedCommand(string[] rawArguments)
         {
-            _arguments = arguments;
+            int cmdId;
+            CmdId = (rawArguments != null && int.TryParse(rawArguments[0], out cmdId)) ? cmdId : -1;
+            if (CmdId<0) return;
+            var array = rawArguments.Where(w => w != rawArguments[0]).ToArray();
+            _arguments.AddRange(array);
         }
 
-        /// <summary> Returns whether this is a valid & filled command. </summary>
-        /// <value> true if ok, false if not. </value>
-        public bool Ok
-        {
-            get { return (CommandId >= 0); }
-        }
 
         // Index arguments directly
 
         /// <summary> Indexer to get arguments directly. </summary>
         /// <value> The indexed item. </value>
-        public string this[int index]
-        {
-            get { return _arguments[index]; }
-        }
+        //public string this[int index]
+        //{
+        //    get { return _arguments[index]; }
+        //}
 
-        /// <summary> Gets the command ID. </summary>
-        /// <value> The command ID. </value>
-        public int CommandId
-        {
-            get
-            {
-                int commandId;
-
-                if (_arguments != null && int.TryParse(_arguments[0], out commandId))
-                    return commandId;
-                return -1;
-            }
-        }
 
         /// <summary> Fetches the next argument. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
@@ -83,16 +64,13 @@ namespace CommandMessenger
             // If this parameter has already been read, see if there is another one
             if (_dumped)
             {
-                if (_parameter < _arguments.Length - 1)
+                if (_parameter < _arguments.Count-1)
                 {
                     _parameter++;
                     _dumped = false;
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
             return true;
         }

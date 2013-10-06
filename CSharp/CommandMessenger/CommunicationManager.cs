@@ -19,6 +19,7 @@
     Copyright 2013 - Thijs Elenbaas
  */
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,12 +28,12 @@ using System.Reflection;
 using System.Text;
 using System.Linq;
 
-namespace CommandMessenger
+namespace CommandMessenger.TransportLayer
 {
     /// <summary>Fas
     /// Manager for serial port data
     /// </summary>
-    public class SerialPortManager : IDisposable
+    public class CommunicationManager : IDisposable
     {
         private TimedAction _pollBuffer;	                                            // Buffer for poll data
         private const double SerialBufferPollFrequency = 50;	                        // The serial buffer poll frequency
@@ -41,7 +42,7 @@ namespace CommandMessenger
         private readonly Queue<string> _lineBuffer = new Queue<string>();               // Buffer for string lines
 
         /// <summary> Default constructor. </summary>
-        public SerialPortManager()
+        public CommunicationManager()
         {
             Initialize(';', '/');
         }
@@ -49,13 +50,13 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         /// <param name="eolSeparator">    The End-Of-Line separator. </param>
         /// <param name="escapeCharacter"> The escape character. </param>
-        public SerialPortManager(char eolSeparator, char escapeCharacter)
+        public CommunicationManager(char eolSeparator, char escapeCharacter)
         {
             Initialize(eolSeparator, escapeCharacter);
         }
 
         /// <summary> Finaliser. </summary>
-        ~SerialPortManager()
+        ~CommunicationManager()
         {
             Dispose(false);
         }
@@ -246,8 +247,11 @@ namespace CommandMessenger
             var writeString = value.ToString();
             try
             {
-                byte[] writeBytes = StringEncoder.GetBytes(writeString + '\n');
-                _serialPort.Write(writeBytes, 0, writeBytes.Length);
+                if (IsOpen())
+                {
+                    byte[] writeBytes = StringEncoder.GetBytes(writeString + '\n');
+                    _serialPort.Write(writeBytes, 0, writeBytes.Length);
+                }
             }
             catch
             {
@@ -262,8 +266,11 @@ namespace CommandMessenger
             var writeString = value.ToString();
             try
             {
-                byte[] writeBytes = StringEncoder.GetBytes(writeString);
-                _serialPort.Write(writeBytes, 0, writeBytes.Length);
+                if (IsOpen())
+                {
+                    byte[] writeBytes = StringEncoder.GetBytes(writeString);
+                    _serialPort.Write(writeBytes, 0, writeBytes.Length);
+                }
             }
             catch
             {
@@ -384,10 +391,7 @@ namespace CommandMessenger
                 {
                     return pos;
                 }
-                else
-                {
-                    pos++;
-                }
+                pos++;
             }
             return pos;
         }

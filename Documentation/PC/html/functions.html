@@ -47,6 +47,7 @@
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li class="current"><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -96,7 +97,7 @@
 : <a class="el" href="class_command_messenger_1_1_send_command.html#ac2f9fc98f2129e04417f7cd8d28b1d3f">CommandMessenger.SendCommand</a>
 </li>
 <li>Arguments
-: <a class="el" href="class_command_messenger_1_1_send_command.html#a3527a0c5b57cfc988bf4c26e04b57678">CommandMessenger.SendCommand</a>
+: <a class="el" href="class_command_messenger_1_1_command.html#a37081da85e99769325d30d3c32a4085f">CommandMessenger.Command</a>
 </li>
 <li>Attach()
 : <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a747bf16fde8067a021f25b4fef95c616">CommandMessenger.CmdMessenger</a>
@@ -119,16 +120,20 @@
 
 <h3><a class="anchor" id="index_c"></a>- c -</h3><ul>
 <li>Close()
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#ae83077559ee979aeb9fa54f4d6dde571">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#a9dde11fed037c2445051e469fbc67f79">CommandMessenger.TransportLayer.CommunicationManager</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#af97ca9e7f6f671bbaa3ec10547db1c85">CommandMessenger.TransportLayer.SerialTransport</a>
 </li>
 <li>CmdId
-: <a class="el" href="class_command_messenger_1_1_send_command.html#a4b7658be00d2e20cfc8995e91c0fd215">CommandMessenger.SendCommand</a>
+: <a class="el" href="class_command_messenger_1_1_command.html#a61af9c08c0c4998715ad6ed874ac7236">CommandMessenger.Command</a>
 </li>
 <li>CmdMessenger()
-: <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a669165f77af79ca0304f1b29efdd8d8a">CommandMessenger.CmdMessenger</a>
+: <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a10a8752d6493fa75698132e14ad04b63">CommandMessenger.CmdMessenger</a>
 </li>
-<li>CommandId
-: <a class="el" href="class_command_messenger_1_1_received_command.html#aa528bea96e58a0d8216bc5f0fc8e216f">CommandMessenger.ReceivedCommand</a>
+<li>Command()
+: <a class="el" href="class_command_messenger_1_1_command.html#abba142f160098a961b875e3b48c308b4">CommandMessenger.Command</a>
+</li>
+<li>CommunicationManager()
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#afd55bd0a4bce6a5f402901e151e65ca6">CommandMessenger.TransportLayer.CommunicationManager</a>
 </li>
 <li>ConvertEncoding()
 : <a class="el" href="class_command_messenger_1_1_string_utils.html#a4a4b78b42274b4451406adc04d5e8629">CommandMessenger.StringUtils</a>
@@ -143,7 +148,8 @@
 : <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a65b97f4191357ca9ac874cd4468d7a87">CommandMessenger.CmdMessenger</a>
 </li>
 <li>CurrentSerialSettings
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#aa8185a2199c5dab340b6a508d5b48df3">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#aca90ad27d2f6c59110d629d2c5a6003e">CommandMessenger.TransportLayer.CommunicationManager</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#ac1878b4fca928cd4010d8ff3848ea824">CommandMessenger.TransportLayer.SerialTransport</a>
 </li>
 </ul>
 
@@ -156,7 +162,8 @@
 : <a class="el" href="class_command_messenger_1_1_serial_settings.html#a34b43b2898f726e4a0ce72a48dc9d1f1">CommandMessenger.SerialSettings</a>
 </li>
 <li>Dispose()
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#a717f6d06d84f01e6821a4524cda0e7a8">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#aeac7520093dca80d0744b3abe084e071">CommandMessenger.TransportLayer.SerialTransport</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#a0f8a6cfc98cb9e85228f7d211e8b1b10">CommandMessenger.TransportLayer.CommunicationManager</a>
 , <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a62ef08af3ad36b23bc8ea1789247891d">CommandMessenger.CmdMessenger</a>
 , <a class="el" href="class_arduino_controller_1_1_controller_form.html#a7ff4a9153232ab5f6589c81ab6cc1127">ArduinoController.ControllerForm</a>
 , <a class="el" href="class_data_logging_1_1_chart_form.html#ac4ed26be69f18729b0ed84ff1d648f98">DataLogging.ChartForm</a>
@@ -166,7 +173,7 @@
 
 <h3><a class="anchor" id="index_e"></a>- e -</h3><ul>
 <li>EolDelimiter
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#aea6da107076450f3b002ac8d52f799d0">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#ac209e37193f8efcbddb37d93d7ecf3a2">CommandMessenger.TransportLayer.CommunicationManager</a>
 </li>
 <li>Escape()
 : <a class="el" href="class_command_messenger_1_1_escaping.html#ad2d9eefe6ed07f826fc2e6e2b92a85df">CommandMessenger.Escaping</a>
@@ -195,10 +202,12 @@
 
 <h3><a class="anchor" id="index_i"></a>- i -</h3><ul>
 <li>Initialize()
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#ad4d3756b553fad1f308ddab91dcf6600">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#a90061e69df1d5bba584294031a66c993">CommandMessenger.TransportLayer.CommunicationManager</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#aa2c2aad846807574bc3dd716f622482b">CommandMessenger.TransportLayer.SerialTransport</a>
 </li>
 <li>IsOpen()
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#a92ffc75a90e15c8e004c286aa15bbc43">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#ae58f0d656ab9b5cf5f7f3799aa739c0d">CommandMessenger.TransportLayer.SerialTransport</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#a89bb7718144454b35dd08f28b81d5e4a">CommandMessenger.TransportLayer.CommunicationManager</a>
 </li>
 <li>IsRunning
 : <a class="el" href="class_command_messenger_1_1_timed_action.html#ad16b8a77e192261e7f2820c2c5143c0d">CommandMessenger.TimedAction</a>
@@ -209,7 +218,7 @@
 <h3><a class="anchor" id="index_l"></a>- l -</h3><ul>
 <li>LastLineTimeStamp
 : <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#aaa33f7a6c44eeda61db3726212d9fa83">CommandMessenger.CmdMessenger</a>
-, <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#a7740186b0ab99b869766a2f96bd84159">CommandMessenger.SerialPortManager</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#a2ab370ee1aff1037b7b0121eb1709ec0">CommandMessenger.TransportLayer.CommunicationManager</a>
 </li>
 </ul>
 
@@ -230,10 +239,11 @@
 
 <h3><a class="anchor" id="index_o"></a>- o -</h3><ul>
 <li>Ok
-: <a class="el" href="class_command_messenger_1_1_received_command.html#a59dc636c70302b0fb03b00719418874b">CommandMessenger.ReceivedCommand</a>
+: <a class="el" href="class_command_messenger_1_1_command.html#ad6a5e59f053eb98988ff09655853bfb3">CommandMessenger.Command</a>
 </li>
 <li>Open()
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#ace142cd69fbf87940d43d9e5ea0c1f95">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#aefb25e0a4fcf8e9a49cb337be84e2331">CommandMessenger.TransportLayer.SerialTransport</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#a670e023b4c284a66d4234a35a6925834">CommandMessenger.TransportLayer.CommunicationManager</a>
 </li>
 </ul>
 
@@ -243,7 +253,8 @@
 : <a class="el" href="class_command_messenger_1_1_serial_settings.html#a0a2f7467378c67db0a9ceef0334cdc90">CommandMessenger.SerialSettings</a>
 </li>
 <li>PortExists()
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#aca2fc8cb181c1dea8184610eb55cbda2">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#a69f9ba81e7cd5f116e0d789b3c926ac5">CommandMessenger.TransportLayer.CommunicationManager</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a799500ced78ebaf350aba47dcbea2d14">CommandMessenger.TransportLayer.SerialTransport</a>
 </li>
 <li>PortName
 : <a class="el" href="class_command_messenger_1_1_serial_settings.html#acfd16687b9f13b1c97f95521c185afd6">CommandMessenger.SerialSettings</a>
@@ -261,6 +272,9 @@
 
 
 <h3><a class="anchor" id="index_r"></a>- r -</h3><ul>
+<li>Read()
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#adb339ec97444037b4297551cb4620c37">CommandMessenger.TransportLayer.SerialTransport</a>
+</li>
 <li>ReadBinBoolArg()
 : <a class="el" href="class_command_messenger_1_1_received_command.html#a7740ae412aa7fa19a791884203a31f10">CommandMessenger.ReceivedCommand</a>
 </li>
@@ -301,7 +315,7 @@
 : <a class="el" href="class_command_messenger_1_1_received_command.html#aabc939140d9cdae2380ffa0485b25e17">CommandMessenger.ReceivedCommand</a>
 </li>
 <li>ReadLine()
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#af3a9e59fa4ee2fd5391a77158793d0e4">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#aa1c6f5f9b473a6da099d5d42273b2136">CommandMessenger.TransportLayer.CommunicationManager</a>
 </li>
 <li>ReadStringArg()
 : <a class="el" href="class_command_messenger_1_1_received_command.html#aa88488f3d9337260e476fd0653fe7746">CommandMessenger.ReceivedCommand</a>
@@ -313,7 +327,7 @@
 : <a class="el" href="class_command_messenger_1_1_received_command.html#aac0cfc378e73c15d93d5ff097998a237">CommandMessenger.ReceivedCommand</a>
 </li>
 <li>ReceivedCommand()
-: <a class="el" href="class_command_messenger_1_1_received_command.html#a8daecab3f84365cb9bd4fa3a1379968e">CommandMessenger.ReceivedCommand</a>
+: <a class="el" href="class_command_messenger_1_1_received_command.html#afa1327a01947ca63a8f9450658af0102">CommandMessenger.ReceivedCommand</a>
 </li>
 <li>Remove()
 : <a class="el" href="class_command_messenger_1_1_escaping.html#af2c39f31108a1d1970cbedbd00f6a5f6">CommandMessenger.Escaping</a>
@@ -334,10 +348,11 @@
 , <a class="el" href="class_command_messenger_1_1_send_command.html#a8809c2b70006ef6137d6dff6f0dc36f2">CommandMessenger.SendCommand</a>
 </li>
 <li>SerialPort
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#af18464232da05447a82b4e20a7beb950">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a3c236169077e701b6d75c0532109c099">CommandMessenger.TransportLayer.SerialTransport</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#a3e35fa7b220206485444a6d58535b1d0">CommandMessenger.TransportLayer.CommunicationManager</a>
 </li>
-<li>SerialPortManager()
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#ad996479a29768c41c3895a791b490688">CommandMessenger.SerialPortManager</a>
+<li>SerialTransport()
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a16c27cfd2c023245ae59f0441dba76bb">CommandMessenger.TransportLayer.SerialTransport</a>
 </li>
 <li>SetControlToInvokeOn()
 : <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ac41ea118c4f01b8d88f6546feeb8b9cd">CommandMessenger.CmdMessenger</a>
@@ -349,7 +364,8 @@
 : <a class="el" href="class_command_messenger_1_1_timed_action.html#afdf1bbaed54d16725c1c7734d0856a52">CommandMessenger.TimedAction</a>
 </li>
 <li>StartListening()
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#a51e56084f632a5e44a7d2e3e25dc0e74">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#ae63e77797920244f352dfe02e604ff35">CommandMessenger.TransportLayer.CommunicationManager</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a65a2e6eb0d68b5656bb19f984c382aee">CommandMessenger.TransportLayer.SerialTransport</a>
 , <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#aed0ef21f531ae9ad038c7ca3a1996e05">CommandMessenger.CmdMessenger</a>
 </li>
 <li>Stop()
@@ -362,8 +378,9 @@
 : <a class="el" href="class_command_messenger_1_1_serial_settings.html#aa4ccdf5592f07c021cd93d3e2b44737e">CommandMessenger.SerialSettings</a>
 </li>
 <li>StopListening()
-: <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a6a3f917bab92d23691186eb5bdee00ae">CommandMessenger.CmdMessenger</a>
-, <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#a440161b0ebe065f528693bd221a566f8">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#a0080e6171ee9cdd8c549fdf1ebbef6b8">CommandMessenger.TransportLayer.CommunicationManager</a>
+, <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a6a3f917bab92d23691186eb5bdee00ae">CommandMessenger.CmdMessenger</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a44356e752434aa01ef6fc98cb28c715d">CommandMessenger.TransportLayer.SerialTransport</a>
 </li>
 <li>StringEncoder
 : <a class="el" href="class_command_messenger_1_1_binary_converter.html#ad3db8d1ab63457eb63bae58ca57d6d0b">CommandMessenger.BinaryConverter</a>
@@ -372,9 +389,6 @@
 
 
 <h3><a class="anchor" id="index_t"></a>- t -</h3><ul>
-<li>this[int index]
-: <a class="el" href="class_command_messenger_1_1_received_command.html#a89cef638ef478a316ec245cca8d293e7">CommandMessenger.ReceivedCommand</a>
-</li>
 <li>TimedAction()
 : <a class="el" href="class_command_messenger_1_1_timed_action.html#a3bd099ec7694f37a92a070f14379f5d1">CommandMessenger.TimedAction</a>
 </li>
@@ -382,7 +396,7 @@
 : <a class="el" href="class_command_messenger_1_1_send_command.html#ac863345feb434feab3bc9e406a466375">CommandMessenger.SendCommand</a>
 </li>
 <li>TimeStamp
-: <a class="el" href="class_command_messenger_1_1_received_command.html#adaacab2c0c93357fc84d317ada2dbef0">CommandMessenger.ReceivedCommand</a>
+: <a class="el" href="class_command_messenger_1_1_command.html#a17296a6fa8f46343cfed036664456694">CommandMessenger.Command</a>
 </li>
 <li>ToByte()
 : <a class="el" href="class_command_messenger_1_1_binary_converter.html#a2187bd5f58a439c1b3bb33bb9b40da49">CommandMessenger.BinaryConverter</a>
@@ -416,28 +430,32 @@
 : <a class="el" href="class_command_messenger_1_1_escaping.html#a03540ea5b9ffa13d587adb2a4c4ff90d">CommandMessenger.Escaping</a>
 </li>
 <li>UpdateBaudRateCollection()
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#a67271ed33e9557da9dffe0c4a99ff7bc">CommandMessenger.SerialSettings</a>
-, <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#a10eb1da315ade77c55d97a9a92161b3d">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#ad246b55349258b940f6f78f35e94e6fe">CommandMessenger.TransportLayer.SerialTransport</a>
+, <a class="el" href="class_command_messenger_1_1_serial_settings.html#a67271ed33e9557da9dffe0c4a99ff7bc">CommandMessenger.SerialSettings</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#a990ebfedf8d7d829a1b1cf7029f584ef">CommandMessenger.TransportLayer.CommunicationManager</a>
 </li>
 </ul>
 
 
 <h3><a class="anchor" id="index_w"></a>- w -</h3><ul>
+<li>Write()
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a86af0c51112c9b7345f209b4dd4081a5">CommandMessenger.TransportLayer.SerialTransport</a>
+</li>
 <li>Write&lt; T &gt;()
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#a69e86e85d36b318fce2166da5643b457">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#a4b683e51c953ac630f8b5ab96ded8e6e">CommandMessenger.TransportLayer.CommunicationManager</a>
 </li>
 <li>WriteLine()
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#a98905713dddce8cb5ddf39d893e97992">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#adbb83000a7c08662a5d71c333faa5509">CommandMessenger.TransportLayer.CommunicationManager</a>
 </li>
 <li>WriteLine&lt; T &gt;()
-: <a class="el" href="class_command_messenger_1_1_serial_port_manager.html#ac6a5079b87f67d889fcb0b9734c149ab">CommandMessenger.SerialPortManager</a>
+: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_communication_manager.html#ab892314fcbb988e8c6d78d914c047f45">CommandMessenger.TransportLayer.CommunicationManager</a>
 </li>
 </ul>
 </div><!-- contents -->
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Sep 27 2013 15:30:02 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Oct 6 2013 22:15:16 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

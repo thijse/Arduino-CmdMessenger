@@ -12,6 +12,7 @@
 
 using System;
 using CommandMessenger;
+using CommandMessenger.TransportLayer;
 
 namespace SendAndReceiveBinaryArguments
 {
@@ -28,7 +29,7 @@ namespace SendAndReceiveBinaryArguments
     public class SendAndReceiveBinaryArguments
     {
         public bool RunLoop { get; set; }
-        private SerialPortManager _serialPortManager;
+        private CommunicationManager _serialPortManager;
         private CmdMessenger _cmdMessenger;
         private int _receivedPlainTextCount;                    // Counter of number of plain text items received
         private int _receivedBinaryCount;                       // Counter of number of binary items received
@@ -45,7 +46,7 @@ namespace SendAndReceiveBinaryArguments
         public void Setup()
         {
             // Create Serial Port object
-            _serialPortManager = new SerialPortManager
+            _serialPortManager = new CommunicationManager
             {
                 CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200 } // object initializer
             };

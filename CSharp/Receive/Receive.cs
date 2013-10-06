@@ -8,6 +8,7 @@
 using System;
 using System.Threading;
 using CommandMessenger;
+using CommandMessenger.TransportLayer;
 
 namespace Receive
 {
@@ -32,7 +33,7 @@ namespace Receive
     public class Receive
     {
         public bool RunLoop { get; set; }
-        private SerialPortManager _serialPortManager;
+        private CommunicationManager _serialPortManager;
         private CmdMessenger _cmdMessenger;
         private bool _ledState;
 
@@ -42,7 +43,7 @@ namespace Receive
             _ledState = false;
 
             // Create Serial Port object
-            _serialPortManager = new SerialPortManager();                   
+            _serialPortManager = new CommunicationManager();                   
             _serialPortManager.CurrentSerialSettings.PortName = "COM6";     // Set com port
             _serialPortManager.CurrentSerialSettings.BaudRate = 115200;     // Set baud rate
             _cmdMessenger = new CmdMessenger(_serialPortManager);

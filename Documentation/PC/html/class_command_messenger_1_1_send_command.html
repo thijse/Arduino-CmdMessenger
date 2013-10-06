@@ -47,6 +47,7 @@
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -65,9 +66,18 @@
 <div class="title">CommandMessenger.SendCommand Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<!-- doxytag: class="CommandMessenger::SendCommand" -->
+<!-- doxytag: class="CommandMessenger::SendCommand" --><!-- doxytag: inherits="CommandMessenger::Command" -->
 <p>A command to be send by <a class="el" href="class_command_messenger_1_1_cmd_messenger.html" title="Command messenger main class.">CmdMessenger</a>.  
  <a href="class_command_messenger_1_1_send_command.html#details">More...</a></p>
+<div class="dynheader">
+Inheritance diagram for CommandMessenger.SendCommand:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="class_command_messenger_1_1_send_command.png" usemap="#CommandMessenger.SendCommand_map" alt=""/>
+  <map id="CommandMessenger.SendCommand_map" name="CommandMessenger.SendCommand_map">
+<area href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger." alt="CommandMessenger.Command" shape="rect" coords="0,0,218,24"/>
+</map>
+ </div></div>
 
 <p><a href="class_command_messenger_1_1_send_command-members.html">List of all members.</a></p>
 <table class="memberdecls">
@@ -147,16 +157,12 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a binary command argument.  <a href="#a40b2e2655ef99a15e7438f3c81106ba6"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="properties"></a>
 Properties</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command.html#a4b7658be00d2e20cfc8995e91c0fd215">CmdId</a><code> [get, set]</code></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the command ID.  <a href="#a4b7658be00d2e20cfc8995e91c0fd215"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command.html#a3f3962f4c43f6b524c5ff023c5a206ce">ReqAc</a><code> [get, set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Indicates if we want to wait for an acknowlegde command.  <a href="#a3f3962f4c43f6b524c5ff023c5a206ce"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command.html#ac47003199fab019f246f68ec17c1ca5e">AckCmdId</a><code> [get, set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the acknowledge command ID.  <a href="#ac47003199fab019f246f68ec17c1ca5e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command.html#ac863345feb434feab3bc9e406a466375">Timeout</a><code> [get, set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the time we want to wait for the acknowledgde command.  <a href="#ac863345feb434feab3bc9e406a466375"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">String[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command.html#a3527a0c5b57cfc988bf4c26e04b57678">Arguments</a><code> [get]</code></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the command arguments.  <a href="#a3527a0c5b57cfc988bf4c26e04b57678"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>A command to be send by <a class="el" href="class_command_messenger_1_1_cmd_messenger.html" title="Command messenger main class.">CmdMessenger</a>. </p>
@@ -214,7 +220,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
   </table>
   </dd>
@@ -250,7 +256,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">arguments</td><td>The arguments. </td></tr>
   </table>
   </dd>
@@ -286,7 +292,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
   </table>
   </dd>
@@ -322,7 +328,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
   </table>
   </dd>
@@ -358,7 +364,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
   </table>
   </dd>
@@ -394,7 +400,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
   </table>
   </dd>
@@ -430,7 +436,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
   </table>
   </dd>
@@ -466,7 +472,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
   </table>
   </dd>
@@ -502,7 +508,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
   </table>
   </dd>
@@ -544,7 +550,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">ackCmdId</td><td>Acknowlegde command ID. </td></tr>
     <tr><td class="paramname">timeout</td><td>The timeout on waiting for an acknowlegde</td></tr>
   </table>
@@ -593,7 +599,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
     <tr><td class="paramname">ackCmdId</td><td>Acknowlegde command ID. </td></tr>
     <tr><td class="paramname">timeout</td><td>The timeout on waiting for an acknowlegde</td></tr>
@@ -643,7 +649,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">arguments</td><td>The arguments. </td></tr>
     <tr><td class="paramname">ackCmdId</td><td>Acknowlegde command ID. </td></tr>
     <tr><td class="paramname">timeout</td><td>The timeout on waiting for an acknowlegde</td></tr>
@@ -693,7 +699,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
     <tr><td class="paramname">ackCmdId</td><td>Acknowlegde command ID. </td></tr>
     <tr><td class="paramname">timeout</td><td>The timeout on waiting for an acknowlegde</td></tr>
@@ -743,7 +749,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
     <tr><td class="paramname">ackCmdId</td><td>Acknowlegde command ID. </td></tr>
     <tr><td class="paramname">timeout</td><td>The timeout on waiting for an acknowlegde</td></tr>
@@ -793,7 +799,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
     <tr><td class="paramname">ackCmdId</td><td>Acknowlegde command ID. </td></tr>
     <tr><td class="paramname">timeout</td><td>The timeout on waiting for an acknowlegde</td></tr>
@@ -843,7 +849,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
     <tr><td class="paramname">ackCmdId</td><td>Acknowlegde command ID. </td></tr>
     <tr><td class="paramname">timeout</td><td>The timeout on waiting for an acknowlegde</td></tr>
@@ -893,7 +899,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
     <tr><td class="paramname">ackCmdId</td><td>Acknowlegde command ID. </td></tr>
     <tr><td class="paramname">timeout</td><td>The timeout on waiting for an acknowlegde</td></tr>
@@ -943,7 +949,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">cmdId</td><td>Command ID </td></tr>
+    <tr><td class="paramname">cmdId</td><td><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> ID </td></tr>
     <tr><td class="paramname">argument</td><td>The argument. </td></tr>
     <tr><td class="paramname">ackCmdId</td><td>Acknowlegde command ID. </td></tr>
     <tr><td class="paramname">timeout</td><td>The timeout on waiting for an acknowlegde</td></tr>
@@ -1396,38 +1402,6 @@ Properties</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3527a0c5b57cfc988bf4c26e04b57678"></a><!-- doxytag: member="CommandMessenger::SendCommand::Arguments" ref="a3527a0c5b57cfc988bf4c26e04b57678" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">String [] <a class="el" href="class_command_messenger_1_1_send_command.html#a3527a0c5b57cfc988bf4c26e04b57678">CommandMessenger.SendCommand.Arguments</a><code> [get]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Gets the command arguments. </p>
-<p>The arguments, first one is the command ID </p>
-
-</div>
-</div>
-<a class="anchor" id="a4b7658be00d2e20cfc8995e91c0fd215"></a><!-- doxytag: member="CommandMessenger::SendCommand::CmdId" ref="a4b7658be00d2e20cfc8995e91c0fd215" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int <a class="el" href="class_command_messenger_1_1_send_command.html#a4b7658be00d2e20cfc8995e91c0fd215">CommandMessenger.SendCommand.CmdId</a><code> [get, set]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Gets or sets the command ID. </p>
-<p>The command ID. </p>
-
-</div>
-</div>
 <a class="anchor" id="a3f3962f4c43f6b524c5ff023c5a206ce"></a><!-- doxytag: member="CommandMessenger::SendCommand::ReqAc" ref="a3f3962f4c43f6b524c5ff023c5a206ce" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -1467,7 +1441,7 @@ Properties</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Sep 27 2013 15:30:01 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Oct 6 2013 22:15:16 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

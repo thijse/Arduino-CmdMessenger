@@ -25,6 +25,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
+using CommandMessenger;
+using CommandMessenger.TransportLayer;
 
 namespace CommandMessenger
 {
@@ -43,13 +45,16 @@ namespace CommandMessenger
         public EventHandler NewLineSent;	                                // The new line sent
         private readonly Object _processSerialDataLock = new Object();      // The process serial data lock
 
-        private SerialPortManager _communications;                          // The Serial port implementation
+        private CommunicationManager _communications;                          // The Serial port implementation
         private char _fieldSeparator;                                       // The field separator
         private char _commandSeparator;                                     // The command separator
         private char _escapeCharacter;                                      // The escape character
 
         private MessengerCallbackFunction _defaultCallback;                 // The default callback
         private Dictionary<int, MessengerCallbackFunction> _callbackList;   // List of callbacks
+
+        private SendCommandQueue _sendCommandQueue;
+        private ReceiveCommandQueue _receiveCommandQueue;
 
         /// <summary> Definition of the messenger callback function. </summary>
         /// <param name="receivedCommand"> The received command. </param>
@@ -79,7 +84,7 @@ namespace CommandMessenger
 
         /// <summary> Constructor. </summary>
         /// <param name="communications"> The Serial port object. </param>
-        public CmdMessenger(SerialPortManager communications)
+        public CmdMessenger(CommunicationManager communications)
         {
             Init(communications, ',', ';', '/');
         }
@@ -87,7 +92,7 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         /// <param name="communications"> The Serial port object. </param>
         /// <param name="fieldSeparator"> The field separator. </param>
-        public CmdMessenger(SerialPortManager communications, char fieldSeparator)
+        public CmdMessenger(CommunicationManager communications, char fieldSeparator)
         {
             Init(communications, fieldSeparator, ';', '/');
         }
@@ -96,7 +101,7 @@ namespace CommandMessenger
         /// <param name="communications">   The Serial port object. </param>
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
-        public CmdMessenger(SerialPortManager communications, char fieldSeparator, char commandSeparator)
+        public CmdMessenger(CommunicationManager communications, char fieldSeparator, char commandSeparator)
         {
             Init(communications, fieldSeparator, commandSeparator, commandSeparator);
         }
@@ -106,7 +111,7 @@ namespace CommandMessenger
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
         /// <param name="escapeCharacter">  The escape character. </param>
-        public CmdMessenger(SerialPortManager communications, char fieldSeparator, char commandSeparator,
+        public CmdMessenger(CommunicationManager communications, char fieldSeparator, char commandSeparator,
                             char escapeCharacter)
         {
             Init(communications, fieldSeparator, commandSeparator, escapeCharacter);
@@ -117,7 +122,7 @@ namespace CommandMessenger
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
         /// <param name="escapeCharacter">  The escape character. </param>
-        private void Init(SerialPortManager communications, char fieldSeparator, char commandSeparator,
+        private void Init(CommunicationManager communications, char fieldSeparator, char commandSeparator,
                           char escapeCharacter)
         {
             _controlToInvokeOn = null;
@@ -131,6 +136,8 @@ namespace CommandMessenger
             Escaping.EscapeChars(fieldSeparator, commandSeparator, escapeCharacter);
             _callbackList = new Dictionary<int, MessengerCallbackFunction>();
             PrintLfCr = false;
+            _sendCommandQueue = new SendCommandQueue(this);
+            _receiveCommandQueue = new ReceiveCommandQueue(this);
             _communications.NewLineReceived += NewSerialDataReceived;
         }
 
@@ -252,9 +259,9 @@ namespace CommandMessenger
             if (receivedCommand.Ok)
             {
                 //receivedCommand = new ReceivedCommand(commandString);
-                if (_callbackList.ContainsKey(receivedCommand.CommandId))
+                if (_callbackList.ContainsKey(receivedCommand.CmdId))
                 {
-                    callback = _callbackList[receivedCommand.CommandId];
+                    callback = _callbackList[receivedCommand.CmdId];
                 }
                 else
                 {
@@ -353,6 +360,17 @@ namespace CommandMessenger
             }
         }
 
+        public void QueueCommand(SendCommand sendCommand)
+        {
+            _sendCommandQueue.QueueCommand(sendCommand);
+        }
+
+        public void QueueCommand(CommandStrategy commandStrategy)
+        {
+            _sendCommandQueue.QueueCommand(commandStrategy);
+        }
+
+
         /// <summary> Helper function to Invoke or directly call event. </summary>
         /// <param name="eventHandler"> The event handler. </param>
         private void InvokeEvent(EventHandler eventHandler)
@@ -431,9 +449,10 @@ namespace CommandMessenger
                 LastLineTimeStamp = _communications.LastLineTimeStamp;
                 InvokeEvent(NewLineReceived);
 
-                int commandId;
-                if (!int.TryParse(CurrentReceivedCommand[0], out commandId)) return null;
-                if (commandId == ackCmdId)
+                //int commandId;
+                //if (!int.TryParse(CurrentReceivedCommand[0], out commandId)) return null;
+                if (!CurrentReceivedCommand.Ok) return null;
+                if (CurrentReceivedCommand.CmdId == ackCmdId)
                 {
                     return CurrentReceivedCommand;
                 }

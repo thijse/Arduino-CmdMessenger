@@ -31,7 +31,7 @@ namespace ArduinoController
         // Update value label and arduinoController on value changed using slider
         private void LedFrequencyTrackBarScroll(object sender, EventArgs e)
         {
-            _ledFrequency = 0.4 + ((double)LedFrequencyLabelTrackBar.Value) / 2.5;
+            _ledFrequency = 0.4 + ((double)LedFrequencyLabelTrackBar.Value) / 25.0;
             LedFrequencyValue.Text = _ledFrequency.ToString(CultureInfo.InvariantCulture);
             _arduinoController.SetLedFrequency(_ledFrequency);
         }

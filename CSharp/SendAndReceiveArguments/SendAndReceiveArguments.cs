@@ -9,6 +9,7 @@
 
 using System;
 using CommandMessenger;
+using CommandMessenger.TransportLayer;
 
 namespace SendAndReceiveArguments
 {
@@ -25,7 +26,7 @@ namespace SendAndReceiveArguments
     public class SendAndReceiveArguments
     {
         public bool RunLoop { get; set; }
-        private SerialPortManager _serialPortManager;
+        private CommunicationManager _serialPortManager;
         private CmdMessenger _cmdMessenger;
         
         // ------------------ M A I N  ----------------------
@@ -34,7 +35,7 @@ namespace SendAndReceiveArguments
         public void Setup()
         {
             // Create Serial Port object
-            _serialPortManager = new SerialPortManager
+            _serialPortManager = new CommunicationManager
             {
                 CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200 } // object initializer
             };

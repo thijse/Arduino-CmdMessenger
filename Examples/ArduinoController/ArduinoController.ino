@@ -1,14 +1,15 @@
-// *** SentandReceive ***
+// *** ArduinoController ***
 
 // This example expands the previous Receive example. The Arduino will now send back a status.
 // It adds a demonstration of how to:
 // - Handle received commands that do not have a function attached
 // - Send a command with a parameter to the PC
+// - Shows how to invoke on the UI thread
 
 #include <CmdMessenger.h>  // CmdMessenger
 
 // Blinking led variables 
-const int kBlinkLed             = 13;  // Pin of internal Led
+const int kBlinkLed            = 13;  // Pin of internal Led
 bool ledState                  = 1;   // Current state of Led
 float ledFrequency             = 1.0; // Current blink frequency of Led
 
@@ -49,6 +50,7 @@ void OnSetLed()
 {
   // Read led state argument, interpret string as boolean
   ledState = cmdMessenger.readBoolArg();
+  cmdMessenger.sendCmd(kAcknowledge,ledState);
 }
 
 // Callback function that sets leds blinking frequency
@@ -61,8 +63,7 @@ void OnSetLedFrequency()
   // translate frequency in on and off times in miliseconds
   intervalOn  = (500.0/ledFrequency);
   intervalOff = (1000.0/ledFrequency);
-  cmdMessenger.sendCmd(kAcknowledge,intervalOn);
-  cmdMessenger.sendCmd(kAcknowledge,intervalOff);
+  cmdMessenger.sendCmd(kAcknowledge,ledFrequency);
 }
 
 // Setup function
@@ -72,7 +73,7 @@ void setup()
   Serial.begin(115200); 
 
   // Adds newline to every command
-  cmdMessenger.printLfCr();   
+  //cmdMessenger.printLfCr();   
 
   // Attach my application's user-defined callback methods
   attachCommandCallbacks();
@@ -103,7 +104,6 @@ bool blinkLed() {
     digitalWrite(kBlinkLed, LOW);
   } else if (  millis() - prevBlinkTime > intervalOn ) {
     // Turn led on at end of interval (if led state is on)
-    digitalWrite(kBlinkLed, HIGH);
+    digitalWrite(kBlinkLed, ledState?HIGH:LOW);
   } 
 }
-

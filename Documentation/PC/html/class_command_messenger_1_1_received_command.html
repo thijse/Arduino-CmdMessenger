@@ -47,6 +47,7 @@
     <ul class="tablist">
       <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
       <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
+      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
       <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
     </ul>
   </div>
@@ -59,15 +60,23 @@
 </div>
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#properties">Properties</a>  </div>
+<a href="#pub-methods">Public Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">CommandMessenger.ReceivedCommand Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<!-- doxytag: class="CommandMessenger::ReceivedCommand" -->
+<!-- doxytag: class="CommandMessenger::ReceivedCommand" --><!-- doxytag: inherits="CommandMessenger::Command" -->
 <p>A command received from <a class="el" href="class_command_messenger_1_1_cmd_messenger.html" title="Command messenger main class.">CmdMessenger</a>.  
  <a href="class_command_messenger_1_1_received_command.html#details">More...</a></p>
+<div class="dynheader">
+Inheritance diagram for CommandMessenger.ReceivedCommand:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="class_command_messenger_1_1_received_command.png" usemap="#CommandMessenger.ReceivedCommand_map" alt=""/>
+  <map id="CommandMessenger.ReceivedCommand_map" name="CommandMessenger.ReceivedCommand_map">
+<area href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger." alt="CommandMessenger.Command" shape="rect" coords="0,0,242,24"/>
+</map>
+ </div></div>
 
 <p><a href="class_command_messenger_1_1_received_command-members.html">List of all members.</a></p>
 <table class="memberdecls">
@@ -75,10 +84,10 @@
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#afa1327a01947ca63a8f9450658af0102">ReceivedCommand</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#afa1327a01947ca63a8f9450658af0102"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#a8daecab3f84365cb9bd4fa3a1379968e">ReceivedCommand</a> (string[] arguments)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a8daecab3f84365cb9bd4fa3a1379968e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#af331506b24361d397d3a49d3d9368d01">ReceivedCommand</a> (string[] rawArguments)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#af331506b24361d397d3a49d3d9368d01"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#a0bcf4c334cf7263c18c31a90de7ecd42">Next</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Fetches the next argument.  <a href="#a0bcf4c334cf7263c18c31a90de7ecd42"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Indexer to get arguments directly.  <a href="#a0bcf4c334cf7263c18c31a90de7ecd42"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#a7d4395133d8590b46dbd63ba767eff9a">Available</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">returns if a next command is available  <a href="#a7d4395133d8590b46dbd63ba767eff9a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Int16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#a3ec2913e7f539e27908dfffadeb83cb2">ReadInt16Arg</a> ()</td></tr>
@@ -113,16 +122,6 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the current binary argument as a string value.  <a href="#a1a0b516bc39f151037bdc9a10ce6cf08"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#a7740ae412aa7fa19a791884203a31f10">ReadBinBoolArg</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the current binary argument as a boolean value.  <a href="#a7740ae412aa7fa19a791884203a31f10"></a><br/></td></tr>
-<tr><td colspan="2"><h2><a name="properties"></a>
-Properties</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#adaacab2c0c93357fc84d317ada2dbef0">TimeStamp</a><code> [get, set]</code></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the time stamp.  <a href="#adaacab2c0c93357fc84d317ada2dbef0"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#a59dc636c70302b0fb03b00719418874b">Ok</a><code> [get]</code></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether this is a valid &amp; filled command.  <a href="#a59dc636c70302b0fb03b00719418874b"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#a89cef638ef478a316ec245cca8d293e7">this[int index]</a><code> [get]</code></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Indexer to get arguments directly.  <a href="#a89cef638ef478a316ec245cca8d293e7"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#aa528bea96e58a0d8216bc5f0fc8e216f">CommandId</a><code> [get]</code></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the command ID.  <a href="#aa528bea96e58a0d8216bc5f0fc8e216f"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>A command received from <a class="el" href="class_command_messenger_1_1_cmd_messenger.html" title="Command messenger main class.">CmdMessenger</a>. </p>
@@ -145,7 +144,7 @@ Properties</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a8daecab3f84365cb9bd4fa3a1379968e"></a><!-- doxytag: member="CommandMessenger::ReceivedCommand::ReceivedCommand" ref="a8daecab3f84365cb9bd4fa3a1379968e" args="(string[] arguments)" -->
+<a class="anchor" id="af331506b24361d397d3a49d3d9368d01"></a><!-- doxytag: member="CommandMessenger::ReceivedCommand::ReceivedCommand" ref="af331506b24361d397d3a49d3d9368d01" args="(string[] rawArguments)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -153,7 +152,7 @@ Properties</h2></td></tr>
           <td class="memname"><a class="el" href="class_command_messenger_1_1_received_command.html#afa1327a01947ca63a8f9450658af0102">CommandMessenger.ReceivedCommand.ReceivedCommand</a> </td>
           <td>(</td>
           <td class="paramtype">string[]&#160;</td>
-          <td class="paramname"><em>arguments</em></td><td>)</td>
+          <td class="paramname"><em>rawArguments</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -163,7 +162,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">arguments</td><td>All command arguments, first one is command ID </td></tr>
+    <tr><td class="paramname">rawArguments</td><td>All command arguments, first one is command ID </td></tr>
   </table>
   </dd>
 </dl>
@@ -204,6 +203,8 @@ Properties</h2></td></tr>
 </div>
 <div class="memdoc">
 
+<p>Indexer to get arguments directly. </p>
+<p>The indexed item. </p>
 <p>Fetches the next argument. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>true if it succeeds, false if it fails. </dd></dl>
 
@@ -513,71 +514,6 @@ Properties</h2></td></tr>
 
 </div>
 </div>
-<hr/><h2>Property Documentation</h2>
-<a class="anchor" id="aa528bea96e58a0d8216bc5f0fc8e216f"></a><!-- doxytag: member="CommandMessenger::ReceivedCommand::CommandId" ref="aa528bea96e58a0d8216bc5f0fc8e216f" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int <a class="el" href="class_command_messenger_1_1_received_command.html#aa528bea96e58a0d8216bc5f0fc8e216f">CommandMessenger.ReceivedCommand.CommandId</a><code> [get]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Gets the command ID. </p>
-<p>The command ID. </p>
-
-</div>
-</div>
-<a class="anchor" id="a59dc636c70302b0fb03b00719418874b"></a><!-- doxytag: member="CommandMessenger::ReceivedCommand::Ok" ref="a59dc636c70302b0fb03b00719418874b" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="class_command_messenger_1_1_received_command.html#a59dc636c70302b0fb03b00719418874b">CommandMessenger.ReceivedCommand.Ok</a><code> [get]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Returns whether this is a valid &amp; filled command. </p>
-<p>true if ok, false if not. </p>
-
-</div>
-</div>
-<a class="anchor" id="a89cef638ef478a316ec245cca8d293e7"></a><!-- doxytag: member="CommandMessenger::ReceivedCommand::this[int index]" ref="a89cef638ef478a316ec245cca8d293e7" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">string CommandMessenger.ReceivedCommand.this[int index]<code> [get]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Indexer to get arguments directly. </p>
-<p>The indexed item. </p>
-
-</div>
-</div>
-<a class="anchor" id="adaacab2c0c93357fc84d317ada2dbef0"></a><!-- doxytag: member="CommandMessenger::ReceivedCommand::TimeStamp" ref="adaacab2c0c93357fc84d317ada2dbef0" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">long <a class="el" href="class_command_messenger_1_1_received_command.html#adaacab2c0c93357fc84d317ada2dbef0">CommandMessenger.ReceivedCommand.TimeStamp</a><code> [get, set]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Gets or sets the time stamp. </p>
-<p>The time stamp. </p>
-
-</div>
-</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>D:/My Documents/Github/Arduino-Code-and-Libraries/Libraries/CmdMessenger/CSharp/CommandMessenger/ReceivedCommand.cs</li>
 </ul>
@@ -585,7 +521,7 @@ Properties</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Sep 27 2013 15:30:01 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Oct 6 2013 22:15:16 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

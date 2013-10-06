@@ -52,11 +52,12 @@
             // LedFrequencyLabelTrackBar
             // 
             this.LedFrequencyLabelTrackBar.Location = new System.Drawing.Point(90, 35);
-            this.LedFrequencyLabelTrackBar.Maximum = 24;
+            this.LedFrequencyLabelTrackBar.Maximum = 240;
             this.LedFrequencyLabelTrackBar.Name = "LedFrequencyLabelTrackBar";
             this.LedFrequencyLabelTrackBar.Size = new System.Drawing.Size(208, 45);
             this.LedFrequencyLabelTrackBar.TabIndex = 1;
             this.LedFrequencyLabelTrackBar.Tag = "";
+            this.LedFrequencyLabelTrackBar.TickFrequency = 10;
             this.LedFrequencyLabelTrackBar.Scroll += new System.EventHandler(this.LedFrequencyTrackBarScroll);
             this.LedFrequencyLabelTrackBar.ValueChanged += new System.EventHandler(this.LedFrequencyLabelTrackBarValueChanged);
             // 

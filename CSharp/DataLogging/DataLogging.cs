@@ -8,6 +8,7 @@
 
 using System;
 using CommandMessenger;
+using CommandMessenger.TransportLayer;
 
 namespace DataLogging
 {
@@ -24,7 +25,7 @@ namespace DataLogging
         // This class (kind of) contains presentation logic, and domain model.
         // ChartForm.cs contains the view components 
 
-        private SerialPortManager _serialPortManager;
+        private CommunicationManager _serialPortManager;
         private CmdMessenger      _cmdMessenger;
         private ChartForm         _chartForm;
         
@@ -40,7 +41,7 @@ namespace DataLogging
             _chartForm.SetupChart();
 
             // Create Serial Port object
-            _serialPortManager = new SerialPortManager
+            _serialPortManager = new CommunicationManager
             {
                 CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200 } // object initializer
             };

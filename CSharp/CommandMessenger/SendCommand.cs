@@ -26,13 +26,13 @@ using System.Globalization;
 namespace CommandMessenger
 {
     /// <summary> A command to be send by CmdMessenger </summary>
-    public class SendCommand
+    public class SendCommand : Command
     {
-        private List<String> _arguments;	// The argument list of the command, first one is the command ID
+        //private List<String> _arguments;	// The argument list of the command, first one is the command ID
         
-        /// <summary> Gets or sets the command ID. </summary>
-        /// <value> The command ID. </value>
-        public int CmdId { get; set; }
+        ///// <summary> Gets or sets the command ID. </summary>
+        ///// <value> The command ID. </value>
+        //public int CmdId { get; set; }
 
         /// <summary> Indicates if we want to wait for an acknowlegde command. </summary>
         /// <value> true if request acknowledge, false if not. </value>
@@ -46,12 +46,12 @@ namespace CommandMessenger
         /// <value> The timeout on waiting for an acknowlegde</value>
         public int Timeout { get; set; }
   
-        /// <summary> Gets the command arguments. </summary>
-        /// <value> The arguments, first one is the command ID </value>
-        public String[] Arguments
-        {
-            get { return _arguments.ToArray(); }
-        }
+        ///// <summary> Gets the command arguments. </summary>
+        ///// <value> The arguments, first one is the command ID </value>
+        //public String[] Arguments
+        //{
+        //    get { return _arguments.ToArray(); }
+        //}
 
         /// <summary> Constructor. </summary>
         /// <param name="cmdId"> the command ID. </param>
