@@ -7,18 +7,6 @@
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
 
         #region Windows Form Designer generated code
 
@@ -58,7 +46,6 @@
             this.Controls.Add(this.chartControl);
             this.Name = "ChartForm";
             this.Text = "Data Logging and Charting";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ChartFormFormClosing);
             this.ResumeLayout(false);
 
         }

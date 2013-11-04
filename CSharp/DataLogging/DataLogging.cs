@@ -10,6 +10,7 @@ using System;
 using CommandMessenger;
 using CommandMessenger.TransportLayer;
 
+using System.Threading;
 namespace DataLogging
 {
     enum Command
@@ -24,8 +25,7 @@ namespace DataLogging
     {
         // This class (kind of) contains presentation logic, and domain model.
         // ChartForm.cs contains the view components 
-
-        private CommunicationManager _serialPortManager;
+        private SerialTransport   _serialTransport;
         private CmdMessenger      _cmdMessenger;
         private ChartForm         _chartForm;
         
@@ -34,6 +34,7 @@ namespace DataLogging
         // Setup function
         public void Setup(ChartForm chartForm)
         {
+           
             // getting the chart control on top of the chart form.
             _chartForm = chartForm;
             
@@ -41,20 +42,23 @@ namespace DataLogging
             _chartForm.SetupChart();
 
             // Create Serial Port object
-            _serialPortManager = new CommunicationManager
+            _serialTransport = new SerialTransport
             {
                 CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200 } // object initializer
             };
 
-            _cmdMessenger = new CmdMessenger(_serialPortManager);
+            _cmdMessenger = new CmdMessenger(_serialTransport);
 
             // Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
             _cmdMessenger.SetControlToInvokeOn(chartForm);
 
+            // Set Received command strategy that removes commands that are older than 1 sec
+            _cmdMessenger.ReceiveCommandStrategy(new StaleGeneralStrategy(1000));
+
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();
 
-            // Attach to NewLineReceived for logging purposes
+            // Attach to NewLinesReceived for logging purposes
             _cmdMessenger.NewLineReceived += NewLineReceived;
 
             // Attach to NewLineSent for logging purposes
@@ -76,12 +80,13 @@ namespace DataLogging
         {
             // Stop listening
             _cmdMessenger.StopListening();
+           
 
             // Dispose Command Messenger
             _cmdMessenger.Dispose();
 
             // Dispose Serial Port object
-            _serialPortManager.Dispose();
+            _serialTransport.Dispose();
         }
 
         /// Attach command call backs. 

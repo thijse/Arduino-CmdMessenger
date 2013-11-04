@@ -30,6 +30,7 @@ namespace CommandMessenger
         private int _parameter=-1; // The parameter
         private bool _dumped = true;	// true if parameter has been dumped
 
+        public string rawString { get; set; }
         /// <summary> Default constructor. </summary>
         public ReceivedCommand()
         {

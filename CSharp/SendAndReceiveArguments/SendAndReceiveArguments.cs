@@ -26,7 +26,7 @@ namespace SendAndReceiveArguments
     public class SendAndReceiveArguments
     {
         public bool RunLoop { get; set; }
-        private CommunicationManager _serialPortManager;
+        private SerialTransport _serialTransport;
         private CmdMessenger _cmdMessenger;
         
         // ------------------ M A I N  ----------------------
@@ -35,16 +35,16 @@ namespace SendAndReceiveArguments
         public void Setup()
         {
             // Create Serial Port object
-            _serialPortManager = new CommunicationManager
+            _serialTransport = new SerialTransport
             {
                 CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200 } // object initializer
             };
-            _cmdMessenger = new CmdMessenger(_serialPortManager);
+            _cmdMessenger = new CmdMessenger(_serialTransport);
 
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();
 
-            // Attach to NewLineReceived for logging purposes
+            // Attach to NewLinesReceived for logging purposes
             _cmdMessenger.NewLineReceived += NewLineReceived;
 
             // Attach to NewLineSent for logging purposes
@@ -100,7 +100,7 @@ namespace SendAndReceiveArguments
             _cmdMessenger.Dispose();
 
             // Dispose Serial Port object
-            _serialPortManager.Dispose();
+            _serialTransport.Dispose();
 
             // Pause before stop
             Console.WriteLine("Press any key to stop...");

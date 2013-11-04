@@ -62,14 +62,24 @@
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#properties">Properties</a>  </div>
   <div class="headertitle">
 <div class="title">CommandMessenger.TimedAction Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<!-- doxytag: class="CommandMessenger::TimedAction" -->
+<!-- doxytag: class="CommandMessenger::TimedAction" --><!-- doxytag: inherits="CommandMessenger::DisposableObject" -->
 <p>Starts a recurring action with fixed interval If still running at next call, the action is skipped.  
  <a href="class_command_messenger_1_1_timed_action.html#details">More...</a></p>
+<div class="dynheader">
+Inheritance diagram for CommandMessenger.TimedAction:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="class_command_messenger_1_1_timed_action.png" usemap="#CommandMessenger.TimedAction_map" alt=""/>
+  <map id="CommandMessenger.TimedAction_map" name="CommandMessenger.TimedAction_map">
+<area href="class_command_messenger_1_1_disposable_object.html" alt="CommandMessenger.DisposableObject" shape="rect" coords="0,0,233,24"/>
+</map>
+ </div></div>
 
 <p><a href="class_command_messenger_1_1_timed_action-members.html">List of all members.</a></p>
 <table class="memberdecls">
@@ -79,14 +89,18 @@ Classes</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Thread state. <br/></td></tr>
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_timed_action.html#a3bd099ec7694f37a92a070f14379f5d1">TimedAction</a> (double interval, Action action)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a3bd099ec7694f37a92a070f14379f5d1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_timed_action.html#a0bcd051cbc3df3b894f25354190d6ff1">TimedAction</a> (<a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a> disposeStack, double interval, Action action)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a0bcd051cbc3df3b894f25354190d6ff1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_timed_action.html#afdf1bbaed54d16725c1c7734d0856a52">Start</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start timed actions.  <a href="#afdf1bbaed54d16725c1c7734d0856a52"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_timed_action.html#ad704b672a083f7cab330d32ccaf1deb1">Stop</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop timed actions.  <a href="#ad704b672a083f7cab330d32ccaf1deb1"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_timed_action.html#a3ce7771e5bbff75591c3178b316a233b">StopAndWait</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop timed actions and wait until running function has finished.  <a href="#a3ce7771e5bbff75591c3178b316a233b"></a><br/></td></tr>
+<tr><td colspan="2"><h2><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">override void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_timed_action.html#a95f07c703ce6a9274a2ed89c6b51625b">Dispose</a> (bool disposing)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.  <a href="#a95f07c703ce6a9274a2ed89c6b51625b"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="properties"></a>
 Properties</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_timed_action.html#ad16b8a77e192261e7f2820c2c5143c0d">IsRunning</a><code> [get]</code></td></tr>
@@ -95,13 +109,19 @@ Properties</h2></td></tr>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Starts a recurring action with fixed interval If still running at next call, the action is skipped. </p>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a3bd099ec7694f37a92a070f14379f5d1"></a><!-- doxytag: member="CommandMessenger::TimedAction::TimedAction" ref="a3bd099ec7694f37a92a070f14379f5d1" args="(double interval, Action action)" -->
+<a class="anchor" id="a0bcd051cbc3df3b894f25354190d6ff1"></a><!-- doxytag: member="CommandMessenger::TimedAction::TimedAction" ref="a0bcd051cbc3df3b894f25354190d6ff1" args="(DisposeStack disposeStack, double interval, Action action)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_command_messenger_1_1_timed_action.html#a3bd099ec7694f37a92a070f14379f5d1">CommandMessenger.TimedAction.TimedAction</a> </td>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_timed_action.html#a0bcd051cbc3df3b894f25354190d6ff1">CommandMessenger.TimedAction.TimedAction</a> </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a>&#160;</td>
+          <td class="paramname"><em>disposeStack</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">double&#160;</td>
           <td class="paramname"><em>interval</em>, </td>
         </tr>
@@ -123,6 +143,7 @@ Properties</h2></td></tr>
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
+    <tr><td class="paramname">disposeStack</td><td>Dispose stack to add itself to</td></tr>
     <tr><td class="paramname">interval</td><td>The execution interval. </td></tr>
     <tr><td class="paramname">action</td><td>The action to execute. </td></tr>
   </table>
@@ -132,6 +153,33 @@ Properties</h2></td></tr>
 </div>
 </div>
 <hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a95f07c703ce6a9274a2ed89c6b51625b"></a><!-- doxytag: member="CommandMessenger::TimedAction::Dispose" ref="a95f07c703ce6a9274a2ed89c6b51625b" args="(bool disposing)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">override void <a class="el" href="class_command_messenger_1_1_timed_action.html#a95f07c703ce6a9274a2ed89c6b51625b">CommandMessenger.TimedAction.Dispose</a> </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>disposing</em></td><td>)</td>
+          <td><code> [protected, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">disposing</td><td>true if resources should be disposed, false if not. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_command_messenger_1_1_disposable_object.html#a885fd939ed538c3351d31430c62544a7">CommandMessenger.DisposableObject</a>.</p>
+
+</div>
+</div>
 <a class="anchor" id="afdf1bbaed54d16725c1c7734d0856a52"></a><!-- doxytag: member="CommandMessenger::TimedAction::Start" ref="afdf1bbaed54d16725c1c7734d0856a52" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -210,7 +258,7 @@ Properties</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Oct 6 2013 22:15:16 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Nov 4 2013 21:36:53 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

@@ -8,6 +8,7 @@
         }
 
         public ListQueue<CommandStrategy> CommandQueue { get; set; }
+        public CommandQueue.threadRunStates ThreadRunState { get; set; }
         public Command Command { get; private set; }
 
         public virtual void Enqueue()

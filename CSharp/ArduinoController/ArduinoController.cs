@@ -25,9 +25,9 @@ namespace ArduinoController
         // This class (kind of) contains presentation logic, and domain model.
         // ChartForm.cs contains the view components 
 
-        private CommunicationManager _serialPortManager;
+        private SerialTransport    _serialTransport;
         private CmdMessenger      _cmdMessenger;
-        private ControllerForm _controllerForm;
+        private ControllerForm    _controllerForm;
 
         // ------------------ MAIN  ----------------------
 
@@ -38,12 +38,12 @@ namespace ArduinoController
             _controllerForm = controllerForm;
             
             // Create Serial Port object
-            _serialPortManager = new CommunicationManager
+            _serialTransport = new SerialTransport
             {
                 CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200 } // object initializer
             };
 
-            _cmdMessenger = new CmdMessenger(_serialPortManager);
+            _cmdMessenger = new CmdMessenger(_serialTransport);
 
             // Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
             _cmdMessenger.SetControlToInvokeOn(_controllerForm);
@@ -51,7 +51,7 @@ namespace ArduinoController
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();
 
-            // Attach to NewLineReceived for logging purposes
+            // Attach to NewLinesReceived for logging purposes
             _cmdMessenger.NewLineReceived += NewLineReceived;
 
             // Attach to NewLineSent for logging purposes
@@ -74,7 +74,7 @@ namespace ArduinoController
             _cmdMessenger.Dispose();
 
             // Dispose Serial Port object
-            _serialPortManager.Dispose();
+            _serialTransport.Dispose();
         }
 
         /// Attach command call backs. 

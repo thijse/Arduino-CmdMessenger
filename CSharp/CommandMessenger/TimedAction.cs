@@ -30,7 +30,7 @@ namespace CommandMessenger
     /// Starts a recurring action with fixed interval   
     /// If still running at next call, the action is skipped
     /// </summary>
-    public class TimedAction
+    public class TimedAction : DisposableObject
     {
         /// <summary> Thread state.  </summary>
         private class ThreadState
@@ -51,10 +51,12 @@ namespace CommandMessenger
         }
 
         /// <summary> Constructor. </summary>
+        /// <param name="disposeStack">Dispose stack to add itself to</param>
         /// <param name="interval"> The execution interval. </param>
         /// <param name="action">   The action to execute. </param>
-        public TimedAction(double interval, Action action)
+        public TimedAction(DisposeStack disposeStack, double interval, Action action)
         {
+            disposeStack.Push(this);
             _action = action;
             _threadState = new ThreadState {IsRunning = false};
 
@@ -143,5 +145,19 @@ namespace CommandMessenger
             {
             }
         }
+
+        // Dispose
+        /// <summary> Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </summary>
+        /// <param name="disposing"> true if resources should be disposed, false if not. </param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _actionTimer.Elapsed -= OnActionTimer;
+            }
+            base.Dispose(disposing);
+        }
+        
+
     }
 }

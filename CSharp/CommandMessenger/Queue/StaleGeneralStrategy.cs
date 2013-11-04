@@ -11,15 +11,16 @@ namespace CommandMessenger
             _commandTimeOut = commandTimeOut;
         }
 
-        public override void OnEnqueue()
+        public override void OnDequeue()
         {
             // Remove commands that have gone stale
-            Console.WriteLine("Before StaleStrategy {0}", CommandQueue.Count);
+            //Console.WriteLine("Before StaleStrategy {0}", CommandQueue.Count);
             var currentTime = TimeUtils.Millis;
             // Work from oldest to newest
             for (var item = 0; item < CommandQueue.Count; item++)
             {
-                if (currentTime - CommandQueue[item].Command.TimeStamp > _commandTimeOut)
+                var age = currentTime - CommandQueue[item].Command.TimeStamp;
+                if (age > _commandTimeOut && CommandQueue.Count > 1 )
                 {
                     CommandQueue.RemoveAt(item);
                 }
@@ -29,7 +30,7 @@ namespace CommandMessenger
                     break;
                 }
             }
-            Console.WriteLine("After StaleStrategy {0}", CommandQueue.Count);
+            //Console.WriteLine("After StaleStrategy {0}", CommandQueue.Count);
         }
     }
 }

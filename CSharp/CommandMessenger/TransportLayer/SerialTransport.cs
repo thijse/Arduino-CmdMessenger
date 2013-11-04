@@ -21,41 +21,43 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO.Ports;
 using System.Reflection;
-using System.Text;
 using System.Linq;
+using System.Threading;
 
 namespace CommandMessenger.TransportLayer
 {
+    public enum threadRunStates
+    {
+        Start,
+        Stop,
+    }
+
     /// <summary>Fas
     /// Manager for serial port data
     /// </summary>
-    public class SerialTransport : ITransport, IDisposable
+    public class SerialTransport : DisposableObject, ITransport
     {
-        private TimedAction _pollBuffer;	                                            // Buffer for poll data
+        //private TimedAction _pollBuffer;	                                            // Buffer for poll data
         private const double SerialBufferPollFrequency = 50;	                        // The serial buffer poll frequency
+        private QueueSpeed queueSpeed = new QueueSpeed(4);
+        private Thread _queueThread;
+
+        public threadRunStates ThreadRunState = threadRunStates.Start;
 
         /// <summary> Default constructor. </summary>
         public SerialTransport()
-        {
+        {          
             Initialize();
         }
 
 
-        /// <summary> Finaliser. </summary>
-        ~SerialTransport()
-        {
-            Dispose(false);
-        }
-
         /// <summary> Initializes this object. </summary>
-        /// <param name="eolSeparator">    The End-Of-Line separator. </param>
-        /// <param name="escapeCharacter"> The escape character. </param>
         public void Initialize()
         {
+            queueSpeed.Name = "Serial";
             // Find installed serial ports on hardware
             _currentSerialSettings.PortNameCollection = SerialPort.GetPortNames();
             _currentSerialSettings.PropertyChanged += CurrentSerialSettingsPropertyChanged;
@@ -63,14 +65,19 @@ namespace CommandMessenger.TransportLayer
             // If serial ports are found, we select the first one
             if (_currentSerialSettings.PortNameCollection.Length > 0)
                 _currentSerialSettings.PortName = _currentSerialSettings.PortNameCollection[0];
-            _pollBuffer = new TimedAction(SerialBufferPollFrequency, SerialPortDataReceived);
+           // _pollBuffer = new TimedAction(DisposeStack,SerialBufferPollFrequency, CheckForNewData);
+
+            // Create queue thread and wait for it to start
+            _queueThread = new Thread(ProcessQueue) { Priority = ThreadPriority.Normal };
+            _queueThread.Start();
+            while (!_queueThread.IsAlive) { }
         }
 
         #region Fields
 
         private SerialPort _serialPort;                                         // The serial port
         private SerialSettings _currentSerialSettings = new SerialSettings();   // The current serial settings
-        public event EventHandler NewLineReceived;                              // Event queue for all listeners interested in NewLineReceived events.
+        public event EventHandler NewDataReceived;                              // Event queue for all listeners interested in NewLinesReceived events.
 
         #endregion
 
@@ -105,14 +112,33 @@ namespace CommandMessenger.TransportLayer
                 UpdateBaudRateCollection();
         }
 
-        /// <summary> Serial port data received. </summary>
-        private void SerialPortDataReceived()
+        protected  void ProcessQueue()
         {
-            if (BytesInBuffer()>0)
+            // Endless loop
+            while (ThreadRunState == threadRunStates.Start)
             {
-                NewLineReceived(this,null);
+                var bytes = BytesInBuffer();
+                if (bytes > 0)
+                {
+                    
+                    queueSpeed.addCount(bytes);
+                    queueSpeed.Sleep();
+                    queueSpeed.CalcSleepTimeWithoutLoad();
+                    if (NewDataReceived != null) NewDataReceived(this, null);
+                }
+                    
+
             }
         }
+
+        /// <summary> Serial port data received. </summary>
+        //private void CheckForNewData()
+        //{
+        //    if (BytesInBuffer()>0)
+        //    {
+        //        if (NewDataReceived!=null) NewDataReceived(this,null);
+        //    }
+        //}
 
         #endregion
 
@@ -135,7 +161,8 @@ namespace CommandMessenger.TransportLayer
                 _currentSerialSettings.StopBits);
 
             // Subscribe to event and open serial port for data
-            _pollBuffer.Start();
+            ThreadRunState = threadRunStates.Start;
+            //_pollBuffer.Start();
             return Open();
         }
 
@@ -202,7 +229,8 @@ namespace CommandMessenger.TransportLayer
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool StopListening()
         {
-            _pollBuffer.StopAndWait();
+            ThreadRunState = threadRunStates.Start;
+            //_pollBuffer.StopAndWait();
             return Close();
         }
 
@@ -260,49 +288,46 @@ namespace CommandMessenger.TransportLayer
         /// <summary> Reads the serial buffer into the string buffer. </summary>
         public byte[] Read()
         {
-            byte[] buffer = new byte[0];
+            var buffer = new byte[0];
             if (IsOpen())
             {
                 try
                 {
-                    int dataLength = _serialPort.BytesToRead;
+                    var dataLength = _serialPort.BytesToRead;
                     buffer = new byte[dataLength];
                     int nbrDataRead = _serialPort.Read(buffer, 0, dataLength);
                     if (nbrDataRead == 0) return new byte[0];
                 }
-                catch (Exception) { }
+                catch
+                { }
             }
             return buffer;
         }
 
+        /// <summary> Gets the bytes in buffer. </summary>
+        /// <returns> Bytes in buffer </returns>
         public int BytesInBuffer()
         {
-            return _serialPort.BytesToRead;
-        }
-
-
-        // Dispose 
-
-        /// <summary> Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </summary>
-        public void Dispose()
-        {
-            Dispose(true);
+            return IsOpen()? _serialPort.BytesToRead:0;
         }
 
         // Dispose
-
-        /// <summary> Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </summary>
-        /// <param name="disposing"> true if resources should be disposed, false if not. </param>
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _pollBuffer.StopAndWait();
-                // Releasing serial port (and other unmanaged objects)
-
+                //
+              //  _pollBuffer.StopAndWait();
+                // Stop polling
+                _queueThread.Abort();
+                _queueThread.Join();
+                _currentSerialSettings.PropertyChanged -= CurrentSerialSettingsPropertyChanged;
+                // Releasing serial port 
                 if (IsOpen()) Close();
                 _serialPort.Dispose();
+                _serialPort = null;
             }
+            base.Dispose(disposing);
         }
 
         #endregion

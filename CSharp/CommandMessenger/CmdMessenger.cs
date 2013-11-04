@@ -17,6 +17,12 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
     Copyright 2013 - Thijs Elenbaas
+ * 
+ * Add receive queue 
+ * Add adaptive poll speed
+ * Update license
+ * Disable threads when wait for acknowledge
+ * 
  */
 #endregion
 
@@ -36,16 +42,16 @@ namespace CommandMessenger
         Receive
     }
     /// <summary> Command messenger main class  </summary>
-    public class CmdMessenger : IDisposable
+    public class CmdMessenger : DisposableObject
     {
-
+        
 
         public EventHandler NewLinesReceived;                               // Event handler for new lines received
         public EventHandler NewLineReceived;	                            // Event handler for a new line received
         public EventHandler NewLineSent;	                                // The new line sent
         private readonly Object _processSerialDataLock = new Object();      // The process serial data lock
-
-        private CommunicationManager _communications;                          // The Serial port implementation
+       
+        private CommunicationManager _communicationManager;                          // The Serial port implementation
         private char _fieldSeparator;                                       // The field separator
         private char _commandSeparator;                                     // The command separator
         private char _escapeCharacter;                                      // The escape character
@@ -76,69 +82,69 @@ namespace CommandMessenger
         /// <value> The currently sent line. </value>
         public String CurrentSentLine { get; private set; }
 
-
-
         public ConcurrencyPriority Priority { get; private set; }
+
+        public CommunicationManager CommunicationManager { get { return _communicationManager; } }
 
         private Control _controlToInvokeOn; // The control to invoke the callback on
 
         /// <summary> Constructor. </summary>
-        /// <param name="communications"> The Serial port object. </param>
-        public CmdMessenger(CommunicationManager communications)
+        /// <param name="transport"> The transport layer. </param>
+        public CmdMessenger(ITransport transport)
         {
-            Init(communications, ',', ';', '/');
+            Init(transport, ',', ';', '/');
         }
 
         /// <summary> Constructor. </summary>
-        /// <param name="communications"> The Serial port object. </param>
+        /// <param name="transport"> The transport layer. </param>
         /// <param name="fieldSeparator"> The field separator. </param>
-        public CmdMessenger(CommunicationManager communications, char fieldSeparator)
+        public CmdMessenger(ITransport transport, char fieldSeparator)
         {
-            Init(communications, fieldSeparator, ';', '/');
+            Init(transport, fieldSeparator, ';', '/');
         }
 
         /// <summary> Constructor. </summary>
-        /// <param name="communications">   The Serial port object. </param>
+        /// <param name="transport">   The transport layer. </param>
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
-        public CmdMessenger(CommunicationManager communications, char fieldSeparator, char commandSeparator)
+        public CmdMessenger(ITransport transport, char fieldSeparator, char commandSeparator)
         {
-            Init(communications, fieldSeparator, commandSeparator, commandSeparator);
+            Init(transport, fieldSeparator, commandSeparator, commandSeparator);
         }
 
         /// <summary> Constructor. </summary>
-        /// <param name="communications">   The Serial port object. </param>
+        /// <param name="transport">   The transport layer. </param>
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
         /// <param name="escapeCharacter">  The escape character. </param>
-        public CmdMessenger(CommunicationManager communications, char fieldSeparator, char commandSeparator,
+        public CmdMessenger(ITransport transport, char fieldSeparator, char commandSeparator,
                             char escapeCharacter)
         {
-            Init(communications, fieldSeparator, commandSeparator, escapeCharacter);
+            Init(transport, fieldSeparator, commandSeparator, escapeCharacter);
         }
 
         /// <summary> Initialises this object. </summary>
-        /// <param name="communications">   The Serial port object. </param>
+        /// <param name="transport">   The transport layer. </param>
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
         /// <param name="escapeCharacter">  The escape character. </param>
-        private void Init(CommunicationManager communications, char fieldSeparator, char commandSeparator,
+        private void Init(ITransport transport, char fieldSeparator, char commandSeparator,
                           char escapeCharacter)
-        {
+        {           
             _controlToInvokeOn = null;
-            _communications = communications;
-            _communications = communications;
+            _communicationManager = new CommunicationManager(DisposeStack,transport);
+
             _fieldSeparator = fieldSeparator;
             _commandSeparator = commandSeparator;
             _escapeCharacter = escapeCharacter;
 
-            communications.EolDelimiter = _commandSeparator;
+            _communicationManager.EolDelimiter = _commandSeparator;
             Escaping.EscapeChars(fieldSeparator, commandSeparator, escapeCharacter);
             _callbackList = new Dictionary<int, MessengerCallbackFunction>();
             PrintLfCr = false;
-            _sendCommandQueue = new SendCommandQueue(this);
-            _receiveCommandQueue = new ReceiveCommandQueue(this);
-            _communications.NewLineReceived += NewSerialDataReceived;
+            _sendCommandQueue = new SendCommandQueue(DisposeStack,this);
+            _receiveCommandQueue = new ReceiveCommandQueue(DisposeStack, this, _communicationManager, fieldSeparator, commandSeparator, escapeCharacter);
+           // _communicationManager.NewLinesReceived += OnNewLineReceived;
         }
 
         /// <summary> Sets a control to invoke on. </summary>
@@ -152,17 +158,17 @@ namespace CommandMessenger
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool StopListening()
         {
-            return _communications.StopListening();
+            return _communicationManager.StopListening();
         }
 
         /// <summary> Starts serial port connection and start listening. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool StartListening()
         {
-            if (_communications.StartListening())
+            if (_communicationManager.StartListening())
             {
                 // Timestamp of this command is same as time stamp of serial line
-                LastLineTimeStamp = _communications.LastLineTimeStamp;
+                LastLineTimeStamp = _communicationManager.LastLineTimeStamp;
                 return true;
             }
             return false;
@@ -181,44 +187,6 @@ namespace CommandMessenger
         public void Attach(int messageId, MessengerCallbackFunction newFunction)
         {
             _callbackList[messageId] = newFunction;
-        }
-
-        /// <summary> Creates a new serial data received. </summary>
-        /// <param name="sender"> Source of the event. </param>
-        /// <param name="e"> Event information. </param>
-        private void NewSerialDataReceived(object sender, EventArgs e)
-        {
-            // Var lock can result in deadlocks, instead we do a soft enforcement of synced sent/receive order
-            var synced = Monitor.TryEnter(_processSerialDataLock, 100);
-            try
-            {
-                ProcessLines();
-                InvokeEvent(NewLinesReceived);
-            }
-            finally
-            {
-                if (synced) Monitor.Exit(_processSerialDataLock);
-            }
-        }
-
-        /// <summary> Process the command lines and invokes callbacks. </summary>
-        public void ProcessLines()
-        {
-            bool continueParsing = true;
-            while (continueParsing)
-            {
-                var line = _communications.ReadLine();
-                if (line != null)
-                {
-                    CurrentReceivedLine = CleanLine(line);
-                    CurrentReceivedCommand = ParseMessage(CurrentReceivedLine);
-                    LastLineTimeStamp = _communications.LastLineTimeStamp;
-                    InvokeEvent(NewLineReceived);
-                    HandleMessage(CurrentReceivedCommand);
-                }
-                else
-                    continueParsing = false;
-            }
         }
 
         /// <summary> Gets or sets the time stamp of the last command line received. </summary>
@@ -242,8 +210,7 @@ namespace CommandMessenger
         private ReceivedCommand ParseMessage(string line)
         {
             // Split line in command and arguments     
-            //var splitLine =  Escaping.Split(line, _fieldSeparator, _escapeCharacter, StringSplitOptions.RemoveEmptyEntries);
-            //var command = new ReceivedCommand(splitLine);
+
             return
                 new ReceivedCommand(Escaping.Split(line, _fieldSeparator, _escapeCharacter,
                                                    StringSplitOptions.RemoveEmptyEntries));
@@ -253,9 +220,11 @@ namespace CommandMessenger
         /// <param name="receivedCommand"> The received command. </param>
         public void HandleMessage(ReceivedCommand receivedCommand)
         {
+            CurrentReceivedLine = receivedCommand.rawString;
+            // Send message that a new line has been received and is due to be processed
+            InvokeEvent(NewLineReceived);
+
             MessengerCallbackFunction callback = null;
-            //var commandId = -1;
-            //ReceivedCommand receivedCommand;
             if (receivedCommand.Ok)
             {
                 //receivedCommand = new ReceivedCommand(commandString);
@@ -331,7 +300,8 @@ namespace CommandMessenger
             var synced = Monitor.TryEnter(_processSerialDataLock, 100); 
             try
             {
-                _communications.NewLineReceived -= NewSerialDataReceived;
+               // _communicationManager.NewLinesReceived -= OnNewLineReceived;
+               // _receiveCommandQueue.ThreadRunState = CommandQueue.threadRunStates.Stop;
 
                 CurrentSentLine = cmdId.ToString(CultureInfo.InvariantCulture);
 
@@ -341,16 +311,17 @@ namespace CommandMessenger
                 }
 
                 if (PrintLfCr)
-                    _communications.WriteLine(CurrentSentLine + _commandSeparator);
+                    _communicationManager.WriteLine(CurrentSentLine + _commandSeparator);
                 else
                 {
-                    _communications.Write(CurrentSentLine + _commandSeparator);
+                    _communicationManager.Write(CurrentSentLine + _commandSeparator);
                 }
-
+               // _receiveCommandQueue.ThreadRunState = CommandQueue.threadRunStates.Start;
                 InvokeEvent(NewLineSent);
 
                 ReceivedCommand ackCommand = reqAc ? BlockedTillReply(ackCmdId, timeout) : new ReceivedCommand();
-                _communications.NewLineReceived += NewSerialDataReceived;
+              //  _communicationManager.NewLinesReceived += OnNewLineReceived;
+               // _receiveCommandQueue.ThreadRunState = CommandQueue.threadRunStates.Start;
 
                 return ackCommand;
             }
@@ -370,6 +341,20 @@ namespace CommandMessenger
             _sendCommandQueue.QueueCommand(commandStrategy);
         }
 
+        public void ReceiveCommandStrategy(GeneralStrategy generalStrategy) 
+        {
+            _receiveCommandQueue.AddGeneralStrategy(generalStrategy);
+        }
+
+        public void ClearReceiveQueue()
+        {
+            _receiveCommandQueue.Clear();
+        }
+
+        public void ClearSendQueue()
+        {
+            _sendCommandQueue.Clear();
+        }
 
         /// <summary> Helper function to Invoke or directly call event. </summary>
         /// <param name="eventHandler"> The event handler. </param>
@@ -440,13 +425,13 @@ namespace CommandMessenger
         private ReceivedCommand CheckForAcknowledge(int ackCmdId)
         {
             // Read single line from serial buffer
-            string line = _communications.ReadLine();
+            string line = _communicationManager.ReadLine();
 
             if (!String.IsNullOrEmpty(line))
             {
                 CurrentReceivedLine = CleanLine(line);
                 CurrentReceivedCommand = ParseMessage(CurrentReceivedLine);
-                LastLineTimeStamp = _communications.LastLineTimeStamp;
+                LastLineTimeStamp = _communicationManager.LastLineTimeStamp;
                 InvokeEvent(NewLineReceived);
 
                 //int commandId;
@@ -460,24 +445,18 @@ namespace CommandMessenger
             return new ReceivedCommand();
         }
 
-        // Dispose 
-        /// <summary> Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        // Dispose
 
         /// <summary> Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </summary>
         /// <param name="disposing"> true if resources should be disposed, false if not. </param>
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 _controlToInvokeOn = null;
-                _communications.NewLineReceived -= NewSerialDataReceived;
+        //        _communicationManager.NewLinesReceived -= OnNewLineReceived;
+                _receiveCommandQueue.ThreadRunState = CommandQueue.threadRunStates.Stop;
             }
+            base.Dispose(disposing);
         }
     }
 }

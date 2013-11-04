@@ -33,7 +33,7 @@ namespace Receive
     public class Receive
     {
         public bool RunLoop { get; set; }
-        private CommunicationManager _serialPortManager;
+        private SerialTransport _serialTransport;
         private CmdMessenger _cmdMessenger;
         private bool _ledState;
 
@@ -43,10 +43,10 @@ namespace Receive
             _ledState = false;
 
             // Create Serial Port object
-            _serialPortManager = new CommunicationManager();                   
-            _serialPortManager.CurrentSerialSettings.PortName = "COM6";     // Set com port
-            _serialPortManager.CurrentSerialSettings.BaudRate = 115200;     // Set baud rate
-            _cmdMessenger = new CmdMessenger(_serialPortManager);
+            _serialTransport = new SerialTransport();
+            _serialTransport.CurrentSerialSettings.PortName = "COM6";     // Set com port
+            _serialTransport.CurrentSerialSettings.BaudRate = 115200;     // Set baud rate
+            _cmdMessenger = new CmdMessenger(_serialTransport);
             
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();

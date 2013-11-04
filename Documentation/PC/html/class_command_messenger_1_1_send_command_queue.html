@@ -60,25 +60,68 @@
 </div>
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a>  </div>
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a>  </div>
   <div class="headertitle">
 <div class="title">CommandMessenger.SendCommandQueue Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<!-- doxytag: class="CommandMessenger::SendCommandQueue" -->
+<!-- doxytag: class="CommandMessenger::SendCommandQueue" --><!-- doxytag: inherits="CommandMessenger::CommandQueue" --><div class="dynheader">
+Inheritance diagram for CommandMessenger.SendCommandQueue:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="class_command_messenger_1_1_send_command_queue.png" usemap="#CommandMessenger.SendCommandQueue_map" alt=""/>
+  <map id="CommandMessenger.SendCommandQueue_map" name="CommandMessenger.SendCommandQueue_map">
+<area href="class_command_messenger_1_1_command_queue.html" alt="CommandMessenger.CommandQueue" shape="rect" coords="0,56,256,80"/>
+<area href="class_command_messenger_1_1_disposable_object.html" alt="CommandMessenger.DisposableObject" shape="rect" coords="0,0,256,24"/>
+</map>
+ </div></div>
+
 <p><a href="class_command_messenger_1_1_send_command_queue-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a55f01e687d4cb5ca42c526cda0ff79b0"></a><!-- doxytag: member="CommandMessenger::SendCommandQueue::SendCommandQueue" ref="a55f01e687d4cb5ca42c526cda0ff79b0" args="(CmdMessenger cmdMessenger)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>SendCommandQueue</b> (<a class="el" href="class_command_messenger_1_1_cmd_messenger.html">CmdMessenger</a> cmdMessenger)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1cc02b7db52797cfd2f2907e91c822f"></a><!-- doxytag: member="CommandMessenger::SendCommandQueue::SendCommandQueue" ref="ab1cc02b7db52797cfd2f2907e91c822f" args="(DisposeStack disposeStack, CmdMessenger cmdMessenger)" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>SendCommandQueue</b> (<a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a> disposeStack, <a class="el" href="class_command_messenger_1_1_cmd_messenger.html">CmdMessenger</a> cmdMessenger)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3df7604c12d12b468fc109d99cdbc307"></a><!-- doxytag: member="CommandMessenger::SendCommandQueue::QueueCommand" ref="a3df7604c12d12b468fc109d99cdbc307" args="(SendCommand sendCommand)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><b>QueueCommand</b> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a91992993c1f8fb670d5cd0d53f5b3025"></a><!-- doxytag: member="CommandMessenger::SendCommandQueue::QueueCommand" ref="a91992993c1f8fb670d5cd0d53f5b3025" args="(CommandStrategy commandStrategy)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>QueueCommand</b> (<a class="el" href="class_command_messenger_1_1_command_strategy.html">CommandStrategy</a> commandStrategy)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b126c558abd3beec1b848d56de82c26"></a><!-- doxytag: member="CommandMessenger::SendCommandQueue::AddGeneralStrategy" ref="a7b126c558abd3beec1b848d56de82c26" args="(GeneralStrategy generalStrategy)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>AddGeneralStrategy</b> (<a class="el" href="class_command_messenger_1_1_general_strategy.html">GeneralStrategy</a> generalStrategy)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a59dafe7d72a2a7ea9a08395a8d36739f"></a><!-- doxytag: member="CommandMessenger::SendCommandQueue::QueueCommand" ref="a59dafe7d72a2a7ea9a08395a8d36739f" args="(CommandStrategy commandStrategy)" -->
+override void&#160;</td><td class="memItemRight" valign="bottom"><b>QueueCommand</b> (<a class="el" href="class_command_messenger_1_1_command_strategy.html">CommandStrategy</a> commandStrategy)</td></tr>
+<tr><td colspan="2"><h2><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8c506b009d6f1b874cee455460c9370"></a><!-- doxytag: member="CommandMessenger::SendCommandQueue::ProcessQueue" ref="ad8c506b009d6f1b874cee455460c9370" args="()" -->
+override void&#160;</td><td class="memItemRight" valign="bottom"><b>ProcessQueue</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">override void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command_queue.html#a7a16afe8ef1e5b5be72f555897aed41c">Dispose</a> (bool disposing)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.  <a href="#a7a16afe8ef1e5b5be72f555897aed41c"></a><br/></td></tr>
 </table>
+<hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a7a16afe8ef1e5b5be72f555897aed41c"></a><!-- doxytag: member="CommandMessenger::SendCommandQueue::Dispose" ref="a7a16afe8ef1e5b5be72f555897aed41c" args="(bool disposing)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">override void <a class="el" href="class_command_messenger_1_1_send_command_queue.html#a7a16afe8ef1e5b5be72f555897aed41c">CommandMessenger.SendCommandQueue.Dispose</a> </td>
+          <td>(</td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>disposing</em></td><td>)</td>
+          <td><code> [protected, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">disposing</td><td>true if resources should be disposed, false if not. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_command_messenger_1_1_command_queue.html#acd3245e4358c29e666c2250c82991158">CommandMessenger.CommandQueue</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>D:/My Documents/Github/Arduino-Code-and-Libraries/Libraries/CmdMessenger/CSharp/CommandMessenger/Queue/SendCommandQueue.cs</li>
 </ul>
@@ -86,7 +129,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>AddGeneralStrategy</b
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Oct 6 2013 22:15:16 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Nov 4 2013 21:36:53 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

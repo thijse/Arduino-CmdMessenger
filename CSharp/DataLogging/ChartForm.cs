@@ -23,11 +23,6 @@ namespace DataLogging
             _dataLogging.Setup(this);
         }
 
-        private void ChartFormFormClosing(object sender, FormClosingEventArgs e)
-        {
-            _dataLogging.Exit();
-        }
-
         // ------------------  CHARTING ROUTINES ---------------------
 
         // Set up the chart
@@ -85,6 +80,21 @@ namespace DataLogging
 
             // Force a redraw
             chartControl.Invalidate();
+        }
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _dataLogging.Exit();
+                if (components != null)
+                    components.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }
