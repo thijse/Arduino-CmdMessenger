@@ -13,9 +13,8 @@ namespace DataLogging
         // For a cleaner, MVP-like setup I moved higher logic to Datalogging.cs,        
         
         private readonly TemperatureControl _temperatureControl;
-        private long _previousChartUpdate;
+        //private long _previousChartUpdate;
         private IPointListEdit _analog1List;
-        private IPointListEdit _analog2List;
         private IPointListEdit _analog3List;
         private GraphPane _temperaturePane;
         private GraphPane _heaterPane;
@@ -29,14 +28,12 @@ namespace DataLogging
         public ChartForm()
         {
             InitializeComponent();
-            _temperatureControl = new TemperatureControl();
-
-            
+            _temperatureControl = new TemperatureControl();   
         }
 
         private void ChartFormShown(object sender, EventArgs e)
         {
-            // Run setup of viewmodel
+            // Run setup of view model
             _temperatureControl.Setup(this);
         }
 
@@ -66,10 +63,8 @@ namespace DataLogging
 
             // Create data arrays for rolling points
             _analog1List = new RollingPointPairList(3000);
-            _analog2List = new RollingPointPairList(3000);
             _analog3List = new RollingPointPairList(3000);
             _analog1List.Clear();
-            _analog2List.Clear();
             _analog3List.Clear();
 
             // Create a smoothened red curve for the current temperature
@@ -78,11 +73,6 @@ namespace DataLogging
             myCurve1.Line.IsSmooth = true;
             myCurve1.Line.SmoothTension = 0.2f;
 
-            // Create a smoothened YellowGreen curve for the reference temperature
-            LineItem myCurve2 = _temperaturePane.AddCurve("Reference temperature", _analog1List, Color.YellowGreen, SymbolType.None);
-            myCurve2.Line.Width = 2;
-            myCurve2.Line.IsSmooth = true;
-            myCurve2.Line.SmoothTension = 0.2f;
 
             // Create a smoothened blue curve for the goal temperature
             LineItem myCurve3 = _temperaturePane.AddCurve("Goal temperature", _analog3List, Color.Blue, SymbolType.None);
@@ -117,11 +107,10 @@ namespace DataLogging
         }
 
         // Update the graph with the data points
-        public void UpdateGraph(double time, double currTemp, double refTemp, double goalTemp, double heaterValue, bool heaterPwmValue)
+        public void UpdateGraph(double time, double currTemp,  double goalTemp, double heaterValue, bool heaterPwmValue)
         {
             // Add data points to the circular lists
             _analog1List.Add(time, currTemp);
-            _analog2List.Add(time, refTemp);
             _analog3List.Add(time, goalTemp);
 
             _heaterList.Add(time, heaterValue);
@@ -183,16 +172,21 @@ namespace DataLogging
             base.Dispose(disposing);
         }
 
-
-
         public void GoalTemperatureTrackBarScroll(object sender, EventArgs e)
         {
             _goalTemperature = ((double)GoalTemperatureTrackBar.Value/10.0);
             GoalTemperatureValue.Text = _goalTemperature.ToString(CultureInfo.InvariantCulture);
-            //_temperatureControl.SetGoalTemperature(_goalTemperature);
             _temperatureControl.GoalTemperature = _goalTemperature;
         }
 
+        private void buttonStopAcquisition_Click(object sender, EventArgs e)
+        {
+            _temperatureControl.StopAcquisition();
+        }
 
+        private void buttonStartAcquisition_Click(object sender, EventArgs e)
+        {
+            _temperatureControl.StartAcquisition();
+        }
     }
 }

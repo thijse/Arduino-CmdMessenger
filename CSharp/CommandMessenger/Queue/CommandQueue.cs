@@ -1,58 +1,83 @@
-﻿using System.Collections.Generic;
+﻿#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
+/*
+  CmdMessenger - library that provides command based messaging
+
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
+
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+
+  Copyright 2013 - Thijs Elenbaas
+*/
+#endregion
+
+using System.Collections.Generic;
 using System.Threading;
 
 namespace CommandMessenger
 {
+    // Command queue base object. 
     public class CommandQueue : DisposableObject
     {
-        public enum threadRunStates
+        protected readonly Thread QueueThread;
+        protected readonly ListQueue<CommandStrategy> Queue = new ListQueue<CommandStrategy>();   // Buffer for commands
+        protected readonly List<GeneralStrategy> GeneralStrategies = new List<GeneralStrategy>(); // Buffer for command independent strategies
+        protected readonly CmdMessenger CmdMessenger;
+
+        /// <summary> Run state of thread running the queue.  </summary>
+        public enum ThreadRunStates
         {
             Start,
             Stop,
         }
 
-        protected readonly Thread _queueThread;
-       // protected threadRunState _threadRunState;
-        protected readonly ListQueue<CommandStrategy> _queue = new ListQueue<CommandStrategy>();   // Buffer for commands
-        protected readonly List<GeneralStrategy> _generalStrategies = new List<GeneralStrategy>(); // Buffer for command independent strategies
-        protected readonly CmdMessenger _cmdMessenger;
+        public ThreadRunStates ThreadRunState;  // Run state of the thread 
 
-        public threadRunStates ThreadRunState;
-        //{
-        //    get;
-        //    set;
-        //}
-   
+        /// <summary> command queue constructor. </summary>
+        /// <param name="disposeStack"> DisposeStack. </param>
+        /// <param name="cmdMessenger"> The command messenger. </param>
         public CommandQueue(DisposeStack disposeStack, CmdMessenger cmdMessenger) 
         {
-            _cmdMessenger = cmdMessenger;
+            CmdMessenger = cmdMessenger;
             disposeStack.Push(this);   
+
             // Create queue thread and wait for it to start
-            _queueThread = new Thread(ProcessQueue) {Priority = ThreadPriority.Normal};
-            _queueThread.Start();
-            while (!_queueThread.IsAlive) {}
+            QueueThread = new Thread(ProcessQueue) {Priority = ThreadPriority.Normal};
+            QueueThread.Start();
+            while (!QueueThread.IsAlive) {}
         }
 
+        /// <summary> Process the queue. </summary>
         protected virtual void ProcessQueue()
         {
         }
 
+        /// <summary> Clears the queue. </summary>
         public void Clear()
         {
-            _queue.Clear();
+            Queue.Clear();
         }
 
+        /// <summary> Queue the command wrapped in a command strategy. </summary>
+        /// <param name="commandStrategy"> The command strategy. </param>
         public virtual void QueueCommand(CommandStrategy commandStrategy)
         {
         }
 
-
+        /// <summary> Adds a general strategy. This strategy is applied to all queued and dequeued commands.  </summary>
+        /// <param name="generalStrategy"> The general strategy. </param>
         public void AddGeneralStrategy(GeneralStrategy generalStrategy)
         {
             // Give strategy access to queue
-            generalStrategy.CommandQueue = _queue;
+            generalStrategy.CommandQueue = Queue;
             // Add to general strategy list
-            _generalStrategies.Add(generalStrategy);
+            GeneralStrategies.Add(generalStrategy);
         }
 
         // Dispose
@@ -63,8 +88,8 @@ namespace CommandMessenger
             if (disposing)
             {
                 // Stop polling
-                _queueThread.Abort();
-                _queueThread.Join();
+                QueueThread.Abort();
+                QueueThread.Join();
             }
             base.Dispose(disposing);
         }

@@ -39,6 +39,8 @@ namespace SendAndReceiveArguments
             {
                 CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200 } // object initializer
             };
+
+            // Initialize the command messenger with the Serial Port transport layer
             _cmdMessenger = new CmdMessenger(_serialTransport);
 
             // Attach the callbacks to the Command Messenger

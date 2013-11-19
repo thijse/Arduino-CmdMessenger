@@ -63,8 +63,7 @@
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
-<a href="#properties">Properties</a> &#124;
-<a href="#events">Events</a>  </div>
+<a href="#properties">Properties</a>  </div>
   <div class="headertitle">
 <div class="title">CommandMessenger.CommunicationManager Class Reference</div>  </div>
 </div><!--header-->
@@ -86,12 +85,12 @@ Inheritance diagram for CommandMessenger.CommunicationManager:</div>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#afaaf800ac9f96f9ce50c080a9964b8fa">CommunicationManager</a> (<a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a> disposeStack, <a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#afaaf800ac9f96f9ce50c080a9964b8fa"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#a606012a754ed4687a8ae8d4dc5bd579e">CommunicationManager</a> (<a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a> disposeStack, <a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport, char eolSeparator, char escapeCharacter)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a606012a754ed4687a8ae8d4dc5bd579e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#a40c61ab90850e9a8dc9931171a16d2ac">Initialize</a> (<a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a> disposeStack, <a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport, char eolSeparator, char escapeCharacter)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes this object.  <a href="#a40c61ab90850e9a8dc9931171a16d2ac"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#a6e87e73a04ec8df2d78770da35131d31">CommunicationManager</a> (<a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a> disposeStack, <a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport, <a class="el" href="class_command_messenger_1_1_receive_command_queue.html">ReceiveCommandQueue</a> receiveCommandQueue)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#a6e87e73a04ec8df2d78770da35131d31"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#adf06bf1847254f0185d00320f0cd6186">CommunicationManager</a> (<a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a> disposeStack, <a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport, <a class="el" href="class_command_messenger_1_1_receive_command_queue.html">ReceiveCommandQueue</a> receiveCommandQueue, char commandSeparator, char fieldSeparator, char escapeCharacter)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#adf06bf1847254f0185d00320f0cd6186"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#a81f68a2643290aabc4329e3636f064bd">Initialize</a> (<a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a> disposeStack, <a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport, <a class="el" href="class_command_messenger_1_1_receive_command_queue.html">ReceiveCommandQueue</a> receiveCommandQueue, char commandSeparator, char fieldSeparator, char escapeCharacter)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes this object.  <a href="#a81f68a2643290aabc4329e3636f064bd"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#a1794b86c7c00184ad2d901a42f016703">StartListening</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Connects to a serial port defined through the current settings.  <a href="#a1794b86c7c00184ad2d901a42f016703"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#adb730476dea4b549a0772c4bf7f68d34">StopListening</a> ()</td></tr>
@@ -102,8 +101,8 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a parameter to the serial port followed by a NewLine.  <a href="#a47e837f9582e719e06a3bf65fe76f0e2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#aa5f096f4a9e61c3e40a2589a7ca67103">Write&lt; T &gt;</a> (T value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes a parameter to the serial port.  <a href="#aa5f096f4a9e61c3e40a2589a7ca67103"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#ac1fecaac3c3a086d51b15720037cbc31">ReadLine</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads a line from the string buffer.  <a href="#ac1fecaac3c3a086d51b15720037cbc31"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#ae59cd71ca509787030a4038e90fcb014">ProcessLine</a> (string line)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts lines on .  <a href="#ae59cd71ca509787030a4038e90fcb014"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab84bdfd9041d5b8ea3e3d101e77242da"></a><!-- doxytag: member="CommandMessenger::CommunicationManager::StringEncoder" ref="ab84bdfd9041d5b8ea3e3d101e77242da" args="" -->
@@ -114,24 +113,18 @@ Protected Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.  <a href="#a16e9a0c27332a71eb7ddf7d0669b00ec"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="properties"></a>
 Properties</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#ae56446d9ce4f6d51a53817383f76f437">EolDelimiter</a><code> [get, set]</code></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the End-Of-Line delimiter.  <a href="#ae56446d9ce4f6d51a53817383f76f437"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html#a1412c22139bedbf86d072d0bd5177988">LastLineTimeStamp</a><code> [get, set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the time stamp of the last received line.  <a href="#a1412c22139bedbf86d072d0bd5177988"></a><br/></td></tr>
-<tr><td colspan="2"><h2><a name="events"></a>
-Events</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88b7917d0791cb4fe8847c0477915631"></a><!-- doxytag: member="CommandMessenger::CommunicationManager::NewLinesReceived" ref="a88b7917d0791cb4fe8847c0477915631" args="" -->
-EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLinesReceived</b></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Fas Manager for serial port data. </p>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="afaaf800ac9f96f9ce50c080a9964b8fa"></a><!-- doxytag: member="CommandMessenger::CommunicationManager::CommunicationManager" ref="afaaf800ac9f96f9ce50c080a9964b8fa" args="(DisposeStack disposeStack, ITransport transport)" -->
+<a class="anchor" id="a6e87e73a04ec8df2d78770da35131d31"></a><!-- doxytag: member="CommandMessenger::CommunicationManager::CommunicationManager" ref="a6e87e73a04ec8df2d78770da35131d31" args="(DisposeStack disposeStack, ITransport transport, ReceiveCommandQueue receiveCommandQueue)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_command_messenger_1_1_communication_manager.html#afaaf800ac9f96f9ce50c080a9964b8fa">CommandMessenger.CommunicationManager.CommunicationManager</a> </td>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_communication_manager.html#a6e87e73a04ec8df2d78770da35131d31">CommandMessenger.CommunicationManager.CommunicationManager</a> </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a>&#160;</td>
           <td class="paramname"><em>disposeStack</em>, </td>
@@ -140,7 +133,13 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLinesRecei
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a>&#160;</td>
-          <td class="paramname"><em>transport</em>&#160;</td>
+          <td class="paramname"><em>transport</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_command_messenger_1_1_receive_command_queue.html">ReceiveCommandQueue</a>&#160;</td>
+          <td class="paramname"><em>receiveCommandQueue</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -157,18 +156,19 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLinesRecei
   <table class="params">
     <tr><td class="paramname">disposeStack</td><td>The <a class="el" href="class_command_messenger_1_1_dispose_stack.html" title="The dispose stack takes manages disposal of objects that are pushed onto the stack. When the stack is disposed all objects are disposed (in reversed order).">DisposeStack</a></td></tr>
     <tr><td class="paramname">transport</td><td>The Transport Layer</td></tr>
+    <tr><td class="paramname">receiveCommandQueue</td><td></td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a class="anchor" id="a606012a754ed4687a8ae8d4dc5bd579e"></a><!-- doxytag: member="CommandMessenger::CommunicationManager::CommunicationManager" ref="a606012a754ed4687a8ae8d4dc5bd579e" args="(DisposeStack disposeStack, ITransport transport, char eolSeparator, char escapeCharacter)" -->
+<a class="anchor" id="adf06bf1847254f0185d00320f0cd6186"></a><!-- doxytag: member="CommandMessenger::CommunicationManager::CommunicationManager" ref="adf06bf1847254f0185d00320f0cd6186" args="(DisposeStack disposeStack, ITransport transport, ReceiveCommandQueue receiveCommandQueue, char commandSeparator, char fieldSeparator, char escapeCharacter)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_command_messenger_1_1_communication_manager.html#afaaf800ac9f96f9ce50c080a9964b8fa">CommandMessenger.CommunicationManager.CommunicationManager</a> </td>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_communication_manager.html#a6e87e73a04ec8df2d78770da35131d31">CommandMessenger.CommunicationManager.CommunicationManager</a> </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a>&#160;</td>
           <td class="paramname"><em>disposeStack</em>, </td>
@@ -182,8 +182,20 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLinesRecei
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="class_command_messenger_1_1_receive_command_queue.html">ReceiveCommandQueue</a>&#160;</td>
+          <td class="paramname"><em>receiveCommandQueue</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">char&#160;</td>
-          <td class="paramname"><em>eolSeparator</em>, </td>
+          <td class="paramname"><em>commandSeparator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>fieldSeparator</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -203,7 +215,9 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLinesRecei
 <p>Constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">eolSeparator</td><td>The End-Of-Line separator. </td></tr>
+    <tr><td class="paramname">receiveCommandQueue</td><td></td></tr>
+    <tr><td class="paramname">commandSeparator</td><td>The End-Of-Line separator. </td></tr>
+    <tr><td class="paramname">fieldSeparator</td><td></td></tr>
     <tr><td class="paramname">escapeCharacter</td><td>The escape character. </td></tr>
     <tr><td class="paramname">disposeStack</td><td>The <a class="el" href="class_command_messenger_1_1_dispose_stack.html" title="The dispose stack takes manages disposal of objects that are pushed onto the stack. When the stack is disposed all objects are disposed (in reversed order).">DisposeStack</a></td></tr>
     <tr><td class="paramname">transport</td><td>The Transport Layer</td></tr>
@@ -241,12 +255,12 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLinesRecei
 
 </div>
 </div>
-<a class="anchor" id="a40c61ab90850e9a8dc9931171a16d2ac"></a><!-- doxytag: member="CommandMessenger::CommunicationManager::Initialize" ref="a40c61ab90850e9a8dc9931171a16d2ac" args="(DisposeStack disposeStack, ITransport transport, char eolSeparator, char escapeCharacter)" -->
+<a class="anchor" id="a81f68a2643290aabc4329e3636f064bd"></a><!-- doxytag: member="CommandMessenger::CommunicationManager::Initialize" ref="a81f68a2643290aabc4329e3636f064bd" args="(DisposeStack disposeStack, ITransport transport, ReceiveCommandQueue receiveCommandQueue, char commandSeparator, char fieldSeparator, char escapeCharacter)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_command_messenger_1_1_communication_manager.html#a40c61ab90850e9a8dc9931171a16d2ac">CommandMessenger.CommunicationManager.Initialize</a> </td>
+          <td class="memname">void <a class="el" href="class_command_messenger_1_1_communication_manager.html#a81f68a2643290aabc4329e3636f064bd">CommandMessenger.CommunicationManager.Initialize</a> </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a>&#160;</td>
           <td class="paramname"><em>disposeStack</em>, </td>
@@ -260,8 +274,20 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLinesRecei
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="class_command_messenger_1_1_receive_command_queue.html">ReceiveCommandQueue</a>&#160;</td>
+          <td class="paramname"><em>receiveCommandQueue</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">char&#160;</td>
-          <td class="paramname"><em>eolSeparator</em>, </td>
+          <td class="paramname"><em>commandSeparator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>fieldSeparator</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -281,7 +307,9 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLinesRecei
 <p>Initializes this object. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">eolSeparator</td><td>The End-Of-Line separator. </td></tr>
+    <tr><td class="paramname">receiveCommandQueue</td><td></td></tr>
+    <tr><td class="paramname">commandSeparator</td><td>The End-Of-Line separator. </td></tr>
+    <tr><td class="paramname">fieldSeparator</td><td></td></tr>
     <tr><td class="paramname">escapeCharacter</td><td>The escape character. </td></tr>
     <tr><td class="paramname">disposeStack</td><td>The <a class="el" href="class_command_messenger_1_1_dispose_stack.html" title="The dispose stack takes manages disposal of objects that are pushed onto the stack. When the stack is disposed all objects are disposed (in reversed order).">DisposeStack</a></td></tr>
   </table>
@@ -297,22 +325,22 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLinesRecei
 
 </div>
 </div>
-<a class="anchor" id="ac1fecaac3c3a086d51b15720037cbc31"></a><!-- doxytag: member="CommandMessenger::CommunicationManager::ReadLine" ref="ac1fecaac3c3a086d51b15720037cbc31" args="()" -->
+<a class="anchor" id="ae59cd71ca509787030a4038e90fcb014"></a><!-- doxytag: member="CommandMessenger::CommunicationManager::ProcessLine" ref="ae59cd71ca509787030a4038e90fcb014" args="(string line)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">string <a class="el" href="class_command_messenger_1_1_communication_manager.html#ac1fecaac3c3a086d51b15720037cbc31">CommandMessenger.CommunicationManager.ReadLine</a> </td>
+          <td class="memname">void <a class="el" href="class_command_messenger_1_1_communication_manager.html#ae59cd71ca509787030a4038e90fcb014">CommandMessenger.CommunicationManager.ProcessLine</a> </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>line</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Reads a line from the string buffer. </p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>The read line. </dd></dl>
+<p>Converts lines on . </p>
 
 </div>
 </div>
@@ -442,22 +470,6 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLinesRecei
 </div>
 </div>
 <hr/><h2>Property Documentation</h2>
-<a class="anchor" id="ae56446d9ce4f6d51a53817383f76f437"></a><!-- doxytag: member="CommandMessenger::CommunicationManager::EolDelimiter" ref="ae56446d9ce4f6d51a53817383f76f437" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">char <a class="el" href="class_command_messenger_1_1_communication_manager.html#ae56446d9ce4f6d51a53817383f76f437">CommandMessenger.CommunicationManager.EolDelimiter</a><code> [get, set]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Gets or sets the End-Of-Line delimiter. </p>
-<p>The End-Of-Line delimiter. </p>
-
-</div>
-</div>
 <a class="anchor" id="a1412c22139bedbf86d072d0bd5177988"></a><!-- doxytag: member="CommandMessenger::CommunicationManager::LastLineTimeStamp" ref="a1412c22139bedbf86d072d0bd5177988" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -481,7 +493,7 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLinesRecei
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Nov 4 2013 21:36:53 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Nov 19 2013 00:47:25 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

@@ -66,20 +66,130 @@
 </div><!--header-->
 <div class="contents">
 <!-- doxytag: class="CommandMessenger::ListQueue-g" -->
+<p>Queue class.  
+ <a href="class_command_messenger_1_1_list_queue-g.html#details">More...</a></p>
+
 <p><a href="class_command_messenger_1_1_list_queue-g-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa8c1bf57a1ae38b931f7f6be06f2459f"></a><!-- doxytag: member="CommandMessenger::ListQueue&#45;g::Enqueue" ref="aa8c1bf57a1ae38b931f7f6be06f2459f" args="(T item)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Enqueue</b> (T item)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8ff1d74ec90fdbe06b694521f3ccc099"></a><!-- doxytag: member="CommandMessenger::ListQueue&#45;g::Dequeue" ref="a8ff1d74ec90fdbe06b694521f3ccc099" args="()" -->
-T&#160;</td><td class="memItemRight" valign="bottom"><b>Dequeue</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a12b60abfe88b6c97dc15c54f88579276"></a><!-- doxytag: member="CommandMessenger::ListQueue&#45;g::Peek" ref="a12b60abfe88b6c97dc15c54f88579276" args="()" -->
-T&#160;</td><td class="memItemRight" valign="bottom"><b>Peek</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_list_queue-g.html#a59340b474344eda7a26415c15c7d1361">EnqueueFront</a> (T item)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds item to front of queue.  <a href="#a59340b474344eda7a26415c15c7d1361"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_list_queue-g.html#aa8c1bf57a1ae38b931f7f6be06f2459f">Enqueue</a> (T item)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds item to back of queue.  <a href="#aa8c1bf57a1ae38b931f7f6be06f2459f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_list_queue-g.html#a8ff1d74ec90fdbe06b694521f3ccc099">Dequeue</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">fetches item from front of queue.  <a href="#a8ff1d74ec90fdbe06b694521f3ccc099"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_list_queue-g.html#a12b60abfe88b6c97dc15c54f88579276">Peek</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">look at item at front of queue without removing it from the queue.  <a href="#a12b60abfe88b6c97dc15c54f88579276"></a><br/></td></tr>
 </table>
-<h3>template&lt;T&gt;<br/>
- class CommandMessenger::ListQueue&lt; T &gt;</h3>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><h3>template&lt;T&gt;<br/>
+class CommandMessenger::ListQueue&lt; T &gt;</h3>
 
+<p>Queue class. </p>
+<dl class=""><dt><b>Template Parameters:</b></dt><dd>
+  <table class="">
+    <tr><td class="paramname">T</td><td>Type of object to queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+</div><hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a8ff1d74ec90fdbe06b694521f3ccc099"></a><!-- doxytag: member="CommandMessenger::ListQueue&#45;g::Dequeue" ref="a8ff1d74ec90fdbe06b694521f3ccc099" args="()" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T <a class="el" href="class_command_messenger_1_1_list_queue-g.html">CommandMessenger.ListQueue</a>&lt; T &gt;.<a class="el" href="class_command_messenger_1_1_list_queue-g.html#a8ff1d74ec90fdbe06b694521f3ccc099">Dequeue</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>fetches item from front of queue. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The item to dequeue. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aa8c1bf57a1ae38b931f7f6be06f2459f"></a><!-- doxytag: member="CommandMessenger::ListQueue&#45;g::Enqueue" ref="aa8c1bf57a1ae38b931f7f6be06f2459f" args="(T item)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_command_messenger_1_1_list_queue-g.html">CommandMessenger.ListQueue</a>&lt; T &gt;.<a class="el" href="class_command_messenger_1_1_list_queue-g.html#aa8c1bf57a1ae38b931f7f6be06f2459f">Enqueue</a> </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>item</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Adds item to back of queue. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">item</td><td>The item to queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a59340b474344eda7a26415c15c7d1361"></a><!-- doxytag: member="CommandMessenger::ListQueue&#45;g::EnqueueFront" ref="a59340b474344eda7a26415c15c7d1361" args="(T item)" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_command_messenger_1_1_list_queue-g.html">CommandMessenger.ListQueue</a>&lt; T &gt;.<a class="el" href="class_command_messenger_1_1_list_queue-g.html#a59340b474344eda7a26415c15c7d1361">EnqueueFront</a> </td>
+          <td>(</td>
+          <td class="paramtype">T&#160;</td>
+          <td class="paramname"><em>item</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Adds item to front of queue. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">item</td><td>The item to queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a12b60abfe88b6c97dc15c54f88579276"></a><!-- doxytag: member="CommandMessenger::ListQueue&#45;g::Peek" ref="a12b60abfe88b6c97dc15c54f88579276" args="()" -->
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T <a class="el" href="class_command_messenger_1_1_list_queue-g.html">CommandMessenger.ListQueue</a>&lt; T &gt;.<a class="el" href="class_command_messenger_1_1_list_queue-g.html#a12b60abfe88b6c97dc15c54f88579276">Peek</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>look at item at front of queue without removing it from the queue. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The item to peek at. </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>D:/My Documents/Github/Arduino-Code-and-Libraries/Libraries/CmdMessenger/CSharp/CommandMessenger/Queue/ListQueue.cs</li>
 </ul>
@@ -87,7 +197,7 @@ T&#160;</td><td class="memItemRight" valign="bottom"><b>Peek</b> ()</td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Nov 4 2013 21:36:53 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Nov 19 2013 00:47:25 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

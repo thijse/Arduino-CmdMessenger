@@ -66,15 +66,83 @@
 </div><!--header-->
 <div class="contents">
 <!-- doxytag: class="CommandMessenger::StructSerializer" -->
+<p>Helper object to convert structures to byte arrays and vice versa.  
+ <a href="class_command_messenger_1_1_struct_serializer.html#details">More...</a></p>
+
 <p><a href="class_command_messenger_1_1_struct_serializer-members.html">List of all members.</a></p>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4e9d4ef1a5c27468417a5a4e0d4abb1"></a><!-- doxytag: member="CommandMessenger::StructSerializer::StructureToByteArray" ref="aa4e9d4ef1a5c27468417a5a4e0d4abb1" args="(object obj)" -->
-static byte[]&#160;</td><td class="memItemRight" valign="bottom"><b>StructureToByteArray</b> (object obj)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9712d0e442107e967ce7d97803a5d49b"></a><!-- doxytag: member="CommandMessenger::StructSerializer::ByteArrayToStructure" ref="a9712d0e442107e967ce7d97803a5d49b" args="(byte[] bytearray, ref object obj)" -->
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>ByteArrayToStructure</b> (byte[] bytearray, ref object obj)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static byte[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_struct_serializer.html#a1d48ad165ab583f881b4a9816f3a6b8d">ObjectToByteArray</a> (object obj)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert an object to a byte array.  <a href="#a1d48ad165ab583f881b4a9816f3a6b8d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_struct_serializer.html#a586b1cd144f09947b72a9f1dc3bb93b4">ByteArrayToObject</a> (byte[] bytearray, ref object obj)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert an byte array to an object.  <a href="#a586b1cd144f09947b72a9f1dc3bb93b4"></a><br/></td></tr>
 </table>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>Helper object to convert structures to byte arrays and vice versa. </p>
+</div><hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a586b1cd144f09947b72a9f1dc3bb93b4"></a><!-- doxytag: member="CommandMessenger::StructSerializer::ByteArrayToObject" ref="a586b1cd144f09947b72a9f1dc3bb93b4" args="(byte[] bytearray, ref object obj)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void <a class="el" href="class_command_messenger_1_1_struct_serializer.html#a586b1cd144f09947b72a9f1dc3bb93b4">CommandMessenger.StructSerializer.ByteArrayToObject</a> </td>
+          <td>(</td>
+          <td class="paramtype">byte[]&#160;</td>
+          <td class="paramname"><em>bytearray</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ref object&#160;</td>
+          <td class="paramname"><em>obj</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Convert an byte array to an object. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bytearray</td><td>The bytearray. </td></tr>
+    <tr><td class="paramname">obj</td><td>[in,out] The object. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="a1d48ad165ab583f881b4a9816f3a6b8d"></a><!-- doxytag: member="CommandMessenger::StructSerializer::ObjectToByteArray" ref="a1d48ad165ab583f881b4a9816f3a6b8d" args="(object obj)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static byte [] <a class="el" href="class_command_messenger_1_1_struct_serializer.html#a1d48ad165ab583f881b4a9816f3a6b8d">CommandMessenger.StructSerializer.ObjectToByteArray</a> </td>
+          <td>(</td>
+          <td class="paramtype">object&#160;</td>
+          <td class="paramname"><em>obj</em></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Convert an object to a byte array. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">obj</td><td>The object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The byte array. </dd></dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>D:/My Documents/Github/Arduino-Code-and-Libraries/Libraries/CmdMessenger/CSharp/CommandMessenger/StructSerializer.cs</li>
 </ul>
@@ -82,7 +150,7 @@ static void&#160;</td><td class="memItemRight" valign="bottom"><b>ByteArrayToStr
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Nov 4 2013 21:36:53 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Nov 19 2013 00:47:25 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

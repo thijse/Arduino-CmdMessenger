@@ -21,6 +21,8 @@
             this.GoalTemperatureValue = new System.Windows.Forms.Label();
             this.GoalTemperatureLabel = new System.Windows.Forms.Label();
             this.GoalTemperatureTrackBar = new System.Windows.Forms.TrackBar();
+            this.buttonStopAcquisition = new System.Windows.Forms.Button();
+            this.buttonStartAcquisition = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.GoalTemperatureTrackBar)).BeginInit();
             this.SuspendLayout();
             // 
@@ -39,7 +41,7 @@
             this.chartControl.ScrollMinX = 0D;
             this.chartControl.ScrollMinY = 0D;
             this.chartControl.ScrollMinY2 = 0D;
-            this.chartControl.Size = new System.Drawing.Size(896, 592);
+            this.chartControl.Size = new System.Drawing.Size(896, 601);
             this.chartControl.TabIndex = 0;
             // 
             // GoalTemperatureValue
@@ -72,11 +74,33 @@
             this.GoalTemperatureTrackBar.Value = 200;
             this.GoalTemperatureTrackBar.Scroll += new System.EventHandler(this.GoalTemperatureTrackBarScroll);
             // 
+            // buttonStopAcquisition
+            // 
+            this.buttonStopAcquisition.Location = new System.Drawing.Point(117, 657);
+            this.buttonStopAcquisition.Name = "buttonStopAcquisition";
+            this.buttonStopAcquisition.Size = new System.Drawing.Size(98, 35);
+            this.buttonStopAcquisition.TabIndex = 7;
+            this.buttonStopAcquisition.Text = "Stop acquisition";
+            this.buttonStopAcquisition.UseVisualStyleBackColor = true;
+            this.buttonStopAcquisition.Click += new System.EventHandler(this.buttonStopAcquisition_Click);
+            // 
+            // buttonStartAcquisition
+            // 
+            this.buttonStartAcquisition.Location = new System.Drawing.Point(13, 657);
+            this.buttonStartAcquisition.Name = "buttonStartAcquisition";
+            this.buttonStartAcquisition.Size = new System.Drawing.Size(98, 35);
+            this.buttonStartAcquisition.TabIndex = 8;
+            this.buttonStartAcquisition.Text = "Start acquisition";
+            this.buttonStartAcquisition.UseVisualStyleBackColor = true;
+            this.buttonStartAcquisition.Click += new System.EventHandler(this.buttonStartAcquisition_Click);
+            // 
             // ChartForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(926, 695);
+            this.ClientSize = new System.Drawing.Size(926, 704);
+            this.Controls.Add(this.buttonStartAcquisition);
+            this.Controls.Add(this.buttonStopAcquisition);
             this.Controls.Add(this.GoalTemperatureValue);
             this.Controls.Add(this.GoalTemperatureLabel);
             this.Controls.Add(this.GoalTemperatureTrackBar);
@@ -96,6 +120,8 @@
         private System.Windows.Forms.Label GoalTemperatureValue;
         private System.Windows.Forms.Label GoalTemperatureLabel;
         private System.Windows.Forms.TrackBar GoalTemperatureTrackBar;
+        private System.Windows.Forms.Button buttonStopAcquisition;
+        private System.Windows.Forms.Button buttonStartAcquisition;
     }
 }
 

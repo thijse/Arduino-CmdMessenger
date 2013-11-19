@@ -47,13 +47,14 @@ namespace DataLogging
                 CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200 } // object initializer
             };
 
+            // Initialize the command messenger with the Serial Port transport layer
             _cmdMessenger = new CmdMessenger(_serialTransport);
 
             // Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
             _cmdMessenger.SetControlToInvokeOn(chartForm);
 
             // Set Received command strategy that removes commands that are older than 1 sec
-            _cmdMessenger.ReceiveCommandStrategy(new StaleGeneralStrategy(1000));
+            _cmdMessenger.AddReceiveCommandStrategy(new StaleGeneralStrategy(1000));
 
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();

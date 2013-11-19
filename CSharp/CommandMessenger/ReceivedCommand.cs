@@ -1,24 +1,22 @@
-﻿#region CmdMessenger - LGPL - (c) 2013 Thijs Elenbaas.
+﻿#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
-  The library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Copyright 2013 - Thijs Elenbaas
- */
+  Copyright 2013 - Thijs Elenbaas
+*/
 #endregion
+
 using System;
 using System.Linq;
 
@@ -27,10 +25,13 @@ namespace CommandMessenger
     /// <summary> A command received from CmdMessenger </summary>
     public class ReceivedCommand : Command
     {
-        private int _parameter=-1; // The parameter
-        private bool _dumped = true;	// true if parameter has been dumped
+        private int _parameter=-1;    // The parameter
+        private bool _dumped = true;  // true if parameter has been dumped
 
+        /// <summary> Gets or sets the command input. </summary>
+        /// <value> The raw string. </value>
         public string rawString { get; set; }
+
         /// <summary> Default constructor. </summary>
         public ReceivedCommand()
         {
@@ -46,17 +47,6 @@ namespace CommandMessenger
             var array = rawArguments.Where(w => w != rawArguments[0]).ToArray();
             _arguments.AddRange(array);
         }
-
-
-        // Index arguments directly
-
-        /// <summary> Indexer to get arguments directly. </summary>
-        /// <value> The indexed item. </value>
-        //public string this[int index]
-        //{
-        //    get { return _arguments[index]; }
-        //}
-
 
         /// <summary> Fetches the next argument. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>

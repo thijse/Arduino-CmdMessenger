@@ -1,23 +1,20 @@
-﻿#region CmdMessenger - LGPL - (c) 2013 Thijs Elenbaas.
+﻿#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
-  The library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Copyright 2013 - Thijs Elenbaas
- */
+  Copyright 2013 - Thijs Elenbaas
+*/
 #endregion
 
 using System;
@@ -29,7 +26,7 @@ using System.Threading;
 
 namespace CommandMessenger.TransportLayer
 {
-    public enum threadRunStates
+    public enum ThreadRunStates
     {
         Start,
         Stop,
@@ -40,12 +37,10 @@ namespace CommandMessenger.TransportLayer
     /// </summary>
     public class SerialTransport : DisposableObject, ITransport
     {
-        //private TimedAction _pollBuffer;	                                            // Buffer for poll data
-        private const double SerialBufferPollFrequency = 50;	                        // The serial buffer poll frequency
-        private QueueSpeed queueSpeed = new QueueSpeed(4);
+        private readonly QueueSpeed _queueSpeed = new QueueSpeed(4);
         private Thread _queueThread;
 
-        public threadRunStates ThreadRunState = threadRunStates.Start;
+        public ThreadRunStates ThreadRunState = ThreadRunStates.Start;
 
         /// <summary> Default constructor. </summary>
         public SerialTransport()
@@ -53,11 +48,10 @@ namespace CommandMessenger.TransportLayer
             Initialize();
         }
 
-
         /// <summary> Initializes this object. </summary>
         public void Initialize()
         {
-            queueSpeed.Name = "Serial";
+            _queueSpeed.Name = "Serial";
             // Find installed serial ports on hardware
             _currentSerialSettings.PortNameCollection = SerialPort.GetPortNames();
             _currentSerialSettings.PropertyChanged += CurrentSerialSettingsPropertyChanged;
@@ -65,7 +59,6 @@ namespace CommandMessenger.TransportLayer
             // If serial ports are found, we select the first one
             if (_currentSerialSettings.PortNameCollection.Length > 0)
                 _currentSerialSettings.PortName = _currentSerialSettings.PortNameCollection[0];
-           // _pollBuffer = new TimedAction(DisposeStack,SerialBufferPollFrequency, CheckForNewData);
 
             // Create queue thread and wait for it to start
             _queueThread = new Thread(ProcessQueue) { Priority = ThreadPriority.Normal };
@@ -115,30 +108,21 @@ namespace CommandMessenger.TransportLayer
         protected  void ProcessQueue()
         {
             // Endless loop
-            while (ThreadRunState == threadRunStates.Start)
+            while (ThreadRunState == ThreadRunStates.Start)
             {
                 var bytes = BytesInBuffer();
                 if (bytes > 0)
                 {
                     
-                    queueSpeed.addCount(bytes);
-                    queueSpeed.Sleep();
-                    queueSpeed.CalcSleepTimeWithoutLoad();
+                    _queueSpeed.AddCount(bytes);
+                    _queueSpeed.Sleep();
+                    _queueSpeed.CalcSleepTimeWithoutLoad();
                     if (NewDataReceived != null) NewDataReceived(this, null);
                 }
                     
 
             }
         }
-
-        /// <summary> Serial port data received. </summary>
-        //private void CheckForNewData()
-        //{
-        //    if (BytesInBuffer()>0)
-        //    {
-        //        if (NewDataReceived!=null) NewDataReceived(this,null);
-        //    }
-        //}
 
         #endregion
 
@@ -161,8 +145,7 @@ namespace CommandMessenger.TransportLayer
                 _currentSerialSettings.StopBits);
 
             // Subscribe to event and open serial port for data
-            ThreadRunState = threadRunStates.Start;
-            //_pollBuffer.Start();
+            ThreadRunState = ThreadRunStates.Start;
             return Open();
         }
 
@@ -229,7 +212,7 @@ namespace CommandMessenger.TransportLayer
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool StopListening()
         {
-            ThreadRunState = threadRunStates.Start;
+            ThreadRunState = ThreadRunStates.Start;
             //_pollBuffer.StopAndWait();
             return Close();
         }
@@ -316,9 +299,6 @@ namespace CommandMessenger.TransportLayer
         {
             if (disposing)
             {
-                //
-              //  _pollBuffer.StopAndWait();
-                // Stop polling
                 _queueThread.Abort();
                 _queueThread.Join();
                 _currentSerialSettings.PropertyChanged -= CurrentSerialSettingsPropertyChanged;

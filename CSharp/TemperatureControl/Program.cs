@@ -7,7 +7,7 @@ namespace DataLogging
     {
         /// <summary>
         /// The main entry point for the application.
-        /// Note that the main code is n
+        /// Note that the main code is not in this class
         /// </summary>
         [STAThread]
         static void Main()

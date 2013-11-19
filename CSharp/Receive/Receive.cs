@@ -46,6 +46,8 @@ namespace Receive
             _serialTransport = new SerialTransport();
             _serialTransport.CurrentSerialSettings.PortName = "COM6";     // Set com port
             _serialTransport.CurrentSerialSettings.BaudRate = 115200;     // Set baud rate
+
+            // Initialize the command messenger with the Serial Port transport layer
             _cmdMessenger = new CmdMessenger(_serialTransport);
             
             // Attach the callbacks to the Command Messenger

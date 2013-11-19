@@ -79,14 +79,24 @@ Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_escaping.html">Escaping</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility class providing escaping functions.  <a href="class_command_messenger_1_1_escaping.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_collapse_command_strategy.html">CollapseCommandStrategy</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Collapse command strategy. The purpose of the strategy is to avoid duplicates of a certain command on the queue to avoid lagging.  <a href="class_command_messenger_1_1_collapse_command_strategy.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_command_queue.html">CommandQueue</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_command_strategy.html">CommandStrategy</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Base command strategy.  <a href="class_command_messenger_1_1_command_strategy.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_general_strategy.html">GeneralStrategy</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Base of general strategy.  <a href="class_command_messenger_1_1_general_strategy.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_list_queue-g.html">ListQueue</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue class.  <a href="class_command_messenger_1_1_list_queue-g.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_queue_speed.html">QueueSpeed</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Class that regulates sleeping within a queue thread. Based on load the sleep time will increase or decrease.  <a href="class_command_messenger_1_1_queue_speed.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_receive_command_queue.html">ReceiveCommandQueue</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue of received commands.  <a href="class_command_messenger_1_1_receive_command_queue.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command_queue.html">SendCommandQueue</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue of received commands.  <a href="class_command_messenger_1_1_send_command_queue.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_stale_general_strategy.html">StaleGeneralStrategy</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stale strategy. Any command older than the time-out is removed from the queue.  <a href="class_command_messenger_1_1_stale_general_strategy.html#details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_top_command_strategy.html">TopCommandStrategy</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Top strategy. The command is added to the front of the queue.  <a href="class_command_messenger_1_1_top_command_strategy.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">A command received from <a class="el" href="class_command_messenger_1_1_cmd_messenger.html" title="Command messenger main class.">CmdMessenger</a>.  <a href="class_command_messenger_1_1_received_command.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a></td></tr>
@@ -96,21 +106,24 @@ Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_string_utils.html">StringUtils</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">String utilities.  <a href="class_command_messenger_1_1_string_utils.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_struct_serializer.html">StructSerializer</a></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper object to convert structures to byte arrays and vice versa.  <a href="class_command_messenger_1_1_struct_serializer.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_timed_action.html">TimedAction</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts a recurring action with fixed interval If still running at next call, the action is skipped.  <a href="class_command_messenger_1_1_timed_action.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><b>TimeUtils</b></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Class to get a timestamp. <br/></td></tr>
 <tr><td colspan="2"><h2><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>ConcurrencyPriority</b> { <b>Send</b>, 
-<b>Receive</b>
+<tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>ClearQueue</b> { <b>KeepQueue</b>, 
+<b>ClearSendQueue</b>, 
+<b>ClearReceivedQueue</b>, 
+<b>ClearSendAndReceivedQueue</b>
  }</td></tr>
 </table>
 </div><!-- contents -->
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Nov 4 2013 21:36:53 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Nov 19 2013 00:47:25 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

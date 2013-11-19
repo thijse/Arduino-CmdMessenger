@@ -1,24 +1,22 @@
-﻿#region CmdMessenger - LGPL - (c) 2013 Thijs Elenbaas.
+﻿#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
-  The library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Copyright 2013 - Thijs Elenbaas
- */
+  Copyright 2013 - Thijs Elenbaas
+*/
 #endregion
+
 using System;
 using System.IO.Ports;
 using System.ComponentModel;
@@ -150,7 +148,7 @@ namespace CommandMessenger
         public void UpdateBaudRateCollection(int possibleBaudRates)
         {
             // ReSharper disable InconsistentNaming
-            const int BAUD_075 = 0x00000001;	// The fifth baud 07
+            const int BAUD_075    = 0x00000001;	// The fifth baud 07
             const int BAUD_110    = 0x00000002;
             const int BAUD_150    = 0x00000008;
             const int BAUD_300    = 0x00000010;
@@ -168,7 +166,7 @@ namespace CommandMessenger
             const int BAUD_57600  = 0x00040000;
             const int BAUD_115200 = 0x00020000;
             const int BAUD_128K   = 0x00010000;
-            // ReSharper restore InconsistentNaming
+
             _baudRateCollection.Clear();
 
             if ((possibleBaudRates & BAUD_075) > 0)

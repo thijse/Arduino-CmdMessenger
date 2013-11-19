@@ -66,13 +66,16 @@
 <div class="title">CommandMessenger.GeneralStrategy Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<!-- doxytag: class="CommandMessenger::GeneralStrategy" --><div class="dynheader">
+<!-- doxytag: class="CommandMessenger::GeneralStrategy" -->
+<p>Base of general strategy.  
+ <a href="class_command_messenger_1_1_general_strategy.html#details">More...</a></p>
+<div class="dynheader">
 Inheritance diagram for CommandMessenger.GeneralStrategy:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="class_command_messenger_1_1_general_strategy.png" usemap="#CommandMessenger.GeneralStrategy_map" alt=""/>
   <map id="CommandMessenger.GeneralStrategy_map" name="CommandMessenger.GeneralStrategy_map">
-<area href="class_command_messenger_1_1_stale_general_strategy.html" alt="CommandMessenger.StaleGeneralStrategy" shape="rect" coords="0,56,254,80"/>
+<area href="class_command_messenger_1_1_stale_general_strategy.html" title="Stale strategy. Any command older than the time-out is removed from the queue." alt="CommandMessenger.StaleGeneralStrategy" shape="rect" coords="0,56,254,80"/>
 </map>
  </div></div>
 
@@ -80,15 +83,73 @@ Inheritance diagram for CommandMessenger.GeneralStrategy:</div>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a87e9577c70e56ae3772f956a26141aca"></a><!-- doxytag: member="CommandMessenger::GeneralStrategy::OnEnqueue" ref="a87e9577c70e56ae3772f956a26141aca" args="()" -->
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnEnqueue</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a722c70e12ee1744c7f37a443018e5451"></a><!-- doxytag: member="CommandMessenger::GeneralStrategy::OnDequeue" ref="a722c70e12ee1744c7f37a443018e5451" args="()" -->
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnDequeue</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_general_strategy.html#a87e9577c70e56ae3772f956a26141aca">OnEnqueue</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">GenerAdd command (strategy) to command queue.  <a href="#a87e9577c70e56ae3772f956a26141aca"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_general_strategy.html#a722c70e12ee1744c7f37a443018e5451">OnDequeue</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove this command (strategy) from command queue.  <a href="#a722c70e12ee1744c7f37a443018e5451"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="properties"></a>
 Properties</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abd1f669e5e0fbe1a9189197bb79c4c4c"></a><!-- doxytag: member="CommandMessenger::GeneralStrategy::CommandQueue" ref="abd1f669e5e0fbe1a9189197bb79c4c4c" args="" -->
-<a class="el" href="class_command_messenger_1_1_list_queue-g.html">ListQueue</a>&lt; <a class="el" href="class_command_messenger_1_1_command_strategy.html">CommandStrategy</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>CommandQueue</b><code> [get, set]</code></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_list_queue-g.html">ListQueue</a>&lt; <a class="el" href="class_command_messenger_1_1_command_strategy.html">CommandStrategy</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_general_strategy.html#abd1f669e5e0fbe1a9189197bb79c4c4c">CommandQueue</a><code> [get, set]</code></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the command queue.  <a href="#abd1f669e5e0fbe1a9189197bb79c4c4c"></a><br/></td></tr>
 </table>
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>Base of general strategy. </p>
+</div><hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a722c70e12ee1744c7f37a443018e5451"></a><!-- doxytag: member="CommandMessenger::GeneralStrategy::OnDequeue" ref="a722c70e12ee1744c7f37a443018e5451" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="class_command_messenger_1_1_general_strategy.html#a722c70e12ee1744c7f37a443018e5451">CommandMessenger.GeneralStrategy.OnDequeue</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Remove this command (strategy) from command queue. </p>
+
+<p>Reimplemented in <a class="el" href="class_command_messenger_1_1_stale_general_strategy.html#a77145d833ce8b7224125c0337756987a">CommandMessenger.StaleGeneralStrategy</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a87e9577c70e56ae3772f956a26141aca"></a><!-- doxytag: member="CommandMessenger::GeneralStrategy::OnEnqueue" ref="a87e9577c70e56ae3772f956a26141aca" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="class_command_messenger_1_1_general_strategy.html#a87e9577c70e56ae3772f956a26141aca">CommandMessenger.GeneralStrategy.OnEnqueue</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>GenerAdd command (strategy) to command queue. </p>
+
+</div>
+</div>
+<hr/><h2>Property Documentation</h2>
+<a class="anchor" id="abd1f669e5e0fbe1a9189197bb79c4c4c"></a><!-- doxytag: member="CommandMessenger::GeneralStrategy::CommandQueue" ref="abd1f669e5e0fbe1a9189197bb79c4c4c" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_list_queue-g.html">ListQueue</a>&lt;<a class="el" href="class_command_messenger_1_1_command_strategy.html">CommandStrategy</a>&gt; <a class="el" href="class_command_messenger_1_1_general_strategy.html#abd1f669e5e0fbe1a9189197bb79c4c4c">CommandMessenger.GeneralStrategy.CommandQueue</a><code> [get, set]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Gets or sets the command queue. </p>
+<p>A Queue of commands. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>D:/My Documents/Github/Arduino-Code-and-Libraries/Libraries/CmdMessenger/CSharp/CommandMessenger/Queue/GeneralStrategy.cs</li>
 </ul>
@@ -96,7 +157,7 @@ Properties</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Nov 4 2013 21:36:53 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Nov 19 2013 00:47:25 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

@@ -55,7 +55,6 @@
     <Compile Include="ChartForm.Designer.cs">
       <DependentUpon>ChartForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="NotifyingProperty.cs" />
     <Compile Include="TemperatureControl.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

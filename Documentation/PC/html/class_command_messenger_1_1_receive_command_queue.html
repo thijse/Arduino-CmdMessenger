@@ -66,7 +66,10 @@
 <div class="title">CommandMessenger.ReceiveCommandQueue Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<!-- doxytag: class="CommandMessenger::ReceiveCommandQueue" --><!-- doxytag: inherits="CommandMessenger::CommandQueue" --><div class="dynheader">
+<!-- doxytag: class="CommandMessenger::ReceiveCommandQueue" --><!-- doxytag: inherits="CommandMessenger::CommandQueue" -->
+<p>Queue of received commands.  
+ <a href="class_command_messenger_1_1_receive_command_queue.html#details">More...</a></p>
+<div class="dynheader">
 Inheritance diagram for CommandMessenger.ReceiveCommandQueue:</div>
 <div class="dyncontent">
  <div class="center">
@@ -81,57 +84,65 @@ Inheritance diagram for CommandMessenger.ReceiveCommandQueue:</div>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9523b3bd77e4f79408caa2f7188694c8"></a><!-- doxytag: member="CommandMessenger::ReceiveCommandQueue::ReceiveCommandQueue" ref="a9523b3bd77e4f79408caa2f7188694c8" args="(DisposeStack disposeStack, CmdMessenger cmdMessenger, CommunicationManager communicationManager, char fieldSeparator, char commandSeparator, char escapeCharacter)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>ReceiveCommandQueue</b> (<a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a> disposeStack, <a class="el" href="class_command_messenger_1_1_cmd_messenger.html">CmdMessenger</a> cmdMessenger, <a class="el" href="class_command_messenger_1_1_communication_manager.html">CommunicationManager</a> communicationManager, char fieldSeparator, char commandSeparator, char escapeCharacter)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abd8640c818717f9c177802ea2b253da7"></a><!-- doxytag: member="CommandMessenger::ReceiveCommandQueue::DequeueCommand" ref="abd8640c818717f9c177802ea2b253da7" args="()" -->
-<a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><b>DequeueCommand</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_receive_command_queue.html#a0404789e9ffd4f693fd908b23bc33dde">ProcessLines</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts lines on .  <a href="#a0404789e9ffd4f693fd908b23bc33dde"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc0d58abe8501094d5f76b9e801a1e66"></a><!-- doxytag: member="CommandMessenger::ReceiveCommandQueue::QueueCommand" ref="adc0d58abe8501094d5f76b9e801a1e66" args="(ReceivedCommand receivedCommand)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>QueueCommand</b> (<a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> receivedCommand)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad025552cc26f8a7953961843d9b20915"></a><!-- doxytag: member="CommandMessenger::ReceiveCommandQueue::QueueCommand" ref="ad025552cc26f8a7953961843d9b20915" args="(CommandStrategy commandStrategy)" -->
-override void&#160;</td><td class="memItemRight" valign="bottom"><b>QueueCommand</b> (<a class="el" href="class_command_messenger_1_1_command_strategy.html">CommandStrategy</a> commandStrategy)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_receive_command_queue.html#af52838a253f4816b9bdd48543d08a9a1">ReceiveCommandQueue</a> (<a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a> disposeStack, <a class="el" href="class_command_messenger_1_1_cmd_messenger.html">CmdMessenger</a> cmdMessenger)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="namespace_receive.html">Receive</a> command queue constructor.  <a href="#af52838a253f4816b9bdd48543d08a9a1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_receive_command_queue.html#abd8640c818717f9c177802ea2b253da7">DequeueCommand</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Dequeue the received command.  <a href="#abd8640c818717f9c177802ea2b253da7"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_receive_command_queue.html#adc0d58abe8501094d5f76b9e801a1e66">QueueCommand</a> (<a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> receivedCommand)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue the received command.  <a href="#adc0d58abe8501094d5f76b9e801a1e66"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">override void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_receive_command_queue.html#ad025552cc26f8a7953961843d9b20915">QueueCommand</a> (<a class="el" href="class_command_messenger_1_1_command_strategy.html">CommandStrategy</a> commandStrategy)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Queue the command wrapped in a command strategy.  <a href="#ad025552cc26f8a7953961843d9b20915"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad93978ec91805a9eec02a3649e1132ac"></a><!-- doxytag: member="CommandMessenger::ReceiveCommandQueue::ProcessQueue" ref="ad93978ec91805a9eec02a3649e1132ac" args="()" -->
-override void&#160;</td><td class="memItemRight" valign="bottom"><b>ProcessQueue</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">override void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_receive_command_queue.html#ad26c87aeb7b03db59f365e290c534a54">Dispose</a> (bool disposing)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.  <a href="#ad26c87aeb7b03db59f365e290c534a54"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">override void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_receive_command_queue.html#ad93978ec91805a9eec02a3649e1132ac">ProcessQueue</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Process the queue.  <a href="#ad93978ec91805a9eec02a3649e1132ac"></a><br/></td></tr>
 </table>
-<hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="ad26c87aeb7b03db59f365e290c534a54"></a><!-- doxytag: member="CommandMessenger::ReceiveCommandQueue::Dispose" ref="ad26c87aeb7b03db59f365e290c534a54" args="(bool disposing)" -->
+<hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
+<div class="textblock"><p>Queue of received commands. </p>
+</div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="af52838a253f4816b9bdd48543d08a9a1"></a><!-- doxytag: member="CommandMessenger::ReceiveCommandQueue::ReceiveCommandQueue" ref="af52838a253f4816b9bdd48543d08a9a1" args="(DisposeStack disposeStack, CmdMessenger cmdMessenger)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">override void <a class="el" href="class_command_messenger_1_1_receive_command_queue.html#ad26c87aeb7b03db59f365e290c534a54">CommandMessenger.ReceiveCommandQueue.Dispose</a> </td>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_receive_command_queue.html#af52838a253f4816b9bdd48543d08a9a1">CommandMessenger.ReceiveCommandQueue.ReceiveCommandQueue</a> </td>
           <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>disposing</em></td><td>)</td>
-          <td><code> [protected, virtual]</code></td>
+          <td class="paramtype"><a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a>&#160;</td>
+          <td class="paramname"><em>disposeStack</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html">CmdMessenger</a>&#160;</td>
+          <td class="paramname"><em>cmdMessenger</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </p>
+<p><a class="el" href="namespace_receive.html">Receive</a> command queue constructor. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">disposing</td><td>true if resources should be disposed, false if not. </td></tr>
+    <tr><td class="paramname">disposeStack</td><td><a class="el" href="class_command_messenger_1_1_dispose_stack.html" title="The dispose stack takes manages disposal of objects that are pushed onto the stack. When the stack is disposed all objects are disposed (in reversed order).">DisposeStack</a>. </td></tr>
+    <tr><td class="paramname">cmdMessenger</td><td>The command messenger. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Reimplemented from <a class="el" href="class_command_messenger_1_1_command_queue.html#acd3245e4358c29e666c2250c82991158">CommandMessenger.CommandQueue</a>.</p>
-
 </div>
 </div>
-<a class="anchor" id="a0404789e9ffd4f693fd908b23bc33dde"></a><!-- doxytag: member="CommandMessenger::ReceiveCommandQueue::ProcessLines" ref="a0404789e9ffd4f693fd908b23bc33dde" args="()" -->
+<hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="abd8640c818717f9c177802ea2b253da7"></a><!-- doxytag: member="CommandMessenger::ReceiveCommandQueue::DequeueCommand" ref="abd8640c818717f9c177802ea2b253da7" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_command_messenger_1_1_receive_command_queue.html#a0404789e9ffd4f693fd908b23bc33dde">CommandMessenger.ReceiveCommandQueue.ProcessLines</a> </td>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> <a class="el" href="class_command_messenger_1_1_receive_command_queue.html#abd8640c818717f9c177802ea2b253da7">CommandMessenger.ReceiveCommandQueue.DequeueCommand</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -140,7 +151,80 @@ override void&#160;</td><td class="memItemRight" valign="bottom"><b>ProcessQueue
 </div>
 <div class="memdoc">
 
-<p>Converts lines on . </p>
+<p>Dequeue the received command. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The received command. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ad93978ec91805a9eec02a3649e1132ac"></a><!-- doxytag: member="CommandMessenger::ReceiveCommandQueue::ProcessQueue" ref="ad93978ec91805a9eec02a3649e1132ac" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">override void <a class="el" href="class_command_messenger_1_1_receive_command_queue.html#ad93978ec91805a9eec02a3649e1132ac">CommandMessenger.ReceiveCommandQueue.ProcessQueue</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [protected, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Process the queue. </p>
+
+<p>Reimplemented from <a class="el" href="class_command_messenger_1_1_command_queue.html#a1d789327697b1844b336f5ae45e8dd9e">CommandMessenger.CommandQueue</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="adc0d58abe8501094d5f76b9e801a1e66"></a><!-- doxytag: member="CommandMessenger::ReceiveCommandQueue::QueueCommand" ref="adc0d58abe8501094d5f76b9e801a1e66" args="(ReceivedCommand receivedCommand)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_command_messenger_1_1_receive_command_queue.html#adc0d58abe8501094d5f76b9e801a1e66">CommandMessenger.ReceiveCommandQueue.QueueCommand</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td>
+          <td class="paramname"><em>receivedCommand</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Queue the received command. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">receivedCommand</td><td>The received command. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ad025552cc26f8a7953961843d9b20915"></a><!-- doxytag: member="CommandMessenger::ReceiveCommandQueue::QueueCommand" ref="ad025552cc26f8a7953961843d9b20915" args="(CommandStrategy commandStrategy)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">override void <a class="el" href="class_command_messenger_1_1_receive_command_queue.html#adc0d58abe8501094d5f76b9e801a1e66">CommandMessenger.ReceiveCommandQueue.QueueCommand</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_command_messenger_1_1_command_strategy.html">CommandStrategy</a>&#160;</td>
+          <td class="paramname"><em>commandStrategy</em></td><td>)</td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Queue the command wrapped in a command strategy. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">commandStrategy</td><td>The command strategy. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_command_messenger_1_1_command_queue.html#a94e7cd7c62dba06ebf092384aea4c4a6">CommandMessenger.CommandQueue</a>.</p>
 
 </div>
 </div>
@@ -151,7 +235,7 @@ override void&#160;</td><td class="memItemRight" valign="bottom"><b>ProcessQueue
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Nov 4 2013 21:36:53 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Nov 19 2013 00:47:25 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

@@ -88,7 +88,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#af331506b24361d397d3a49d3d9368d01">ReceivedCommand</a> (string[] rawArguments)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#af331506b24361d397d3a49d3d9368d01"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#a0bcf4c334cf7263c18c31a90de7ecd42">Next</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Indexer to get arguments directly.  <a href="#a0bcf4c334cf7263c18c31a90de7ecd42"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Fetches the next argument.  <a href="#a0bcf4c334cf7263c18c31a90de7ecd42"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#a7d4395133d8590b46dbd63ba767eff9a">Available</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">returns if a next command is available  <a href="#a7d4395133d8590b46dbd63ba767eff9a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Int16&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#a3ec2913e7f539e27908dfffadeb83cb2">ReadInt16Arg</a> ()</td></tr>
@@ -125,8 +125,8 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the current binary argument as a boolean value.  <a href="#a7740ae412aa7fa19a791884203a31f10"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="properties"></a>
 Properties</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3e966e6126c82f5334173a47370b8444"></a><!-- doxytag: member="CommandMessenger::ReceivedCommand::rawString" ref="a3e966e6126c82f5334173a47370b8444" args="" -->
-string&#160;</td><td class="memItemRight" valign="bottom"><b>rawString</b><code> [get, set]</code></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_received_command.html#a3e966e6126c82f5334173a47370b8444">rawString</a><code> [get, set]</code></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the command input.  <a href="#a3e966e6126c82f5334173a47370b8444"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>A command received from <a class="el" href="class_command_messenger_1_1_cmd_messenger.html" title="Command messenger main class.">CmdMessenger</a>. </p>
@@ -208,8 +208,6 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>rawString</b><code>
 </div>
 <div class="memdoc">
 
-<p>Indexer to get arguments directly. </p>
-<p>The indexed item. </p>
 <p>Fetches the next argument. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>true if it succeeds, false if it fails. </dd></dl>
 
@@ -519,6 +517,23 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>rawString</b><code>
 
 </div>
 </div>
+<hr/><h2>Property Documentation</h2>
+<a class="anchor" id="a3e966e6126c82f5334173a47370b8444"></a><!-- doxytag: member="CommandMessenger::ReceivedCommand::rawString" ref="a3e966e6126c82f5334173a47370b8444" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">string <a class="el" href="class_command_messenger_1_1_received_command.html#a3e966e6126c82f5334173a47370b8444">CommandMessenger.ReceivedCommand.rawString</a><code> [get, set]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Gets or sets the command input. </p>
+<p>The raw string. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>D:/My Documents/Github/Arduino-Code-and-Libraries/Libraries/CmdMessenger/CSharp/CommandMessenger/ReceivedCommand.cs</li>
 </ul>
@@ -526,7 +541,7 @@ string&#160;</td><td class="memItemRight" valign="bottom"><b>rawString</b><code>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Nov 4 2013 21:36:53 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue Nov 19 2013 00:47:25 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

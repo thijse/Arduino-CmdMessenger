@@ -1,24 +1,22 @@
-﻿#region CmdMessenger - LGPL - (c) 2013 Thijs Elenbaas.
+﻿#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
-  The library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
 
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
-    Copyright 2013 - Thijs Elenbaas
- */
+  Copyright 2013 - Thijs Elenbaas
+*/
 #endregion
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -28,12 +26,6 @@ namespace CommandMessenger
     /// <summary> A command to be send by CmdMessenger </summary>
     public class SendCommand : Command
     {
-        //private List<String> _arguments;	// The argument list of the command, first one is the command ID
-        
-        ///// <summary> Gets or sets the command ID. </summary>
-        ///// <value> The command ID. </value>
-        //public int CmdId { get; set; }
-
         /// <summary> Indicates if we want to wait for an acknowlegde command. </summary>
         /// <value> true if request acknowledge, false if not. </value>
         public bool ReqAc { get; set; }
@@ -45,13 +37,6 @@ namespace CommandMessenger
         /// <summary> Gets or sets the time we want to wait for the acknowledgde command. </summary>
         /// <value> The timeout on waiting for an acknowlegde</value>
         public int Timeout { get; set; }
-  
-        ///// <summary> Gets the command arguments. </summary>
-        ///// <value> The arguments, first one is the command ID </value>
-        //public String[] Arguments
-        //{
-        //    get { return _arguments.ToArray(); }
-        //}
 
         /// <summary> Constructor. </summary>
         /// <param name="cmdId"> the command ID. </param>

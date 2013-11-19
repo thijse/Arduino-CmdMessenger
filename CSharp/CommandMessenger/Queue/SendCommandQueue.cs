@@ -1,80 +1,102 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System;
-using System.Globalization;
+﻿#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
+/*
+  CmdMessenger - library that provides command based messaging
+
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
+
+  The above copyright notice and this permission notice shall be
+  included in all copies or substantial portions of the Software.
+
+  Copyright 2013 - Thijs Elenbaas
+*/
+#endregion
+
 namespace CommandMessenger
 {
+    /// <summary> Queue of received commands.  </summary>
     class SendCommandQueue : CommandQueue
     {
-        private QueueSpeed queueSpeed = new QueueSpeed(0.5);
+        private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5);
 
+        /// <summary> send command queue constructor. </summary>
+        /// <param name="disposeStack"> DisposeStack. </param>
+        /// <param name="cmdMessenger"> The command messenger. </param>
         public SendCommandQueue(DisposeStack disposeStack, CmdMessenger cmdMessenger)
             : base(disposeStack, cmdMessenger)
         {
         }
 
+        /// <summary> Process the queue. </summary>
         protected override void ProcessQueue()
         {
             // Endless loop
-            while (ThreadRunState == threadRunStates.Start)
+            while (ThreadRunState == ThreadRunStates.Start)
             {
-                queueSpeed.Sleep();
+                _queueSpeed.Sleep();
                 SendCommandFromQueue();
             }
         }
 
+        /// <summary> Sends all commands currently on queue. </summary>
         private void SendCommandFromQueue()
         {
-            queueSpeed.CalcSleepTime();
+            _queueSpeed.CalcSleepTime();
             CommandStrategy commandStrategy;
-            lock (_queue)
+            lock (Queue)
             {
-                commandStrategy = _queue.Count != 0 ? _queue.Peek() : null;
+                commandStrategy = Queue.Count != 0 ? Queue.Peek() : null;
                 // Process command specific dequeue strategy
                 if (commandStrategy != null)
                 { commandStrategy.DeQueue(); }
 
                 // Process all generic dequeue strategies
-                foreach (var generalStrategy in _generalStrategies) { generalStrategy.OnDequeue(); }
+                foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
 
             }
             // Send command
-            if (commandStrategy != null && commandStrategy.Command != null) 
-                _cmdMessenger.SendCommand((SendCommand)commandStrategy.Command);    
+            if (commandStrategy != null && commandStrategy.Command != null)
+                CmdMessenger.ExecuteSendCommand((SendCommand)commandStrategy.Command, ClearQueue.KeepQueue);    
      
         }
 
-        public void QueueCommand(SendCommand sendCommand)
+        /// <summary> Sends a command. Note that the command is put at the front of the queue </summary>
+        /// <param name="sendCommand"> The command to sent. </param>
+        public void SendCommand(SendCommand sendCommand)
         {
-            
+            // Add command to front of queue
+            QueueCommand(new TopCommandStrategy(sendCommand));
+        }
+
+        /// <summary> Queue the send command. </summary>
+        /// <param name="sendCommand"> The command to sent. </param>
+        public void QueueCommand(SendCommand sendCommand)
+        {            
             QueueCommand(new CommandStrategy(sendCommand));
         }
 
+        /// <summary> Queue the send command wrapped in a command strategy. </summary>
+        /// <param name="commandStrategy"> The command strategy. </param>
         public override void QueueCommand(CommandStrategy commandStrategy)
         {
-            queueSpeed.addCount();
-            lock (_queue)
+            _queueSpeed.AddCount();
+            lock (Queue)
             {
                 // Process commandStrategy enqueue associated with command
-                commandStrategy.CommandQueue = _queue;
+                commandStrategy.CommandQueue = Queue;
                 commandStrategy.ThreadRunState = ThreadRunState;
 
                 commandStrategy.Enqueue();
 
                 // Process all generic enqueue strategies
-                foreach (var generalStrategy in _generalStrategies) { generalStrategy.OnEnqueue(); }
+                foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
 
             }
         }
-
-
-        // Dispose
-        /// <summary> Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </summary>
-        /// <param name="disposing"> true if resources should be disposed, false if not. </param>
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-        }
-
     }
 }
