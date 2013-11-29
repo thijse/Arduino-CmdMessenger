@@ -44,8 +44,12 @@ namespace CommandMessenger
             int cmdId;
             CmdId = (rawArguments != null && int.TryParse(rawArguments[0], out cmdId)) ? cmdId : -1;
             if (CmdId<0) return;
-            var array = rawArguments.Where(w => w != rawArguments[0]).ToArray();
-            _arguments.AddRange(array);
+            if (rawArguments.Length > 1)
+            {
+                var array = new string[rawArguments.Length - 1];
+                Array.Copy(rawArguments, 1, array, 0, array.Length);
+                _arguments.AddRange(array);
+            }
         }
 
         /// <summary> Fetches the next argument. </summary>

@@ -46,6 +46,7 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         public Command()
         {
+			CmdId = -1;
             _arguments = new List<string>();
             TimeStamp =  TimeUtils.Millis;
         }

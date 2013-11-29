@@ -165,7 +165,7 @@ public:
   void feedinSerialData ();
   bool next ();
   bool available ();
-  
+  bool isArgOk ();
   uint8_t CommandID ();
   
   // ****  Command sending ****
@@ -249,6 +249,7 @@ public:
   // **** Command receiving ****
   bool readBoolArg();
   int readIntArg ();
+  long readLongArg ();
   char readCharArg ();
   float readFloatArg ();
   char *readStringArg ();

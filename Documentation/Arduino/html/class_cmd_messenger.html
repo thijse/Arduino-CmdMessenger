@@ -70,6 +70,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#ad4de9df5669b1ba98dc553ad20723682">feedinSerialData</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#abe96932ce5e813a7ef406280c922e191">next</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#ace5e703c0bf2c054bd95c7ce99a5c30d">available</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#a3207f1df2e236710cfeda5bd0cce25a9">isArgOk</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#ad29849badca1123f1f13366acabbbd40">CommandID</a> ()</td></tr>
 <tr><td class="memTemplParams" colspan="2">template&lt;class T &gt; </td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#acb8e9ea83c099da16be9fa60c3772f80">sendCmd</a> (int cmdId, T arg, bool reqAc=false, int ackCmdId=1, int timeout=5000)</td></tr>
@@ -87,6 +88,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#a4bc93989ec5e50712c728558664bf458">sendCmdBinArg</a> (T arg)</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#a0118332c0880f3f634bc458c556d8d7a">readBoolArg</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#a4ba33ae7873fba2090b8746f01bbfd8a">readIntArg</a> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#a278e64c7b85c949a093714ae2f495488">readLongArg</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#aa7c2ac636d59660e17ed4b7515df25ba">readCharArg</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#ada11d87584542951837b50cc2ba1ecbc">readFloatArg</a> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cmd_messenger.html#a593dd2763f6c817447de5cd38adfa1f4">readStringArg</a> ()</td></tr>
@@ -287,6 +289,23 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a3207f1df2e236710cfeda5bd0cce25a9"></a><!-- doxytag: member="CmdMessenger::isArgOk" ref="a3207f1df2e236710cfeda5bd0cce25a9" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_cmd_messenger.html#a3207f1df2e236710cfeda5bd0cce25a9">CmdMessenger::isArgOk</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Returns if the latest argument is well formed. </p>
+
+</div>
+</div>
 <a class="anchor" id="abe96932ce5e813a7ef406280c922e191"></a><!-- doxytag: member="CmdMessenger::next" ref="abe96932ce5e813a7ef406280c922e191" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -302,7 +321,7 @@ Public Member Functions</h2></td></tr>
 <div class="memdoc">
 <p>Gets next argument. Returns true if an argument is available </p>
 
-<p>Referenced by <a class="el" href="class_cmd_messenger.html#ace5e703c0bf2c054bd95c7ce99a5c30d">available()</a>, <a class="el" href="class_cmd_messenger.html#a4571c8ce449826dceeac5417efa16e78">compareStringArg()</a>, <a class="el" href="class_cmd_messenger.html#a7757a31834d68e79845490006f20e8c2">copyStringArg()</a>, <a class="el" href="class_cmd_messenger.html#aa7c2ac636d59660e17ed4b7515df25ba">readCharArg()</a>, <a class="el" href="class_cmd_messenger.html#ada11d87584542951837b50cc2ba1ecbc">readFloatArg()</a>, <a class="el" href="class_cmd_messenger.html#a4ba33ae7873fba2090b8746f01bbfd8a">readIntArg()</a>, and <a class="el" href="class_cmd_messenger.html#a593dd2763f6c817447de5cd38adfa1f4">readStringArg()</a>.</p>
+<p>Referenced by <a class="el" href="class_cmd_messenger.html#ace5e703c0bf2c054bd95c7ce99a5c30d">available()</a>, <a class="el" href="class_cmd_messenger.html#a4571c8ce449826dceeac5417efa16e78">compareStringArg()</a>, <a class="el" href="class_cmd_messenger.html#a7757a31834d68e79845490006f20e8c2">copyStringArg()</a>, <a class="el" href="class_cmd_messenger.html#aa7c2ac636d59660e17ed4b7515df25ba">readCharArg()</a>, <a class="el" href="class_cmd_messenger.html#ada11d87584542951837b50cc2ba1ecbc">readFloatArg()</a>, <a class="el" href="class_cmd_messenger.html#a4ba33ae7873fba2090b8746f01bbfd8a">readIntArg()</a>, <a class="el" href="class_cmd_messenger.html#a278e64c7b85c949a093714ae2f495488">readLongArg()</a>, and <a class="el" href="class_cmd_messenger.html#a593dd2763f6c817447de5cd38adfa1f4">readStringArg()</a>.</p>
 
 </div>
 </div>
@@ -418,6 +437,25 @@ template&lt;class T &gt; </div>
 <p>References <a class="el" href="class_cmd_messenger.html#abe96932ce5e813a7ef406280c922e191">next()</a>.</p>
 
 <p>Referenced by <a class="el" href="class_cmd_messenger.html#a0118332c0880f3f634bc458c556d8d7a">readBoolArg()</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a278e64c7b85c949a093714ae2f495488"></a><!-- doxytag: member="CmdMessenger::readLongArg" ref="a278e64c7b85c949a093714ae2f495488" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">long <a class="el" href="class_cmd_messenger.html#a278e64c7b85c949a093714ae2f495488">CmdMessenger::readLongArg</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+<p>Read the next argument as int </p>
+
+<p>References <a class="el" href="class_cmd_messenger.html#abe96932ce5e813a7ef406280c922e191">next()</a>.</p>
 
 </div>
 </div>
@@ -742,7 +780,7 @@ template&lt;class T &gt; </div>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Nov 19 2013 00:47:24 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Nov 27 2013 17:40:42 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

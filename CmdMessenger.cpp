@@ -257,6 +257,14 @@ bool CmdMessenger::available()
 }
 
 /**
+ * Returns if the latest argument is well formed. 
+ */
+bool CmdMessenger::isArgOk ()
+{
+	return ArgOk;
+}
+
+/**
  * Returns the CommandID of the current command
  */
 uint8_t CmdMessenger::CommandID()
@@ -362,6 +370,20 @@ int CmdMessenger::readIntArg()
     }
 	ArgOk  = false;
     return 0;
+}
+
+/**
+ * Read the next argument as int
+ */
+long CmdMessenger::readLongArg()
+{
+    if (next()) {
+        dumped = true;
+		ArgOk  = true;
+        return atol(current);
+    }
+	ArgOk  = false;
+    return 0L;
 }
 
 /**
