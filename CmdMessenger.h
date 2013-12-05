@@ -20,7 +20,6 @@
 	OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 	WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
  */
 
 #ifndef CmdMessenger_h
@@ -43,6 +42,7 @@ extern "C"
 
 #define MAXCALLBACKS        50   // The maximum number of commands   (default: 50)
 #define MESSENGERBUFFERSIZE 64   // The maximum length of the buffer (default: 64)
+#define MAXSTREAMBUFFERSIZE 32   // The maximum length of the buffer (default: 32)
 #define DEFAULT_TIMEOUT     5000 // Time out on unanswered messages. (default: 5s)
 
 // Message States
@@ -68,7 +68,8 @@ private:
   char CmdlastChar;                 // Bookkeeping of command escape char 
   bool pauseProcessing;             // pauses processing of new commands, during sending
   bool print_newlines;              // Indicates if \r\n should be added after send command
-  char buffer[MESSENGERBUFFERSIZE]; // Buffer that holds the data
+  char commandBuffer[MESSENGERBUFFERSIZE]; // Buffer that holds the data
+  char streamBuffer[MAXSTREAMBUFFERSIZE]; // Buffer that holds the data
   uint8_t messageState;             // Current state of message processing
   bool dumped;                      // Indicates if last argument has been externally read 
   bool ArgOk;						// Indicated if last fetched argument could be read
@@ -93,13 +94,10 @@ private:
   
   // **** Command processing ****
   
-  uint8_t processAndCallBack (int serialByte);
-  uint8_t processLine (int serialByte);
-  void handleMessage ();
-
-  bool blockedTillReply (int timeout = DEFAULT_TIMEOUT, int ackCmdId = 1);
-  bool CheckForAck (int AckCommand);
-  bool processAndWaitForAck (int serialByte, int AckCommand);
+  inline uint8_t processLine (int serialByte) __attribute__((always_inline));
+  inline void handleMessage() __attribute__((always_inline));
+  inline bool blockedTillReply (unsigned long timeout = DEFAULT_TIMEOUT, int ackCmdId = 1) __attribute__((always_inline));
+  inline bool CheckForAck (int AckCommand) __attribute__((always_inline));
 
   // **** Command sending ****
    
@@ -183,6 +181,7 @@ public:
 		sendCmdArg (arg);
 		return sendCmdEnd (reqAc, ackCmdId, timeout);
 	}
+	return false;
   }
   
   /**
@@ -198,6 +197,7 @@ public:
 		sendCmdBinArg (arg);
 		return sendCmdEnd (reqAc, ackCmdId, timeout);
 	}
+	return false;
   }
 
   // **** Command sending with multiple arguments ****
@@ -266,6 +266,7 @@ public:
         dumped = true;
         return readBin < T > (current);
       }
+	  return (T)0;
   }
 
   // **** Escaping tools ****

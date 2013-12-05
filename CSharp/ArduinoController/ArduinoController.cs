@@ -1,11 +1,14 @@
-﻿// *** DataLogging ***
+﻿// *** ArduinoController ***
 
-// This example expands the previous SendandReceiveArguments example. The PC will now send a start command to the Arduino,
-// and wait for a response from the Arduino. The Arduino will start sending analog data which the PC will plot in a chart
+// This example expands the SendandReceiveArguments example. The PC will now sends commands to the Arduino when the trackbar 
+// is pulled. Every TrackBarChanged events will queue a message to the Arduino to set the blink speed of the 
+// internal / pin 13 LED
+// 
 // This example shows how to :
 // - use in combination with WinForms
 // - use in combination with ZedGraph
 // - send queued commands
+// - Use the CollapseCommandStrategy
 
 using System;
 using CommandMessenger;

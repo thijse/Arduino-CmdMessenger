@@ -51,7 +51,6 @@ Get to know the library, by trying the examples,from simple to complex:
 ### SentandReceive 
   This example expands the previous Receive example. The Arduino will now send back a status. 
   On the Arduino side, 
-
   * it demonstrates how to:
 	  - Handle received commands that do not have a function attache
 	  - Send a command with a parameter to the PC
@@ -62,7 +61,6 @@ Get to know the library, by trying the examples,from simple to complex:
 ### SendandReceiveArguments
   This example expands the previous SendandReceive example. The Arduino will now receive multiple 
   and sent multiple float values. 
-
   * On the arduino side, it demonstrates how to:
 	  - Return multiple types status 
 	  - Receive multiple parameters,
@@ -116,7 +114,7 @@ This example shows how to design a responsive performance UI that sends and rece
 - Send queued commands
 - Add queue strategies
 
-All samples are heavily documented and should be self explanatory.
+All samples are heavily documented and should be self explanatory. 
  
 1. Open the Example sketch in the Arduino IDE and compile and upload it to your board.
 2. Open de CmdMessenger.sln solution in Visual Studio or Mono Develop/Xamarin Studio
