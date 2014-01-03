@@ -160,7 +160,7 @@ uint8_t CmdMessenger::processLine(char serialChar)
             }
             reset();
         } else {
-            commandBuffer[bufferIndex]=serialByte;
+            commandBuffer[bufferIndex]=serialChar;
             bufferIndex++;
             if (bufferIndex >= bufferLastIndex) reset();
         }
