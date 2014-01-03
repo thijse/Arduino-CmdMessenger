@@ -1,4 +1,4 @@
-# CmdMessenger v3.2
+# CmdMessenger v3.5
 
 A serial messaging library for the Arduino and .NET/Mono platform
 
