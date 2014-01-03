@@ -32,13 +32,14 @@ namespace CommandMessenger
             : base(disposeStack, cmdMessenger)
         {
             disposeStack.Push(this);
+            QueueThread.Name = "ReceiveCommandQueue";
+           // _queueSpeed.Name = "ReceiveCommandQueue";
         }
 
         /// <summary> Dequeue the received command. </summary>
         /// <returns> The received command. </returns>
         public ReceivedCommand DequeueCommand()
         {
-            _queueSpeed.CalcSleepTime();
             lock (Queue)
             {
                 if (Queue.Count != 0)
@@ -57,7 +58,11 @@ namespace CommandMessenger
             // Endless loop
             while (ThreadRunState == ThreadRunStates.Start)
             {
-                _queueSpeed.Sleep();
+                // Calculate sleep time based on incoming command speed
+                _queueSpeed.SetCount(Queue.Count);
+                _queueSpeed.CalcSleepTime();
+                // Only actually sleep if there are no commands in the queue
+                if (Queue.Count == 0) _queueSpeed.Sleep();
                 
                 var dequeueCommand = DequeueCommand();
                 if (dequeueCommand != null)
@@ -71,7 +76,6 @@ namespace CommandMessenger
         /// <param name="receivedCommand"> The received command. </param>
         public void QueueCommand(ReceivedCommand receivedCommand)
         {
-            _queueSpeed.AddCount();
             QueueCommand(new CommandStrategy(receivedCommand));
         }
 

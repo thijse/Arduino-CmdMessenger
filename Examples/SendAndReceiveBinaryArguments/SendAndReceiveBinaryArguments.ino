@@ -62,8 +62,7 @@ void OnRequestBinaryFloatSeries()
 {
   // Get series length from 1st parameter
   int seriesLength = cmdMessenger.readBinArg<uint16_t>();
-  float seriesBase = cmdMessenger.readFloatArg();
-  //float seriesBase = cmdMessenger.readBinArg<float>(); // Due to a bug, receiving a second binary command on the embedded sys does not seem to work
+  float seriesBase = cmdMessenger.readBinArg<float>(); 
 
   // Disable new lines, this saves another 2 chars per command
   cmdMessenger.printLfCr(false); 

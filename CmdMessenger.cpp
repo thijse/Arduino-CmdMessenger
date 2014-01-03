@@ -125,11 +125,11 @@ void CmdMessenger::feedinSerialData()
 		// The Stream class has a readBytes() function that reads many bytes at once. On Teensy 2.0 and 3.0, readBytes() is optimized. 
 		// Benchmarks about the incredible difference it makes: http://www.pjrc.com/teensy/benchmark_usb_serial_receive.html
 
-		int bytesAvailable = min(comms->available(),MAXSTREAMBUFFERSIZE);
+		size_t bytesAvailable = min(comms->available(),MAXSTREAMBUFFERSIZE);
 		comms->readBytes(streamBuffer, bytesAvailable); 
 		
 		// Process the bytes in the stream buffer, and handles dispatches callbacks, if commands are received
-		for (int byteNo = 0; byteNo < bytesAvailable ; byteNo++) 
+		for (size_t byteNo = 0; byteNo < bytesAvailable ; byteNo++) 
 		{   
 		    int messageState = processLine(streamBuffer[byteNo]);
 
@@ -145,12 +145,12 @@ void CmdMessenger::feedinSerialData()
 /**
  * Processes bytes and determines message state
  */
-uint8_t CmdMessenger::processLine(int serialByte)
+uint8_t CmdMessenger::processLine(char serialChar)
 {
     messageState = kProccesingMessage;
-    char serialChar = (char)serialByte;
+    //char serialChar = (char)serialByte;
     bool escaped = isEscaped(&serialChar,escape_character,&CmdlastChar);
-    if (serialByte > 0 || escaped) {
+    //if (serialByte > 0 || escaped) {
         if((serialChar == command_separator) && !escaped) {
             commandBuffer[bufferIndex]=0;
             if(bufferIndex > 0) {
@@ -164,7 +164,7 @@ uint8_t CmdMessenger::processLine(int serialByte)
             bufferIndex++;
             if (bufferIndex >= bufferLastIndex) reset();
         }
-    }
+    //}
     return messageState;
 }
 
@@ -204,19 +204,15 @@ bool CmdMessenger::CheckForAck(int AckCommand)
 {
     while (  comms->available() ) {
 		//Processes a byte and determines if an acknowlegde has come in
-	    //*comms << "1, processAndWaitForAck,";
 		int messageState = processLine(comms->read());
 		if ( messageState == kEndOfMessage ) {
 			int id = readIntArg();
 			if (AckCommand==id && ArgOk) {
-				//*comms << " matched! ;" << endl;
 				return true;
 			} else {
-				//*comms << " unmatched;" << endl;
 				return false;
 			}
 		}
-		//*comms << "No command;" << endl;
 		return false;
     }
     return false;

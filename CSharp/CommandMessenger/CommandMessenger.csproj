@@ -71,6 +71,7 @@
     <Compile Include="StringUtils.cs" />
     <Compile Include="TimedAction.cs" />
     <Compile Include="TimeUtils.cs" />
+    <Compile Include="TransportLayer\Logger.cs" />
     <Compile Include="TransportLayer\SerialTransport.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

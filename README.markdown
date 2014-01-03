@@ -72,6 +72,7 @@ Get to know the library, by trying the examples,from simple to complex:
 	  - Add logging events on data that has been sent or received
   
 ### SendandReceiveBinaryArguments
+
   This example expands the previous SendandReceiveArguments example. The Arduino will receive and send multiple 
   Binary values, demonstrating that this is more efficient way of communication. 
 
@@ -114,6 +115,41 @@ This example shows how to design a responsive performance UI that sends and rece
 - Send queued commands
 - Add queue strategies
 
+### ConsoleShell
+
+This example shows how to use CmdMessenger as a shell, and communicate with it using the Serial Console
+This example is different from the others:
+
+
+- there is no PC counterpart 
+- it will only receive commands, instead of sending 
+- commands it will use Serial.Print
+
+ Below is an example of interacting with the sample:
+ 
+```
+   Available commands
+   0;                  - This command list
+   1,<led state>;      - Set led. 0 = off, 1 = on
+   2,<led brightness>; - Set led brighness. 0 - 1000
+   3;                  - Show led state
+  
+ Command3;
+  
+  Led status: on
+  Led brightness: 500
+  
+ Command2,1000;
+  
+   Led status: on
+   Led brightness: 1000
+  
+ Command1,0;
+  
+   Led status: off
+   Led brightness: 1000
+```
+
 All samples are heavily documented and should be self explanatory. 
  
 1. Open the Example sketch in the Arduino IDE and compile and upload it to your board.
@@ -130,6 +166,19 @@ An example for use with Max5 / MaxMSP was included up until version 2. (it can s
 Since we have not been able to check it wil Max/MaxMSP, the example was removed.
 
 ## Changelog 
+
+### CmdMessenger v3.5
+* [Arduino] Added console shell sample 
+* [Arduino] Minor performance improvement
+* [.Net/.Mono] Minor performance improvement
+
+### CmdMessenger v3.4
+* [Arduino] Bug-fix in receiving binary values
+* [.Net/.Mono] Bug-fix that makes communication 100x  (!) faster, while lowering system load
+* [.Net/.Mono] Added function to run on single core
+
+### CmdMessenger v3.3
+* [Arduino] Speed improvements for Teensy
 
 ### CmdMessenger v3.2
 

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Forms;
 using CommandMessenger.TransportLayer;
@@ -52,6 +53,7 @@ namespace CommandMessenger
         private SendCommandQueue _sendCommandQueue;                         // The queue of commands to be sent
         private ReceiveCommandQueue _receiveCommandQueue;                   // The queue of commands to be processed
 
+        //private Logger _sendCommandLogger = new Logger(@"d:\sendCommands.txt");
         /// <summary> Definition of the messenger callback function. </summary>
         /// <param name="receivedCommand"> The received command. </param>
         public delegate void MessengerCallbackFunction(ReceivedCommand receivedCommand);
@@ -71,6 +73,18 @@ namespace CommandMessenger
         /// <summary> Gets or sets the currently sent line. </summary>
         /// <value> The currently sent line. </value>
         public String CurrentSentLine { get; private set; }
+
+        /// <summary> Gets or sets the log file of send commands. </summary>
+        /// <value> The logfile name for send commands. </value>
+        //public String LogFileSendCommands
+        //{
+        //    get { return _sendCommandLogger.LogFileName; }
+        //    set { _sendCommandLogger.LogFileName = value; }
+        //}
+
+        /// <summary> Gets or sets the log file of receive commands. </summary>
+        /// <value> The logfile name for receive commands. </value>
+        public String LogFileReceiveCommands { get; set; }
 
         // The control to invoke the callback on
         private Control _controlToInvokeOn; 
@@ -132,6 +146,26 @@ namespace CommandMessenger
             PrintLfCr = false;
         }
 
+        public void SetSingleCore()
+        {
+            Process proc = Process.GetCurrentProcess();
+            //var t = proc.Threads[0];
+            foreach (ProcessThread pt in proc.Threads)
+            {
+                if (pt.ThreadState != ThreadState.Terminated)
+                {
+                    try
+                    {
+                        pt.IdealProcessor = 0;
+                        pt.ProcessorAffinity = (IntPtr) 1;
+                    }
+                    catch (Exception)
+                    {
+                    }
+
+                }
+            }
+        }
         /// <summary> Sets a control to invoke on. </summary>
         /// <param name="controlToInvokeOn"> The control to invoke on. </param>
         public void SetControlToInvokeOn(Control controlToInvokeOn)
@@ -228,6 +262,8 @@ namespace CommandMessenger
         /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
         public ReceivedCommand SendCommand(SendCommand sendCommand, ClearQueue clearQueueState)
         {
+            //_sendCommandLogger.LogLine(CommandToString(sendCommand) + _commandSeparator);
+
             if (clearQueueState == ClearQueue.ClearReceivedQueue || 
                 clearQueueState == ClearQueue.ClearSendAndReceivedQueue)
             {
@@ -263,12 +299,9 @@ namespace CommandMessenger
 
             lock (_sendCommandDataLock)
             {
-                CurrentSentLine =  sendCommand.CmdId.ToString(CultureInfo.InvariantCulture);
 
-                foreach (var argument in sendCommand.Arguments)
-                {
-                    CurrentSentLine += _fieldSeparator + argument;
-                }
+                CurrentSentLine = CommandToString(sendCommand);
+ 
 
                 if (PrintLfCr)
                     _communicationManager.WriteLine(CurrentSentLine + _commandSeparator);
@@ -281,6 +314,17 @@ namespace CommandMessenger
                 return ackCommand;
             }
 
+        }
+
+        string CommandToString(Command command)
+        {
+            var commandString = command.CmdId.ToString(CultureInfo.InvariantCulture);
+
+            foreach (var argument in command.Arguments)
+            {
+                commandString += _fieldSeparator + argument;
+            }
+            return commandString;
         }
 
         /// <summary> Put the command at the back of the sent queue.</summary>

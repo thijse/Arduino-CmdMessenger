@@ -50,8 +50,8 @@ namespace CommandMessenger.TransportLayer
 
         /// <summary> Initializes this object. </summary>
         public void Initialize()
-        {
-            _queueSpeed.Name = "Serial";
+        {            
+           // _queueSpeed.Name = "Serial";
             // Find installed serial ports on hardware
             _currentSerialSettings.PortNameCollection = SerialPort.GetPortNames();
             _currentSerialSettings.PropertyChanged += CurrentSerialSettingsPropertyChanged;
@@ -61,9 +61,13 @@ namespace CommandMessenger.TransportLayer
                 _currentSerialSettings.PortName = _currentSerialSettings.PortNameCollection[0];
 
             // Create queue thread and wait for it to start
-            _queueThread = new Thread(ProcessQueue) { Priority = ThreadPriority.Normal };
+            _queueThread = new Thread(ProcessQueue)
+                {
+                    Priority = ThreadPriority.Normal, 
+                    Name = "Serial"
+                };
             _queueThread.Start();
-            while (!_queueThread.IsAlive) { }
+            while (!_queueThread.IsAlive) { Thread.Sleep(50); }
         }
 
         #region Fields
@@ -91,6 +95,7 @@ namespace CommandMessenger.TransportLayer
             get { return _serialPort; }
         }
 
+
         #endregion
 
         #region Event handlers
@@ -111,17 +116,15 @@ namespace CommandMessenger.TransportLayer
             while (ThreadRunState == ThreadRunStates.Start)
             {
                 var bytes = BytesInBuffer();
-                if (bytes > 0)
-                {
-                    
-                    _queueSpeed.AddCount(bytes);
-                    _queueSpeed.Sleep();
+                    _queueSpeed.SetCount(bytes);
                     _queueSpeed.CalcSleepTimeWithoutLoad();
+                    _queueSpeed.Sleep();
+                if (bytes > 0)
+                {                    
                     if (NewDataReceived != null) NewDataReceived(this, null);
-                }
-                    
-
+                }                    
             }
+            _queueSpeed.Sleep(50);
         }
 
         #endregion
@@ -142,7 +145,11 @@ namespace CommandMessenger.TransportLayer
                 _currentSerialSettings.BaudRate,
                 _currentSerialSettings.Parity,
                 _currentSerialSettings.DataBits,
-                _currentSerialSettings.StopBits);
+                _currentSerialSettings.StopBits)
+                {
+                    DtrEnable = _currentSerialSettings.DtrEnable
+                };
+
 
             // Subscribe to event and open serial port for data
             ThreadRunState = ThreadRunStates.Start;
@@ -213,7 +220,6 @@ namespace CommandMessenger.TransportLayer
         public bool StopListening()
         {
             ThreadRunState = ThreadRunStates.Start;
-            //_pollBuffer.StopAndWait();
             return Close();
         }
 
@@ -291,6 +297,14 @@ namespace CommandMessenger.TransportLayer
         /// <returns> Bytes in buffer </returns>
         public int BytesInBuffer()
         {
+            //try
+            //{                
+            //    return _serialPort.BytesToRead;
+            //}
+            //catch (Exception)
+            //{
+            //    return 0;
+            //}
             return IsOpen()? _serialPort.BytesToRead:0;
         }
 

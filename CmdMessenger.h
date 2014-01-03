@@ -94,7 +94,7 @@ private:
   
   // **** Command processing ****
   
-  inline uint8_t processLine (int serialByte) __attribute__((always_inline));
+  inline uint8_t processLine (char serialChar) __attribute__((always_inline));
   inline void handleMessage() __attribute__((always_inline));
   inline bool blockedTillReply (unsigned long timeout = DEFAULT_TIMEOUT, int ackCmdId = 1) __attribute__((always_inline));
   inline bool CheckForAck (int AckCommand) __attribute__((always_inline));

@@ -37,7 +37,7 @@ namespace SendAndReceiveBinaryArguments
         long _endTime;                                          // End time, last item of sequence received 
         private bool _receivePlainTextFloatSeriesFinished;      // Indicates if plain text float series has been fully received
         private bool _receiveBinaryFloatSeriesFinished;         // Indicates if binary float series has been fully received
-        const int SeriesLength = 10;                            // Number of items we like to receive from the Arduino
+        const int SeriesLength = 5000;                          // Number of items we like to receive from the Arduino
         private const float SeriesBase = 1111111.111111F;       // Base of values to return: SeriesBase * (0..SeriesLength-1)
 
         // ------------------ M A I N  ----------------------
@@ -75,8 +75,7 @@ namespace SendAndReceiveBinaryArguments
             // Send command requesting a series of 100 float values send in plain text
             var commandBinary = new SendCommand((int)Command.RequestBinaryFloatSeries);
             commandBinary.AddBinArgument((UInt16)SeriesLength);
-            //commandBinary.AddBinArgument((Single)SeriesBase); // Due to a bug, receiving a second binary command on the embedded sys does not seem to work
-            commandBinary.AddArgument(SeriesBase);
+            commandBinary.AddBinArgument((Single)SeriesBase); 
             
             // Send command 
             _cmdMessenger.SendCommand(commandBinary);

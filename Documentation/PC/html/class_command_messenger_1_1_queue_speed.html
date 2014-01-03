@@ -84,8 +84,14 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a unit to the load count.  <a href="#a9d47cab5d19e9d4ba7f5d4f37d202f31"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_queue_speed.html#afabe2d59df62a6b33b2c471c4eed9d62">AddCount</a> (int count)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a count units to the load count.  <a href="#afabe2d59df62a6b33b2c471c4eed9d62"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_queue_speed.html#a747809148f1294de49ad13b08687336d">SetCount</a> (int count)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the count units to the load count.  <a href="#a747809148f1294de49ad13b08687336d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_queue_speed.html#a0b7f06e6ba4418a146e71759fd5e4327">ResetCount</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the count units to zero.  <a href="#a0b7f06e6ba4418a146e71759fd5e4327"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_queue_speed.html#ad98c3b9bd7bd2415040381dd462f22f7">Sleep</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform the sleep based on load.  <a href="#ad98c3b9bd7bd2415040381dd462f22f7"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ed75f8e7715cf92c007539b57073181"></a><!-- doxytag: member="CommandMessenger::QueueSpeed::Sleep" ref="a1ed75f8e7715cf92c007539b57073181" args="(long millis)" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Sleep</b> (long millis)</td></tr>
 <tr><td colspan="2"><h2><a name="properties"></a>
 Properties</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_queue_speed.html#aacd1f175883a335d377cf0c0e12da9c9">Name</a><code> [get, set]</code></td></tr>
@@ -199,6 +205,49 @@ Properties</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a0b7f06e6ba4418a146e71759fd5e4327"></a><!-- doxytag: member="CommandMessenger::QueueSpeed::ResetCount" ref="a0b7f06e6ba4418a146e71759fd5e4327" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_command_messenger_1_1_queue_speed.html#a0b7f06e6ba4418a146e71759fd5e4327">CommandMessenger.QueueSpeed.ResetCount</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Resets the count units to zero. </p>
+
+</div>
+</div>
+<a class="anchor" id="a747809148f1294de49ad13b08687336d"></a><!-- doxytag: member="CommandMessenger::QueueSpeed::SetCount" ref="a747809148f1294de49ad13b08687336d" args="(int count)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_command_messenger_1_1_queue_speed.html#a747809148f1294de49ad13b08687336d">CommandMessenger.QueueSpeed.SetCount</a> </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>count</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Sets the count units to the load count. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">count</td><td>Number of load units to increase. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="ad98c3b9bd7bd2415040381dd462f22f7"></a><!-- doxytag: member="CommandMessenger::QueueSpeed::Sleep" ref="ad98c3b9bd7bd2415040381dd462f22f7" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -241,7 +290,7 @@ Properties</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 5 2013 21:56:43 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jan 3 2014 22:33:46 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

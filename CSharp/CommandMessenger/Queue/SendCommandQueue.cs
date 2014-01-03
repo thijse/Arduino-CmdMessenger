@@ -30,6 +30,8 @@ namespace CommandMessenger
         public SendCommandQueue(DisposeStack disposeStack, CmdMessenger cmdMessenger)
             : base(disposeStack, cmdMessenger)
         {
+            QueueThread.Name = "SendCommandQueue";
+           // _queueSpeed.Name = "SendCommandQueue";
         }
 
         /// <summary> Process the queue. </summary>
@@ -38,15 +40,18 @@ namespace CommandMessenger
             // Endless loop
             while (ThreadRunState == ThreadRunStates.Start)
             {
-                _queueSpeed.Sleep();
+                // Calculate sleep time based on incoming command speed
+                _queueSpeed.SetCount(Queue.Count);
+                _queueSpeed.CalcSleepTime();
+                // Only actually sleep if there are no commands in the queue
+                if (Queue.Count == 0) _queueSpeed.Sleep();                
                 SendCommandFromQueue();
             }
         }
 
         /// <summary> Sends all commands currently on queue. </summary>
         private void SendCommandFromQueue()
-        {
-            _queueSpeed.CalcSleepTime();
+        {         
             CommandStrategy commandStrategy;
             lock (Queue)
             {
@@ -84,7 +89,7 @@ namespace CommandMessenger
         /// <param name="commandStrategy"> The command strategy. </param>
         public override void QueueCommand(CommandStrategy commandStrategy)
         {
-            _queueSpeed.AddCount();
+            
             lock (Queue)
             {
                 // Process commandStrategy enqueue associated with command

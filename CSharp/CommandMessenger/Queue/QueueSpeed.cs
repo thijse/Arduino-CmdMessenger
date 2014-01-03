@@ -32,6 +32,7 @@ namespace CommandMessenger
         private const double Alpha = 0.8;
         private readonly double _targetQueue = 0.5;
         private const long MaxSleep = 50;
+        private const long MinSleep = 0;
 
         /// <summary> Gets or sets the QueueSpeed name. Used for debugging </summary>
         /// <value> The object name. </value>
@@ -43,7 +44,7 @@ namespace CommandMessenger
         {
             _targetQueue = targetQueue;       
             _prevTime = TimeUtils.Millis;
-            _sleepTime = 10;
+            _sleepTime = 0;
         }
 
         /// <summary> Calculates the sleep time taking into account work being done in queue. </summary>
@@ -51,14 +52,15 @@ namespace CommandMessenger
             var currentTime = TimeUtils.Millis;
             var deltaT = (currentTime-_prevTime);
             var processT = deltaT- _sleepTime;
-            double rate = _queueCount / (double)deltaT;
-            double targetT = _targetQueue /rate;
+            double rate = (double)_queueCount / (double)deltaT;
+            double targetT = Math.Min(_targetQueue / rate, MaxSleep); 
             double compensatedT = Math.Min(Math.Max(targetT - processT, 0), 1e6);
-            _sleepTime = Math.Max(Math.Min((long)(Alpha * _sleepTime + (1 - Alpha) * compensatedT), MaxSleep), 0);
+            _sleepTime = Math.Max(Math.Min((long)(Alpha * _sleepTime + (1 - Alpha) * compensatedT), MaxSleep), MinSleep);
 
-            // if (Name!="" && Name!=null) {
+            //if (Name != "" && Name != null)
+            //{
             //     Console.WriteLine("Rate {1} {0}", Name, rate);
-            //     Console.WriteLine("Sleeptime {1} {0}", Name, sleepTime);
+            //    Console.WriteLine("Sleeptime {1} {0}", Name, _sleepTime);
             //}
 
             // Reset
@@ -72,13 +74,13 @@ namespace CommandMessenger
             var currentTime = TimeUtils.Millis;
             var deltaT = (currentTime - _prevTime);
             double rate = _queueCount / (double)deltaT;
-            double targetT = _targetQueue / rate;
-            _sleepTime = Math.Max(Math.Min((long)(Alpha * _sleepTime + (1 - Alpha) * targetT), MaxSleep), 0);
+            double targetT = Math.Min(_targetQueue / rate,MaxSleep);
+            _sleepTime = Math.Max((long)(Alpha * _sleepTime + (1 - Alpha) * targetT), MinSleep);
             //if (Name != "" && Name != null)
             //{
                 //Console.WriteLine("Rate {1} {0}", Name, rate);
                 //Console.WriteLine("targetT {1} {0}", Name, targetT);
-               // Console.WriteLine("sleepTime {1} {0}", Name, sleepTime);
+                //Console.WriteLine("sleepTime {1} {0}", Name, _sleepTime);
             //}
 
             // Reset
@@ -98,9 +100,27 @@ namespace CommandMessenger
             _queueCount+= count;
         }
 
+        /// <summary> Sets the count units to the load count. </summary>
+        /// <param name="count"> Number of load units to increase. </param>
+        public void SetCount(int count)
+        {
+            _queueCount = count;
+        }
+
+        /// <summary> Resets the count units to zero. </summary>
+        public void ResetCount()
+        {
+            _queueCount = 0;
+        }
+
         /// <summary> Perform the sleep based on load. </summary>
         public void Sleep() {
-            Thread.Sleep(TimeSpan.FromMilliseconds(_sleepTime));
+            Sleep(_sleepTime);
+        }
+
+        public void Sleep(long millis)
+        {
+            Thread.Sleep(TimeSpan.FromMilliseconds(millis));
         }
     }
 }

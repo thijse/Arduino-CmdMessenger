@@ -95,6 +95,8 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#ad319aeeb507319fffa7af1be0106f0f8"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#af5b4a66aee80814298f0b4ad2d37bccb">CmdMessenger</a> (<a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport, char fieldSeparator, char commandSeparator, char escapeCharacter)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#af5b4a66aee80814298f0b4ad2d37bccb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42a12fc9a25e8e34e72d51a873069249"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::SetSingleCore" ref="a42a12fc9a25e8e34e72d51a873069249" args="()" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetSingleCore</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ac41ea118c4f01b8d88f6546feeb8b9cd">SetControlToInvokeOn</a> (Control controlToInvokeOn)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a control to invoke on.  <a href="#ac41ea118c4f01b8d88f6546feeb8b9cd"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a6a3f917bab92d23691186eb5bdee00ae">StopListening</a> ()</td></tr>
@@ -147,6 +149,8 @@ Properties</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the current received command.  <a href="#ae79c6742eb153fb6893bbaf2827ce136"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">String&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a65b97f4191357ca9ac874cd4468d7a87">CurrentSentLine</a><code> [get, set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the currently sent line.  <a href="#a65b97f4191357ca9ac874cd4468d7a87"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">String&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a4c0ea245888504bf6863e66d54bbbf78">LogFileReceiveCommands</a><code> [get, set]</code></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the log file of send commands.  <a href="#a4c0ea245888504bf6863e66d54bbbf78"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#aaa33f7a6c44eeda61db3726212d9fa83">LastLineTimeStamp</a><code> [get, set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the time stamp of the last command line received.  <a href="#aaa33f7a6c44eeda61db3726212d9fa83"></a><br/></td></tr>
 </table>
@@ -809,6 +813,24 @@ Properties</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a4c0ea245888504bf6863e66d54bbbf78"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::LogFileReceiveCommands" ref="a4c0ea245888504bf6863e66d54bbbf78" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">String <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a4c0ea245888504bf6863e66d54bbbf78">CommandMessenger.CmdMessenger.LogFileReceiveCommands</a><code> [get, set]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Gets or sets the log file of send commands. </p>
+<p>The logfile name for send commands. </p>
+<p>Gets or sets the log file of receive commands. </p>
+<p>The logfile name for receive commands. </p>
+
+</div>
+</div>
 <a class="anchor" id="accab332ea5b404ac26f9b679327d8e29"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::PrintLfCr" ref="accab332ea5b404ac26f9b679327d8e29" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -832,7 +854,7 @@ Properties</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Dec 5 2013 21:56:42 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jan 3 2014 22:33:46 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

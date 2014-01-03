@@ -36,6 +36,7 @@ namespace CommandMessenger
         int _dataBits = 8;
         int[] _dataBitsCollection = new[] { 5, 6, 7, 8 };
         StopBits _stopBits = StopBits.One;
+        private bool _dtrEnable = false;
 
         #region Properties
         /// <summary>
@@ -111,6 +112,22 @@ namespace CommandMessenger
                 {
                     _stopBits = value;
                     SendPropertyChangedEvent("StopBits");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Set Data Terminal Ready.
+        /// </summary>
+        public bool DtrEnable
+        {
+            get { return _dtrEnable; }
+            set
+            {
+                if (_dtrEnable != value)
+                {
+                    _dtrEnable = value;
+                    SendPropertyChangedEvent("DtrEnable");
                 }
             }
         }
