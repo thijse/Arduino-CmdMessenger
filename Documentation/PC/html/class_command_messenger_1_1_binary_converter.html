@@ -71,8 +71,8 @@
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#aed3ffd418e28205a24c4d0fdf0719de6">ToString</a> (Single value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a float into a string representation.  <a href="#aed3ffd418e28205a24c4d0fdf0719de6"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#a8942e13c0a1de9b9c97ec78ea8aef708">ToString</a> (float value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a float into a string representation.  <a href="#a8942e13c0a1de9b9c97ec78ea8aef708"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#ae61e7f39f0cbacb8f0109f995cee19b4">ToString</a> (Double value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a Double into a string representation.  <a href="#ae61e7f39f0cbacb8f0109f995cee19b4"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#a81a63fa84b955ee598955cf3b346c0a0">ToString</a> (int value)</td></tr>
@@ -85,8 +85,8 @@ Static Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert an unsigned an unsigned short into a string representation.  <a href="#ab039efec1a8ee58577d804f92c3c4731"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#a7298c97fc5e2a4ba7bd20b6ec133cb98">ToString</a> (byte value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a byte into a string representation.  <a href="#a7298c97fc5e2a4ba7bd20b6ec133cb98"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">static Single&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#a28c836b886a07d2ba417026c208a895a">ToFloat</a> (String value)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a string to a float.  <a href="#a28c836b886a07d2ba417026c208a895a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#a58c7b802193ab213fe3f0593be47cf5b">ToFloat</a> (String value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a string to a float.  <a href="#a58c7b802193ab213fe3f0593be47cf5b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static Double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#a508e13b267ece1da9af9509df066a8ef">ToDouble</a> (String value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a string representation to a double.  <a href="#a508e13b267ece1da9af9509df066a8ef"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static Int32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#a408a8dad8d79c69a7e9089ffb51c69ec">ToInt32</a> (String value)</td></tr>
@@ -101,12 +101,42 @@ Static Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a string representation to a byte.  <a href="#a2187bd5f58a439c1b3bb33bb9b40da49"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">static byte[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#a375cc5ea4c592f13c69ccd8517530cc4">EscapedStringToBytes</a> (String value)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts an escaped string to a bytes array.  <a href="#a375cc5ea4c592f13c69ccd8517530cc4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static byte[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#a472d65215b5d72c5247e4a366149f58f">StringToBytes</a> (string value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a string to a bytes array.  <a href="#a472d65215b5d72c5247e4a366149f58f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">static byte[]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#a65522c39b56adea1421bbeea9c197d1e">CharsToBytes</a> (char[] value)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Converts a char array to a bytes array.  <a href="#a65522c39b56adea1421bbeea9c197d1e"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="properties"></a>
 Properties</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Encoding&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_binary_converter.html#ad3db8d1ab63457eb63bae58ca57d6d0b">StringEncoder</a><code> [set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the string encoder.  <a href="#ad3db8d1ab63457eb63bae58ca57d6d0b"></a><br/></td></tr>
 </table>
 <hr/><h2>Member Function Documentation</h2>
+<a class="anchor" id="a65522c39b56adea1421bbeea9c197d1e"></a><!-- doxytag: member="CommandMessenger::BinaryConverter::CharsToBytes" ref="a65522c39b56adea1421bbeea9c197d1e" args="(char[] value)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static byte [] <a class="el" href="class_command_messenger_1_1_binary_converter.html#a65522c39b56adea1421bbeea9c197d1e">CommandMessenger.BinaryConverter.CharsToBytes</a> </td>
+          <td>(</td>
+          <td class="paramtype">char[]&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Converts a char array to a bytes array. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>The value to be converted. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>input value as a byte array. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a375cc5ea4c592f13c69ccd8517530cc4"></a><!-- doxytag: member="CommandMessenger::BinaryConverter::EscapedStringToBytes" ref="a375cc5ea4c592f13c69ccd8517530cc4" args="(String value)" -->
 <div class="memitem">
 <div class="memproto">
@@ -130,6 +160,32 @@ Properties</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>input value as an escaped string. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a472d65215b5d72c5247e4a366149f58f"></a><!-- doxytag: member="CommandMessenger::BinaryConverter::StringToBytes" ref="a472d65215b5d72c5247e4a366149f58f" args="(string value)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">static byte [] <a class="el" href="class_command_messenger_1_1_binary_converter.html#a472d65215b5d72c5247e4a366149f58f">CommandMessenger.BinaryConverter.StringToBytes</a> </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td><code> [static]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Converts a string to a bytes array. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>The value to be converted. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>input value as a byte array. </dd></dl>
 
 </div>
 </div>
@@ -185,12 +241,12 @@ Properties</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a28c836b886a07d2ba417026c208a895a"></a><!-- doxytag: member="CommandMessenger::BinaryConverter::ToFloat" ref="a28c836b886a07d2ba417026c208a895a" args="(String value)" -->
+<a class="anchor" id="a58c7b802193ab213fe3f0593be47cf5b"></a><!-- doxytag: member="CommandMessenger::BinaryConverter::ToFloat" ref="a58c7b802193ab213fe3f0593be47cf5b" args="(String value)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static Single <a class="el" href="class_command_messenger_1_1_binary_converter.html#a28c836b886a07d2ba417026c208a895a">CommandMessenger.BinaryConverter.ToFloat</a> </td>
+          <td class="memname">static float <a class="el" href="class_command_messenger_1_1_binary_converter.html#a58c7b802193ab213fe3f0593be47cf5b">CommandMessenger.BinaryConverter.ToFloat</a> </td>
           <td>(</td>
           <td class="paramtype">String&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
@@ -207,7 +263,7 @@ Properties</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>Input string as a Single? </dd></dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Input string as a float? </dd></dl>
 
 </div>
 </div>
@@ -263,14 +319,14 @@ Properties</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="aed3ffd418e28205a24c4d0fdf0719de6"></a><!-- doxytag: member="CommandMessenger::BinaryConverter::ToString" ref="aed3ffd418e28205a24c4d0fdf0719de6" args="(Single value)" -->
+<a class="anchor" id="a8942e13c0a1de9b9c97ec78ea8aef708"></a><!-- doxytag: member="CommandMessenger::BinaryConverter::ToString" ref="a8942e13c0a1de9b9c97ec78ea8aef708" args="(float value)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#aed3ffd418e28205a24c4d0fdf0719de6">CommandMessenger.BinaryConverter.ToString</a> </td>
+          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#a8942e13c0a1de9b9c97ec78ea8aef708">CommandMessenger.BinaryConverter.ToString</a> </td>
           <td>(</td>
-          <td class="paramtype">Single&#160;</td>
+          <td class="paramtype">float&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
           <td><code> [static]</code></td>
         </tr>
@@ -294,7 +350,7 @@ Properties</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#aed3ffd418e28205a24c4d0fdf0719de6">CommandMessenger.BinaryConverter.ToString</a> </td>
+          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#a8942e13c0a1de9b9c97ec78ea8aef708">CommandMessenger.BinaryConverter.ToString</a> </td>
           <td>(</td>
           <td class="paramtype">Double&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
@@ -320,7 +376,7 @@ Properties</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#aed3ffd418e28205a24c4d0fdf0719de6">CommandMessenger.BinaryConverter.ToString</a> </td>
+          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#a8942e13c0a1de9b9c97ec78ea8aef708">CommandMessenger.BinaryConverter.ToString</a> </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
@@ -346,7 +402,7 @@ Properties</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#aed3ffd418e28205a24c4d0fdf0719de6">CommandMessenger.BinaryConverter.ToString</a> </td>
+          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#a8942e13c0a1de9b9c97ec78ea8aef708">CommandMessenger.BinaryConverter.ToString</a> </td>
           <td>(</td>
           <td class="paramtype">uint&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
@@ -372,7 +428,7 @@ Properties</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#aed3ffd418e28205a24c4d0fdf0719de6">CommandMessenger.BinaryConverter.ToString</a> </td>
+          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#a8942e13c0a1de9b9c97ec78ea8aef708">CommandMessenger.BinaryConverter.ToString</a> </td>
           <td>(</td>
           <td class="paramtype">short&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
@@ -398,7 +454,7 @@ Properties</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#aed3ffd418e28205a24c4d0fdf0719de6">CommandMessenger.BinaryConverter.ToString</a> </td>
+          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#a8942e13c0a1de9b9c97ec78ea8aef708">CommandMessenger.BinaryConverter.ToString</a> </td>
           <td>(</td>
           <td class="paramtype">ushort&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
@@ -424,7 +480,7 @@ Properties</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#aed3ffd418e28205a24c4d0fdf0719de6">CommandMessenger.BinaryConverter.ToString</a> </td>
+          <td class="memname">static string <a class="el" href="class_command_messenger_1_1_binary_converter.html#a8942e13c0a1de9b9c97ec78ea8aef708">CommandMessenger.BinaryConverter.ToString</a> </td>
           <td>(</td>
           <td class="paramtype">byte&#160;</td>
           <td class="paramname"><em>value</em></td><td>)</td>
@@ -521,7 +577,7 @@ Properties</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jan 3 2014 22:54:41 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 1 2014 23:14:07 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

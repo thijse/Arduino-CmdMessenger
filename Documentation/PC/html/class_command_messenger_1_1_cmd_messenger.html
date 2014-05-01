@@ -61,9 +61,9 @@
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
-<a href="#properties">Properties</a>  </div>
+<a href="#properties">Properties</a> &#124;
+<a href="#events">Events</a>  </div>
   <div class="headertitle">
 <div class="title">CommandMessenger.CmdMessenger Class Reference</div>  </div>
 </div><!--header-->
@@ -89,12 +89,16 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Definition of the messenger callback function.  <a href="#a72a17f15d73955a00f565d86b5216aed"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a07dd5b57e8879c7a2fcb1148a3866687">CmdMessenger</a> (<a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a07dd5b57e8879c7a2fcb1148a3866687"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ad6d2c9e3fbc7d1f597b978e790734177">CmdMessenger</a> (<a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport, int sendBufferMaxLength)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#ad6d2c9e3fbc7d1f597b978e790734177"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a909a469d3ad33f088461cec007403bbf">CmdMessenger</a> (<a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport, char fieldSeparator)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a909a469d3ad33f088461cec007403bbf"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ab63507f611cfc38895b9aee7e5b4f001">CmdMessenger</a> (<a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport, char fieldSeparator, int sendBufferMaxLength)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#ab63507f611cfc38895b9aee7e5b4f001"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ad319aeeb507319fffa7af1be0106f0f8">CmdMessenger</a> (<a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport, char fieldSeparator, char commandSeparator)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#ad319aeeb507319fffa7af1be0106f0f8"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#af5b4a66aee80814298f0b4ad2d37bccb">CmdMessenger</a> (<a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport, char fieldSeparator, char commandSeparator, char escapeCharacter)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#af5b4a66aee80814298f0b4ad2d37bccb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#afaf58e13c46d074ec603ef233980cedc">CmdMessenger</a> (<a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a> transport, char fieldSeparator, char commandSeparator, char escapeCharacter, int sendBufferMaxLength)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#afaf58e13c46d074ec603ef233980cedc"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42a12fc9a25e8e34e72d51a873069249"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::SetSingleCore" ref="a42a12fc9a25e8e34e72d51a873069249" args="()" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SetSingleCore</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ac41ea118c4f01b8d88f6546feeb8b9cd">SetControlToInvokeOn</a> (Control controlToInvokeOn)</td></tr>
@@ -112,9 +116,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SetSingleCore</b> ()<
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ad38b4f7b5658a1f8980aa38eda80b9f4">SendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command. If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired.  <a href="#ad38b4f7b5658a1f8980aa38eda80b9f4"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a85393df2eb2d7a4d022a53505d99d0f5">SendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, ClearQueue clearQueueState)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command. If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired. Based on ClearQueueState, the send- and receive-queues are left intact or are cleared.  <a href="#a85393df2eb2d7a4d022a53505d99d0f5"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a6d15bdc8e285a1bc62cda8bd6cce257a">ExecuteSendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, ClearQueue clearQueueState)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Directly executes the send command operation.  <a href="#a6d15bdc8e285a1bc62cda8bd6cce257a"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command.  <a href="#a85393df2eb2d7a4d022a53505d99d0f5"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a74a7b7d9bab4d777b033d263b8d16c2a">SendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, ClearQueue clearQueueState, bool sendQueued)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command. If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired. Based on ClearQueueState, the send- and receive-queues are left intact or are cleared.  <a href="#a74a7b7d9bab4d777b033d263b8d16c2a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a0398d0d8f45a1c6b02df018dbb13f6b9">QueueCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Put the command at the back of the sent queue.  <a href="#a0398d0d8f45a1c6b02df018dbb13f6b9"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a563309c8b82007422f89889bff4cd5c0">QueueCommand</a> (<a class="el" href="class_command_messenger_1_1_command_strategy.html">CommandStrategy</a> commandStrategy)</td></tr>
@@ -127,32 +131,26 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SetSingleCore</b> ()<
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the receive queue.  <a href="#a9bbd561bcf2b0afc79f3cf6a3afbe6f8"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a6cb2b4efc0ee8d27535bc1b53e3bf537">ClearSendQueue</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the send queue.  <a href="#a6cb2b4efc0ee8d27535bc1b53e3bf537"></a><br/></td></tr>
-<tr><td colspan="2"><h2><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69424316c05c633919a23f5285c88e4a"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::NewLinesReceived" ref="a69424316c05c633919a23f5285c88e4a" args="" -->
-EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLinesReceived</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae13726026a6e8cc298469f8cd4912117"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::NewLineReceived" ref="ae13726026a6e8cc298469f8cd4912117" args="" -->
-EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLineReceived</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2f36e4dffeb1cbd0865e26e0d88c93ba"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::NewLineSent" ref="a2f36e4dffeb1cbd0865e26e0d88c93ba" args="" -->
-EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLineSent</b></td></tr>
 <tr><td colspan="2"><h2><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">override void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a51e0a37b91b08ad7d8d9876513393c0b">Dispose</a> (bool disposing)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.  <a href="#a51e0a37b91b08ad7d8d9876513393c0b"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="properties"></a>
 Properties</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a27a2a3229ee31c717fba71f93e96fab5">BoardType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a27a2a3229ee31c717fba71f93e96fab5">BoardType</a><code> [get, set]</code></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Embedded Processor type. Needed to translate variables between sides.  <a href="#a27a2a3229ee31c717fba71f93e96fab5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#accab332ea5b404ac26f9b679327d8e29">PrintLfCr</a><code> [get, set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets a whether to print a line feed carriage return after each command.  <a href="#accab332ea5b404ac26f9b679327d8e29"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">String&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a1388886b01925fa3f6e78b5ee2ab6219">CurrentReceivedLine</a><code> [get, set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the current received command line.  <a href="#a1388886b01925fa3f6e78b5ee2ab6219"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ae79c6742eb153fb6893bbaf2827ce136">CurrentReceivedCommand</a><code> [get, set]</code></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the current received command.  <a href="#ae79c6742eb153fb6893bbaf2827ce136"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">String&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a65b97f4191357ca9ac874cd4468d7a87">CurrentSentLine</a><code> [get, set]</code></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the currently sent line.  <a href="#a65b97f4191357ca9ac874cd4468d7a87"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">String&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a4c0ea245888504bf6863e66d54bbbf78">LogFileReceiveCommands</a><code> [get, set]</code></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the log file of send commands.  <a href="#a4c0ea245888504bf6863e66d54bbbf78"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#aaa33f7a6c44eeda61db3726212d9fa83">LastLineTimeStamp</a><code> [get, set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the time stamp of the last command line received.  <a href="#aaa33f7a6c44eeda61db3726212d9fa83"></a><br/></td></tr>
+<tr><td colspan="2"><h2><a name="events"></a>
+Events</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53cc20ef9e91c9d683f976f8034225fc"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::NewLineReceived" ref="a53cc20ef9e91c9d683f976f8034225fc" args="" -->
+NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLineReceived</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0831b2c38fc811ac14e15a03a5a11a82"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::NewLineSent" ref="a0831b2c38fc811ac14e15a03a5a11a82" args="" -->
+NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLineSent</b></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="class_command_messenger_1_1_command.html" title="A command to be send by CmdMessenger.">Command</a> messenger main class. </p>
@@ -176,6 +174,42 @@ Properties</h2></td></tr>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">transport</td><td>The transport layer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ad6d2c9e3fbc7d1f597b978e790734177"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::CmdMessenger" ref="ad6d2c9e3fbc7d1f597b978e790734177" args="(ITransport transport, int sendBufferMaxLength)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a07dd5b57e8879c7a2fcb1148a3866687">CommandMessenger.CmdMessenger.CmdMessenger</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a>&#160;</td>
+          <td class="paramname"><em>transport</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sendBufferMaxLength</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Constructor. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transport</td><td>The transport layer. </td></tr>
+    <tr><td class="paramname">sendBufferMaxLength</td><td>The maximum size of the send buffer</td></tr>
   </table>
   </dd>
 </dl>
@@ -212,6 +246,49 @@ Properties</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">transport</td><td>The transport layer. </td></tr>
     <tr><td class="paramname">fieldSeparator</td><td>The field separator. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ab63507f611cfc38895b9aee7e5b4f001"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::CmdMessenger" ref="ab63507f611cfc38895b9aee7e5b4f001" args="(ITransport transport, char fieldSeparator, int sendBufferMaxLength)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a07dd5b57e8879c7a2fcb1148a3866687">CommandMessenger.CmdMessenger.CmdMessenger</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="interface_command_messenger_1_1_transport_layer_1_1_i_transport.html">ITransport</a>&#160;</td>
+          <td class="paramname"><em>transport</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char&#160;</td>
+          <td class="paramname"><em>fieldSeparator</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sendBufferMaxLength</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Constructor. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transport</td><td>The transport layer. </td></tr>
+    <tr><td class="paramname">fieldSeparator</td><td>The field separator. </td></tr>
+    <tr><td class="paramname">sendBufferMaxLength</td><td>The maximunm size of the send buffer</td></tr>
   </table>
   </dd>
 </dl>
@@ -261,7 +338,7 @@ Properties</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="af5b4a66aee80814298f0b4ad2d37bccb"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::CmdMessenger" ref="af5b4a66aee80814298f0b4ad2d37bccb" args="(ITransport transport, char fieldSeparator, char commandSeparator, char escapeCharacter)" -->
+<a class="anchor" id="afaf58e13c46d074ec603ef233980cedc"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::CmdMessenger" ref="afaf58e13c46d074ec603ef233980cedc" args="(ITransport transport, char fieldSeparator, char commandSeparator, char escapeCharacter, int sendBufferMaxLength)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -287,7 +364,13 @@ Properties</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">char&#160;</td>
-          <td class="paramname"><em>escapeCharacter</em>&#160;</td>
+          <td class="paramname"><em>escapeCharacter</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sendBufferMaxLength</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -305,6 +388,7 @@ Properties</h2></td></tr>
     <tr><td class="paramname">fieldSeparator</td><td>The field separator. </td></tr>
     <tr><td class="paramname">commandSeparator</td><td>The command separator. </td></tr>
     <tr><td class="paramname">escapeCharacter</td><td>The escape character. </td></tr>
+    <tr><td class="paramname">sendBufferMaxLength</td><td>The maximunm size of the send buffer</td></tr>
   </table>
   </dd>
 </dl>
@@ -486,43 +570,6 @@ Properties</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6d15bdc8e285a1bc62cda8bd6cce257a"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::ExecuteSendCommand" ref="a6d15bdc8e285a1bc62cda8bd6cce257a" args="(SendCommand sendCommand, ClearQueue clearQueueState)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a6d15bdc8e285a1bc62cda8bd6cce257a">CommandMessenger.CmdMessenger.ExecuteSendCommand</a> </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a>&#160;</td>
-          <td class="paramname"><em>sendCommand</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">ClearQueue&#160;</td>
-          <td class="paramname"><em>clearQueueState</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Directly executes the send command operation. </p>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">sendCommand</td><td>The command to sent. </td></tr>
-    <tr><td class="paramname">clearQueueState</td><td>Property to optionally clear the send and receive queues. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>A received command. The received command will only be valid if the ReqAc of the command is true. </dd></dl>
-
-</div>
-</div>
 <a class="anchor" id="a77775f343c74a01de0caa693e039717f"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::HandleMessage" ref="a77775f343c74a01de0caa693e039717f" args="(ReceivedCommand receivedCommand)" -->
 <div class="memitem">
 <div class="memproto">
@@ -673,11 +720,56 @@ Properties</h2></td></tr>
 </div>
 <div class="memdoc">
 
+<p>Sends a command. </p>
+<p>If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired. Based on ClearQueueState, the send- and receive-queues are left intact or are cleared </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sendCommand</td><td>The command to sent. </td></tr>
+    <tr><td class="paramname">clearQueueState</td><td>Property to optionally clear the send and receive queues</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>A received command. The received command will only be valid if the ReqAc of the command is true. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a74a7b7d9bab4d777b033d263b8d16c2a"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::SendCommand" ref="a74a7b7d9bab4d777b033d263b8d16c2a" args="(SendCommand sendCommand, ClearQueue clearQueueState, bool sendQueued)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ad38b4f7b5658a1f8980aa38eda80b9f4">CommandMessenger.CmdMessenger.SendCommand</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a>&#160;</td>
+          <td class="paramname"><em>sendCommand</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ClearQueue&#160;</td>
+          <td class="paramname"><em>clearQueueState</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>sendQueued</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
 <p>Sends a command. If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired. Based on ClearQueueState, the send- and receive-queues are left intact or are cleared. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">sendCommand</td><td>The command to sent. </td></tr>
     <tr><td class="paramname">clearQueueState</td><td>Property to optionally clear the send and receive queues</td></tr>
+    <tr><td class="paramname">sendQueued</td><td>Property to indicate if command needs to be send queued or directly</td></tr>
   </table>
   </dd>
 </dl>
@@ -749,19 +841,19 @@ Properties</h2></td></tr>
 </div>
 </div>
 <hr/><h2>Property Documentation</h2>
-<a class="anchor" id="ae79c6742eb153fb6893bbaf2827ce136"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::CurrentReceivedCommand" ref="ae79c6742eb153fb6893bbaf2827ce136" args="" -->
+<a class="anchor" id="a27a2a3229ee31c717fba71f93e96fab5"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::BoardType" ref="a27a2a3229ee31c717fba71f93e96fab5" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ae79c6742eb153fb6893bbaf2827ce136">CommandMessenger.CmdMessenger.CurrentReceivedCommand</a><code> [get, set]</code></td>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a27a2a3229ee31c717fba71f93e96fab5">BoardType</a> <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a27a2a3229ee31c717fba71f93e96fab5">CommandMessenger.CmdMessenger.BoardType</a><code> [get, set]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Gets or sets the current received command. </p>
-<p>The current received command. </p>
+<p>Embedded Processor type. Needed to translate variables between sides. </p>
+<p>The current received line. </p>
 
 </div>
 </div>
@@ -781,22 +873,6 @@ Properties</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a65b97f4191357ca9ac874cd4468d7a87"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::CurrentSentLine" ref="a65b97f4191357ca9ac874cd4468d7a87" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">String <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a65b97f4191357ca9ac874cd4468d7a87">CommandMessenger.CmdMessenger.CurrentSentLine</a><code> [get, set]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Gets or sets the currently sent line. </p>
-<p>The currently sent line. </p>
-
-</div>
-</div>
 <a class="anchor" id="aaa33f7a6c44eeda61db3726212d9fa83"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::LastLineTimeStamp" ref="aaa33f7a6c44eeda61db3726212d9fa83" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -810,24 +886,6 @@ Properties</h2></td></tr>
 
 <p>Gets or sets the time stamp of the last command line received. </p>
 <p>The last line time stamp. </p>
-
-</div>
-</div>
-<a class="anchor" id="a4c0ea245888504bf6863e66d54bbbf78"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::LogFileReceiveCommands" ref="a4c0ea245888504bf6863e66d54bbbf78" args="" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">String <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a4c0ea245888504bf6863e66d54bbbf78">CommandMessenger.CmdMessenger.LogFileReceiveCommands</a><code> [get, set]</code></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Gets or sets the log file of send commands. </p>
-<p>The logfile name for send commands. </p>
-<p>Gets or sets the log file of receive commands. </p>
-<p>The logfile name for receive commands. </p>
 
 </div>
 </div>
@@ -854,7 +912,7 @@ Properties</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jan 3 2014 22:54:41 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 1 2014 23:14:07 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

@@ -181,7 +181,7 @@ namespace CommandMessenger
         {            
                 // Read line from raw buffer and make command
                 var currentReceivedCommand = ParseMessage(line);
-                currentReceivedCommand.rawString = line;
+                currentReceivedCommand.RawString = line;
                 // Set time stamp
                 currentReceivedCommand.TimeStamp = LastLineTimeStamp;
                 // And put on queue
@@ -203,7 +203,7 @@ namespace CommandMessenger
                                     StringSplitOptions.RemoveEmptyEntries));
         }
 
-        /// <summary> Reads a single line from the serial buffer, if complete. </summary>
+        /// <summary> Reads a float line from the serial buffer, if complete. </summary>
         /// <returns> Whether a complete line was present in the serial buffer. </returns>
         private string ParseLine()
         {

@@ -41,8 +41,8 @@ extern "C"
 }
 
 #define MAXCALLBACKS        50   // The maximum number of commands   (default: 50)
-#define MESSENGERBUFFERSIZE 64   // The maximum length of the buffer (default: 64)
-#define MAXSTREAMBUFFERSIZE 32   // The maximum length of the buffer (default: 32)
+#define MESSENGERBUFFERSIZE 64   // The length of the commandbuffer  (default: 64)
+#define MAXSTREAMBUFFERSIZE 512  // The length of the streambuffer   (default: 64)
 #define DEFAULT_TIMEOUT     5000 // Time out on unanswered messages. (default: 5s)
 
 // Message States
@@ -52,6 +52,9 @@ enum
   kEndOfMessage,				 // Message is fully received, reached command separator
   kProcessingArguments,			 // Message is received, arguments are being read parsed
 };
+
+#define white_space(c) ((c) == ' ' || (c) == '\t')
+#define valid_digit(c) ((c) >= '0' && (c) <= '9')
 
 class CmdMessenger
 {
@@ -85,7 +88,6 @@ private:
   messengerCallbackFunction default_callback;            // default callback function  
   messengerCallbackFunction callbackList[MAXCALLBACKS];  // list of attached callback functions 
   
-  // ****** Private functions ******   
   
   // **** Initialize ****
   
@@ -111,7 +113,7 @@ private:
     for (unsigned int i = 0; i < sizeof (value); i++)
       {
         printEsc (*bytePointer); 
-        *bytePointer++;
+		bytePointer++;
       }
   }
     
@@ -131,7 +133,20 @@ private:
     for (unsigned int i = 0; i < sizeof (value); i++)
       {
         *bytePointer = str[i];
-        *bytePointer++;
+		bytePointer++;
+      }
+    return value;
+  }
+  
+  template < class T > 
+    T empty ()
+  {
+    T value;
+    byte *bytePointer = (byte *) (const void *) &value;
+    for (unsigned int i = 0; i < sizeof (value); i++)
+      {
+        *bytePointer = '\0';
+		bytePointer++;
       }
     return value;
   }
@@ -183,7 +198,7 @@ public:
 	}
 	return false;
   }
-  
+
   /**
    * Send a command with a single argument of any type 
    * Note that the argument is sent in binary format
@@ -200,6 +215,8 @@ public:
 	return false;
   }
 
+  bool sendCmd (int cmdId);
+  bool sendCmd (int cmdId, bool reqAc, int ackCmdId );
   // **** Command sending with multiple arguments ****
   
   void sendCmdStart (int cmdId);
@@ -213,25 +230,30 @@ public:
    */
   template < class T > void sendCmdArg (T arg)
   {
-    if (startCommand)
-      {
+    if (startCommand) {
         comms->print (field_separator);
         comms->print (arg);
-      }
+    }
   }
-  
+    
   /**
    * Send a single argument as string with custom accuracy
    *  Note that this will only succeed if a sendCmdStart has been issued first
    */
   template < class T > void sendCmdArg (T arg, int n)
   {
-    if (startCommand)
-      {
+    if (startCommand) {
         comms->print (field_separator);
         comms->print (arg, n);
-      }
+    }
   }
+  
+  /**
+   * Send double argument in scientific format.
+   *  This will overcome the boundary of normal d sending which is limited to abs(f) <= MAXLONG
+  */
+  void sendCmdSciArg(double arg, int n=6);
+
   
   /**
    * Send a single argument in binary format
@@ -239,19 +261,19 @@ public:
    */  
   template < class T > void sendCmdBinArg (T arg)
   {
-    if (startCommand)
-      {
+    if (startCommand) {
         comms->print (field_separator);
         writeBin (arg);
-      }
+    }
   }  
 
   // **** Command receiving ****
   bool readBoolArg();
-  int readIntArg ();
-  long readLongArg ();
+  int16_t readInt16Arg ();
+  int32_t readInt32Arg ();
   char readCharArg ();
   float readFloatArg ();
+  double readDoubleArg();
   char *readStringArg ();
   void copyStringArg (char *string, uint8_t size);
   uint8_t compareStringArg (char *string);
@@ -261,16 +283,19 @@ public:
    */  
   template < class T > T readBinArg ()
   {
-    if (next ())
-      {
-        dumped = true;
-        return readBin < T > (current);
-      }
-	  return (T)0;
+    if (next ()) {
+        dumped = true;      
+		return readBin < T > (current);
+    } else {
+		return empty < T > ();
+	}
   }
 
   // **** Escaping tools ****
   
   void unescape (char *fromChar);	
+  void printSci(double f, unsigned int digits);  
+  
+  
 };
 #endif

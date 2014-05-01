@@ -38,11 +38,14 @@ namespace SendAndReceiveArguments
             // Note that for some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.
             _serialTransport = new SerialTransport
             {
-                CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200, DtrEnable = false} // object initializer
+                CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200, DtrEnable = false } // object initializer
             };
 
             // Initialize the command messenger with the Serial Port transport layer
-            _cmdMessenger = new CmdMessenger(_serialTransport);
+            _cmdMessenger = new CmdMessenger(_serialTransport)
+            {
+                    BoardType = BoardType.Bit16 // Set if it is communicating with a 16- or 32-bit Arduino board
+            };
 
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();
@@ -85,6 +88,15 @@ namespace SendAndReceiveArguments
 
                 Console.WriteLine("Received sum {0}, difference of {1}", sum, diff);
                 Console.WriteLine("with errors {0} and {1}, respectively", errorSum, errorDiff);
+
+                if (errorDiff < 1e-6 && errorSum < 1e-6)
+                {
+                    Console.WriteLine("Seems to be correct!");
+                }
+                else
+                {
+                    Console.WriteLine("Does not seem to be correct!");
+                }
             }
             else
                 Console.WriteLine("No response!");
@@ -139,15 +151,15 @@ namespace SendAndReceiveArguments
         }
 
         // Log received line to console
-        private void NewLineReceived(object sender, EventArgs e)
+        private void NewLineReceived(object sender, NewLineEvent.NewLineArgs e)
         {
-            Console.WriteLine(" Received > " + _cmdMessenger.CurrentReceivedLine);
+            Console.WriteLine(@"Received > " + e.Command.CommandString());
         }
 
         // Log sent line to console
-        private void NewLineSent(object sender, EventArgs e)
+        private void NewLineSent(object sender, NewLineEvent.NewLineArgs e)
         {
-            Console.WriteLine(" Sent > " + _cmdMessenger.CurrentSentLine);
+            Console.WriteLine(@"Sent > " + e.Command.CommandString());
         }
     }
 }

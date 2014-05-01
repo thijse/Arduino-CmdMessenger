@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("6-ArduinoController")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Philips Healthcare")]
+
 [assembly: AssemblyProduct("6-ArduinoController")]
-[assembly: AssemblyCopyright("Copyright © Philips Healthcare 2013")]
+[assembly: AssemblyCopyright("Copyright © Thijs Elenbaas 2013,2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

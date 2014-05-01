@@ -24,6 +24,11 @@
     CmdMessenger Version 1    - Neil Dudman.
     CmdMessenger Version 2    - Dreamcat4.
 	CmdMessenger Version 3    - Thijs Elenbaas.
+	  3.6  - Fixes
+	       - Better compatibility between platforms
+		   - Unit tests
+	  3.5  - Fixes, speed improvements for Teensy
+	  3.4  - Internal update
 	  3.3  - Fixed warnings
 	       - Some code optimization
 	  3.2  - Small fixes and sending long argument support
@@ -43,7 +48,7 @@ extern "C" {
 #include <stdio.h>
 #include <CmdMessenger.h>
 
-#define _CMDMESSENGER_VERSION 3_3 // software version of this library
+#define _CMDMESSENGER_VERSION 3_6 // software version of this library
 
 // **** Initialization **** 
 
@@ -150,21 +155,19 @@ uint8_t CmdMessenger::processLine(char serialChar)
     messageState = kProccesingMessage;
     //char serialChar = (char)serialByte;
     bool escaped = isEscaped(&serialChar,escape_character,&CmdlastChar);
-    //if (serialByte > 0 || escaped) {
-        if((serialChar == command_separator) && !escaped) {
-            commandBuffer[bufferIndex]=0;
-            if(bufferIndex > 0) {
-                messageState = kEndOfMessage;
-                current = commandBuffer;
-                CmdlastChar='\0';
-            }
-            reset();
-        } else {
-            commandBuffer[bufferIndex]=serialChar;
-            bufferIndex++;
-            if (bufferIndex >= bufferLastIndex) reset();
-        }
-    //}
+	if((serialChar == command_separator) && !escaped) {
+		commandBuffer[bufferIndex]=0;
+		if(bufferIndex > 0) {
+			messageState = kEndOfMessage;
+			current = commandBuffer;
+			CmdlastChar='\0';
+		}
+		reset();
+	} else {
+		commandBuffer[bufferIndex]=serialChar;
+		bufferIndex++;
+		if (bufferIndex >= bufferLastIndex) reset();
+	}
     return messageState;
 }
 
@@ -173,14 +176,13 @@ uint8_t CmdMessenger::processLine(char serialChar)
  */
 void CmdMessenger::handleMessage()
 {
-    lastCommandId = readIntArg();
+    lastCommandId = readInt16Arg();
     // if command attached, we will call it
     if (lastCommandId >= 0 && lastCommandId < MAXCALLBACKS && ArgOk && callbackList[lastCommandId] != NULL)
         (*callbackList[lastCommandId])();
     else // If command not attached, call default callback (if attached)
         if (default_callback!=NULL) (*default_callback)();
 }
-
 
 /**
  * Waits for reply from sender or timeout before continuing
@@ -206,7 +208,7 @@ bool CmdMessenger::CheckForAck(int AckCommand)
 		//Processes a byte and determines if an acknowlegde has come in
 		int messageState = processLine(comms->read());
 		if ( messageState == kEndOfMessage ) {
-			int id = readIntArg();
+			int id = readInt16Arg();
 			if (AckCommand==id && ArgOk) {
 				return true;
 			} else {
@@ -297,16 +299,30 @@ void CmdMessenger::sendCmdEscArg(char* arg)
  */
 void CmdMessenger::sendCmdfArg(char *fmt, ...)
 {
+	const int maxMessageSize = 128;
     if (startCommand) {
-        char msg[128];
+        char msg[maxMessageSize];
         va_list args;
         va_start (args, fmt );
-        vsnprintf(msg, 188, fmt, args);
+        vsnprintf(msg, maxMessageSize, fmt, args);
         va_end (args);
 
         comms->print(field_separator);
         comms->print(msg);
     }
+}
+
+/**
+ * Send double argument in scientific format.
+ *  This will overcome the boundary of normal float sending which is limited to abs(f) <= MAXLONG
+ */
+void CmdMessenger::sendCmdSciArg (double arg, int n)
+{
+if (startCommand)
+  {
+	comms->print (field_separator);
+	printSci (arg, n);
+  }
 }
 
 /**
@@ -328,6 +344,30 @@ bool CmdMessenger::sendCmdEnd(bool reqAc, int ackCmdId, int timeout)
     return ackReply;
 }
 
+/**
+ * Send a command without arguments, with acknowledge
+ */
+bool CmdMessenger::sendCmd (int cmdId, bool reqAc, int ackCmdId)
+{
+    if (!startCommand) {
+        sendCmdStart (cmdId);
+        return sendCmdEnd (reqAc, ackCmdId, DEFAULT_TIMEOUT);
+    }
+    return false;
+}
+
+/**
+ * Send a command without arguments, without acknowledge
+ */
+bool CmdMessenger::sendCmd (int cmdId)
+{
+    if (!startCommand) {
+        sendCmdStart (cmdId);
+        return sendCmdEnd (false, 1, DEFAULT_TIMEOUT);
+    }
+    return false;
+}
+
 // **** Command receiving ****
 
 /**
@@ -336,10 +376,15 @@ bool CmdMessenger::sendCmdEnd(bool reqAc, int ackCmdId, int timeout)
 int CmdMessenger::findNext(char *str, char delim)
 {
     int pos = 0;
-    bool escaped;
-    ArglastChar = NULL;
-    while (*str != '\0') {
+    bool escaped = false;
+	bool EOL = false;
+    ArglastChar = '\0';
+    while (true) {
         escaped = isEscaped(str,escape_character,&ArglastChar);
+		EOL = (*str == '\0' && !escaped);
+		if (EOL) { 
+			return pos;
+		}
         if (*str==field_separator && !escaped) {
             return pos;
         } else {
@@ -353,7 +398,7 @@ int CmdMessenger::findNext(char *str, char delim)
 /**
  * Read the next argument as int
  */
-int CmdMessenger::readIntArg()
+int16_t CmdMessenger::readInt16Arg()
 {
     if (next()) {
         dumped = true;
@@ -367,7 +412,7 @@ int CmdMessenger::readIntArg()
 /**
  * Read the next argument as int
  */
-long CmdMessenger::readLongArg()
+int32_t CmdMessenger::readInt32Arg()
 {
     if (next()) {
         dumped = true;
@@ -383,8 +428,7 @@ long CmdMessenger::readLongArg()
  */
 bool CmdMessenger::readBoolArg()
 {
-	return (readIntArg()!=0)?true:false;
-    
+	return (readInt16Arg()!=0)?true:false;   
 }
 
 /**
@@ -409,7 +453,22 @@ float CmdMessenger::readFloatArg()
     if (next()) {
         dumped = true;
 		ArgOk  = true;
-        return atof(current);
+        //return atof(current);
+		return strtod(current,NULL);
+    }
+	ArgOk  = false;
+    return 0;
+}
+
+/**
+ * Read the next argument as double
+ */
+double CmdMessenger::readDoubleArg()
+{
+    if (next()) {
+        dumped = true;
+		ArgOk  = true;
+        return strtod(current,NULL);
     }
 	ArgOk  = false;
     return 0;
@@ -554,4 +613,60 @@ void CmdMessenger::printEsc(char str)
         comms->print(escape_character);
     }
     comms->print(str);
+}
+
+/**
+ * Print float and double in scientific format
+ */
+void CmdMessenger::printSci(double f, unsigned int digits)
+{
+  // handle sign
+  if (f < 0.0)
+  {
+    Serial.print('-');
+    f = -f;
+  } 
+  
+  // handle infinite values
+  if (isinf(f))
+  {
+    Serial.print("INF");
+    return;
+  }
+  // handle Not a Number
+  if (isnan(f)) 
+  {
+    Serial.print("NaN");
+    return;
+  }
+
+  // max digits
+  if (digits > 6) digits = 6;
+  long multiplier = pow(10, digits);     // fix int => long
+
+  int exponent;
+  if (abs(f) < 10.0) { 
+	exponent = 0;
+  }	else {
+	exponent = int(log10(f));
+  }
+  float g = f / pow(10, exponent);
+  if ((g < 1.0) && (g != 0.0))      
+  {
+    g *= 10;
+    exponent--;
+  }
+ 
+  long whole = long(g);                     // single digit
+  long part = long((g-whole)*multiplier+0.5);  // # digits
+  // Check for rounding above .99:
+  if (part == 100) {
+	  whole++;
+	  part = 0;
+  }
+  char format[16];
+  sprintf(format, "%%ld.%%0%dldE%%+d", digits);
+  char output[16];
+  sprintf(output,format, whole, part, exponent);
+  comms->print(output);
 }

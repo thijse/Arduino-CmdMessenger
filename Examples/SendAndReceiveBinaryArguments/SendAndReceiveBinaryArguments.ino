@@ -46,8 +46,8 @@ void OnUnknownCommand()
 void OnRequestPlainTextFloatSeries()
 {
   // Get series length from 1st parameter
-  int seriesLength = cmdMessenger.readIntArg();
-  float seriesBase = cmdMessenger.readFloatArg();
+  int16_t seriesLength = cmdMessenger.readInt16Arg();
+  float seriesBase     = cmdMessenger.readFloatArg();
  
   // Send back series of floats
   for(int i=0;i< seriesLength;i++) {
@@ -61,8 +61,8 @@ void OnRequestPlainTextFloatSeries()
 void OnRequestBinaryFloatSeries()
 {
   // Get series length from 1st parameter
-  int seriesLength = cmdMessenger.readBinArg<uint16_t>();
-  float seriesBase = cmdMessenger.readBinArg<float>(); 
+  int16_t seriesLength = cmdMessenger.readBinArg<uint16_t>();
+  float seriesBase     = cmdMessenger.readBinArg<float>(); 
 
   // Disable new lines, this saves another 2 chars per command
   cmdMessenger.printLfCr(false); 

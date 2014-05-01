@@ -18,7 +18,6 @@
 #endregion
 
 using System;
-using System.Linq;
 
 namespace CommandMessenger
 {
@@ -30,7 +29,7 @@ namespace CommandMessenger
 
         /// <summary> Gets or sets the command input. </summary>
         /// <value> The raw string. </value>
-        public string rawString { get; set; }
+        public string RawString { get; set; }
 
         /// <summary> Default constructor. </summary>
         public ReceivedCommand()
@@ -152,12 +151,12 @@ namespace CommandMessenger
 
         /// <summary> Reads the current argument as a float value. </summary>
         /// <returns> The float value. </returns>
-        public Single ReadFloatArg()
+        public float ReadFloatArg()
         {
             if (Next())
             {
-                Single current;
-                if (Single.TryParse(_arguments[_parameter], out current))
+                float current;
+                if (float.TryParse(_arguments[_parameter], out current))
                 {
                     _dumped = true;
                     return current;
@@ -168,15 +167,27 @@ namespace CommandMessenger
 
         /// <summary> Reads the current argument as a double value. </summary>
         /// <returns> The unsigned double value. </returns>
-        public Single ReadDoubleArg()
+        public Double ReadDoubleArg()
         {
             if (Next())
             {
-                Single current;
-                if (Single.TryParse(_arguments[_parameter], out current))
+                if (BoardType == BoardType.Bit16)
                 {
-                    _dumped = true;
-                    return current;
+                    float current;
+                    if (float.TryParse(_arguments[_parameter], out current))
+                    {
+                        _dumped = true;
+                        return (Double) current;
+                    }
+                }
+                else
+                {
+                    Double current;
+                    if (Double.TryParse(_arguments[_parameter], out current))
+                    {
+                        _dumped = true;
+                        return current;
+                    }  
                 }
             }
             return 0;
@@ -201,7 +212,7 @@ namespace CommandMessenger
 
         /// <summary> Reads the current binary argument as a float value. </summary>
         /// <returns> The float value. </returns>
-        public Single ReadBinFloatArg()
+        public float ReadBinFloatArg()
         {
             if (Next())
             {
@@ -221,11 +232,23 @@ namespace CommandMessenger
         {
             if (Next())
             {
-                var current = BinaryConverter.ToDouble(_arguments[_parameter]);
-                if (current != null)
+                if (BoardType == BoardType.Bit16)
                 {
-                    _dumped = true;
-                    return (double) current;
+                    var current = BinaryConverter.ToFloat(_arguments[_parameter]);
+                    if (current != null)
+                    {
+                        _dumped = true;
+                        return (double) current;
+                    }
+                }
+                else
+                {
+                    var current = BinaryConverter.ToDouble(_arguments[_parameter]);
+                    if (current != null)
+                    {
+                        _dumped = true;
+                        return (double)current;
+                    }                    
                 }
             }
             return 0;
@@ -264,7 +287,7 @@ namespace CommandMessenger
         }
 
         /// <summary> Reads the current binary argument as a int value. </summary>
-        /// <returns> The int value. </returns>
+        /// <returns> The int32 value. </returns>
         public Int32 ReadBinInt32Arg()
         {
             if (Next())

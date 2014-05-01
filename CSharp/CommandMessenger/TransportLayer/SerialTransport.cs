@@ -30,6 +30,7 @@ namespace CommandMessenger.TransportLayer
     {
         Start,
         Stop,
+        Abort,
     }
 
     /// <summary>Fas
@@ -37,7 +38,7 @@ namespace CommandMessenger.TransportLayer
     /// </summary>
     public class SerialTransport : DisposableObject, ITransport
     {
-        private readonly QueueSpeed _queueSpeed = new QueueSpeed(4);
+        private readonly QueueSpeed _queueSpeed = new QueueSpeed(4,10);
         private Thread _queueThread;
 
         public ThreadRunStates ThreadRunState = ThreadRunStates.Start;
@@ -113,16 +114,19 @@ namespace CommandMessenger.TransportLayer
         protected  void ProcessQueue()
         {
             // Endless loop
-            while (ThreadRunState == ThreadRunStates.Start)
+            while (ThreadRunState != ThreadRunStates.Abort)
             {
                 var bytes = BytesInBuffer();
-                    _queueSpeed.SetCount(bytes);
-                    _queueSpeed.CalcSleepTimeWithoutLoad();
-                    _queueSpeed.Sleep();
-                if (bytes > 0)
-                {                    
-                    if (NewDataReceived != null) NewDataReceived(this, null);
-                }                    
+                _queueSpeed.SetCount(bytes);
+                _queueSpeed.CalcSleepTimeWithoutLoad();
+                _queueSpeed.Sleep();
+                if (ThreadRunState == ThreadRunStates.Start)
+                {
+                    if (bytes > 0)
+                    {
+                        if (NewDataReceived != null) NewDataReceived(this, null);
+                    }
+                }
             }
             _queueSpeed.Sleep(50);
         }
@@ -160,19 +164,18 @@ namespace CommandMessenger.TransportLayer
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Open()
         {
-            try
+            if (!IsOpen())
             {
-                if (SerialPort != null && PortExists())
-                {
-                    _serialPort.Open();
-                    return _serialPort.IsOpen;
-                }
+                _serialPort.Open();
+                return IsOpen();
             }
-            catch
-            {
-                return false;
-            }
-            return false;
+
+            return true;
+        }
+
+        public bool IsConnected()
+        {
+            return IsOpen();
         }
 
         /// <summary> Queries if a given port exists. </summary>

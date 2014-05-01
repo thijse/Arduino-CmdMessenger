@@ -132,6 +132,9 @@
 <li>CalcSleepTimeWithoutLoad()
 : <a class="el" href="class_command_messenger_1_1_queue_speed.html#aee52c4d1ea351788fe70e09d659fc422">CommandMessenger.QueueSpeed</a>
 </li>
+<li>CharsToBytes()
+: <a class="el" href="class_command_messenger_1_1_binary_converter.html#a65522c39b56adea1421bbeea9c197d1e">CommandMessenger.BinaryConverter</a>
+</li>
 <li>Clear()
 : <a class="el" href="class_command_messenger_1_1_command_queue.html#a9f885bb970ac4d6ca73157d34f0caf31">CommandMessenger.CommandQueue</a>
 </li>
@@ -145,7 +148,7 @@
 : <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#af97ca9e7f6f671bbaa3ec10547db1c85">CommandMessenger.TransportLayer.SerialTransport</a>
 </li>
 <li>CmdMessenger()
-: <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a909a469d3ad33f088461cec007403bbf">CommandMessenger.CmdMessenger</a>
+: <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a07dd5b57e8879c7a2fcb1148a3866687">CommandMessenger.CmdMessenger</a>
 </li>
 <li>CollapseCommandStrategy()
 : <a class="el" href="class_command_messenger_1_1_collapse_command_strategy.html#ae6eeda6ba8690513465f75cd57ee658c">CommandMessenger.CollapseCommandStrategy</a>
@@ -160,7 +163,7 @@
 : <a class="el" href="class_command_messenger_1_1_command_strategy.html#a9ed9d1c722a4710c5185857f87404e8f">CommandMessenger.CommandStrategy</a>
 </li>
 <li>CommunicationManager()
-: <a class="el" href="class_command_messenger_1_1_communication_manager.html#adf06bf1847254f0185d00320f0cd6186">CommandMessenger.CommunicationManager</a>
+: <a class="el" href="class_command_messenger_1_1_communication_manager.html#a6e87e73a04ec8df2d78770da35131d31">CommandMessenger.CommunicationManager</a>
 </li>
 <li>ConvertEncoding()
 : <a class="el" href="class_command_messenger_1_1_string_utils.html#a4a4b78b42274b4451406adc04d5e8629">CommandMessenger.StringUtils</a>
@@ -215,7 +218,10 @@
 : <a class="el" href="class_command_messenger_1_1_binary_converter.html#a375cc5ea4c592f13c69ccd8517530cc4">CommandMessenger.BinaryConverter</a>
 </li>
 <li>ExecuteSendCommand()
-: <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a6d15bdc8e285a1bc62cda8bd6cce257a">CommandMessenger.CmdMessenger</a>
+: <a class="el" href="class_command_messenger_1_1_sender.html#a1044b7927824f50a15436acf83cff2ad">CommandMessenger.Sender</a>
+</li>
+<li>ExecuteSendString()
+: <a class="el" href="class_command_messenger_1_1_sender.html#a410adbce1454847726e7ffeae70be43e">CommandMessenger.Sender</a>
 </li>
 </ul>
 
@@ -299,12 +305,13 @@
 <h3><a class="anchor" id="index_q"></a>- q -</h3><ul>
 <li>QueueCommand()
 : <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a0398d0d8f45a1c6b02df018dbb13f6b9">CommandMessenger.CmdMessenger</a>
+, <a class="el" href="class_command_messenger_1_1_receive_command_queue.html#adc0d58abe8501094d5f76b9e801a1e66">CommandMessenger.ReceiveCommandQueue</a>
 , <a class="el" href="class_command_messenger_1_1_send_command_queue.html#a59dafe7d72a2a7ea9a08395a8d36739f">CommandMessenger.SendCommandQueue</a>
 , <a class="el" href="class_command_messenger_1_1_receive_command_queue.html#ad025552cc26f8a7953961843d9b20915">CommandMessenger.ReceiveCommandQueue</a>
 , <a class="el" href="class_command_messenger_1_1_command_queue.html#a94e7cd7c62dba06ebf092384aea4c4a6">CommandMessenger.CommandQueue</a>
 </li>
 <li>QueueSpeed()
-: <a class="el" href="class_command_messenger_1_1_queue_speed.html#a62e70211085d6a055f26fe4478357fc9">CommandMessenger.QueueSpeed</a>
+: <a class="el" href="class_command_messenger_1_1_queue_speed.html#a6bad77b99371a49247c3b7f6878eee6e">CommandMessenger.QueueSpeed</a>
 </li>
 </ul>
 
@@ -320,7 +327,7 @@
 : <a class="el" href="class_command_messenger_1_1_received_command.html#a132ec1ad80f52f387404fc8e3c9c7d60">CommandMessenger.ReceivedCommand</a>
 </li>
 <li>ReadBinFloatArg()
-: <a class="el" href="class_command_messenger_1_1_received_command.html#a335b84595cab337e0522f761627c8084">CommandMessenger.ReceivedCommand</a>
+: <a class="el" href="class_command_messenger_1_1_received_command.html#a46706ff62b716995f2b56922c36ed99e">CommandMessenger.ReceivedCommand</a>
 </li>
 <li>ReadBinInt16Arg()
 : <a class="el" href="class_command_messenger_1_1_received_command.html#aa816592b899ae61bb95c7ec94f569533">CommandMessenger.ReceivedCommand</a>
@@ -341,10 +348,10 @@
 : <a class="el" href="class_command_messenger_1_1_received_command.html#a255c3dfa8f5999f0005fe480c4c4f388">CommandMessenger.ReceivedCommand</a>
 </li>
 <li>ReadDoubleArg()
-: <a class="el" href="class_command_messenger_1_1_received_command.html#a67687eb91904af028004894090a02540">CommandMessenger.ReceivedCommand</a>
+: <a class="el" href="class_command_messenger_1_1_received_command.html#ac438f3efb2d140bc3d69e84473679ce7">CommandMessenger.ReceivedCommand</a>
 </li>
 <li>ReadFloatArg()
-: <a class="el" href="class_command_messenger_1_1_received_command.html#a0fd35e972deb75dada5c5c15057f8002">CommandMessenger.ReceivedCommand</a>
+: <a class="el" href="class_command_messenger_1_1_received_command.html#ab85b82bfaa05e3315fdd085ba3e5a466">CommandMessenger.ReceivedCommand</a>
 </li>
 <li>ReadInt16Arg()
 : <a class="el" href="class_command_messenger_1_1_received_command.html#a3ec2913e7f539e27908dfffadeb83cb2">CommandMessenger.ReceivedCommand</a>
@@ -379,12 +386,13 @@
 <h3><a class="anchor" id="index_s"></a>- s -</h3><ul>
 <li>SendCommand()
 : <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ad38b4f7b5658a1f8980aa38eda80b9f4">CommandMessenger.CmdMessenger</a>
-, <a class="el" href="class_command_messenger_1_1_send_command.html#a8809c2b70006ef6137d6dff6f0dc36f2">CommandMessenger.SendCommand</a>
 , <a class="el" href="class_command_messenger_1_1_send_command_queue.html#a40855f29251762cf01496499050aeed7">CommandMessenger.SendCommandQueue</a>
-, <a class="el" href="class_command_messenger_1_1_send_command.html#ac71a790a7ac6b0cb1b62b840be19dbbf">CommandMessenger.SendCommand</a>
+, <a class="el" href="class_command_messenger_1_1_send_command.html#a3e9d99a1f03854db1396d35aa657ac7e">CommandMessenger.SendCommand</a>
+, <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a74a7b7d9bab4d777b033d263b8d16c2a">CommandMessenger.CmdMessenger</a>
+, <a class="el" href="class_command_messenger_1_1_send_command.html#af9cfccd37a93d4afddfc8de4d7f42a2a">CommandMessenger.SendCommand</a>
 </li>
 <li>SendCommandQueue()
-: <a class="el" href="class_command_messenger_1_1_send_command_queue.html#ab1cc02b7db52797cfd2f2907e91c822f">CommandMessenger.SendCommandQueue</a>
+: <a class="el" href="class_command_messenger_1_1_send_command_queue.html#a0a0ed574ccf18f89ea785b336348c36a">CommandMessenger.SendCommandQueue</a>
 </li>
 <li>SerialTransport()
 : <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a16c27cfd2c023245ae59f0441dba76bb">CommandMessenger.TransportLayer.SerialTransport</a>
@@ -408,9 +416,9 @@
 : <a class="el" href="class_command_messenger_1_1_timed_action.html#afdf1bbaed54d16725c1c7734d0856a52">CommandMessenger.TimedAction</a>
 </li>
 <li>StartListening()
-: <a class="el" href="class_command_messenger_1_1_communication_manager.html#a1794b86c7c00184ad2d901a42f016703">CommandMessenger.CommunicationManager</a>
+: <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#aed0ef21f531ae9ad038c7ca3a1996e05">CommandMessenger.CmdMessenger</a>
+, <a class="el" href="class_command_messenger_1_1_communication_manager.html#a1794b86c7c00184ad2d901a42f016703">CommandMessenger.CommunicationManager</a>
 , <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a65a2e6eb0d68b5656bb19f984c382aee">CommandMessenger.TransportLayer.SerialTransport</a>
-, <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#aed0ef21f531ae9ad038c7ca3a1996e05">CommandMessenger.CmdMessenger</a>
 </li>
 <li>Stop()
 : <a class="el" href="class_command_messenger_1_1_timed_action.html#ad704b672a083f7cab330d32ccaf1deb1">CommandMessenger.TimedAction</a>
@@ -419,14 +427,20 @@
 : <a class="el" href="class_command_messenger_1_1_timed_action.html#a3ce7771e5bbff75591c3178b316a233b">CommandMessenger.TimedAction</a>
 </li>
 <li>StopListening()
-: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a44356e752434aa01ef6fc98cb28c715d">CommandMessenger.TransportLayer.SerialTransport</a>
-, <a class="el" href="class_command_messenger_1_1_communication_manager.html#adb730476dea4b549a0772c4bf7f68d34">CommandMessenger.CommunicationManager</a>
+: <a class="el" href="class_command_messenger_1_1_communication_manager.html#adb730476dea4b549a0772c4bf7f68d34">CommandMessenger.CommunicationManager</a>
+, <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a44356e752434aa01ef6fc98cb28c715d">CommandMessenger.TransportLayer.SerialTransport</a>
 , <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a6a3f917bab92d23691186eb5bdee00ae">CommandMessenger.CmdMessenger</a>
+</li>
+<li>StringToBytes()
+: <a class="el" href="class_command_messenger_1_1_binary_converter.html#a472d65215b5d72c5247e4a366149f58f">CommandMessenger.BinaryConverter</a>
 </li>
 </ul>
 
 
 <h3><a class="anchor" id="index_t"></a>- t -</h3><ul>
+<li>TestSendCommandWithAcknowledgementByArduino()
+: <a class="el" href="class_command_messenger_tests_1_1_acknowledge_1_1_command_messenger_test.html#a9f038d1856aa2517824a0e776dd129e0">CommandMessengerTests.Acknowledge.CommandMessengerTest</a>
+</li>
 <li>TimedAction()
 : <a class="el" href="class_command_messenger_1_1_timed_action.html#a0bcd051cbc3df3b894f25354190d6ff1">CommandMessenger.TimedAction</a>
 </li>
@@ -436,8 +450,11 @@
 <li>ToDouble()
 : <a class="el" href="class_command_messenger_1_1_binary_converter.html#a508e13b267ece1da9af9509df066a8ef">CommandMessenger.BinaryConverter</a>
 </li>
+<li>ToExactString()
+: <a class="el" href="class_command_messenger_tests_1_1_double_converter.html#a6ec0cfbe4b989a4d4e74a2cfc64fc172">CommandMessengerTests.DoubleConverter</a>
+</li>
 <li>ToFloat()
-: <a class="el" href="class_command_messenger_1_1_binary_converter.html#a28c836b886a07d2ba417026c208a895a">CommandMessenger.BinaryConverter</a>
+: <a class="el" href="class_command_messenger_1_1_binary_converter.html#a58c7b802193ab213fe3f0593be47cf5b">CommandMessenger.BinaryConverter</a>
 </li>
 <li>ToInt16()
 : <a class="el" href="class_command_messenger_1_1_binary_converter.html#aca7755e36945c6d397e873f9c392108b">CommandMessenger.BinaryConverter</a>
@@ -449,7 +466,7 @@
 : <a class="el" href="class_command_messenger_1_1_top_command_strategy.html#a1f648b032a4557974bc2640f5ef7e737">CommandMessenger.TopCommandStrategy</a>
 </li>
 <li>ToString()
-: <a class="el" href="class_command_messenger_1_1_binary_converter.html#a81a63fa84b955ee598955cf3b346c0a0">CommandMessenger.BinaryConverter</a>
+: <a class="el" href="class_command_messenger_1_1_binary_converter.html#ae61e7f39f0cbacb8f0109f995cee19b4">CommandMessenger.BinaryConverter</a>
 </li>
 <li>ToUInt16()
 : <a class="el" href="class_command_messenger_1_1_binary_converter.html#a2c7faf640b107dc6f3f6530db6d7afac">CommandMessenger.BinaryConverter</a>
@@ -489,7 +506,7 @@
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jan 3 2014 22:54:43 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 1 2014 23:14:09 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

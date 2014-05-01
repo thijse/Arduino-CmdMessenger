@@ -26,12 +26,17 @@ namespace CommandMessenger
     /// <summary> A command to be send by CmdMessenger </summary>
     public class Command
     {
-        protected List<String> _arguments;	// The argument list of the command, first one is the command ID
-        
+        public static char FieldSeparator { get; set; }
+        public static char CommandSeparator { get; set; }
+        public static bool PrintLfCr { get; set; }
+        public static BoardType BoardType { get; set; }
+
+        protected List<String> _arguments; // The argument list of the command, first one is the command ID
+
         /// <summary> Gets or sets the command ID. </summary>
         /// <value> The command ID. </value>
         public int CmdId { get; set; }
-  
+
         /// <summary> Gets the command arguments. </summary>
         /// <value> The arguments, first one is the command ID </value>
         public String[] Arguments
@@ -46,9 +51,9 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         public Command()
         {
-			CmdId = -1;
+            CmdId = -1;
             _arguments = new List<string>();
-            TimeStamp =  TimeUtils.Millis;
+            TimeStamp = TimeUtils.Millis;
         }
 
         /// <summary> Returns whether this is a valid & filled command. </summary>
@@ -58,5 +63,16 @@ namespace CommandMessenger
             get { return (CmdId >= 0); }
         }
 
+        public string CommandString() {
+            var commandString = CmdId.ToString(CultureInfo.InvariantCulture);
+
+            foreach (var argument in Arguments)
+            {
+                commandString += FieldSeparator + argument;
+            }
+            commandString += CommandSeparator;
+            return commandString;
     }
+
+}
 }

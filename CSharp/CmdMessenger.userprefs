@@ -1,13 +1,17 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="ArduinoController\ArduinoController.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="CommandMessengerTests\Common.cs">
     <Files>
-      <File FileName="ArduinoController\ControllerForm.cs" Line="1" Column="1" />
-      <File FileName="ArduinoController\ArduinoController.cs" Line="1" Column="1" />
+      <File FileName="ArduinoController\ArduinoController.cs" Line="60" Column="7" />
+      <File FileName="CommandMessengerTests\Common.cs" Line="276" Column="27" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="D:\My Documents\Github\Arduino-Code-and-Libraries\Libraries\CmdMessenger\CSharp\CommandMessengerTests\Common.cs" line="266" column="1" />
+      <Breakpoint file="D:\My Documents\Github\Arduino-Code-and-Libraries\Libraries\CmdMessenger\CSharp\CommandMessengerTests\Common.cs" line="229" column="1" />
+      <Breakpoint file="D:\My Documents\Github\Arduino-Code-and-Libraries\Libraries\CmdMessenger\CSharp\CommandMessengerTests\Common.cs" line="235" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>

@@ -31,13 +31,14 @@ namespace SendAndReceiveBinaryArguments
         public bool RunLoop { get; set; }
         private SerialTransport _serialTransport;
         private CmdMessenger _cmdMessenger;
-        private int _receivedPlainTextCount;                    // Counter of number of plain text items received
-        private int _receivedBinaryCount;                       // Counter of number of binary items received
+        private int _receivedItemsCount;                    // Counter of number of plain text items received
+        private int _receivedBytesCount;               // Counter of number of plain text bytes received
+        //private int _receivedBinaryCount;                       // Counter of number of binary items received
         long _beginTime;                                        // Start time, 1st item of sequence received 
         long _endTime;                                          // End time, last item of sequence received 
         private bool _receivePlainTextFloatSeriesFinished;      // Indicates if plain text float series has been fully received
         private bool _receiveBinaryFloatSeriesFinished;         // Indicates if binary float series has been fully received
-        const int SeriesLength = 5000;                          // Number of items we like to receive from the Arduino
+        const int SeriesLength = 2000;                          // Number of items we like to receive from the Arduino
         private const float SeriesBase = 1111111.111111F;       // Base of values to return: SeriesBase * (0..SeriesLength-1)
 
         // ------------------ M A I N  ----------------------
@@ -52,7 +53,10 @@ namespace SendAndReceiveBinaryArguments
             };
 
             // Initialize the command messenger with the Serial Port transport layer
-            _cmdMessenger = new CmdMessenger(_serialTransport);
+            _cmdMessenger = new CmdMessenger(_serialTransport)
+            {
+                BoardType = BoardType.Bit16 // Set if it is communicating with a 16- or 32-bit Arduino board
+            };
 
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();                
@@ -60,9 +64,10 @@ namespace SendAndReceiveBinaryArguments
             // Start listening
             _cmdMessenger.StartListening();
 
-            _receivedPlainTextCount = 0;
+            _receivedItemsCount = 0;
+            _receivedBytesCount = 0;
             
-            // Send command requesting a series of 100 float values send in plain text
+            // Send command requesting a series of 100 float values send in plain text form
             var commandPlainText = new SendCommand((int)Command.RequestPlainTextFloatSeries);
             commandPlainText.AddArgument(SeriesLength);
             commandPlainText.AddArgument(SeriesBase);
@@ -72,10 +77,12 @@ namespace SendAndReceiveBinaryArguments
             // Now wait until all values have arrived
             while (!_receivePlainTextFloatSeriesFinished) {}
 
-            // Send command requesting a series of 100 float values send in plain text
+            _receivedItemsCount = 0;
+            _receivedBytesCount = 0;
+            // Send command requesting a series of 100 float values send in binary form
             var commandBinary = new SendCommand((int)Command.RequestBinaryFloatSeries);
             commandBinary.AddBinArgument((UInt16)SeriesLength);
-            commandBinary.AddBinArgument((Single)SeriesBase); 
+            commandBinary.AddBinArgument((float)SeriesBase); 
             
             // Send command 
             _cmdMessenger.SendCommand(commandBinary);
@@ -123,44 +130,84 @@ namespace SendAndReceiveBinaryArguments
             Console.WriteLine("Command without attached callback received");
         }
 
+
         // Callback function To receive the plain text float series from the Arduino
         void OnReceivePlainTextFloatSeries(ReceivedCommand arguments)
         {
-            if (_receivedPlainTextCount % (SeriesLength/10) == 0)
+            _receivedBytesCount += CountBytesInCommand(arguments, true);
+
+
+            if (_receivedItemsCount % (SeriesLength/10) == 0)
                 Console.WriteLine("Received value: {0}",arguments.ReadFloatArg());
-            if (_receivedPlainTextCount == 0)
+            if (_receivedItemsCount == 0)
             {
                 // Received first value, start stopwatch
                 _beginTime = Millis;
             }
-            else if (_receivedPlainTextCount == SeriesLength - 1)
+            else if (_receivedItemsCount == SeriesLength - 1)
             {
                 // Received all values, stop stopwatch
                 _endTime = Millis;
-                Console.WriteLine("{0} milliseconds per {1} items = is {2} ms/item", _endTime - _beginTime, SeriesLength, (_endTime - _beginTime) / (float)SeriesLength);
+                var deltaTime = (_endTime - _beginTime);
+                Console.WriteLine("{0} milliseconds per {1} items = is {2} ms/item, {3} Hz",
+                    deltaTime, 
+                    SeriesLength, 
+                    (float)deltaTime / (float)SeriesLength,
+                    (float)1000 * SeriesLength / (float)deltaTime
+                    );
+                Console.WriteLine("{0} milliseconds per {1} bytes = is {2} ms/byte,  {3} bytes/sec, {4} bps",
+                    deltaTime,
+                    _receivedBytesCount,
+                    (float)deltaTime / (float)_receivedBytesCount,
+                    (float)1000 * _receivedBytesCount / (float)deltaTime,
+                    (float)8 * 1000 * _receivedBytesCount / (float)deltaTime
+                    );
                 _receivePlainTextFloatSeriesFinished = true;
            }            
-            _receivedPlainTextCount++;     
+            _receivedItemsCount++;     
+        }
+
+        private int CountBytesInCommand(CommandMessenger.Command command, bool printLfCr)
+        {
+            var bytes = command.CommandString().Length; // Command + command separator
+            //var bytes = _cmdMessenger.CommandToString(command).Length + 1; // Command + command separator
+            if (printLfCr) bytes += Environment.NewLine.Length; // Add  bytes for carriage return ('\r') and /or a newline  ('\n')
+            return bytes;
         }
 
         // Callback function To receive the binary float series from the Arduino
         void OnReceiveBinaryFloatSeries(ReceivedCommand arguments)
         {
-            if (_receivedBinaryCount % (SeriesLength / 10) == 0)
+            _receivedBytesCount += CountBytesInCommand(arguments, false);
+
+            if (_receivedItemsCount % (SeriesLength / 10) == 0)
                     Console.WriteLine("Received value: {0}", arguments.ReadBinFloatArg());
-            if (_receivedBinaryCount == 0)
+            if (_receivedItemsCount == 0)
             {
                 // Received first value, start stopwatch
                 _beginTime = Millis;
             }
-            else if (_receivedBinaryCount == SeriesLength - 1)
+            else if (_receivedItemsCount == SeriesLength - 1)
             {
                 // Received all values, stop stopwatch
                 _endTime = Millis;
-                Console.WriteLine("{0} milliseconds per {1} items = is {2} ms/item", _endTime - _beginTime, SeriesLength, (_endTime - _beginTime) / (float)SeriesLength);
+                var deltaTime = (_endTime - _beginTime);
+                Console.WriteLine("{0} milliseconds per {1} items = is {2} ms/item, {3} Hz",
+                    deltaTime,
+                    SeriesLength,
+                    (float)deltaTime / (float)SeriesLength,
+                    (float)1000 * SeriesLength / (float)deltaTime
+                    );
+                Console.WriteLine("{0} milliseconds per {1} bytes = is {2} ms/byte,  {3} bytes/sec, {4} bps",
+                    deltaTime,
+                    _receivedBytesCount,
+                    (float)deltaTime / (float)_receivedBytesCount,
+                    (float)1000 * _receivedBytesCount / (float)deltaTime,
+                    (float)8 * 1000 * _receivedBytesCount / (float)deltaTime
+                    );
                 _receiveBinaryFloatSeriesFinished = true;
             }
-            _receivedBinaryCount++;
+            _receivedItemsCount++;
         }
 
         // Return Milliseconds since 1970
