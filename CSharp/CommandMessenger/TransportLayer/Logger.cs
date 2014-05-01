@@ -10,9 +10,12 @@ namespace CommandMessenger.TransportLayer
         private FileStream _fileStream;
         private string _logFileName;
 
+
         public Logger(string logFileName)
         {
             LogFileName = logFileName;
+            isEnabled = true;
+            isOpen = false;
         }
 
         public Logger()
@@ -22,13 +25,11 @@ namespace CommandMessenger.TransportLayer
 
         ~Logger()
         {
-            try
-            {
-                _fileStream.Close();
-            }
-            catch (Exception) { }
+            Close();
         }
 
+        public bool isEnabled { get; set; }
+        public bool isOpen { get; private set; }
 
         /// <summary> Gets or sets the log file name. </summary>
         /// <value> The logfile name . </value>
@@ -39,19 +40,28 @@ namespace CommandMessenger.TransportLayer
             {
                 if (value != _logFileName && value != null)
                 {
-                    if (OpenLogFile(value))
-                        _logFileName = value;
+                    _logFileName = value;
+                    if (isOpen) { Open(); }
                 }
             }
         }
 
-        private bool OpenLogFile(string logFileName)
+        public bool Open()
         {
-            try
-            {
-                _fileStream.Close();
+            return Open(LogFileName);
+        }
+
+        public bool Open(string logFileName)
+        {
+            LogFileName = logFileName;
+            if (isOpen) { 
+                try
+                {
+                    _fileStream.Close();
+                }
+                catch (Exception) {}
+                isOpen = false;
             }
-            catch (Exception) {}
 
             try
             {
@@ -62,22 +72,37 @@ namespace CommandMessenger.TransportLayer
             {
                 return false;
             }
+            isOpen = true;
             return true;
+        }
+
+        public void Close()
+        {
+            if (isOpen)
+            {
+                try
+                {
+                    _fileStream.Close();
+                }
+                catch (Exception) { }
+                isOpen = false;
+            }
         }
 
         public void Log(string logString)
         {
-            byte[] writeBytes = StringEncoder.GetBytes(logString);
-            _fileStream.Write(writeBytes, 0, writeBytes.Length);
-            _fileStream.Flush();
+            if (isEnabled && isOpen)
+            {
+                byte[] writeBytes = StringEncoder.GetBytes(logString);
+                _fileStream.Write(writeBytes, 0, writeBytes.Length);
+                _fileStream.Flush();
+            }
         }
 
 
         public void LogLine(string logString)
         {
-            byte[] writeBytes = StringEncoder.GetBytes(logString + '\n');
-            _fileStream.Write(writeBytes, 0, writeBytes.Length);
-            _fileStream.Flush();
+            Log(logString + '\n');
         }
     }
 }

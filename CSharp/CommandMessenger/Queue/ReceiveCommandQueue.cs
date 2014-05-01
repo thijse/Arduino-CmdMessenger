@@ -22,8 +22,11 @@ namespace CommandMessenger
     /// <summary> Queue of received commands.  </summary>
     public class ReceiveCommandQueue : CommandQueue
     {
+        
+        public event NewLineEvent.NewLineHandler NewLineReceived;
+        //public EventHandler NewLineReceived;
 
-        private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5);
+        private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
 
         /// <summary> Receive command queue constructor. </summary>
         /// <param name="disposeStack"> DisposeStack. </param>
@@ -55,19 +58,29 @@ namespace CommandMessenger
         /// <summary> Process the queue. </summary>
         protected override void ProcessQueue()
         {
-            // Endless loop
-            while (ThreadRunState == ThreadRunStates.Start)
+            // Endless loop unless aborted
+            while (ThreadRunState != ThreadRunStates.Abort)
             {
+               
                 // Calculate sleep time based on incoming command speed
                 _queueSpeed.SetCount(Queue.Count);
                 _queueSpeed.CalcSleepTime();
-                // Only actually sleep if there are no commands in the queue
-                if (Queue.Count == 0) _queueSpeed.Sleep();
-                
-                var dequeueCommand = DequeueCommand();
-                if (dequeueCommand != null)
+
+                // Process queue unless stopped
+                if (ThreadRunState == ThreadRunStates.Start)
                 {
-                    CmdMessenger.HandleMessage(dequeueCommand);
+                    // Only actually sleep if there are no commands in the queue
+                    if (Queue.Count == 0) _queueSpeed.Sleep();
+
+                    var dequeueCommand = DequeueCommand();
+                    if (dequeueCommand != null)
+                    {
+                        CmdMessenger.HandleMessage(dequeueCommand);
+                    }
+                }
+                else
+                {
+                    _queueSpeed.Sleep();
                 }
             }
         }
@@ -85,6 +98,7 @@ namespace CommandMessenger
         {
             lock (Queue)
             {
+                if (NewLineReceived != null) NewLineReceived(this, new NewLineEvent.NewLineArgs(commandStrategy.Command));
                 // Process all generic enqueue strategies
                 Queue.Enqueue(commandStrategy);
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }

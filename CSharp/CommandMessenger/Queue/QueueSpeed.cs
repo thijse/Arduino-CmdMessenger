@@ -31,7 +31,7 @@ namespace CommandMessenger
         private long _sleepTime;
         private const double Alpha = 0.8;
         private readonly double _targetQueue = 0.5;
-        private const long MaxSleep = 50;
+        private readonly long MaxSleep = 50;
         private const long MinSleep = 0;
 
         /// <summary> Gets or sets the QueueSpeed name. Used for debugging </summary>
@@ -45,6 +45,17 @@ namespace CommandMessenger
             _targetQueue = targetQueue;       
             _prevTime = TimeUtils.Millis;
             _sleepTime = 0;
+        }
+
+        /// <summary> Initialize the queue speed with a target filling of the queue. </summary>
+        /// <param name="targetQueue"> target filling of the queue. </param>
+        /// <param name="maxSleep">Maximum sleep times</param>
+        public QueueSpeed(double targetQueue, long maxSleep)
+        {
+            _targetQueue = targetQueue;
+            _prevTime = TimeUtils.Millis;
+            _sleepTime = 0;
+            MaxSleep = maxSleep;
         }
 
         /// <summary> Calculates the sleep time taking into account work being done in queue. </summary>

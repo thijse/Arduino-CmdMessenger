@@ -22,8 +22,19 @@ namespace DataLogging
         private RollingPointPairList _heaterPwmList;
 
         private double _goalTemperature;
-        
-        
+
+
+        // This allows a sub class to easily run a method within
+        // an UI thread without the need of creating multiple
+        // delegate signatures for each method signatures
+        protected virtual void ThreadSafe(MethodInvoker method)
+        {
+            if (InvokeRequired)
+                Invoke(method);
+            else
+                method();
+        }
+
 
         public ChartForm()
         {

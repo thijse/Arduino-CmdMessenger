@@ -90,7 +90,7 @@ void OnSetLed()
 void OnSetLedBrightness()
 {
   // Read led brightness argument, expects value between 0 to 255
-  ledBrightness = cmdMessenger.readIntArg();  
+  ledBrightness = cmdMessenger.readInt16Arg();  
   // Set led brightness
   SetBrightness();  
   // Show Led state

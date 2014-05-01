@@ -27,6 +27,7 @@ namespace CommandMessenger.TransportLayer
         byte[] Read();
         bool StartListening();
         bool StopListening();
+        bool IsConnected();
         void Write(byte[] buffer);
         event EventHandler NewDataReceived; 
     }

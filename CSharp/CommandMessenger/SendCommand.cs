@@ -255,18 +255,29 @@ namespace CommandMessenger
                 _arguments.AddRange(arguments);
         }
 
+
+
         /// <summary> Adds a command argument. </summary>
         /// <param name="argument"> The argument. </param>
-        public void AddArgument(Single argument)
+        public void AddArgument(float argument)
         {
-            _arguments.Add(argument.ToString(CultureInfo.InvariantCulture));
+            _arguments.Add(argument.ToString("R",CultureInfo.InvariantCulture));
         }
 
         /// <summary> Adds a command argument. </summary>
         /// <param name="argument"> The argument. </param>
         public void AddArgument(Double argument)
         {
-            _arguments.Add(argument.ToString(CultureInfo.InvariantCulture));
+            if (BoardType == BoardType.Bit16)
+            {
+                // Not completely sure if this is needed for plain text sending.
+                var floatArg = (float) argument;
+                _arguments.Add(floatArg.ToString("R",CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                _arguments.Add(argument.ToString("R",CultureInfo.InvariantCulture));
+            }
         }
 
         /// <summary> Adds a command argument. </summary>
@@ -287,6 +298,7 @@ namespace CommandMessenger
         /// <param name="argument"> The argument. </param>
         public void AddArgument(Int32 argument)
         {
+            // Make sure the other side can read this: on a 16 processor, read as Long
             _arguments.Add(argument.ToString(CultureInfo.InvariantCulture));
         }
 
@@ -294,6 +306,7 @@ namespace CommandMessenger
         /// <param name="argument"> The argument. </param>
         public void AddArgument(UInt32 argument)
         {
+            // Make sure the other side can read this: on a 16 processor, read as Long
             _arguments.Add(argument.ToString(CultureInfo.InvariantCulture));
         }
 
@@ -301,7 +314,7 @@ namespace CommandMessenger
         /// <param name="argument"> The argument. </param>
         public void AddArgument(bool argument)
         {
-            AddArgument((Int32) (argument ? 1 : 0));
+            AddArgument((Int16) (argument ? 1 : 0));
         }
 
         // ***** Binary **** /
@@ -315,7 +328,7 @@ namespace CommandMessenger
 
         /// <summary> Adds a binary command argument. </summary>
         /// <param name="argument"> The argument. </param>
-        public void AddBinArgument(Single argument)
+        public void AddBinArgument(float argument)
         {
             _arguments.Add(BinaryConverter.ToString(argument));
         }
@@ -324,7 +337,9 @@ namespace CommandMessenger
         /// <param name="argument"> The argument. </param>
         public void AddBinArgument(Double argument)
         {
-            _arguments.Add(BinaryConverter.ToString(argument));
+            _arguments.Add(BoardType == BoardType.Bit16
+                ? BinaryConverter.ToString((float)argument)
+                : BinaryConverter.ToString(argument));
         }
 
         /// <summary> Adds a binary command argument. </summary>

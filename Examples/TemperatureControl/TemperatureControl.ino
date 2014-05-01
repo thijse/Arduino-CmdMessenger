@@ -106,7 +106,7 @@ void OnStopLogging()
 void OnSetGoalTemperature()
 {
   // Read led state argument, interpret string as float
-  float newTemperature = cmdMessenger.readFloatArg(); 
+  float newTemperature = cmdMessenger.readBinArg<float>();
   
   // Make sure that the argument is valid before we change
   // the goal temperature
@@ -117,9 +117,7 @@ void OnSetGoalTemperature()
     controlHeater = true;  
   
     // Send acknowledgement back to PC
-    cmdMessenger.sendCmdStart(kAcknowledge); 
-    cmdMessenger.sendCmdArg(goalTemperature,5); 
-    cmdMessenger.sendCmdEnd();
+    cmdMessenger.sendBinCmd(kAcknowledge,goalTemperature); 
   } else {
     // Error in received goal temperature! Send error back to PC
     cmdMessenger.sendCmd(kError,"Error in received new goal temperature");
@@ -133,6 +131,10 @@ void setup()
 {
   // Listen on serial connection for messages from the pc
   Serial.begin(115200); 
+  
+  // Do not print newLine at end of command, 
+  // in order to reduce data being sent
+  cmdMessenger.printLfCr(false);
   
   //initialize  timers
   tempTimer.reset();
@@ -151,9 +153,6 @@ void setup()
 
   // Set pid sample time to the measure interval
   pid.SetSampleTime(measureInterval);
-
-  // Adds newline to every command
-  cmdMessenger.printLfCr();   
 
   // Attach my application's user-defined callback methods
   attachCommandCallbacks();
@@ -195,11 +194,11 @@ void measure() {
          
      // Send data to PC    
      cmdMessenger.sendCmdStart(kPlotDataPoint);  
-     cmdMessenger.sendCmdArg(seconds,4);                           // Time    
-     cmdMessenger.sendCmdArg(CurrentTemperature,5);                // Measured temperature
-     cmdMessenger.sendCmdArg(goalTemperature,5);                   // Goal temperature
-     cmdMessenger.sendCmdArg((double)((double)heaterSteerValue/(double)heaterPwmInterval)); // normalized heater steer value
-     cmdMessenger.sendCmdArg((bool)switchState);                   // On / off state during PWM cycle
+     cmdMessenger.sendCmdBinArg((float)seconds);                           // Time    
+     cmdMessenger.sendCmdBinArg((float)CurrentTemperature);                // Measured temperature
+     cmdMessenger.sendCmdBinArg((float)goalTemperature);                   // Goal temperature
+     cmdMessenger.sendCmdBinArg((float)((double)heaterSteerValue/(double)heaterPwmInterval)); // normalized heater steer value
+     cmdMessenger.sendCmdBinArg((bool)switchState);                        // On / off state during PWM cycle
      cmdMessenger.sendCmdEnd();    
   }  
 } 
@@ -217,4 +216,3 @@ void heaterPWM()
   // Output on pin switchPin 
   digitalWrite(switchPin,switchState);
 }
-

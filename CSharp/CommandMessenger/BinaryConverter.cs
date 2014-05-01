@@ -38,7 +38,7 @@ namespace CommandMessenger
         /// <summary> Convert a float into a string representation. </summary>
         /// <param name="value"> The value to be converted. </param>
         /// <returns> A string representation of this object. </returns>
-        public static string ToString(Single value)
+        public static string ToString(float value)
         {
             try
             {
@@ -151,12 +151,16 @@ namespace CommandMessenger
 
         /// <summary> Converts a string to a float. </summary>
         /// <param name="value"> The value to be converted. </param>
-        /// <returns> Input string as a Single? </returns>
-        public static Single? ToFloat(String value)
+        /// <returns> Input string as a float? </returns>
+        public static float? ToFloat(String value)
         {
             try
             {
                 byte[] bytes = EscapedStringToBytes(value);
+                if (bytes.Length < 4)
+                {
+                    return null;
+                }
                 return BitConverter.ToSingle(bytes, 0);
             }
             catch (Exception)
@@ -294,5 +298,22 @@ namespace CommandMessenger
                 return null;
             }
         }
+
+        /// <summary> Converts a string to a bytes array. </summary>
+        /// <param name="value"> The value to be converted. </param>
+        /// <returns> input value as a byte array. </returns>
+        public static byte[] StringToBytes(string value)
+        {
+            return _stringEncoder.GetBytes(value);
+        }
+
+        /// <summary> Converts a char array to a bytes array. </summary>
+        /// <param name="value"> The value to be converted. </param>
+        /// <returns> input value as a byte array. </returns>
+        public static byte[] CharsToBytes(char[] value)
+        {
+            return _stringEncoder.GetBytes(value);
+        }
+
     }
 }

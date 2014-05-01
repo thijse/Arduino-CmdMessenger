@@ -44,11 +44,15 @@ namespace Receive
 
             // Create Serial Port object
             _serialTransport = new SerialTransport();
-            _serialTransport.CurrentSerialSettings.PortName = "COM6";     // Set com port
+            _serialTransport.CurrentSerialSettings.PortName = "COM6";    // Set com port
             _serialTransport.CurrentSerialSettings.BaudRate = 115200;     // Set baud rate
-
+            _serialTransport.CurrentSerialSettings.DtrEnable = false;     // For some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.
+            
             // Initialize the command messenger with the Serial Port transport layer
             _cmdMessenger = new CmdMessenger(_serialTransport);
+
+            // Tell CmdMessenger if it is communicating with a 16 or 32 bit Arduino board
+            _cmdMessenger.BoardType = BoardType.Bit16;
             
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();
@@ -66,9 +70,12 @@ namespace Receive
             // Send command
             _cmdMessenger.SendCommand(command);
 
+            Console.Write("Turning led ");
+            Console.WriteLine(_ledState?"on":"off");
+
             // Wait for 1 second and repeat
             Thread.Sleep(1000);
-            _ledState = !_ledState;                                        // Toggle led state            
+            _ledState = !_ledState;   // Toggle led state            
         }
 
         // Exit function

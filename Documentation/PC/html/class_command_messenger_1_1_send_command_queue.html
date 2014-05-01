@@ -61,7 +61,9 @@
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pro-methods">Protected Member Functions</a>  </div>
+<a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#properties">Properties</a> &#124;
+<a href="#events">Events</a>  </div>
   <div class="headertitle">
 <div class="title">CommandMessenger.SendCommandQueue Class Reference</div>  </div>
 </div><!--header-->
@@ -84,8 +86,8 @@ Inheritance diagram for CommandMessenger.SendCommandQueue:</div>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command_queue.html#ab1cc02b7db52797cfd2f2907e91c822f">SendCommandQueue</a> (<a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a> disposeStack, <a class="el" href="class_command_messenger_1_1_cmd_messenger.html">CmdMessenger</a> cmdMessenger)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">send command queue constructor.  <a href="#ab1cc02b7db52797cfd2f2907e91c822f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command_queue.html#a0a0ed574ccf18f89ea785b336348c36a">SendCommandQueue</a> (<a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a> disposeStack, <a class="el" href="class_command_messenger_1_1_cmd_messenger.html">CmdMessenger</a> cmdMessenger, <a class="el" href="class_command_messenger_1_1_sender.html">Sender</a> sender, int sendBufferMaxLength)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">send command queue constructor.  <a href="#a0a0ed574ccf18f89ea785b336348c36a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command_queue.html#a40855f29251762cf01496499050aeed7">SendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command. Note that the command is put at the front of the queue.  <a href="#a40855f29251762cf01496499050aeed7"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command_queue.html#a3df7604c12d12b468fc109d99cdbc307">QueueCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand)</td></tr>
@@ -96,16 +98,24 @@ Public Member Functions</h2></td></tr>
 Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">override void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_send_command_queue.html#ad8c506b009d6f1b874cee455460c9370">ProcessQueue</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Process the queue.  <a href="#ad8c506b009d6f1b874cee455460c9370"></a><br/></td></tr>
+<tr><td colspan="2"><h2><a name="properties"></a>
+Properties</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9ac9a514eb4059d6a4c6164aeaaa7e0b"></a><!-- doxytag: member="CommandMessenger::SendCommandQueue::MaxQueueLength" ref="a9ac9a514eb4059d6a4c6164aeaaa7e0b" args="" -->
+uint&#160;</td><td class="memItemRight" valign="bottom"><b>MaxQueueLength</b><code> [get, set]</code></td></tr>
+<tr><td colspan="2"><h2><a name="events"></a>
+Events</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a59cbf2d9638a3e394aca26610452d443"></a><!-- doxytag: member="CommandMessenger::SendCommandQueue::NewLineSent" ref="a59cbf2d9638a3e394aca26610452d443" args="" -->
+NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewLineSent</b></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p>Queue of received commands. </p>
 </div><hr/><h2>Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ab1cc02b7db52797cfd2f2907e91c822f"></a><!-- doxytag: member="CommandMessenger::SendCommandQueue::SendCommandQueue" ref="ab1cc02b7db52797cfd2f2907e91c822f" args="(DisposeStack disposeStack, CmdMessenger cmdMessenger)" -->
+<a class="anchor" id="a0a0ed574ccf18f89ea785b336348c36a"></a><!-- doxytag: member="CommandMessenger::SendCommandQueue::SendCommandQueue" ref="a0a0ed574ccf18f89ea785b336348c36a" args="(DisposeStack disposeStack, CmdMessenger cmdMessenger, Sender sender, int sendBufferMaxLength)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_command_messenger_1_1_send_command_queue.html#ab1cc02b7db52797cfd2f2907e91c822f">CommandMessenger.SendCommandQueue.SendCommandQueue</a> </td>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_send_command_queue.html#a0a0ed574ccf18f89ea785b336348c36a">CommandMessenger.SendCommandQueue.SendCommandQueue</a> </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a>&#160;</td>
           <td class="paramname"><em>disposeStack</em>, </td>
@@ -114,7 +124,19 @@ Protected Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html">CmdMessenger</a>&#160;</td>
-          <td class="paramname"><em>cmdMessenger</em>&#160;</td>
+          <td class="paramname"><em>cmdMessenger</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_command_messenger_1_1_sender.html">Sender</a>&#160;</td>
+          <td class="paramname"><em>sender</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>sendBufferMaxLength</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -130,6 +152,7 @@ Protected Member Functions</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">disposeStack</td><td><a class="el" href="class_command_messenger_1_1_dispose_stack.html" title="The dispose stack takes manages disposal of objects that are pushed onto the stack. When the stack is disposed all objects are disposed (in reversed order).">DisposeStack</a>. </td></tr>
     <tr><td class="paramname">cmdMessenger</td><td>The command messenger. </td></tr>
+    <tr><td class="paramname">sender</td><td>Object that does the actual sending of the command</td></tr>
   </table>
   </dd>
 </dl>
@@ -241,7 +264,7 @@ Protected Member Functions</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jan 3 2014 22:54:42 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 1 2014 23:14:08 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

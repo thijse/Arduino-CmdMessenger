@@ -1,4 +1,4 @@
-# CmdMessenger v3.5
+# CmdMessenger v3.6
 
 A serial messaging library for the Arduino and .NET/Mono platform
 
@@ -106,7 +106,6 @@ This example shows how to :
 - Send queued commandssds
 - use the CollapseCommandStrategy
 
-
 ### TemperatureControl
 
 This example expands the previous ArduinoController example. The PC will now send a start command to the Arduino, and wait for a response from the Arduino. The Arduino will start sending temperature data and the heater steering value data which the PC will plot in a chart. With a slider we can set the goal temperature, which will make the PID software on the controller adjust the setting of the heater.
@@ -134,17 +133,17 @@ This example is different from the others:
    2,<led brightness>; - Set led brighness. 0 - 1000
    3;                  - Show led state
   
- Command3;
+ Command> 3;
   
   Led status: on
   Led brightness: 500
   
- Command2,1000;
+ Command> 2,1000;
   
    Led status: on
    Led brightness: 1000
   
- Command1,0;
+ Command> 1,0;
   
    Led status: off
    Led brightness: 1000
@@ -158,14 +157,26 @@ All samples are heavily documented and should be self explanatory.
 4. Enjoy!
 
 ## Trouble shooting
-* If the PC and Arduino are not able to connect, chances are that either the selected port on the PC side is not correct or that the Arduino and PC are not at the same baud rate. Try it out by typing commands into the Arduino Serial Monitor.
-* If the port and baud rate are correct but callbacks are not being invoked, try looking at logging of sent and received data. See the SendandReceiveArguments project for an example
+* If the PC and Arduino are not able to connect, chances are that either the selected port on the PC side is not correct or that the Arduino and PC are not at the same baud rate. Try it out by typing commands into the Arduino Serial Monitor, using the ConsoleShell
+* Some boards (e.g. Sparkfun Pro Micro) need DtrEnable set to be true.
+* If the port and baud rate are correct but callbacks are not being invoked, try looking at logging of sent and received data. See the SendandReceiveArguments project for an example.
+* If you have a problem that is hard to pinpoint, use the CommandMessengerTests testsuite. This project runs unit tests on several parts on the mayor parts of the CmdMessenger library. Note that the primary function is not to serve as an example, so the code may be less documented  and clean as the example projects. 
+
 
 ## Notes
 An example for use with Max5 / MaxMSP was included up until version 2. (it can still be found here https://github.com/dreamcat4/CmdMessenger).
 Since we have not been able to check it wil Max/MaxMSP, the example was removed.
 
 ## Changelog 
+
+### CmdMessenger v3.6
+* [Arduino] Bugfix: approx 1 in 1000 commands failed, when multiple binary parameters are sent over
+* [Arduino] Bugfix: Binary sending of non-number would give compile time error 
+* [Arduino] feature: Posibility to send command without argument
+* [Arduino] feature: Posibility to send floats with scientific notation, to get full float range
+* [.Net/.Mono] Added Unit tests 
+* [.Net/.Mono] Consistent variables on .NET and Arduino side. 
+* [.Net/.Mono] Major performance improvement (for boards like Teensy 3), by combining queued commands
 
 ### CmdMessenger v3.5
 * [Arduino] Added console shell sample 
@@ -181,7 +192,6 @@ Since we have not been able to check it wil Max/MaxMSP, the example was removed.
 * [Arduino] Speed improvements for Teensy
 
 ### CmdMessenger v3.2
-
 * [All] Clean transport layer interface makes it easy to implement other transport modes 
   (Bluetooth, ZigBee, Web), even if they do not implement a virtual serial port
 * [.Net/.Mono] Adaptive throttling to work with transport layers of any speed
@@ -222,5 +232,5 @@ Since we have not been able to check it wil Max/MaxMSP, the example was removed.
 
 ## Copyright
 
-CmdMessenger is provided Copyright © 2013 under MIT License.
+CmdMessenger is provided Copyright © 2013,2014 under MIT License.
 

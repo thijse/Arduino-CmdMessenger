@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "6-ArduinoController", "Ardu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7-TemperatureControl", "TemperatureControl\7-TemperatureControl.csproj", "{78810760-E45A-4ACB-8D94-0E359E2F73FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessengerTests", "CommandMessengerTests\CommandMessengerTests.csproj", "{B869057C-DAB3-4C19-958C-C89D3B1521EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,18 @@ Global
 		{A1DBBE25-AD1A-4AA0-9CB4-5BD47B495178}.Release|Mixed Platforms.Build.0 = Release|x86
 		{A1DBBE25-AD1A-4AA0-9CB4-5BD47B495178}.Release|x86.ActiveCfg = Release|x86
 		{A1DBBE25-AD1A-4AA0-9CB4-5BD47B495178}.Release|x86.Build.0 = Release|x86
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC}.Debug|Any CPU.Build.0 = Debug|x86
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC}.Debug|x86.ActiveCfg = Debug|x86
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC}.Debug|x86.Build.0 = Debug|x86
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC}.Release|Any CPU.ActiveCfg = Release|x86
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC}.Release|Any CPU.Build.0 = Release|x86
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC}.Release|Mixed Platforms.Build.0 = Release|x86
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC}.Release|x86.ActiveCfg = Release|x86
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC}.Release|x86.Build.0 = Release|x86
 		{C5545DBA-7364-4FD1-B061-9C5FA5C06141}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{C5545DBA-7364-4FD1-B061-9C5FA5C06141}.Debug|Any CPU.Build.0 = Debug|x86
 		{C5545DBA-7364-4FD1-B061-9C5FA5C06141}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
@@ -125,7 +139,7 @@ Global
 		{F994C186-EB6F-4E71-B274-DBF46F3534BB}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = DataLogging\5-DataLogging.csproj
+		StartupItem = TemperatureControl\7-TemperatureControl.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

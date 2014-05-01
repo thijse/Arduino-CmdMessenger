@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("CmdMessenger")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Philips Healthcare")]
+
 [assembly: AssemblyProduct("CmdMessenger")]
-[assembly: AssemblyCopyright("Copyright © Philips Healthcare 2013")]
+[assembly: AssemblyCopyright("Copyright © Thijs Elenbaas 2013,2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
