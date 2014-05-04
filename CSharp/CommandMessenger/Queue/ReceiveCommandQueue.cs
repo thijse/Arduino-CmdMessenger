@@ -43,16 +43,17 @@ namespace CommandMessenger
         /// <returns> The received command. </returns>
         public ReceivedCommand DequeueCommand()
         {
+            ReceivedCommand receivedCommand = null;
             lock (Queue)
             {
                 if (Queue.Count != 0)
                 {
                     foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
                     var commandStrategy = Queue.Dequeue();
-                    return (ReceivedCommand)commandStrategy.Command;                    
+                    receivedCommand = (ReceivedCommand)commandStrategy.Command;                    
                 }
-                return null;
             }        
+            return receivedCommand;
         }
 
         /// <summary> Process the queue. </summary>
@@ -98,11 +99,11 @@ namespace CommandMessenger
         {
             lock (Queue)
             {
-                if (NewLineReceived != null) NewLineReceived(this, new NewLineEvent.NewLineArgs(commandStrategy.Command));
                 // Process all generic enqueue strategies
                 Queue.Enqueue(commandStrategy);
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
+            if (NewLineReceived != null) NewLineReceived(this, new NewLineEvent.NewLineArgs(commandStrategy.Command));
         }
     }
 }

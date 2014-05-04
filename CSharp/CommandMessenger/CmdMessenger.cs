@@ -470,6 +470,12 @@ namespace CommandMessenger
             }
         }
 
+        ~CmdMessenger()
+        {
+            _controlToInvokeOn = null;
+            _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
+            _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
+        }
 
 
         /// <summary> Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </summary>
@@ -480,6 +486,7 @@ namespace CommandMessenger
             {
                 _controlToInvokeOn = null;
                 _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
+                _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
                // _sendCommandLogger.Close();
             }
             base.Dispose(disposing);

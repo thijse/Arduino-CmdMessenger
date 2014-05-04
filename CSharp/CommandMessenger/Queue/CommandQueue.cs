@@ -30,7 +30,8 @@ namespace CommandMessenger
         protected readonly ListQueue<CommandStrategy> Queue = new ListQueue<CommandStrategy>();   // Buffer for commands
         protected readonly List<GeneralStrategy> GeneralStrategies = new List<GeneralStrategy>(); // Buffer for command independent strategies
         protected readonly CmdMessenger CmdMessenger;
-
+        protected ThreadRunStates _threadRunState;
+        protected object _threadRunStateLock = new object();
         /// <summary> Run state of thread running the queue.  </summary>
         public enum ThreadRunStates
         {
@@ -39,7 +40,27 @@ namespace CommandMessenger
             Abort,
         }
 
-        public ThreadRunStates ThreadRunState;  // Run state of the thread 
+        /// <summary> Gets or sets the run state of the thread . </summary>
+        /// <value> The thread run state. </value>
+        public ThreadRunStates ThreadRunState  
+        {
+            set
+            {
+                lock (_threadRunStateLock)
+                {
+                    _threadRunState = value;
+                }
+            }
+            get
+            {
+                ThreadRunStates result = ThreadRunStates.Start;
+                lock (_threadRunStateLock)
+                {
+                    result = _threadRunState;
+                }
+                return result;
+            }
+        }
 
         /// <summary> command queue constructor. </summary>
         /// <param name="disposeStack"> DisposeStack. </param>
@@ -85,6 +106,24 @@ namespace CommandMessenger
             GeneralStrategies.Add(generalStrategy);
         }
 
+        /// <summary> Kills this object. </summary>
+        public void Kill()
+        {
+            ThreadRunState = ThreadRunStates.Stop;
+            //Wait for thread to die
+            Join(500);
+            if (QueueThread.IsAlive) QueueThread.Abort();
+        }
+
+        /// <summary> Joins the thread. </summary>
+        /// <param name="millisecondsTimeout"> The milliseconds timeout. </param>
+        /// <returns> true if it succeeds, false if it fails. </returns>
+        public bool Join(int millisecondsTimeout)
+        {
+            if (QueueThread.IsAlive == false) return true;
+            return QueueThread.Join(TimeSpan.FromMilliseconds(millisecondsTimeout));
+        }
+
         // Dispose
         /// <summary> Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </summary>
         /// <param name="disposing"> true if resources should be disposed, false if not. </param>
@@ -93,9 +132,7 @@ namespace CommandMessenger
             if (disposing)
             {
                 // Stop polling
-                ThreadRunState = ThreadRunStates.Abort;
-                QueueThread.Abort();
-                QueueThread.Join();
+                Kill();
             }
             base.Dispose(disposing);
         }

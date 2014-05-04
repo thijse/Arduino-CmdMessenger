@@ -40,8 +40,31 @@ namespace CommandMessenger.TransportLayer
     {
         private readonly QueueSpeed _queueSpeed = new QueueSpeed(4,10);
         private Thread _queueThread;
+        protected ThreadRunStates _threadRunState;
+        private object _threadRunStateLock = new object();
+        private object serialReadWriteLock = new object();
 
-        public ThreadRunStates ThreadRunState = ThreadRunStates.Start;
+        /// <summary> Gets or sets the run state of the thread . </summary>
+        /// <value> The thread run state. </value>
+        public ThreadRunStates ThreadRunState  
+        {
+            set
+            {
+                lock (_threadRunStateLock)
+                {
+                    _threadRunState = value;
+                }
+            }
+            get
+            {
+                ThreadRunStates result = ThreadRunStates.Start;
+                lock (_threadRunStateLock)
+                {
+                    result = _threadRunState;
+                }
+                return result;
+            }
+        }
 
         /// <summary> Default constructor. </summary>
         public SerialTransport()
@@ -62,11 +85,13 @@ namespace CommandMessenger.TransportLayer
                 _currentSerialSettings.PortName = _currentSerialSettings.PortNameCollection[0];
 
             // Create queue thread and wait for it to start
+            
             _queueThread = new Thread(ProcessQueue)
                 {
                     Priority = ThreadPriority.Normal, 
                     Name = "Serial"
                 };
+            ThreadRunState = ThreadRunStates.Start;
             _queueThread.Start();
             while (!_queueThread.IsAlive) { Thread.Sleep(50); }
         }
@@ -166,8 +191,15 @@ namespace CommandMessenger.TransportLayer
         {
             if (!IsOpen())
             {
-                _serialPort.Open();
-                return IsOpen();
+                try
+                {
+                    _serialPort.Open();
+                    return IsOpen();
+                }
+                catch
+                {
+                    return false;
+                }
             }
 
             return true;
@@ -234,7 +266,10 @@ namespace CommandMessenger.TransportLayer
             {
                 if (IsOpen())
                 {
-                    _serialPort.Write(buffer, 0, buffer.Length);
+                    lock (serialReadWriteLock)
+                    {
+                        _serialPort.Write(buffer, 0, buffer.Length);
+                    }
                 }
             }
             catch
@@ -285,10 +320,13 @@ namespace CommandMessenger.TransportLayer
             {
                 try
                 {
-                    var dataLength = _serialPort.BytesToRead;
-                    buffer = new byte[dataLength];
-                    int nbrDataRead = _serialPort.Read(buffer, 0, dataLength);
-                    if (nbrDataRead == 0) return new byte[0];
+                    lock (serialReadWriteLock)
+                    {
+                        var dataLength = _serialPort.BytesToRead;
+                        buffer = new byte[dataLength];
+                        int nbrDataRead = _serialPort.Read(buffer, 0, dataLength);
+                        if (nbrDataRead == 0) return new byte[0];
+                    }
                 }
                 catch
                 { }
@@ -300,15 +338,38 @@ namespace CommandMessenger.TransportLayer
         /// <returns> Bytes in buffer </returns>
         public int BytesInBuffer()
         {
-            //try
-            //{                
-            //    return _serialPort.BytesToRead;
-            //}
-            //catch (Exception)
-            //{
-            //    return 0;
-            //}
             return IsOpen()? _serialPort.BytesToRead:0;
+        }
+
+        /// <summary> Kills this object. </summary>
+        public void Kill()
+        {
+            // Signal thread to stop
+            ThreadRunState = ThreadRunStates.Stop;
+            // Release events
+            _currentSerialSettings.PropertyChanged -= CurrentSerialSettingsPropertyChanged;
+
+            //Wait for thread to die
+            Join(500);
+            if (_queueThread.IsAlive) _queueThread.Abort();
+
+            // Releasing serial port 
+            if (IsOpen()) Close();
+            if (_serialPort != null)
+            {
+                _serialPort.Dispose();
+                _serialPort = null;
+            }
+
+        }
+
+        /// <summary> Joins the thread. </summary>
+        /// <param name="millisecondsTimeout"> The milliseconds timeout. </param>
+        /// <returns> true if it succeeds, false if it fails. </returns>
+        public bool Join(int millisecondsTimeout)
+        {
+            if (_queueThread.IsAlive == false) return true;
+            return _queueThread.Join(TimeSpan.FromMilliseconds(millisecondsTimeout));
         }
 
         // Dispose
@@ -316,13 +377,7 @@ namespace CommandMessenger.TransportLayer
         {
             if (disposing)
             {
-                _queueThread.Abort();
-                _queueThread.Join();
-                _currentSerialSettings.PropertyChanged -= CurrentSerialSettingsPropertyChanged;
-                // Releasing serial port 
-                if (IsOpen()) Close();
-                _serialPort.Dispose();
-                _serialPort = null;
+                Kill();
             }
             base.Dispose(disposing);
         }

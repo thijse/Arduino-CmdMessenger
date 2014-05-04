@@ -17,6 +17,7 @@
 */
 #endregion
 using System;
+using System.Threading;
 
 namespace CommandMessenger
 {
@@ -101,6 +102,7 @@ namespace CommandMessenger
             while ((time - start < timeout) && !acknowledgeCommand.Ok)
             {
                 time = TimeUtils.Millis;
+                Thread.Yield();
                 acknowledgeCommand = CheckForAcknowledge(ackCmdId, clearQueueState);
             }
 

@@ -62,8 +62,8 @@
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="#properties">Properties</a> &#124;
 <a href="#events">Events</a>  </div>
   <div class="headertitle">
@@ -114,18 +114,24 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>IsConnected</b> ()</t
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads the serial buffer into the string buffer.  <a href="#adb339ec97444037b4297551cb4620c37"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a36ea25885db8195d19d03fc721ced38a">BytesInBuffer</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the bytes in buffer.  <a href="#a36ea25885db8195d19d03fc721ced38a"></a><br/></td></tr>
-<tr><td colspan="2"><h2><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a414f842f2d47be5927f8499275a45493"></a><!-- doxytag: member="CommandMessenger::TransportLayer::SerialTransport::ThreadRunState" ref="a414f842f2d47be5927f8499275a45493" args="" -->
-ThreadRunStates&#160;</td><td class="memItemRight" valign="bottom"><b>ThreadRunState</b> = ThreadRunStates.Start</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a7d79569badb4e73c273d0585a283898e">Kill</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Kills this object.  <a href="#a7d79569badb4e73c273d0585a283898e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#af2e0c25c3ee0337a8815d8cc7317eed5">Join</a> (int millisecondsTimeout)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Joins the thread.  <a href="#af2e0c25c3ee0337a8815d8cc7317eed5"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a85832f8c9dd0d6bfeaa232da2d205d5e"></a><!-- doxytag: member="CommandMessenger::TransportLayer::SerialTransport::ProcessQueue" ref="a85832f8c9dd0d6bfeaa232da2d205d5e" args="()" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><b>ProcessQueue</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">override void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a19b9990c22fc6e63a8f800e84519c70b">Dispose</a> (bool disposing)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all references and remove children.  <a href="#a19b9990c22fc6e63a8f800e84519c70b"></a><br/></td></tr>
+<tr><td colspan="2"><h2><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a659f94aee6ac9155d08a7e3acebcf7f2"></a><!-- doxytag: member="CommandMessenger::TransportLayer::SerialTransport::_threadRunState" ref="a659f94aee6ac9155d08a7e3acebcf7f2" args="" -->
+ThreadRunStates&#160;</td><td class="memItemRight" valign="bottom"><b>_threadRunState</b></td></tr>
 <tr><td colspan="2"><h2><a name="properties"></a>
 Properties</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">ThreadRunStates&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a414f842f2d47be5927f8499275a45493">ThreadRunState</a><code> [get, set]</code></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the run state of the thread .  <a href="#a414f842f2d47be5927f8499275a45493"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_serial_settings.html">SerialSettings</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#ac1878b4fca928cd4010d8ff3848ea824">CurrentSerialSettings</a><code> [get, set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the current serial port settings.  <a href="#ac1878b4fca928cd4010d8ff3848ea824"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a3c236169077e701b6d75c0532109c099">SerialPort</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a3c236169077e701b6d75c0532109c099">SerialPort</a><code> [get]</code></td></tr>
@@ -258,6 +264,50 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewDataReceiv
 
 <p>Query ifthe serial port is open. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>true if open, false if not. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af2e0c25c3ee0337a8815d8cc7317eed5"></a><!-- doxytag: member="CommandMessenger::TransportLayer::SerialTransport::Join" ref="af2e0c25c3ee0337a8815d8cc7317eed5" args="(int millisecondsTimeout)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#af2e0c25c3ee0337a8815d8cc7317eed5">CommandMessenger.TransportLayer.SerialTransport.Join</a> </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>millisecondsTimeout</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Joins the thread. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">millisecondsTimeout</td><td>The milliseconds timeout. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if it succeeds, false if it fails. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a7d79569badb4e73c273d0585a283898e"></a><!-- doxytag: member="CommandMessenger::TransportLayer::SerialTransport::Kill" ref="a7d79569badb4e73c273d0585a283898e" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a7d79569badb4e73c273d0585a283898e">CommandMessenger.TransportLayer.SerialTransport.Kill</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Kills this object. </p>
 
 </div>
 </div>
@@ -440,6 +490,22 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewDataReceiv
 
 </div>
 </div>
+<a class="anchor" id="a414f842f2d47be5927f8499275a45493"></a><!-- doxytag: member="CommandMessenger::TransportLayer::SerialTransport::ThreadRunState" ref="a414f842f2d47be5927f8499275a45493" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ThreadRunStates <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html#a414f842f2d47be5927f8499275a45493">CommandMessenger.TransportLayer.SerialTransport.ThreadRunState</a><code> [get, set]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Gets or sets the run state of the thread . </p>
+<p>The thread run state. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>D:/My Documents/Github/Arduino-Code-and-Libraries/Libraries/CmdMessenger/CSharp/CommandMessenger/TransportLayer/SerialTransport.cs</li>
 </ul>
@@ -447,7 +513,7 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewDataReceiv
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 1 2014 23:14:08 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun May 4 2014 22:37:17 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
