@@ -115,10 +115,12 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SetSingleCore</b> ()<
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle message.  <a href="#a77775f343c74a01de0caa693e039717f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ad38b4f7b5658a1f8980aa38eda80b9f4">SendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command. If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired.  <a href="#ad38b4f7b5658a1f8980aa38eda80b9f4"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a85393df2eb2d7a4d022a53505d99d0f5">SendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, ClearQueue clearQueueState)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command.  <a href="#a85393df2eb2d7a4d022a53505d99d0f5"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a74a7b7d9bab4d777b033d263b8d16c2a">SendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, ClearQueue clearQueueState, bool sendQueued)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command. If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired. Based on ClearQueueState, the send- and receive-queues are left intact or are cleared.  <a href="#a74a7b7d9bab4d777b033d263b8d16c2a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#aceeec70d6862ecf07b03fa867b67eea8">SendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, SendQueue sendQueueState, ReceiveQueue receiveQueueState)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command.  <a href="#aceeec70d6862ecf07b03fa867b67eea8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#afd95776c37b456660334eaa0aed5d994">SendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, SendQueue sendQueueState, ReceiveQueue receiveQueueState, UseQueue useQueue)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command. If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired. Based on ClearQueueState, the send- and receive-queues are left intact or are cleared.  <a href="#afd95776c37b456660334eaa0aed5d994"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a788986ebb510ecd99c7f7a45ad424cc8">SendCommandSync</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, SendQueue sendQueueState)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Synchronized send a command.  <a href="#a788986ebb510ecd99c7f7a45ad424cc8"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a0398d0d8f45a1c6b02df018dbb13f6b9">QueueCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Put the command at the back of the sent queue.  <a href="#a0398d0d8f45a1c6b02df018dbb13f6b9"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a563309c8b82007422f89889bff4cd5c0">QueueCommand</a> (<a class="el" href="class_command_messenger_1_1_command_strategy.html">CommandStrategy</a> commandStrategy)</td></tr>
@@ -695,7 +697,7 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
 
 </div>
 </div>
-<a class="anchor" id="a85393df2eb2d7a4d022a53505d99d0f5"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::SendCommand" ref="a85393df2eb2d7a4d022a53505d99d0f5" args="(SendCommand sendCommand, ClearQueue clearQueueState)" -->
+<a class="anchor" id="aceeec70d6862ecf07b03fa867b67eea8"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::SendCommand" ref="aceeec70d6862ecf07b03fa867b67eea8" args="(SendCommand sendCommand, SendQueue sendQueueState, ReceiveQueue receiveQueueState)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -708,8 +710,14 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ClearQueue&#160;</td>
-          <td class="paramname"><em>clearQueueState</em>&#160;</td>
+          <td class="paramtype">SendQueue&#160;</td>
+          <td class="paramname"><em>sendQueueState</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ReceiveQueue&#160;</td>
+          <td class="paramname"><em>receiveQueueState</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -725,7 +733,8 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">sendCommand</td><td>The command to sent. </td></tr>
-    <tr><td class="paramname">clearQueueState</td><td>Property to optionally clear the send and receive queues</td></tr>
+    <tr><td class="paramname">sendQueueState</td><td>Property to optionally clear/wait the send queue</td></tr>
+    <tr><td class="paramname">receiveQueueState</td><td>Property to optionally clear/wait the send queue</td></tr>
   </table>
   </dd>
 </dl>
@@ -733,7 +742,7 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
 
 </div>
 </div>
-<a class="anchor" id="a74a7b7d9bab4d777b033d263b8d16c2a"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::SendCommand" ref="a74a7b7d9bab4d777b033d263b8d16c2a" args="(SendCommand sendCommand, ClearQueue clearQueueState, bool sendQueued)" -->
+<a class="anchor" id="afd95776c37b456660334eaa0aed5d994"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::SendCommand" ref="afd95776c37b456660334eaa0aed5d994" args="(SendCommand sendCommand, SendQueue sendQueueState, ReceiveQueue receiveQueueState, UseQueue useQueue)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -746,14 +755,20 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ClearQueue&#160;</td>
-          <td class="paramname"><em>clearQueueState</em>, </td>
+          <td class="paramtype">SendQueue&#160;</td>
+          <td class="paramname"><em>sendQueueState</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>sendQueued</em>&#160;</td>
+          <td class="paramtype">ReceiveQueue&#160;</td>
+          <td class="paramname"><em>receiveQueueState</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">UseQueue&#160;</td>
+          <td class="paramname"><em>useQueue</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -768,12 +783,50 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">sendCommand</td><td>The command to sent. </td></tr>
-    <tr><td class="paramname">clearQueueState</td><td>Property to optionally clear the send and receive queues</td></tr>
-    <tr><td class="paramname">sendQueued</td><td>Property to indicate if command needs to be send queued or directly</td></tr>
+    <tr><td class="paramname">sendQueueState</td><td>Property to optionally clear/wait the send queue</td></tr>
+    <tr><td class="paramname">receiveQueueState</td><td>Property to optionally clear/wait the send queue</td></tr>
+    <tr><td class="paramname">useQueue</td><td>Property to optionally bypass the queue</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>A received command. The received command will only be valid if the ReqAc of the command is true. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a788986ebb510ecd99c7f7a45ad424cc8"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::SendCommandSync" ref="a788986ebb510ecd99c7f7a45ad424cc8" args="(SendCommand sendCommand, SendQueue sendQueueState)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a788986ebb510ecd99c7f7a45ad424cc8">CommandMessenger.CmdMessenger.SendCommandSync</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a>&#160;</td>
+          <td class="paramname"><em>sendCommand</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">SendQueue&#160;</td>
+          <td class="paramname"><em>sendQueueState</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Synchronized send a command. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sendCommand</td><td>The command to sent. </td></tr>
+    <tr><td class="paramname">sendQueueState</td><td>Property to optionally clear/wait the send queue. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>. </dd></dl>
 
 </div>
 </div>
@@ -912,7 +965,7 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun May 4 2014 22:37:17 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat May 17 2014 22:39:22 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

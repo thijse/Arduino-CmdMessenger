@@ -50,7 +50,6 @@ namespace CommandMessenger
                 if (!_portName.Equals(value))
                 {
                     _portName = value;
-                    SendPropertyChangedEvent("PortName");
                 }
             }
         }
@@ -64,8 +63,7 @@ namespace CommandMessenger
             {
                 if (_baudRate != value)
                 {
-                    _baudRate = value;
-                    SendPropertyChangedEvent("BaudRate");
+                    _baudRate = value;                    
                 }
             }
         }
@@ -81,7 +79,6 @@ namespace CommandMessenger
                 if (_parity != value)
                 {
                     _parity = value;
-                    SendPropertyChangedEvent("Parity");
                 }
             }
         }
@@ -96,7 +93,6 @@ namespace CommandMessenger
                 if (_dataBits != value)
                 {
                     _dataBits = value;
-                    SendPropertyChangedEvent("DataBits");
                 }
             }
         }
@@ -111,7 +107,6 @@ namespace CommandMessenger
                 if (_stopBits != value)
                 {
                     _stopBits = value;
-                    SendPropertyChangedEvent("StopBits");
                 }
             }
         }
@@ -127,7 +122,6 @@ namespace CommandMessenger
                 if (_dtrEnable != value)
                 {
                     _dtrEnable = value;
-                    SendPropertyChangedEvent("DtrEnable");
                 }
             }
         }
@@ -146,7 +140,7 @@ namespace CommandMessenger
         }
 
         /// <summary>
-        /// Available databits setting
+        /// Available data bits setting
         /// </summary>
         public int[] DataBitsCollection
         {

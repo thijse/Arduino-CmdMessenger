@@ -24,7 +24,6 @@ namespace CommandMessenger
     {
         
         public event NewLineEvent.NewLineHandler NewLineReceived;
-        //public EventHandler NewLineReceived;
 
         private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
 

@@ -30,8 +30,8 @@ namespace CommandMessengerTests
             {
                 Description = @"Teensy 3.1",
                 MinReceiveSpeed     = 2000000,         // Bits per second    
-                MinSendSpeed        = 1300000,         // Bits per second                                       
-                MinDirectSendSpeed  = 52000,           // Bits per second                     
+                MinSendSpeed        = 1250000,         // Bits per second                                       
+                MinDirectSendSpeed  = 47500,           // Bits per second                     
                 BoardType           = BoardType.Bit32, // 32 architecture, needed from binary value conversion
                 sendBufferMaxLength = 512,             // Maximum send buffer size
                 Transport = new SerialTransport

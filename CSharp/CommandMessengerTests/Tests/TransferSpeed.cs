@@ -1,16 +1,13 @@
 using System;
 using System.Threading;
 using CommandMessenger;
-using CommandMessenger.TransportLayer;
 
 namespace CommandMessengerTests
 {
     public class TransferSpeed 
     {        
         private CmdMessenger _cmdMessenger;
-        readonly Enumerator _command;
-       
-
+        readonly Enumerator _command;      
         public bool RunLoop { get; set; }
         private int _receivedItemsCount;                        // Counter of number of command items received
         private int _receivedBytesCount;                        // Counter of number of command bytes received
@@ -44,6 +41,7 @@ namespace CommandMessengerTests
                 "PrepareSendSeries",   // Command to tell other side to prepare for receiving a series of text float commands
                 "SendSeries"       ,   // Command to send a series of text float commands
                 "AckSendSeries"        // Command to acknowledge the send series of text float commands
+
              });
         }
 
@@ -79,7 +77,7 @@ namespace CommandMessengerTests
             DirectSendSeries();
 
             // Start logging commands again
-            Common.LogCommands(false);
+            Common.LogCommands(true);
 
             // Close connection
             CloseConnection();
@@ -112,7 +110,7 @@ namespace CommandMessengerTests
         private void WaitAndClear()
         {
             var requestResetCommand = new SendCommand(_command["RequestReset"], _command["RequestResetAcknowledge"], 1000);
-            var requestResetAcknowledge = _cmdMessenger.SendCommand(requestResetCommand, ClearQueue.ClearSendAndReceivedQueue);
+            var requestResetAcknowledge = _cmdMessenger.SendCommand(requestResetCommand, SendQueue.ClearQueue,ReceiveQueue.ClearQueue);
 
             Common.WriteLine(!requestResetAcknowledge.Ok ? "No Wait OK received" : "Wait received");
             // Wait another second to see if
@@ -148,13 +146,14 @@ namespace CommandMessengerTests
             var commandPlainText = new SendCommand(_command["RequestSeries"]);
             commandPlainText.AddArgument(SeriesLength);
             commandPlainText.AddArgument(SeriesBase);
+            
             // Send command 
             _cmdMessenger.SendCommand(commandPlainText);
 
             // Now wait until all values have arrived
             while (!_receiveSeriesFinished)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(10);
             }
         }
 
@@ -224,9 +223,7 @@ namespace CommandMessengerTests
                 bps +
                 " bps"
             );
-
             return bps;
-
         }
 
 
@@ -235,14 +232,13 @@ namespace CommandMessengerTests
         private void SetupQueuedSendSeries()
         {
             Common.StartTest("Calculating speed in sending queued series of float data");
-           // Console.WriteLine("\n\nBenchmark 2: send queued & combined plain text float");
             WaitAndClear();
 
             _minimalBps = _systemSettings.MinSendSpeed;
             _sendSeriesFinished = false;
             var prepareSendSeries = new SendCommand(_command["PrepareSendSeries"]);
             prepareSendSeries.AddArgument(SeriesLength);
-            _cmdMessenger.SendCommand(prepareSendSeries);
+            _cmdMessenger.SendCommand(prepareSendSeries, SendQueue.WaitForEmptyQueue, ReceiveQueue.WaitForEmptyQueue);
 
             // Prepare
             _receivedBytesCount = 0;
@@ -265,7 +261,7 @@ namespace CommandMessengerTests
             // Now wait until receiving party acknowledges that values have arrived
             while (!_sendSeriesFinished)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(10);
             }
         }
 
@@ -298,34 +294,34 @@ namespace CommandMessengerTests
 
             var prepareSendSeries = new SendCommand(_command["PrepareSendSeries"]);
             prepareSendSeries.AddArgument(SeriesLength);
-            _cmdMessenger.SendCommand(prepareSendSeries);
+            // We need to to send the prepareSendSeries by bypassing the queue or it might be sent after the directly send commands later on
+            _cmdMessenger.SendCommand(prepareSendSeries, SendQueue.WaitForEmptyQueue, ReceiveQueue.WaitForEmptyQueue,UseQueue.BypassQueue);
 
             // Prepare
             _receivedBytesCount = 0;
             _cmdMessenger.PrintLfCr = true;
             _beginTime = Millis;
-            // Now send all commands individually.
-            // This is not the preferred way to send, but is most direct.
-            for (var sendItemsCount = 0; sendItemsCount < SeriesLength; sendItemsCount++)
+            
+            // Now send all commands individually and bypass the queue
+             for (var sendItemsCount = 0; sendItemsCount < SeriesLength; sendItemsCount++)
             {
                 var sendSeries = new SendCommand(_command["SendSeries"]);
                 sendSeries.AddArgument(sendItemsCount * SeriesBase);
 
                 _receivedBytesCount += CountBytesInCommand(sendSeries, _cmdMessenger.PrintLfCr);
 
-                var commandStrategy = new CommandStrategy(sendSeries);
-                var wrappedCommand = commandStrategy.Command;
-
-                _cmdMessenger.SendCommand((SendCommand)wrappedCommand, ClearQueue.KeepQueue, false);
-                if (sendItemsCount % (SeriesLength / 10) == 0)
-                    Common.WriteLine("Send value: " + sendItemsCount * SeriesBase);
+                _cmdMessenger.SendCommand(sendSeries, SendQueue.Default, ReceiveQueue.Default, UseQueue.BypassQueue);
+     
+                if (sendItemsCount%(SeriesLength/10) == 0)
+                {
+                    Common.WriteLine("Send value: " + sendItemsCount*SeriesBase);
+                }
             }
-
             _endTime = Millis;
             // Now wait until receiving party acknowledges that values have arrived
             while (!_sendSeriesFinished)
             {
-                Thread.Sleep(50);
+                Thread.Sleep(10);
             }
         }
 

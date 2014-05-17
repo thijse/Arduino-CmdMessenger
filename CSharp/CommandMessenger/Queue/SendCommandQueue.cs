@@ -28,8 +28,8 @@ namespace CommandMessenger
         private readonly Sender _sender;
         public event NewLineEvent.NewLineHandler NewLineSent;
         private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
-        //private const int _sendBufferMaxLength = 512;
-        private int _sendBufferMaxLength = 62;
+        //private readonly int _sendBufferMaxLength = 512;
+        private readonly int _sendBufferMaxLength = 62;
         string _sendBuffer = "";
         int _commandCount = 0;
 
@@ -40,6 +40,7 @@ namespace CommandMessenger
         /// <param name="disposeStack"> DisposeStack. </param>
         /// <param name="cmdMessenger"> The command messenger. </param>
         /// <param name="sender">Object that does the actual sending of the command</param>
+        /// <param name="sendBufferMaxLength">Length of the send buffer</param>
         public SendCommandQueue(DisposeStack disposeStack, CmdMessenger cmdMessenger, Sender sender, int sendBufferMaxLength)
             : base(disposeStack, cmdMessenger)
         {
@@ -64,8 +65,8 @@ namespace CommandMessenger
                 if (ThreadRunState == ThreadRunStates.Start)
                 {
                     // Only actually sleep if there are no commands in the queue
-                    if (Queue.Count == 0) _queueSpeed.Sleep();
                     SendCommandsFromQueue();
+                    _queueSpeed.Sleep();                    
                 }
                 else
                 {
@@ -87,8 +88,7 @@ namespace CommandMessenger
             {
                 lock (Queue)
                 {
-                    CommandStrategy commandStrategy = Queue.Count != 0 ? Queue.Peek() : null;
-
+                    var commandStrategy = Queue.Count != 0 ? Queue.Peek() : null;
                     if (commandStrategy != null)
                     {
                         if (commandStrategy.Command != null)
@@ -108,8 +108,7 @@ namespace CommandMessenger
                                 eventCommandStrategy = commandStrategy;
                                 AddToCommandsString(commandStrategy);
                             }
-                        }
-                        
+                        }                        
                     }
                 }
                 // event callback outside lock for performance
@@ -123,10 +122,8 @@ namespace CommandMessenger
             // Now check if a command string has been filled
             if (_sendBuffer.Length > 0)
             {
-                _sender.ExecuteSendString(_sendBuffer, ClearQueue.KeepQueue);              
+                _sender.ExecuteSendString(_sendBuffer, SendQueue.InFrontQueue);              
             }
-
-
         }
 
         /// <summary> Sends a float command from the queue. </summary>
@@ -142,7 +139,7 @@ namespace CommandMessenger
             }
             // Send command
             if (commandStrategy != null && commandStrategy.Command != null)
-                _sender.ExecuteSendCommand((SendCommand)commandStrategy.Command, ClearQueue.KeepQueue);                     
+                _sender.ExecuteSendCommand((SendCommand)commandStrategy.Command, SendQueue.InFrontQueue);                     
         }
 
         /// <summary> Adds a commandStrategy to the commands string.  </summary>

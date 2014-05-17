@@ -115,10 +115,21 @@ Classes</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Class to get a timestamp. <br/></td></tr>
 <tr><td colspan="2"><h2><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>ClearQueue</b> { <b>KeepQueue</b>, 
-<b>ClearSendQueue</b>, 
-<b>ClearReceivedQueue</b>, 
-<b>ClearSendAndReceivedQueue</b>
+<tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>SendQueue</b> { <br/>
+&#160;&#160;<b>Default</b>, 
+<b>InFrontQueue</b>, 
+<b>AtEndQueue</b>, 
+<b>WaitForEmptyQueue</b>, 
+<br/>
+&#160;&#160;<b>ClearQueue</b>
+<br/>
+ }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>ReceiveQueue</b> { <b>Default</b>, 
+<b>WaitForEmptyQueue</b>, 
+<b>ClearQueue</b>
+ }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>UseQueue</b> { <b>UseQueue</b>, 
+<b>BypassQueue</b>
  }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>BoardType</b> { <b>Bit16</b>, 
 <b>Bit32</b>
@@ -128,7 +139,7 @@ Enumerations</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun May 4 2014 22:37:17 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat May 17 2014 22:39:22 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

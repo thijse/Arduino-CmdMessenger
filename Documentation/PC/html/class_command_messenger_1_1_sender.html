@@ -73,10 +73,10 @@
 Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0c436a222aa042784a213fe0dc68a8f4"></a><!-- doxytag: member="CommandMessenger::Sender::Sender" ref="a0c436a222aa042784a213fe0dc68a8f4" args="(CommunicationManager communicationManager, ReceiveCommandQueue receiveCommandQueue)" -->
 &#160;</td><td class="memItemRight" valign="bottom"><b>Sender</b> (<a class="el" href="class_command_messenger_1_1_communication_manager.html">CommunicationManager</a> communicationManager, <a class="el" href="class_command_messenger_1_1_receive_command_queue.html">ReceiveCommandQueue</a> receiveCommandQueue)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_sender.html#a1044b7927824f50a15436acf83cff2ad">ExecuteSendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, ClearQueue clearQueueState)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Directly executes the send command operation.  <a href="#a1044b7927824f50a15436acf83cff2ad"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_sender.html#a410adbce1454847726e7ffeae70be43e">ExecuteSendString</a> (String commandsString, ClearQueue clearQueueState)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Directly executes the send string operation.  <a href="#a410adbce1454847726e7ffeae70be43e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_sender.html#a4e5357ace312650987654e00b7b8e2b1">ExecuteSendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, SendQueue sendQueueState)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Directly executes the send command operation.  <a href="#a4e5357ace312650987654e00b7b8e2b1"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_sender.html#a57738b9b57fa6a52d13317e75abe89df">ExecuteSendString</a> (String commandsString, SendQueue sendQueueState)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Directly executes the send string operation.  <a href="#a57738b9b57fa6a52d13317e75abe89df"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="properties"></a>
 Properties</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_sender.html#a5045a74961cb27242b858750ca7c2efe">CurrentReceivedCommand</a><code> [get, set]</code></td></tr>
@@ -85,12 +85,12 @@ Properties</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets a whether to print a line feed carriage return after each command.  <a href="#ac9610b6a6cb0947bbe0ccdcf0482a00d"></a><br/></td></tr>
 </table>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a1044b7927824f50a15436acf83cff2ad"></a><!-- doxytag: member="CommandMessenger::Sender::ExecuteSendCommand" ref="a1044b7927824f50a15436acf83cff2ad" args="(SendCommand sendCommand, ClearQueue clearQueueState)" -->
+<a class="anchor" id="a4e5357ace312650987654e00b7b8e2b1"></a><!-- doxytag: member="CommandMessenger::Sender::ExecuteSendCommand" ref="a4e5357ace312650987654e00b7b8e2b1" args="(SendCommand sendCommand, SendQueue sendQueueState)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> <a class="el" href="class_command_messenger_1_1_sender.html#a1044b7927824f50a15436acf83cff2ad">CommandMessenger.Sender.ExecuteSendCommand</a> </td>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> <a class="el" href="class_command_messenger_1_1_sender.html#a4e5357ace312650987654e00b7b8e2b1">CommandMessenger.Sender.ExecuteSendCommand</a> </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a>&#160;</td>
           <td class="paramname"><em>sendCommand</em>, </td>
@@ -98,8 +98,8 @@ Properties</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ClearQueue&#160;</td>
-          <td class="paramname"><em>clearQueueState</em>&#160;</td>
+          <td class="paramtype">SendQueue&#160;</td>
+          <td class="paramname"><em>sendQueueState</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -114,7 +114,7 @@ Properties</h2></td></tr>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">sendCommand</td><td>The command to sent. </td></tr>
-    <tr><td class="paramname">clearQueueState</td><td>Property to optionally clear the send and receive queues. </td></tr>
+    <tr><td class="paramname">sendQueueState</td><td>Property to optionally clear the send and receive queues. </td></tr>
   </table>
   </dd>
 </dl>
@@ -122,12 +122,12 @@ Properties</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a410adbce1454847726e7ffeae70be43e"></a><!-- doxytag: member="CommandMessenger::Sender::ExecuteSendString" ref="a410adbce1454847726e7ffeae70be43e" args="(String commandsString, ClearQueue clearQueueState)" -->
+<a class="anchor" id="a57738b9b57fa6a52d13317e75abe89df"></a><!-- doxytag: member="CommandMessenger::Sender::ExecuteSendString" ref="a57738b9b57fa6a52d13317e75abe89df" args="(String commandsString, SendQueue sendQueueState)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> <a class="el" href="class_command_messenger_1_1_sender.html#a410adbce1454847726e7ffeae70be43e">CommandMessenger.Sender.ExecuteSendString</a> </td>
+          <td class="memname"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> <a class="el" href="class_command_messenger_1_1_sender.html#a57738b9b57fa6a52d13317e75abe89df">CommandMessenger.Sender.ExecuteSendString</a> </td>
           <td>(</td>
           <td class="paramtype">String&#160;</td>
           <td class="paramname"><em>commandsString</em>, </td>
@@ -135,8 +135,8 @@ Properties</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">ClearQueue&#160;</td>
-          <td class="paramname"><em>clearQueueState</em>&#160;</td>
+          <td class="paramtype">SendQueue&#160;</td>
+          <td class="paramname"><em>sendQueueState</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -151,7 +151,7 @@ Properties</h2></td></tr>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">commandsString</td><td>The string to sent. </td></tr>
-    <tr><td class="paramname">clearQueueState</td><td>Property to optionally clear the send and receive queues. </td></tr>
+    <tr><td class="paramname">sendQueueState</td><td>Property to optionally clear the send and receive queues. </td></tr>
   </table>
   </dd>
 </dl>
@@ -199,7 +199,7 @@ Properties</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun May 4 2014 22:37:17 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat May 17 2014 22:39:23 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

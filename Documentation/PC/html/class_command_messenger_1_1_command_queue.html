@@ -85,9 +85,14 @@ Inheritance diagram for CommandMessenger.CommandQueue:</div>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_command_queue.html#a6567f97f90b63c545beba5efd565d653">ThreadRunStates</a> { <b>Start</b>, 
+<tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_command_queue.html#a6567f97f90b63c545beba5efd565d653">ThreadRunStates</a> { <br/>
+&#160;&#160;<b>Start</b>, 
+<b>Started</b>, 
 <b>Stop</b>, 
-<b>Abort</b>
+<b>Stopped</b>, 
+<br/>
+&#160;&#160;<b>Abort</b>
+<br/>
  }</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Run state of thread running the queue.  <a href="class_command_messenger_1_1_command_queue.html#a6567f97f90b63c545beba5efd565d653">More...</a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
@@ -121,14 +126,14 @@ readonly <a class="el" href="class_command_messenger_1_1_list_queue-g.html">List
 readonly List&lt; <a class="el" href="class_command_messenger_1_1_general_strategy.html">GeneralStrategy</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GeneralStrategies</b> = new List&lt;<a class="el" href="class_command_messenger_1_1_general_strategy.html">GeneralStrategy</a>&gt;()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2030fd669f301acb586c6cb0a3d789e4"></a><!-- doxytag: member="CommandMessenger::CommandQueue::CmdMessenger" ref="a2030fd669f301acb586c6cb0a3d789e4" args="" -->
 readonly <a class="el" href="class_command_messenger_1_1_cmd_messenger.html">CmdMessenger</a>&#160;</td><td class="memItemRight" valign="bottom"><b>CmdMessenger</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4e1bfead7637bba087bd0d7bb860bcc"></a><!-- doxytag: member="CommandMessenger::CommandQueue::_threadRunState" ref="af4e1bfead7637bba087bd0d7bb860bcc" args="" -->
-<a class="el" href="class_command_messenger_1_1_command_queue.html#a6567f97f90b63c545beba5efd565d653">ThreadRunStates</a>&#160;</td><td class="memItemRight" valign="bottom"><b>_threadRunState</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a52b87183a6075a38eec8fa4c87afafea"></a><!-- doxytag: member="CommandMessenger::CommandQueue::_threadRunStateLock" ref="a52b87183a6075a38eec8fa4c87afafea" args="" -->
-object&#160;</td><td class="memItemRight" valign="bottom"><b>_threadRunStateLock</b> = new object()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3faaafe1f41fff79f690d192e3e2b869"></a><!-- doxytag: member="CommandMessenger::CommandQueue::ThreadRunStateLock" ref="a3faaafe1f41fff79f690d192e3e2b869" args="" -->
+object&#160;</td><td class="memItemRight" valign="bottom"><b>ThreadRunStateLock</b> = new object()</td></tr>
 <tr><td colspan="2"><h2><a name="properties"></a>
 Properties</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_command_queue.html#a6567f97f90b63c545beba5efd565d653">ThreadRunStates</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_command_queue.html#ac80d4deb81d6128d136734f8f22ca066">ThreadRunState</a><code> [get, set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the run state of the thread .  <a href="#ac80d4deb81d6128d136734f8f22ca066"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_command_queue.html#ad89f94593dab1b278128d8586c4f51de">Count</a><code> [get]</code></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the run state of the thread .  <a href="#ad89f94593dab1b278128d8586c4f51de"></a><br/></td></tr>
 </table>
 <hr/><h2>Member Enumeration Documentation</h2>
 <a class="anchor" id="a6567f97f90b63c545beba5efd565d653"></a><!-- doxytag: member="CommandMessenger::CommandQueue::ThreadRunStates" ref="a6567f97f90b63c545beba5efd565d653" args="" -->
@@ -346,6 +351,22 @@ Properties</h2></td></tr>
 </div>
 </div>
 <hr/><h2>Property Documentation</h2>
+<a class="anchor" id="ad89f94593dab1b278128d8586c4f51de"></a><!-- doxytag: member="CommandMessenger::CommandQueue::Count" ref="ad89f94593dab1b278128d8586c4f51de" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="class_command_messenger_1_1_command_queue.html#ad89f94593dab1b278128d8586c4f51de">CommandMessenger.CommandQueue.Count</a><code> [get]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Gets or sets the run state of the thread . </p>
+<p>The thread run state. </p>
+
+</div>
+</div>
 <a class="anchor" id="ac80d4deb81d6128d136734f8f22ca066"></a><!-- doxytag: member="CommandMessenger::CommandQueue::ThreadRunState" ref="ac80d4deb81d6128d136734f8f22ca066" args="" -->
 <div class="memitem">
 <div class="memproto">
@@ -369,7 +390,7 @@ Properties</h2></td></tr>
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun May 4 2014 22:37:17 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sat May 17 2014 22:39:23 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

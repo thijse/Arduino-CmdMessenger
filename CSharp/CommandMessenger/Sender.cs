@@ -26,8 +26,7 @@ namespace CommandMessenger
         readonly CommunicationManager _communicationManager;
         readonly ReceiveCommandQueue _receiveCommandQueue;
         private readonly Object _sendCommandDataLock = new Object();        // The process serial data lock
-        
-        
+                
         /// <summary> Gets or sets the current received command. </summary>
         /// <value> The current received command. </value>
         public ReceivedCommand CurrentReceivedCommand { get; private set; }
@@ -40,37 +39,34 @@ namespace CommandMessenger
         {
             _communicationManager = communicationManager;
             _receiveCommandQueue = receiveCommandQueue;
-
         }
         
         /// <summary> Directly executes the send command operation. </summary>
-        /// <param name="sendCommand">     The command to sent. </param>
-        /// <param name="clearQueueState"> Property to optionally clear the send and receive queues. </param>
+        /// <param name="sendCommand">    The command to sent. </param>
+        /// <param name="sendQueueState"> Property to optionally clear the send and receive queues. </param>
         /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
-        public ReceivedCommand ExecuteSendCommand(SendCommand sendCommand, ClearQueue clearQueueState)
+        public ReceivedCommand ExecuteSendCommand(SendCommand sendCommand, SendQueue sendQueueState)
         {
             // Disable listening, all callbacks are disabled until after command was sent
 
+            ReceivedCommand ackCommand;
             lock (_sendCommandDataLock)
             {
 
                 if (PrintLfCr)
                     _communicationManager.WriteLine(sendCommand.CommandString());
                 else
-                {
                     _communicationManager.Write(sendCommand.CommandString());
+                ackCommand = sendCommand.ReqAc ? BlockedTillReply(sendCommand.AckCmdId, sendCommand.Timeout, sendQueueState) : new ReceivedCommand();                
                 }
-                
-                var ackCommand = sendCommand.ReqAc ? BlockedTillReply(sendCommand.AckCmdId, sendCommand.Timeout, clearQueueState) : new ReceivedCommand();
                 return ackCommand;
             }
-        }
 
         /// <summary> Directly executes the send string operation. </summary>
-        /// <param name="commandsString">     The string to sent. </param>
-        /// <param name="clearQueueState"> Property to optionally clear the send and receive queues. </param>
+        /// <param name="commandsString"> The string to sent. </param>
+        /// <param name="sendQueueState"> Property to optionally clear the send and receive queues. </param>
         /// <returns> The received command is added for compatibility. It will not yield a response. </returns>
-        public ReceivedCommand ExecuteSendString(String commandsString, ClearQueue clearQueueState)
+        public ReceivedCommand ExecuteSendString(String commandsString, SendQueue sendQueueState)
         {
             lock (_sendCommandDataLock)
             {
@@ -80,18 +76,16 @@ namespace CommandMessenger
                 {
                     _communicationManager.Write(commandsString);
                 }
-
-                var ackCommand = new ReceivedCommand();
-                return ackCommand;
-            }
+            }            
+            return new ReceivedCommand();
         }
 
                 /// <summary> Blocks until acknowlegdement reply has been received. </summary>
         /// <param name="ackCmdId"> acknowledgement command ID </param>
         /// <param name="timeout">  Timeout on acknowlegde command. </param>
-        /// <param name="clearQueueState"></param>
+        /// <param name="sendQueueState"></param>
         /// <returns> A received command. </returns>
-        private ReceivedCommand BlockedTillReply(int ackCmdId, int timeout, ClearQueue clearQueueState)
+        private ReceivedCommand BlockedTillReply(int ackCmdId, int timeout, SendQueue sendQueueState)
         {
             // Disable invoking command callbacks
             _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
@@ -103,7 +97,7 @@ namespace CommandMessenger
             {
                 time = TimeUtils.Millis;
                 Thread.Yield();
-                acknowledgeCommand = CheckForAcknowledge(ackCmdId, clearQueueState);
+                acknowledgeCommand = CheckForAcknowledge(ackCmdId, sendQueueState);
             }
 
             // Re-enable invoking command callbacks
@@ -113,9 +107,9 @@ namespace CommandMessenger
 
         /// <summary> Listen to the receive queue and check for a specific acknowledge command. </summary>
         /// <param name="ackCmdId">        acknowledgement command ID. </param>
-        /// <param name="clearQueueState"> Property to optionally clear the send and receive queues. </param>
+        /// <param name="sendQueueState"> Property to optionally clear the send and receive queues. </param>
         /// <returns> The first received command that matches the command ID. </returns>
-        private ReceivedCommand CheckForAcknowledge(int ackCmdId, ClearQueue clearQueueState)
+        private ReceivedCommand CheckForAcknowledge(int ackCmdId, SendQueue sendQueueState)
         {
             // Read command from received queue
             CurrentReceivedCommand = _receiveCommandQueue.DequeueCommand();
@@ -132,7 +126,7 @@ namespace CommandMessenger
                 }
                 
                 // This is not command we are waiting for
-                if (clearQueueState == ClearQueue.KeepQueue || clearQueueState == ClearQueue.ClearSendQueue)
+                if (sendQueueState != SendQueue.ClearQueue)
                 {
                     // Add to queue for later processing
                     _receiveCommandQueue.QueueCommand(CurrentReceivedCommand);

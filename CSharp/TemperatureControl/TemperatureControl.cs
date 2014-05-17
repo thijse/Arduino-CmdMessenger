@@ -161,18 +161,12 @@ namespace DataLogging
         // the heater steer value and the Pulse Width Modulated (PWM) value.
         private void OnPlotDataPoint(ReceivedCommand arguments)
         {             
-            //var time        = arguments.ReadFloatArg();
-            //var currTemp    = arguments.ReadFloatArg();
-            //var goalTemp    = arguments.ReadFloatArg();
-            //var heaterValue = arguments.ReadFloatArg();
-            //var heaterPwm   = arguments.ReadBoolArg();
 
             var time = arguments.ReadBinFloatArg();
             var currTemp = arguments.ReadBinFloatArg();
             var goalTemp = arguments.ReadBinFloatArg();
             var heaterValue = arguments.ReadBinFloatArg();
             var heaterPwm = arguments.ReadBinBoolArg();
-
 
             _chartForm.UpdateGraph(time, currTemp, goalTemp, heaterValue, heaterPwm);
         }
@@ -217,7 +211,7 @@ namespace DataLogging
             var command = new SendCommand((int)Command.StartLogging,(int)Command.Acknowledge,5);
 
             // Wait for an acknowledgment that data is being sent. Clear both the receive queue until the acknowledgment is received
-            var receivedCommand = _cmdMessenger.SendCommand(command, ClearQueue.ClearReceivedQueue);
+            var receivedCommand = _cmdMessenger.SendCommand(command, SendQueue.WaitForEmptyQueue,ReceiveQueue.ClearQueue);            
             if (!receivedCommand.Ok)
             {
                 Console.WriteLine(@" Failure > no OK received from controller");
@@ -231,7 +225,7 @@ namespace DataLogging
             var command = new SendCommand((int)Command.StopLogging, (int)Command.Acknowledge, 5);
 
             // Wait for an acknowledgment that data is being sent. Clear both the send and receive queue until the acknowledgment is received
-            var receivedCommand = _cmdMessenger.SendCommand(command, ClearQueue.ClearSendAndReceivedQueue);
+            var receivedCommand = _cmdMessenger.SendCommand(command, SendQueue.ClearQueue, ReceiveQueue.ClearQueue);
             if (!receivedCommand.Ok)
             {
                 Console.WriteLine(@" Failure > no OK received from controller");

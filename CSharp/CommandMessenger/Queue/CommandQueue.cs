@@ -30,13 +30,16 @@ namespace CommandMessenger
         protected readonly ListQueue<CommandStrategy> Queue = new ListQueue<CommandStrategy>();   // Buffer for commands
         protected readonly List<GeneralStrategy> GeneralStrategies = new List<GeneralStrategy>(); // Buffer for command independent strategies
         protected readonly CmdMessenger CmdMessenger;
-        protected ThreadRunStates _threadRunState;
-        protected object _threadRunStateLock = new object();
+        private ThreadRunStates _threadRunState;
+        protected object ThreadRunStateLock = new object();
+
         /// <summary> Run state of thread running the queue.  </summary>
         public enum ThreadRunStates
         {
             Start,
+            Started,
             Stop,
+            Stopped,
             Abort,
         }
 
@@ -46,20 +49,27 @@ namespace CommandMessenger
         {
             set
             {
-                lock (_threadRunStateLock)
+                lock (ThreadRunStateLock)
                 {
                     _threadRunState = value;
                 }
             }
             get
             {
-                ThreadRunStates result = ThreadRunStates.Start;
-                lock (_threadRunStateLock)
+                var result = ThreadRunStates.Start;
+                lock (ThreadRunStateLock)
                 {
                     result = _threadRunState;
                 }
                 return result;
             }
+        }
+
+        /// <summary> Gets or sets the run state of the thread . </summary>
+        /// <value> The thread run state. </value>
+        public int Count
+        {
+            get { return Queue.Count; }
         }
 
         /// <summary> command queue constructor. </summary>
@@ -87,7 +97,10 @@ namespace CommandMessenger
         /// <summary> Clears the queue. </summary>
         public void Clear()
         {
-            Queue.Clear();
+            lock (Queue)
+            {
+                Queue.Clear();
+            }
         }
 
         /// <summary> Queue the command wrapped in a command strategy. </summary>
