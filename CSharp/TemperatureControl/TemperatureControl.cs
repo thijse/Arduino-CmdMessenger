@@ -133,6 +133,11 @@ namespace DataLogging
             else
                 _connectionManager = new SerialConnectionManager   ((_transport as SerialTransport),    _cmdMessenger, (int)Command.RequestId, (int)Command.SendId);                    
             
+			// Enable the watchdog. 
+			// This will watch the connection for disconnection
+			// and start reconnecting
+            _connectionManager.WatchdogEnabled = true;
+
             // Tell the Connection manager to "Invoke" commands on the thread running the WinForms UI
             _connectionManager.SetControlToInvokeOn(chartForm);
 
@@ -271,8 +276,6 @@ namespace DataLogging
             // Disable UI ..                 
             _chartForm.SetStatus(@"Connection timeout, attempting to reconnect");           
             _chartForm.SetDisConnected();
-            // and start scanning
-            _connectionManager.StartScan();
         }
 
         private void ConnectionFound(object sender, EventArgs e)
@@ -291,8 +294,6 @@ namespace DataLogging
             // Restart acquisition if needed 
             if (AcquisitionStarted) StartAcquisition(); else StopAcquisition();
             AcceptData = true;
-            // Start Watchdog
-            _connectionManager.StartWatchDog();
 
             // Yield time slice in order to get UI updated
             Thread.Yield();

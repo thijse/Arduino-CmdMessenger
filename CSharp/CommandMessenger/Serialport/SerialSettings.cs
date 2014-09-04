@@ -35,7 +35,7 @@ namespace CommandMessenger
         readonly List<int> _baudRateCollection = new List<int>();
         Parity _parity = Parity.None;
         int _dataBits = 8;
-        int[] _dataBitsCollection = new[] { 5, 6, 7, 8 };
+        int[] _dataBitsCollection = { 5, 6, 7, 8 };
         StopBits _stopBits = StopBits.One;
         private bool _dtrEnable = false;
 
@@ -181,42 +181,45 @@ namespace CommandMessenger
 
             _baudRateCollection.Clear();
 
-            if ((possibleBaudRates & BAUD_075) > 0)
-                _baudRateCollection.Add(75);
-            if ((possibleBaudRates & BAUD_110) > 0)
-                _baudRateCollection.Add(110);
-            if ((possibleBaudRates & BAUD_150) > 0)
-                _baudRateCollection.Add(150);
-            if ((possibleBaudRates & BAUD_300) > 0)
-                _baudRateCollection.Add(300);
-            if ((possibleBaudRates & BAUD_600) > 0)
-                _baudRateCollection.Add(600);
-            if ((possibleBaudRates & BAUD_1200) > 0)
-                _baudRateCollection.Add(1200);
-            if ((possibleBaudRates & BAUD_1800) > 0)
-                _baudRateCollection.Add(1800);
-            if ((possibleBaudRates & BAUD_2400) > 0)
-                _baudRateCollection.Add(2400);
-            if ((possibleBaudRates & BAUD_4800) > 0)
-                _baudRateCollection.Add(4800);
-            if ((possibleBaudRates & BAUD_7200) > 0)
-                _baudRateCollection.Add(7200);
-            if ((possibleBaudRates & BAUD_9600) > 0)
-                _baudRateCollection.Add(9600);
-            if ((possibleBaudRates & BAUD_14400) > 0)
-                _baudRateCollection.Add(14400);
-            if ((possibleBaudRates & BAUD_19200) > 0)
-                _baudRateCollection.Add(19200);
-            if ((possibleBaudRates & BAUD_38400) > 0)
-                _baudRateCollection.Add(38400);
-            if ((possibleBaudRates & BAUD_56K) > 0)
-                _baudRateCollection.Add(56000);
+			// We start with the most common baudrates:
+            if ((possibleBaudRates & BAUD_115200) > 0)  
+                _baudRateCollection.Add(115200);        // Maxspeed Arduino Uno, Mega, with AT8u2 USB
+            if ((possibleBaudRates & BAUD_9600) > 0)    
+                _baudRateCollection.Add(9600);          // Often default speed 
             if ((possibleBaudRates & BAUD_57600) > 0)
-                _baudRateCollection.Add(57600);
-            if ((possibleBaudRates & BAUD_115200) > 0)
-                _baudRateCollection.Add(115200);
+                _baudRateCollection.Add(57600);         // Maxspeed Arduino Duemilanove, FTDI Serial
+            
+            // After that going from fastest to slowest baudrates:
             if ((possibleBaudRates & BAUD_128K) > 0)
                 _baudRateCollection.Add(128000);
+            if ((possibleBaudRates & BAUD_56K) > 0)
+                _baudRateCollection.Add(56000);
+            if ((possibleBaudRates & BAUD_38400) > 0)
+                _baudRateCollection.Add(38400);
+            if ((possibleBaudRates & BAUD_19200) > 0)
+                _baudRateCollection.Add(19200);
+            if ((possibleBaudRates & BAUD_14400) > 0)
+                _baudRateCollection.Add(14400);
+            if ((possibleBaudRates & BAUD_7200) > 0)
+                _baudRateCollection.Add(7200);
+            if ((possibleBaudRates & BAUD_4800) > 0)
+                _baudRateCollection.Add(4800);
+            if ((possibleBaudRates & BAUD_2400) > 0)
+                _baudRateCollection.Add(2400);
+            if ((possibleBaudRates & BAUD_1800) > 0)
+                _baudRateCollection.Add(1800);
+            if ((possibleBaudRates & BAUD_1200) > 0)
+                _baudRateCollection.Add(1200);
+            if ((possibleBaudRates & BAUD_600) > 0)
+                _baudRateCollection.Add(600);
+            if ((possibleBaudRates & BAUD_300) > 0)
+                _baudRateCollection.Add(300);
+            if ((possibleBaudRates & BAUD_150) > 0)
+                _baudRateCollection.Add(150);
+            if ((possibleBaudRates & BAUD_110) > 0)
+                _baudRateCollection.Add(110);
+            if ((possibleBaudRates & BAUD_075) > 0)
+                _baudRateCollection.Add(75);
 
             SendPropertyChangedEvent("BaudRateCollection");
         }

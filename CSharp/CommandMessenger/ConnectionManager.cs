@@ -60,6 +60,7 @@ namespace CommandMessenger
         public long WatchdogTimeOut { get; set; }
         public long WatchdogRetryTimeOut { get; set; }
         public uint MaxWatchdogTries     { get; set; }
+        public bool WatchdogEnabled { get; set; }
 
         protected ConnectionManager(CmdMessenger cmdMessenger, int challengeCommandId, int responseCommandId)
         {
@@ -139,7 +140,23 @@ namespace CommandMessenger
 
         protected void ConnectionFoundEvent()
         {
+            if (WatchdogEnabled)
+            {
+                StartWatchDog();
+            }
+
             InvokeEvent(ConnectionFound);
+        }
+
+        protected void ConnectionTimeoutEvent()
+        {
+            InvokeEvent(ConnectionTimeout);
+
+            if (WatchdogEnabled)
+            {
+                StopWatchDog();
+                StartScan();
+            }
         }
 
         protected void InvokeEvent<TEventHandlerArguments>(EventHandler<TEventHandlerArguments> eventHandler,
@@ -148,7 +165,7 @@ namespace CommandMessenger
             try
             {
                 if (eventHandler == null) return;
-                if (ControlToInvokeOn.IsDisposed) return;
+                if (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed) return;
                 if (ControlToInvokeOn != null && ControlToInvokeOn.InvokeRequired)
                 {
                     //Asynchronously call on UI thread
@@ -231,7 +248,7 @@ namespace CommandMessenger
                 Log(3, "No watchdog response after final try");
                 _watchdogTries = 0;
                 ConnectionManagerState = ConnectionManagerStates.Wait;
-                InvokeEvent(ConnectionTimeout);
+                ConnectionTimeoutEvent();
             }
 
             // We'll try another time
