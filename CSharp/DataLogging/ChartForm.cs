@@ -68,7 +68,7 @@ namespace DataLogging
             // there are many data points, we do this only every 100 ms, that is 10 Hz
             if (!TimeUtils.HasExpired(ref _previousChartUpdate, 100)) return;
 
-            Console.WriteLine("Update chart");
+            ///Console.WriteLine("Update chart");
 
             // get and update x-scale to scroll with data with an certain window
             var xScale = chartControl.GraphPane.XAxis.Scale;

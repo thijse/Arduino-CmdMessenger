@@ -12,6 +12,7 @@
 
 using System;
 using CommandMessenger;
+using CommandMessenger.Serialport;
 using CommandMessenger.TransportLayer;
 
 namespace ArduinoController
@@ -67,7 +68,7 @@ namespace ArduinoController
             _cmdMessenger.NewLineSent += NewLineSent;                       
 
             // Start listening
-            _cmdMessenger.StartListening();
+            _cmdMessenger.Connect();
 
             _controllerForm.SetLedState(true);
             _controllerForm.SetFrequency(2);
@@ -77,7 +78,7 @@ namespace ArduinoController
         public void Exit()
         {
             // Stop listening
-            _cmdMessenger.StopListening();
+            _cmdMessenger.Disconnect();
 
             // Dispose Command Messenger
             _cmdMessenger.Dispose();

@@ -8,6 +8,7 @@
 
 using System;
 using CommandMessenger;
+using CommandMessenger.Serialport;
 using CommandMessenger.TransportLayer;
 
 using System.Threading;
@@ -70,7 +71,7 @@ namespace DataLogging
             _cmdMessenger.NewLineSent += NewLineSent;                       
 
             // Start listening
-            _cmdMessenger.StartListening();
+            _cmdMessenger.Connect();
 
             // Send command to start sending data
             var command = new SendCommand((int)Command.StartLogging);
@@ -84,7 +85,7 @@ namespace DataLogging
         public void Exit()
         {
             // Stop listening
-            _cmdMessenger.StopListening();
+            _cmdMessenger.Disconnect();
            
             // Dispose Command Messenger
             _cmdMessenger.Dispose();

@@ -80,9 +80,9 @@ namespace CommandMessenger
             return new ReceivedCommand();
         }
 
-                /// <summary> Blocks until acknowlegdement reply has been received. </summary>
+                /// <summary> Blocks until acknowledgement reply has been received. </summary>
         /// <param name="ackCmdId"> acknowledgement command ID </param>
-        /// <param name="timeout">  Timeout on acknowlegde command. </param>
+        /// <param name="timeout">  Timeout on acknowledge command. </param>
         /// <param name="sendQueueState"></param>
         /// <returns> A received command. </returns>
         private ReceivedCommand BlockedTillReply(int ackCmdId, int timeout, SendQueue sendQueueState)
@@ -90,15 +90,25 @@ namespace CommandMessenger
             // Disable invoking command callbacks
             _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
 
+            // Disable thread based polling of Serial Interface
+            //_communicationManager.StopPolling();
+
             var start = TimeUtils.Millis;
             var time = start;
             var acknowledgeCommand = new ReceivedCommand();
             while ((time - start < timeout) && !acknowledgeCommand.Ok)
             {
-                time = TimeUtils.Millis;
+                time = TimeUtils.Millis;                                
+                // Force updating the transport buffer
+                //_communicationManager.UpdateTransportBuffer();
+                // Yield to other threads in order to process data in the buffer
                 Thread.Yield();
+                // Check if an acknowledgment command has come in
                 acknowledgeCommand = CheckForAcknowledge(ackCmdId, sendQueueState);
             }
+
+            // Re enable thread based polling of Serial Interface
+            //_communicationManager.StartPolling();
 
             // Re-enable invoking command callbacks
             _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Start;

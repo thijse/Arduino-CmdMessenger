@@ -18,6 +18,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO.Ports;
 using System.ComponentModel;
 
@@ -31,7 +32,7 @@ namespace CommandMessenger
         public event PropertyChangedEventHandler PropertyChanged;
         string _portName = "";
         int _baudRate = 115200;
-        readonly BindingList<int> _baudRateCollection = new BindingList<int>();
+        readonly List<int> _baudRateCollection = new List<int>();
         Parity _parity = Parity.None;
         int _dataBits = 8;
         int[] _dataBitsCollection = new[] { 5, 6, 7, 8 };
@@ -134,7 +135,7 @@ namespace CommandMessenger
         /// <summary>
         /// Available baud rates for current serial port
         /// </summary>
-        public BindingList<int> BaudRateCollection
+        public List<int> BaudRateCollection
         {
             get { return _baudRateCollection; }
         }

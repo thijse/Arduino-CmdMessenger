@@ -12,6 +12,7 @@
 
 using System;
 using CommandMessenger;
+using CommandMessenger.Serialport;
 using CommandMessenger.TransportLayer;
 
 namespace SendAndReceiveBinaryArguments
@@ -62,7 +63,7 @@ namespace SendAndReceiveBinaryArguments
             AttachCommandCallBacks();                
 
             // Start listening
-            _cmdMessenger.StartListening();
+            _cmdMessenger.Connect();
 
             _receivedItemsCount = 0;
             _receivedBytesCount = 0;
@@ -101,7 +102,7 @@ namespace SendAndReceiveBinaryArguments
         public void Exit()
         {
             // Stop listening
-            _cmdMessenger.StopListening();
+            _cmdMessenger.Disconnect();
 
             // Dispose Command Messenger
             _cmdMessenger.Dispose();

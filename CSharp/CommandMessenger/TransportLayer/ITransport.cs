@@ -21,13 +21,16 @@ using System;
 namespace CommandMessenger.TransportLayer
 {
     /// <summary> Interface for transport layer.  </summary>
-    public interface ITransport
+    public interface ITransport: IDisposable    
     {
         int BytesInBuffer();
         byte[] Read();
-        bool StartListening();
-        bool StopListening();
+        void Poll();
+        bool Connect();
+        bool Disconnect();
         bool IsConnected();
+        void StartPolling();
+        void StopPolling();
         void Write(byte[] buffer);
         event EventHandler NewDataReceived; 
     }

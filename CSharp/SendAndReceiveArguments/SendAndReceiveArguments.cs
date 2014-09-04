@@ -9,6 +9,7 @@
 
 using System;
 using CommandMessenger;
+using CommandMessenger.Serialport;
 using CommandMessenger.TransportLayer;
 
 namespace SendAndReceiveArguments
@@ -57,7 +58,7 @@ namespace SendAndReceiveArguments
             _cmdMessenger.NewLineSent += NewLineSent;                       
 
             // Start listening
-            _cmdMessenger.StartListening();
+            _cmdMessenger.Connect();
         }
 
         // Loop function
@@ -109,7 +110,7 @@ namespace SendAndReceiveArguments
         public void Exit()
         {
             // Stop listening
-            _cmdMessenger.StopListening();
+            _cmdMessenger.Disconnect();
 
             // Dispose Command Messenger
             _cmdMessenger.Dispose();

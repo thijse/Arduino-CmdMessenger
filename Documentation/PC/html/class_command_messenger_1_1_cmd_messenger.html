@@ -103,10 +103,10 @@ Public Member Functions</h2></td></tr>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SetSingleCore</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ac41ea118c4f01b8d88f6546feeb8b9cd">SetControlToInvokeOn</a> (Control controlToInvokeOn)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a control to invoke on.  <a href="#ac41ea118c4f01b8d88f6546feeb8b9cd"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a6a3f917bab92d23691186eb5bdee00ae">StopListening</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop listening and end serial port connection.  <a href="#a6a3f917bab92d23691186eb5bdee00ae"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#aed0ef21f531ae9ad038c7ca3a1996e05">StartListening</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts serial port connection and start listening.  <a href="#aed0ef21f531ae9ad038c7ca3a1996e05"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a42c68036bd9e5dded9cbffb6a6242de9">Disconnect</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop listening and end serial port connection.  <a href="#a42c68036bd9e5dded9cbffb6a6242de9"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ab0392f0afcae4fc13873f5a0d1353328">Connect</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts serial port connection and start listening.  <a href="#ab0392f0afcae4fc13873f5a0d1353328"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#afd4efbc74d716406919ed54a2ec57cd7">Attach</a> (<a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a72a17f15d73955a00f565d86b5216aed">MessengerCallbackFunction</a> newFunction)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Attaches default callback for unsupported commands.  <a href="#afd4efbc74d716406919ed54a2ec57cd7"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a747bf16fde8067a021f25b4fef95c616">Attach</a> (int messageId, <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a72a17f15d73955a00f565d86b5216aed">MessengerCallbackFunction</a> newFunction)</td></tr>
@@ -116,7 +116,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SetSingleCore</b> ()<
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ad38b4f7b5658a1f8980aa38eda80b9f4">SendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command. If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired.  <a href="#ad38b4f7b5658a1f8980aa38eda80b9f4"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#aceeec70d6862ecf07b03fa867b67eea8">SendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, SendQueue sendQueueState, ReceiveQueue receiveQueueState)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command.  <a href="#aceeec70d6862ecf07b03fa867b67eea8"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command. If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired. Based on ClearQueueState, the send- and receive-queues are left intact or are cleared.  <a href="#aceeec70d6862ecf07b03fa867b67eea8"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#afd95776c37b456660334eaa0aed5d994">SendCommand</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, SendQueue sendQueueState, ReceiveQueue receiveQueueState, UseQueue useQueue)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sends a command. If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired. Based on ClearQueueState, the send- and receive-queues are left intact or are cleared.  <a href="#afd95776c37b456660334eaa0aed5d994"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a788986ebb510ecd99c7f7a45ad424cc8">SendCommandSync</a> (<a class="el" href="class_command_messenger_1_1_send_command.html">SendCommand</a> sendCommand, SendQueue sendQueueState)</td></tr>
@@ -145,8 +145,8 @@ Properties</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets a whether to print a line feed carriage return after each command.  <a href="#accab332ea5b404ac26f9b679327d8e29"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">String&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a1388886b01925fa3f6e78b5ee2ab6219">CurrentReceivedLine</a><code> [get, set]</code></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the current received command line.  <a href="#a1388886b01925fa3f6e78b5ee2ab6219"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#aaa33f7a6c44eeda61db3726212d9fa83">LastLineTimeStamp</a><code> [get, set]</code></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the time stamp of the last command line received.  <a href="#aaa33f7a6c44eeda61db3726212d9fa83"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_cmd_messenger.html#affed4f13807df660e56d6cbf8f8110a8">LastReceivedCommandTimeStamp</a><code> [get]</code></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets or sets the time stamp of the last command line received.  <a href="#affed4f13807df660e56d6cbf8f8110a8"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="events"></a>
 Events</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53cc20ef9e91c9d683f976f8034225fc"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::NewLineReceived" ref="a53cc20ef9e91c9d683f976f8034225fc" args="" -->
@@ -290,7 +290,7 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
   <table class="params">
     <tr><td class="paramname">transport</td><td>The transport layer. </td></tr>
     <tr><td class="paramname">fieldSeparator</td><td>The field separator. </td></tr>
-    <tr><td class="paramname">sendBufferMaxLength</td><td>The maximunm size of the send buffer</td></tr>
+    <tr><td class="paramname">sendBufferMaxLength</td><td>The maximum size of the send buffer</td></tr>
   </table>
   </dd>
 </dl>
@@ -390,7 +390,7 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
     <tr><td class="paramname">fieldSeparator</td><td>The field separator. </td></tr>
     <tr><td class="paramname">commandSeparator</td><td>The command separator. </td></tr>
     <tr><td class="paramname">escapeCharacter</td><td>The escape character. </td></tr>
-    <tr><td class="paramname">sendBufferMaxLength</td><td>The maximunm size of the send buffer</td></tr>
+    <tr><td class="paramname">sendBufferMaxLength</td><td>The maximum size of the send buffer</td></tr>
   </table>
   </dd>
 </dl>
@@ -542,6 +542,44 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
 <div class="memdoc">
 
 <p>Clears the send queue. </p>
+
+</div>
+</div>
+<a class="anchor" id="ab0392f0afcae4fc13873f5a0d1353328"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::Connect" ref="ab0392f0afcae4fc13873f5a0d1353328" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#ab0392f0afcae4fc13873f5a0d1353328">CommandMessenger.CmdMessenger.Connect</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Starts serial port connection and start listening. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if it succeeds, false if it fails. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a42c68036bd9e5dded9cbffb6a6242de9"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::Disconnect" ref="a42c68036bd9e5dded9cbffb6a6242de9" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a42c68036bd9e5dded9cbffb6a6242de9">CommandMessenger.CmdMessenger.Disconnect</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Stop listening and end serial port connection. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>true if it succeeds, false if it fails. </dd></dl>
 
 </div>
 </div>
@@ -728,8 +766,7 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
 </div>
 <div class="memdoc">
 
-<p>Sends a command. </p>
-<p>If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired. Based on ClearQueueState, the send- and receive-queues are left intact or are cleared </p>
+<p>Sends a command. If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue If a command acknowledge is requested, the command will be send synchronously: the program will block until the acknowledge command has been received or the timeout has expired. Based on ClearQueueState, the send- and receive-queues are left intact or are cleared. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">sendCommand</td><td>The command to sent. </td></tr>
@@ -855,44 +892,6 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
 
 </div>
 </div>
-<a class="anchor" id="aed0ef21f531ae9ad038c7ca3a1996e05"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::StartListening" ref="aed0ef21f531ae9ad038c7ca3a1996e05" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#aed0ef21f531ae9ad038c7ca3a1996e05">CommandMessenger.CmdMessenger.StartListening</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Starts serial port connection and start listening. </p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>true if it succeeds, false if it fails. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a6a3f917bab92d23691186eb5bdee00ae"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::StopListening" ref="a6a3f917bab92d23691186eb5bdee00ae" args="()" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a6a3f917bab92d23691186eb5bdee00ae">CommandMessenger.CmdMessenger.StopListening</a> </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Stop listening and end serial port connection. </p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>true if it succeeds, false if it fails. </dd></dl>
-
-</div>
-</div>
 <hr/><h2>Property Documentation</h2>
 <a class="anchor" id="a27a2a3229ee31c717fba71f93e96fab5"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::BoardType" ref="a27a2a3229ee31c717fba71f93e96fab5" args="" -->
 <div class="memitem">
@@ -926,12 +925,12 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
 
 </div>
 </div>
-<a class="anchor" id="aaa33f7a6c44eeda61db3726212d9fa83"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::LastLineTimeStamp" ref="aaa33f7a6c44eeda61db3726212d9fa83" args="" -->
+<a class="anchor" id="affed4f13807df660e56d6cbf8f8110a8"></a><!-- doxytag: member="CommandMessenger::CmdMessenger::LastReceivedCommandTimeStamp" ref="affed4f13807df660e56d6cbf8f8110a8" args="" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#aaa33f7a6c44eeda61db3726212d9fa83">CommandMessenger.CmdMessenger.LastLineTimeStamp</a><code> [get, set]</code></td>
+          <td class="memname">long <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#affed4f13807df660e56d6cbf8f8110a8">CommandMessenger.CmdMessenger.LastReceivedCommandTimeStamp</a><code> [get]</code></td>
         </tr>
       </table>
 </div>
@@ -965,7 +964,7 @@ NewLineEvent.NewLineHandler&#160;</td><td class="memItemRight" valign="bottom"><
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat May 17 2014 22:39:22 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Sep 4 2014 21:12:55 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

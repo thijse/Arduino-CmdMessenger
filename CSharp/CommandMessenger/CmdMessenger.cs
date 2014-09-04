@@ -166,7 +166,7 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
         /// <param name="fieldSeparator"> The field separator. </param>
-        /// <param name="sendBufferMaxLength"> The maximunm size of the send buffer</param>
+        /// <param name="sendBufferMaxLength"> The maximum size of the send buffer</param>
         public CmdMessenger(ITransport transport, char fieldSeparator, int sendBufferMaxLength)
         {
             Init(transport, fieldSeparator, ';', '/', sendBufferMaxLength);
@@ -186,19 +186,19 @@ namespace CommandMessenger
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
         /// <param name="escapeCharacter">  The escape character. </param>
-        /// <param name="sendBufferMaxLength"> The maximunm size of the send buffer</param>
+        /// <param name="sendBufferMaxLength"> The maximum size of the send buffer</param>
         public CmdMessenger(ITransport transport, char fieldSeparator, char commandSeparator,
                             char escapeCharacter, int sendBufferMaxLength)
         {
             Init(transport, fieldSeparator, commandSeparator, escapeCharacter, sendBufferMaxLength);
         }
 
-        /// <summary> Initialises this object. </summary>
+        /// <summary> Initializes this object. </summary>
         /// <param name="transport">   The transport layer. </param>
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
         /// <param name="escapeCharacter">  The escape character. </param>
-        /// <param name="sendBufferMaxLength"> The maximunm size of the send buffer</param>
+        /// <param name="sendBufferMaxLength"> The maximum size of the send buffer</param>
         private void Init(ITransport transport, char fieldSeparator, char commandSeparator,
                           char escapeCharacter, int sendBufferMaxLength)
         {           
@@ -259,19 +259,19 @@ namespace CommandMessenger
 
         /// <summary>  Stop listening and end serial port connection. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
-        public bool StopListening()
+        public bool Disconnect()
         {
-            return _communicationManager.StopListening();
+            return _communicationManager.Disconnect();
         }
 
         /// <summary> Starts serial port connection and start listening. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
-        public bool StartListening()
+        public bool Connect()
         {
-            if (_communicationManager.StartListening())
+            if (_communicationManager.Connect())
             {
                 // Timestamp of this command is same as time stamp of serial line
-                LastLineTimeStamp = _communicationManager.LastLineTimeStamp;
+                //LastReceivedCommandTimeStamp = _communicationManager.LastLineTimeStamp;
                 return true;
             }
             return false;
@@ -294,7 +294,13 @@ namespace CommandMessenger
 
         /// <summary> Gets or sets the time stamp of the last command line received. </summary>
         /// <value> The last line time stamp. </value>
-        public long LastLineTimeStamp { get; private set; }
+        public long LastReceivedCommandTimeStamp
+        {
+            get
+            {
+                return _communicationManager.LastLineTimeStamp;
+            }
+        }
 
         /// <summary> Handle message. </summary>
         /// <param name="receivedCommand"> The received command. </param>
@@ -334,7 +340,7 @@ namespace CommandMessenger
             return SendCommand(sendCommand, SendQueue.InFrontQueue,ReceiveQueue.Default);
         }
 
-                /// <summary> Sends a command. 
+        /// <summary> Sends a command. 
         /// 		  If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue
         ///  		  If a  command acknowledge is requested, the command will be send synchronously:  the program will block until the acknowledge command 
         ///  		  has been received or the timeout has expired.
@@ -488,12 +494,14 @@ namespace CommandMessenger
         /// <param name="command">                   The command. </param>
         private void InvokeCallBack(MessengerCallbackFunction messengerCallbackFunction, ReceivedCommand command)
         {
-            if (messengerCallbackFunction != null)
+            try
             {
+                if (messengerCallbackFunction == null) return;
+
                 if (_controlToInvokeOn != null && _controlToInvokeOn.InvokeRequired)
                 {
                     //Asynchronously call on UI thread
-                    _controlToInvokeOn.Invoke(new MessengerCallbackFunction(messengerCallbackFunction), (object) command);
+                    _controlToInvokeOn.Invoke(new MessengerCallbackFunction(messengerCallbackFunction), (object)command);
                 }
                 else
                 {
@@ -501,14 +509,18 @@ namespace CommandMessenger
                     messengerCallbackFunction(command);
                 }
             }
+            catch (Exception)
+            {
+            }
+
         }
 
         /// <summary> Finaliser. </summary>
         ~CmdMessenger()
         {
             _controlToInvokeOn = null;
-            _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
-            _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
+            _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
+            _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
         }
 
 
@@ -519,8 +531,8 @@ namespace CommandMessenger
             if (disposing)
             {
                 _controlToInvokeOn = null;
-                _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
-                _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
+                _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
+                _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
                // _sendCommandLogger.Close();
             }
             base.Dispose(disposing);

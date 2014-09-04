@@ -31,6 +31,7 @@ namespace CommandMessenger
         protected readonly List<GeneralStrategy> GeneralStrategies = new List<GeneralStrategy>(); // Buffer for command independent strategies
         protected readonly CmdMessenger CmdMessenger;
         private ThreadRunStates _threadRunState;
+        protected readonly EventWaiter EventWaiter;
         protected object ThreadRunStateLock = new object();
 
         /// <summary> Run state of thread running the queue.  </summary>
@@ -78,7 +79,9 @@ namespace CommandMessenger
         public CommandQueue(DisposeStack disposeStack, CmdMessenger cmdMessenger) 
         {
             CmdMessenger = cmdMessenger;
-            disposeStack.Push(this);   
+            disposeStack.Push(this);
+
+            EventWaiter = new EventWaiter();
 
             // Create queue thread and wait for it to start
             QueueThread = new Thread(ProcessQueue) {Priority = ThreadPriority.Normal};
@@ -122,9 +125,10 @@ namespace CommandMessenger
         /// <summary> Kills this object. </summary>
         public void Kill()
         {
-            ThreadRunState = ThreadRunStates.Stop;
+            ThreadRunState = ThreadRunStates.Abort;
+            EventWaiter.Quit();
             //Wait for thread to die
-            Join(500);
+            Join(2000);
             if (QueueThread.IsAlive) QueueThread.Abort();
         }
 

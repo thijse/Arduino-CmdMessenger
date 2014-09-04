@@ -26,7 +26,7 @@ namespace CommandMessenger
     /// <summary> A command to be send by CmdMessenger </summary>
     public class SendCommand : Command
     {
-        /// <summary> Indicates if we want to wait for an acknowlegde command. </summary>
+        /// <summary> Indicates if we want to wait for an acknowledge command. </summary>
         /// <value> true if request acknowledge, false if not. </value>
         public bool ReqAc { get; set; }
 
@@ -34,8 +34,8 @@ namespace CommandMessenger
         /// <value> the acknowledge command ID. </value>
         public int AckCmdId { get; set; }
 
-        /// <summary> Gets or sets the time we want to wait for the acknowledgde command. </summary>
-        /// <value> The timeout on waiting for an acknowlegde</value>
+        /// <summary> Gets or sets the time we want to wait for the acknowledge command. </summary>
+        /// <value> The timeout on waiting for an acknowledge</value>
         public int Timeout { get; set; }
 
         /// <summary> Constructor. </summary>
@@ -128,8 +128,8 @@ namespace CommandMessenger
 
         /// <summary> Constructor. </summary>
         /// <param name="cmdId">    Command ID </param>
-        /// <param name="ackCmdId"> Acknowlegde command ID. </param>
-        /// <param name="timeout">  The timeout on waiting for an acknowlegde</param>
+        /// <param name="ackCmdId"> Acknowledge command ID. </param>
+        /// <param name="timeout">  The timeout on waiting for an acknowledge</param>
         public SendCommand(int cmdId, int ackCmdId, int timeout)
         {
             Init(cmdId, true, ackCmdId, timeout);
@@ -138,8 +138,8 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         /// <param name="cmdId">    Command ID </param>
         /// <param name="argument"> The argument. </param>
-        /// <param name="ackCmdId"> Acknowlegde command ID. </param>
-        /// <param name="timeout">  The timeout on waiting for an acknowlegde</param>
+        /// <param name="ackCmdId"> Acknowledge command ID. </param>
+        /// <param name="timeout">  The timeout on waiting for an acknowledge</param>
         public SendCommand(int cmdId, string argument, int ackCmdId, int timeout)
         {
             Init(cmdId, true, ackCmdId, timeout);
@@ -149,8 +149,8 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         /// <param name="cmdId">     Command ID </param>
         /// <param name="arguments"> The arguments. </param>
-        /// <param name="ackCmdId">  Acknowlegde command ID. </param>
-        /// <param name="timeout">   The timeout on waiting for an acknowlegde</param>
+        /// <param name="ackCmdId">  Acknowledge command ID. </param>
+        /// <param name="timeout">   The timeout on waiting for an acknowledge</param>
         public SendCommand(int cmdId, string[] arguments, int ackCmdId, int timeout)
         {
             Init(cmdId, true, ackCmdId, timeout);
@@ -160,8 +160,8 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         /// <param name="cmdId">    Command ID </param>
         /// <param name="argument"> The argument. </param>
-        /// <param name="ackCmdId"> Acknowlegde command ID. </param>
-        /// <param name="timeout">  The timeout on waiting for an acknowlegde</param>
+        /// <param name="ackCmdId"> Acknowledge command ID. </param>
+        /// <param name="timeout">  The timeout on waiting for an acknowledge</param>
         public SendCommand(int cmdId, float argument, int ackCmdId, int timeout)
         {
             Init(cmdId, true, ackCmdId, timeout);
@@ -171,8 +171,8 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         /// <param name="cmdId">    Command ID </param>
         /// <param name="argument"> The argument. </param>
-        /// <param name="ackCmdId"> Acknowlegde command ID. </param>
-        /// <param name="timeout">  The timeout on waiting for an acknowlegde</param>
+        /// <param name="ackCmdId"> Acknowledge command ID. </param>
+        /// <param name="timeout">  The timeout on waiting for an acknowledge</param>
         public SendCommand(int cmdId, double argument, int ackCmdId, int timeout)
         {
             Init(cmdId, true, ackCmdId, timeout);
@@ -182,8 +182,8 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         /// <param name="cmdId">    Command ID </param>
         /// <param name="argument"> The argument. </param>
-        /// <param name="ackCmdId"> Acknowlegde command ID. </param>
-        /// <param name="timeout">  The timeout on waiting for an acknowlegde</param>
+        /// <param name="ackCmdId"> Acknowledge command ID. </param>
+        /// <param name="timeout">  The timeout on waiting for an acknowledge</param>
         public SendCommand(int cmdId, Int16 argument, int ackCmdId, int timeout)
         {
             Init(cmdId, true, ackCmdId, timeout);
@@ -193,8 +193,8 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         /// <param name="cmdId">    Command ID </param>
         /// <param name="argument"> The argument. </param>
-        /// <param name="ackCmdId"> Acknowlegde command ID. </param>
-        /// <param name="timeout">  The timeout on waiting for an acknowlegde</param>
+        /// <param name="ackCmdId"> Acknowledge command ID. </param>
+        /// <param name="timeout">  The timeout on waiting for an acknowledge</param>
         public SendCommand(int cmdId, UInt16 argument, int ackCmdId, int timeout)
         {
             Init(cmdId, true, ackCmdId, timeout);
@@ -204,8 +204,8 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         /// <param name="cmdId">    Command ID </param>
         /// <param name="argument"> The argument. </param>
-        /// <param name="ackCmdId"> Acknowlegde command ID. </param>
-        /// <param name="timeout">  The timeout on waiting for an acknowlegde</param>
+        /// <param name="ackCmdId"> Acknowledge command ID. </param>
+        /// <param name="timeout">  The timeout on waiting for an acknowledge</param>
         public SendCommand(int cmdId, Int32 argument, int ackCmdId, int timeout)
         {
             Init(cmdId, true, ackCmdId, timeout);
@@ -215,19 +215,19 @@ namespace CommandMessenger
         /// <summary> Constructor. </summary>
         /// <param name="cmdId">    Command ID </param>
         /// <param name="argument"> The argument. </param>
-        /// <param name="ackCmdId"> Acknowlegde command ID. </param>
-        /// <param name="timeout">  The timeout on waiting for an acknowlegde</param>
+        /// <param name="ackCmdId"> Acknowledge command ID. </param>
+        /// <param name="timeout">  The timeout on waiting for an acknowledge</param>
         public SendCommand(int cmdId, UInt32 argument, int ackCmdId, int timeout)
         {
             Init(cmdId, true, ackCmdId, timeout);
             AddArgument(argument);
         }
 
-        /// <summary> Initialises this object. </summary>
+        /// <summary> Initializes this object. </summary>
         /// <param name="cmdId">    Command ID </param>
         /// <param name="reqAc">    true to request ac. </param>
-        /// <param name="ackCmdId"> Acknowlegde command ID. </param>
-        /// <param name="timeout">  The timeout on waiting for an acknowlegde</param>
+        /// <param name="ackCmdId"> Acknowledge command ID. </param>
+        /// <param name="timeout">  The timeout on waiting for an acknowledge</param>
         private void Init(int cmdId, bool reqAc, int ackCmdId, int timeout)
         {
             ReqAc = reqAc;

@@ -1,19 +1,33 @@
+
 // *** TemperatureControl ***
 
 // This example expands the previous ArduinoController example. The PC will now send a start command to the controller,
 // the controller will now start measuring the temperature and controlling the heater. The controller will also start 
 // sending temperature and heater steer data which the PC will plot in a chart. With a slider we can set the goal 
 // temperature, which will make the PID library on the controller adjust the setting of the heater.
+
+// To use this example without having a thermocouple or heating element, it comes with a simulated boiler
+// In order to use the simulator, disable the #define REAL_HEATER
+
  
+//#define REAL_HEATER;
+#ifdef REAL_HEATER
 #include <Adafruit_MAX31855.h>
+#else
+#include <HeaterSim.h>
+#endif
+
 #include <CmdMessenger.h>  
 #include <PID_v1.h>
 #include <DoEvery.h>   
 
+
 // Attach a new CmdMessenger object to the default Serial port
 CmdMessenger cmdMessenger = CmdMessenger(Serial);
 
-const int heaterPwmInterval        = 3000; // PWM cycle duration 
+
+
+const int heaterPwmInterval        = 300; // PWM cycle duration 
 const int measureInterval          = 100;  // Interval between measurements
 
 DoEvery tempTimer(measureInterval);
@@ -33,18 +47,22 @@ int thermoCLK                      = 5;
 const int switchPin                = 4;
 
 bool acquireData                   = false; // Logging start/stop flag
-bool controlHeater 	           = false; // Heater start/stop flag
+bool controlHeater 	               = false; // Heater start/stop flag
 
 long startAcqMillis                = 0;
 
 double CurrentTemperature          = 20;    // Measured temperature
 double goalTemperature             = 20;    // Goal temperature
 
-bool switchState                   = false; // Initial binary heater state 
+bool heaterOn                      = false; // Initial binary heater state 
 double heaterSteerValue            = 0;     // Initial normalized heater value
 
 // Initialize thermocouple library
-Adafruit_MAX31855 thermocouple(thermoCLK, thermoCS, thermoDO);
+#ifdef REAL_HEATER
+Adafruit_MAX31855 thermocouple(thermoCLK, thermoCS, thermoDO);  
+#else
+HeaterSim heaterSim(20);   // Heater is placed in ambient temperature of 20 degrees Celsius
+#endif
 
 // Initialize PID library
 PID pid(&CurrentTemperature, &heaterSteerValue, &goalTemperature,pidP,pidI,pidD,DIRECT);
@@ -54,12 +72,15 @@ PID pid(&CurrentTemperature, &heaterSteerValue, &goalTemperature,pidP,pidI,pidD,
 enum
 {
   // Commands
+  kRequestId           , // Command to request application ID
+  kSendId              , // Command to send application ID
   kAcknowledge         , // Command to acknowledge a received command
   kError               , // Command to message that an error has occurred
   kStartLogging        , // Command to request logging start              
   kStopLogging         , // Command to request logging stop               
-  kPlotDataPoint       , // Command to request datapoint plotting  
+  kPlotDataPoint       , // Command to request data-point plotting  
   kSetGoalTemperature  , // Command to set the goal temperature 
+  KSetStartTime        , // Command to set the new start time for the logger   
 };
 
 // Commands we send from the PC and want to receive on the Arduino.
@@ -68,9 +89,11 @@ void attachCommandCallbacks()
 {
   // Attach callback methods
   cmdMessenger.attach(OnUnknownCommand);
+  cmdMessenger.attach(kRequestId, OnRequestId);
   cmdMessenger.attach(kStartLogging, OnStartLogging);
   cmdMessenger.attach(kStopLogging, OnStopLogging);
   cmdMessenger.attach(kSetGoalTemperature, OnSetGoalTemperature);
+  cmdMessenger.attach(KSetStartTime, OnSetStartTime);
 }
 
 // ------------------  C A L L B A C K S -----------------------
@@ -79,6 +102,11 @@ void attachCommandCallbacks()
 void OnUnknownCommand()
 {
   cmdMessenger.sendCmd(kError,"Command without attached callback");
+}
+
+void OnRequestId()
+{
+  cmdMessenger.sendCmd(kSendId,"TemperatureControl");
 }
 
 // Callback function that responds that Arduino is ready (has booted up)
@@ -102,7 +130,7 @@ void OnStopLogging()
   cmdMessenger.sendCmd(kAcknowledge,"Stop Logging");
 }
 
-// Callback function that sets leds blinking frequency
+// Callback function that sets the goal temperature
 void OnSetGoalTemperature()
 {
   // Read led state argument, interpret string as float
@@ -113,15 +141,31 @@ void OnSetGoalTemperature()
   if (cmdMessenger.isArgOk()) {
     goalTemperature = newTemperature;
     
-    // Enable heater control (was disabled at intialization)
+    // Enable heater control (was disabled at initialization)
     controlHeater = true;  
   
-    // Send acknowledgement back to PC
+    // Send acknowledgment back to PC
     cmdMessenger.sendBinCmd(kAcknowledge,goalTemperature); 
   } else {
     // Error in received goal temperature! Send error back to PC
     cmdMessenger.sendCmd(kError,"Error in received new goal temperature");
   }
+}
+
+// Callback function that sets the start time
+void OnSetStartTime()
+{
+	// Read led state argument, interpret string as float
+	float startTime = cmdMessenger.readBinArg<float>();
+	
+	// Make sure that the argument is valid before we change
+	if (cmdMessenger.isArgOk()) {
+		unsigned long milis =  millis();
+		// translate time in seconds to time in milliseconds wrt to internal clock;
+		startAcqMillis = (unsigned long)((float)startTime*1000.0f);
+		if (startAcqMillis >  milis) { startAcqMillis = milis; }
+		startAcqMillis = milis- startAcqMillis;
+	}
 }
 
 // ------------------ M A I N  ----------------------
@@ -130,8 +174,14 @@ void OnSetGoalTemperature()
 void setup() 
 {
   // Listen on serial connection for messages from the pc
-  Serial.begin(115200); 
-  
+    
+  // 115200 is typically the maximum speed for serial over USB
+  // Serial.begin(115200);
+    
+  // Many bluetooth breakout boards run on 9600 at default speed
+  // The Serial setting below should match this
+  Serial.begin(9600);    
+	
   // Do not print newLine at end of command, 
   // in order to reduce data being sent
   cmdMessenger.printLfCr(false);
@@ -143,7 +193,12 @@ void setup()
   //initialize the PID variables
   pid.SetOutputLimits(0,heaterPwmInterval);
 
-  CurrentTemperature= thermocouple.readCelsius();
+  // Read the current temperature
+  #ifdef REAL_HEATER
+	CurrentTemperature= thermocouple.readCelsius();
+  #else
+	CurrentTemperature = heaterSim.GetTemp();
+  #endif
 
   //prepare PID port for writing
   pinMode(switchPin, OUTPUT);  
@@ -183,14 +238,18 @@ void loop()
   }
 }
 
-// simple readout of two Analog pins. 
+// Measure temperature in boiler 
 void measure() {
   if (acquireData) {
      // Calculate time
      float seconds     = (float) (millis()-startAcqMillis) /1000.0 ;
      
-     // Measure temperature using thermocouple
-     CurrentTemperature = thermocouple.readCelsius(); 
+     // Measure temperature 
+     #ifdef REAL_HEATER
+		CurrentTemperature= thermocouple.readCelsius(); // measure with thermocouple
+     #else 
+		CurrentTemperature = heaterSim.GetTemp();       // measure temperature in simulated boiler
+     #endif   
          
      // Send data to PC    
      cmdMessenger.sendCmdStart(kPlotDataPoint);  
@@ -198,21 +257,27 @@ void measure() {
      cmdMessenger.sendCmdBinArg((float)CurrentTemperature);                // Measured temperature
      cmdMessenger.sendCmdBinArg((float)goalTemperature);                   // Goal temperature
      cmdMessenger.sendCmdBinArg((float)((double)heaterSteerValue/(double)heaterPwmInterval)); // normalized heater steer value
-     cmdMessenger.sendCmdBinArg((bool)switchState);                        // On / off state during PWM cycle
+     cmdMessenger.sendCmdBinArg((bool)heaterOn);                        // On / off state during PWM cycle
      cmdMessenger.sendCmdEnd();    
   }  
 } 
+
+void SetHeaterState(bool heaterOn)
+{
+	// Turn heater, connected to relay at pin switchPin
+	digitalWrite(switchPin,heaterOn?HIGH:LOW);
+}
 
 // Set binary heater state
 void heaterPWM()
 {
   // Switch heater on or off, based on moment in the PWM cycle
-  if(pidTimer.before(heaterSteerValue)) {
-    switchState = HIGH;
-  } else { 
-    switchState = LOW;
-  }
+  heaterOn = pidTimer.before(heaterSteerValue);
+  #ifdef REAL_HEATER
+	SetHeaterState(heaterOn);			  // Turn on heater of boiler 
+  #else
+	heaterSim.SetHeaterState(heaterOn); // Turn on heater of simulated boiler
+  #endif 
   
-  // Output on pin switchPin 
-  digitalWrite(switchPin,switchState);
+
 }

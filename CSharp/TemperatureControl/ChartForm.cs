@@ -10,31 +10,18 @@ namespace DataLogging
     public partial class ChartForm : Form
     {
         // In a small C# application all code would typically end up in this class.
-        // For a cleaner, MVP-like setup I moved higher logic to Datalogging.cs,        
+        // For a cleaner, MVP-like setup I moved higher logic to TemperatureControl.cs,        
         
         private readonly TemperatureControl _temperatureControl;
-        //private long _previousChartUpdate;
+        private long _previousChartUpdate;
         private IPointListEdit _analog1List;
         private IPointListEdit _analog3List;
         private GraphPane _temperaturePane;
         private GraphPane _heaterPane;
         private RollingPointPairList _heaterList;
         private RollingPointPairList _heaterPwmList;
-
+        private bool _connected;
         private double _goalTemperature;
-
-
-        // This allows a sub class to easily run a method within
-        // an UI thread without the need of creating multiple
-        // delegate signatures for each method signatures
-        protected virtual void ThreadSafe(MethodInvoker method)
-        {
-            if (InvokeRequired)
-                Invoke(method);
-            else
-                method();
-        }
-
 
         public ChartForm()
         {
@@ -51,7 +38,7 @@ namespace DataLogging
 
         // ------------------  CHARTING ROUTINES ---------------------
 
-        // Set up the chart
+        /// <summary> Sets up the chart. </summary>
         public void SetupChart()
         {
             MasterPane masterPane = chartControl.MasterPane;
@@ -64,13 +51,6 @@ namespace DataLogging
                 "Time (s)",
                 "Temperature (C)");
             masterPane.Add(_temperaturePane);
-
-            //var temperaturePane = chartControl.GraphPane;
-
-            // Set the Titles
-            //temperaturePane.Title.Text = "Temperature controller";
-            //temperaturePane.XAxis.Title.Text = "Time (s)";
-            //temperaturePane.YAxis.Title.Text = "Temperature (C)";
 
             // Create data arrays for rolling points
             _analog1List = new RollingPointPairList(3000);
@@ -128,28 +108,51 @@ namespace DataLogging
             _heaterPwmList.Add(time, heaterPwmValue?1.05:0.05);
 
             // Because updating the chart is computationally expensive if 
-            // there are many data points, we do this only every 100 ms, that is 10 Hz
-            //if (!TimeUtils.HasExpired(ref _previousChartUpdate, 100)) return;
+            // there are many data points, we do this only every 10 ms, that is 100 Hz
+            if (!TimeUtils.HasExpired(ref _previousChartUpdate, 10)) return;
             
-            Console.WriteLine(@"Update chart");
+            //Console.WriteLine(@"Update chart");
             SetChartScale(time);
         }
-        
+
+        // Update the graph with the data points
+        public void SetConnected()
+        {
+            _connected = true;
+            UpdateUi();
+        }
+
+        // Update the graph with the data points
+        public void SetDisConnected()
+        {
+            _connected = false;
+            UpdateUi();
+        }
+
+        /// <summary> Updates the user interface. </summary>
+        private void UpdateUi()
+        {
+            buttonStartAcquisition.Enabled  = _connected;
+            buttonStopAcquisition.Enabled   = _connected;
+            chartControl.Enabled            = _connected;
+            GoalTemperatureTrackBar.Enabled = _connected;
+            GoalTemperatureValue.Enabled    = _connected;
+        }
+
+        /// <summary> Sets the chart scale. </summary>
+        /// <param name="time"> The time scale to show. </param>
         private void SetChartScale(double time)
         {
             // set window width
             const double windowWidth = 30.0;
             // get and update x-scale to scroll with data with an certain window
-
-
+            
             var xScaleTemp = _temperaturePane.XAxis.Scale;
    
-
             if (time < windowWidth)
             {
                 xScaleTemp.Max = windowWidth;
-                xScaleTemp.Min = 0;
-                
+                xScaleTemp.Min = 0;               
             }
             else
             {
@@ -183,6 +186,9 @@ namespace DataLogging
             base.Dispose(disposing);
         }
 
+        /// <summary> Update goal temperature as triggered by scrollbar. </summary>
+        /// <param name="sender"> Source of the event. </param>
+        /// <param name="e">      Event information. </param>
         public void GoalTemperatureTrackBarScroll(object sender, EventArgs e)
         {
             _goalTemperature = ((double)GoalTemperatureTrackBar.Value/10.0);
@@ -190,14 +196,43 @@ namespace DataLogging
             _temperatureControl.GoalTemperature = _goalTemperature;
         }
 
-        private void buttonStopAcquisition_Click(object sender, EventArgs e)
+        /// <summary>  Stop Acquisition. </summary>
+        /// <param name="sender"> Source of the event. </param>
+        /// <param name="e">      Event information. </param>
+        private void ButtonStopAcquisitionClick(object sender, EventArgs e)
         {
             _temperatureControl.StopAcquisition();
         }
 
-        private void buttonStartAcquisition_Click(object sender, EventArgs e)
+        /// <summary>  Start Acquisition. </summary>
+        /// <param name="sender"> Source of the event. </param>
+        /// <param name="e">      Event information. </param>
+        private void ButtonStartAcquisitionClick(object sender, EventArgs e)
         {
             _temperatureControl.StartAcquisition();
         }
+
+        /// <summary> Update status bar. </summary>
+        /// <param name="description"> The message to show on the status bar. </param>
+        public void SetStatus(string description)
+        {
+            toolStripStatusLabel1.Text = description;
+        }
+
+        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void loggingView1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        public void LogMessage(string message)
+        {
+            loggingView1.AddEntry(message);
+        }
+
     }
 }

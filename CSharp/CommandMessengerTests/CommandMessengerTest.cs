@@ -9,6 +9,7 @@
 using System;
 using System.IO.Ports;
 using CommandMessenger;
+using CommandMessenger.Serialport;
 using CommandMessenger.TransportLayer;
 
 namespace CommandMessengerTests

@@ -8,6 +8,7 @@
 using System;
 using System.Threading;
 using CommandMessenger;
+using CommandMessenger.Serialport;
 using CommandMessenger.TransportLayer;
 
 namespace Receive
@@ -58,7 +59,7 @@ namespace Receive
             AttachCommandCallBacks();
             
             // Start listening
-            _cmdMessenger.StartListening();                                
+            _cmdMessenger.Connect();                                
         }
 
         // Loop function

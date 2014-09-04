@@ -56,6 +56,7 @@
     <Compile Include="Tests\TransferSpeed.cs" />
     <Compile Include="Tests\SetupConnection.cs" />
     <Compile Include="Tests\Random.cs" />
+    <Compile Include="TimedAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommandMessenger\CommandMessenger.csproj">

@@ -31,8 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="InTheHand.Net.Personal, Version=3.5.605.0, Culture=neutral, PublicKeyToken=ea38caa273134499, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Bluetooth\InTheHand.Net.Personal.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -41,10 +46,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="EventWaiter.cs" />
     <Compile Include="BinaryConverter.cs" />
+    <Compile Include="Bluetooth\BluetoothConnectionManager.cs" />
+    <Compile Include="Bluetooth\BluetoothUtils.cs" />
     <Compile Include="CmdMessenger.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CommunicationManager.cs" />
+    <Compile Include="ConnectionManager\IConnectionManager.cs" />
+    <Compile Include="ConsoleUtils.cs" />
+    <Compile Include="Serialport\SerialConnectionManager.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="DisposeStack.cs" />
     <Compile Include="NewLineEvent.cs" />
@@ -68,13 +82,14 @@
     <Compile Include="SendCommand.cs" />
     <Compile Include="Sender.cs" />
     <Compile Include="StructSerializer.cs" />
+    <Compile Include="Bluetooth\BluetoothTransport.cs" />
     <Compile Include="TransportLayer\ITransport.cs" />
-    <Compile Include="SerialSettings.cs" />
+    <Compile Include="Serialport\SerialSettings.cs" />
     <Compile Include="StringUtils.cs" />
     <Compile Include="TimedAction.cs" />
     <Compile Include="TimeUtils.cs" />
     <Compile Include="TransportLayer\Logger.cs" />
-    <Compile Include="TransportLayer\SerialTransport.cs" />
+    <Compile Include="Serialport\SerialTransport.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

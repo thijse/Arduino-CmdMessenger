@@ -76,7 +76,8 @@ Inheritance diagram for CommandMessenger.TransportLayer.ITransport:</div>
  <div class="center">
   <img src="interface_command_messenger_1_1_transport_layer_1_1_i_transport.png" usemap="#CommandMessenger.TransportLayer.ITransport_map" alt=""/>
   <map id="CommandMessenger.TransportLayer.ITransport_map" name="CommandMessenger.TransportLayer.ITransport_map">
-<area href="class_command_messenger_1_1_transport_layer_1_1_serial_transport.html" title="Fas Manager for serial port data." alt="CommandMessenger.TransportLayer.SerialTransport" shape="rect" coords="0,56,312,80"/>
+<area href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_transport.html" title="Manager for Bluetooth connection." alt="CommandMessenger.Bluetooth.BluetoothTransport" shape="rect" coords="0,56,296,80"/>
+<area href="class_command_messenger_1_1_serialport_1_1_serial_transport.html" title="Fas Manager for serial port data." alt="CommandMessenger.Serialport.SerialTransport" shape="rect" coords="306,56,602,80"/>
 </map>
  </div></div>
 
@@ -88,12 +89,18 @@ Public Member Functions</h2></td></tr>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>BytesInBuffer</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1867ebc2250cdf6a9df073ce10928626"></a><!-- doxytag: member="CommandMessenger::TransportLayer::ITransport::Read" ref="a1867ebc2250cdf6a9df073ce10928626" args="()" -->
 byte[]&#160;</td><td class="memItemRight" valign="bottom"><b>Read</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2a5e13645478ce90f4cf3091e4b76e4"></a><!-- doxytag: member="CommandMessenger::TransportLayer::ITransport::StartListening" ref="ab2a5e13645478ce90f4cf3091e4b76e4" args="()" -->
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>StartListening</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1e8deae7e356fdca42de890bfc6dd23"></a><!-- doxytag: member="CommandMessenger::TransportLayer::ITransport::StopListening" ref="af1e8deae7e356fdca42de890bfc6dd23" args="()" -->
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>StopListening</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad07c73ac68325a493a4fa0dbe4e7d47e"></a><!-- doxytag: member="CommandMessenger::TransportLayer::ITransport::Poll" ref="ad07c73ac68325a493a4fa0dbe4e7d47e" args="()" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Poll</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0cfebf3cf56eb1f05dee4e4cb27f8c00"></a><!-- doxytag: member="CommandMessenger::TransportLayer::ITransport::Connect" ref="a0cfebf3cf56eb1f05dee4e4cb27f8c00" args="()" -->
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>Connect</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac8a554fcb0ab810b2b45a44b82da0341"></a><!-- doxytag: member="CommandMessenger::TransportLayer::ITransport::Disconnect" ref="ac8a554fcb0ab810b2b45a44b82da0341" args="()" -->
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>Disconnect</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa2953c86ac28f0f83ae5f6208dcc0954"></a><!-- doxytag: member="CommandMessenger::TransportLayer::ITransport::IsConnected" ref="aa2953c86ac28f0f83ae5f6208dcc0954" args="()" -->
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>IsConnected</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a203624ef94ba7d92f9d3e79eeb51988c"></a><!-- doxytag: member="CommandMessenger::TransportLayer::ITransport::StartPolling" ref="a203624ef94ba7d92f9d3e79eeb51988c" args="()" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><b>StartPolling</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0767d79dee81c376579c5e4a6603c6af"></a><!-- doxytag: member="CommandMessenger::TransportLayer::ITransport::StopPolling" ref="a0767d79dee81c376579c5e4a6603c6af" args="()" -->
+void&#160;</td><td class="memItemRight" valign="bottom"><b>StopPolling</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a20f773d4c071ebd6748ac65dc3cab791"></a><!-- doxytag: member="CommandMessenger::TransportLayer::ITransport::Write" ref="a20f773d4c071ebd6748ac65dc3cab791" args="(byte[] buffer)" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Write</b> (byte[] buffer)</td></tr>
 <tr><td colspan="2"><h2><a name="events"></a>
@@ -110,7 +117,7 @@ EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>NewDataReceiv
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat May 17 2014 22:39:23 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Sep 4 2014 21:12:56 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

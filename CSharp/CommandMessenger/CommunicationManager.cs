@@ -19,12 +19,13 @@
 
 using System;
 using System.Text;
+using System.Threading;
 using CommandMessenger.TransportLayer;
 
 namespace CommandMessenger
 {
-    /// <summary>Fas
-    /// Manager for serial port data
+    /// <summary>
+    /// Manager for data over transport layer. 
     /// </summary>
     public class CommunicationManager : DisposableObject
     {
@@ -37,7 +38,9 @@ namespace CommandMessenger
         private char _fieldSeparator;                                       // The field separator
         private char _commandSeparator;                                     // The command separator
         private char _escapeCharacter;                                      // The escape character
+        private object _parseLinesLock = new object();
 
+     
 
         /// <summary> Default constructor. </summary>
         /// /// <param name="disposeStack"> The DisposeStack</param>
@@ -101,7 +104,7 @@ namespace CommandMessenger
 
         #region Event handlers
 
-        /// <summary> Serial port data received. </summary>
+        /// <summary> transport layer data received. </summary>
         private void NewDataReceived(object o, EventArgs e)
         {
             ParseLines();
@@ -111,21 +114,33 @@ namespace CommandMessenger
 
         #region Methods
 
-        /// <summary> Connects to a serial port defined through the current settings. </summary>
+        /// <summary> Connects to a transport layer defined through the current settings. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
-        public bool StartListening()
+        public bool Connect()
         {
-            return _transport.StartListening();
+            return _transport.Connect();
         }
 
-        /// <summary> Stops listening to the serial port. </summary>
+        /// <summary> Stops listening to the transport layer </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
-        public bool StopListening()
+        public bool Disconnect()
         {
-            return _transport.StopListening();
+            return _transport.Disconnect();
         }
 
-        /// <summary> Writes a string to the serial port. </summary>
+        /// <summary> Starts polling. </summary>
+        public void StartPolling()
+        {
+            _transport.StartPolling();
+        }
+
+        /// <summary> Stop polling. </summary>
+        public void StopPolling()
+        {
+            _transport.StopPolling();
+        }
+
+        /// <summary> Writes a string to the transport layer. </summary>
         /// <param name="value"> The string to write. </param>
         public void WriteLine(string value)
         {
@@ -133,7 +148,7 @@ namespace CommandMessenger
             _transport.Write(writeBytes);
         }
 
-        /// <summary> Writes a parameter to the serial port followed by a NewLine. </summary>
+        /// <summary> Writes a parameter to the transport layer followed by a NewLine. </summary>
         /// <typeparam name="T"> Generic type parameter. </typeparam>
         /// <param name="value"> The value. </param>
         public void WriteLine<T>(T value)
@@ -143,7 +158,7 @@ namespace CommandMessenger
             _transport.Write(writeBytes);
         }
 
-        /// <summary> Writes a parameter to the serial port. </summary>
+        /// <summary> Writes a parameter to the transport layer. </summary>
         /// <typeparam name="T"> Generic type parameter. </typeparam>
         /// <param name="value"> The value. </param>
         public void Write<T>(T value)
@@ -153,8 +168,12 @@ namespace CommandMessenger
             _transport.Write(writeBytes);
         }
 
+        public void UpdateTransportBuffer()
+        {
+            _transport.Poll();
+        }
 
-        /// <summary> Reads the serial buffer into the string buffer. </summary>
+        /// <summary> Reads the transport buffer into the string buffer. </summary>
         private void ReadInBuffer()
         {
             var data = _transport.Read();
@@ -163,20 +182,21 @@ namespace CommandMessenger
 
         private void ParseLines()
         {
-            LastLineTimeStamp = TimeUtils.Millis;
-            ReadInBuffer();
-            var currentLine = ParseLine();
-            while (!String.IsNullOrEmpty(currentLine))
-            {
-                ProcessLine(currentLine);
-                currentLine = ParseLine();
+            //if (Monitor.TryEnter(_parseLinesLock)) {
+            lock(_parseLinesLock) {
+            //{
+                LastLineTimeStamp = TimeUtils.Millis;
+                ReadInBuffer();
+                var currentLine = ParseLine();
+                while (!String.IsNullOrEmpty(currentLine))
+                {
+                    ProcessLine(currentLine);
+                    currentLine = ParseLine();
+                }
             }
-            //Send data to whom ever interested
-            //if (newDataAvailable && NewLinesReceived != null)
-            //    NewLinesReceived(this, null);
         }
 
-        /// <summary> Converts lines on . </summary>
+        /// <summary> Processes the byte message and add to queue. </summary>
         public void ProcessLine(string line)
         {            
                 // Read line from raw buffer and make command
@@ -203,8 +223,8 @@ namespace CommandMessenger
                                     StringSplitOptions.RemoveEmptyEntries));
         }
 
-        /// <summary> Reads a float line from the serial buffer, if complete. </summary>
-        /// <returns> Whether a complete line was present in the serial buffer. </returns>
+        /// <summary> Reads a float line from the buffer, if complete. </summary>
+        /// <returns> Whether a complete line was present in the buffer. </returns>
         private string ParseLine()
         {
 

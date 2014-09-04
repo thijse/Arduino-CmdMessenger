@@ -58,20 +58,21 @@ namespace CommandMessenger
             while (ThreadRunState != ThreadRunStates.Abort)
             {
                 // Calculate sleep time based on incoming command speed
-                _queueSpeed.SetCount(Queue.Count);
-                _queueSpeed.CalcSleepTime();
+                //_queueSpeed.SetCount(Queue.Count);
+                //_queueSpeed.CalcSleepTime();
+                EventWaiter.Wait(1000);
 
                 // Process queue unless stopped
                 if (ThreadRunState == ThreadRunStates.Start)
                 {
                     // Only actually sleep if there are no commands in the queue
                     SendCommandsFromQueue();
-                    _queueSpeed.Sleep();                    
+                  //  _queueSpeed.Sleep();                    
                 }
-                else
-                {
-                    _queueSpeed.Sleep();
-                }
+                //else
+                //{
+                //    _queueSpeed.Sleep();
+                //}
             }
         }
 
@@ -162,7 +163,6 @@ namespace CommandMessenger
             
         }
 
-
         /// <summary> Sends a command. Note that the command is put at the front of the queue </summary>
         /// <param name="sendCommand"> The command to sent. </param>
         public void SendCommand(SendCommand sendCommand)
@@ -197,6 +197,7 @@ namespace CommandMessenger
                 // Process all generic enqueue strategies
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
+            EventWaiter.Set();
         }
     }
 }

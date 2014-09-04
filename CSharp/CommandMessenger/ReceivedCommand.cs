@@ -41,7 +41,7 @@ namespace CommandMessenger
         public ReceivedCommand(string[] rawArguments)
         {
             int cmdId;
-            CmdId = (rawArguments != null && int.TryParse(rawArguments[0], out cmdId)) ? cmdId : -1;
+            CmdId = (rawArguments != null && rawArguments.Length !=0 && int.TryParse(rawArguments[0], out cmdId)) ? cmdId : -1;
             if (CmdId<0) return;
             if (rawArguments.Length > 1)
             {

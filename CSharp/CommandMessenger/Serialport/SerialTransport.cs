@@ -18,13 +18,13 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using System.IO.Ports;
 using System.Reflection;
 using System.Linq;
 using System.Threading;
+using CommandMessenger.TransportLayer;
 
-namespace CommandMessenger.TransportLayer
+namespace CommandMessenger.Serialport
 {
     public enum ThreadRunStates
     {
@@ -129,28 +129,49 @@ namespace CommandMessenger.TransportLayer
             // Endless loop
             while (ThreadRunState != ThreadRunStates.Abort)
             {
-                var bytes = BytesInBuffer();
-                _queueSpeed.SetCount(bytes);
-                _queueSpeed.CalcSleepTimeWithoutLoad();
-                _queueSpeed.Sleep();
-                if (ThreadRunState == ThreadRunStates.Start)
-                {
-                    if (bytes > 0)
-                    {
-                        if (NewDataReceived != null) NewDataReceived(this, null);
-                    }
-                }
+                Poll(ThreadRunState);
             }
             _queueSpeed.Sleep(50);
         }        
 
+        public void StartPolling()
+        {
+            ThreadRunState = ThreadRunStates.Start;
+        }
+
+        public void StopPolling()
+        {
+            ThreadRunState = ThreadRunStates.Stop;
+        }
+
+        private void Poll(ThreadRunStates threadRunState)
+        {
+            var bytes = BytesInBuffer();
+            _queueSpeed.SetCount(bytes);
+            _queueSpeed.CalcSleepTimeWithoutLoad();
+            _queueSpeed.Sleep();
+            if (threadRunState == ThreadRunStates.Start)
+            {
+                if (bytes > 0)
+                {
+                    if (NewDataReceived != null) NewDataReceived(this, null);
+                }
+            }
+        }
+
+        public void Poll()
+        {
+            Poll(ThreadRunStates.Start);
+        }
+
         /// <summary> Connects to a serial port defined through the current settings. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
-        public bool StartListening()
+        public bool Connect()
         {
             // Closing serial port if it is open
 
-            if (IsOpen()) Close();
+            //if (IsOpen()) Close();
+            Close();
 
             // Setting serial port settings
             _serialPort = new SerialPort(
@@ -160,7 +181,8 @@ namespace CommandMessenger.TransportLayer
                 _currentSerialSettings.DataBits,
                 _currentSerialSettings.StopBits)
                 {
-                    DtrEnable = _currentSerialSettings.DtrEnable
+                    DtrEnable = _currentSerialSettings.DtrEnable,
+                    WriteTimeout = 1000
                 };
 
 
@@ -172,13 +194,14 @@ namespace CommandMessenger.TransportLayer
         /// <summary> Opens the serial port. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Open()
-        {
-                       
+        {            
             if(_serialPort != null && PortExists() && !_serialPort.IsOpen)
             {
                 try
                 {
                     _serialPort.Open();
+                    _serialPort.DiscardInBuffer();
+                    _serialPort.DiscardOutBuffer();
                     return _serialPort.IsOpen;
                 }
                 catch
@@ -235,7 +258,7 @@ namespace CommandMessenger.TransportLayer
 
         /// <summary> Stops listening to the serial port. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
-        public bool StopListening()
+        public bool Disconnect()
         {
             ThreadRunState = ThreadRunStates.Stop;
             var state = Close();
@@ -267,7 +290,10 @@ namespace CommandMessenger.TransportLayer
         {
             try
             {
-                if (_serialPort!=null)
+                _currentSerialSettings.UpdateBaudRateCollection(0);
+                Close();
+                _serialPort = new SerialPort(_currentSerialSettings.PortName);
+                if (Open())
                 {
                     var fieldInfo = _serialPort.BaseStream.GetType()
                                                .GetField("commProp", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -288,10 +314,16 @@ namespace CommandMessenger.TransportLayer
                 }
             }
             catch
-            {
+            {                
                 return false;
             }
             return true;
+        }
+
+
+        public void UpdatePortCollection()
+        {
+            _currentSerialSettings.PortNameCollection = SerialPort.GetPortNames();  
         }
 
         /// <summary> Reads the serial buffer into the string buffer. </summary>
@@ -327,10 +359,10 @@ namespace CommandMessenger.TransportLayer
         public void Kill()
         {
             // Signal thread to stop
-            ThreadRunState = ThreadRunStates.Stop;
+            ThreadRunState = ThreadRunStates.Abort;
 
             //Wait for thread to die
-            Join(500);
+            Join(1200);
             if (_queueThread.IsAlive) _queueThread.Abort();
 
             // Releasing serial port 

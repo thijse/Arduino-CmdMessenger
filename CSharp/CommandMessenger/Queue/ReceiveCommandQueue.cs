@@ -24,7 +24,6 @@ namespace CommandMessenger
     {
         
         public event NewLineEvent.NewLineHandler NewLineReceived;
-
         private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
 
         /// <summary> Receive command queue constructor. </summary>
@@ -60,17 +59,17 @@ namespace CommandMessenger
         {
             // Endless loop unless aborted
             while (ThreadRunState != ThreadRunStates.Abort)
-            {
-               
+            {               
                 // Calculate sleep time based on incoming command speed
-                _queueSpeed.SetCount(Queue.Count);
-                _queueSpeed.CalcSleepTime();
+                //_queueSpeed.SetCount(Queue.Count);
+                //_queueSpeed.CalcSleepTime();
+                EventWaiter.Wait(1000);
 
                 // Process queue unless stopped
                 if (ThreadRunState == ThreadRunStates.Start)
                 {
                     // Only actually sleep if there are no commands in the queue
-                    if (Queue.Count == 0) _queueSpeed.Sleep();
+                    //if (Queue.Count == 0) _queueSpeed.Sleep();
 
                     var dequeueCommand = DequeueCommand();
                     if (dequeueCommand != null)
@@ -78,10 +77,10 @@ namespace CommandMessenger
                         CmdMessenger.HandleMessage(dequeueCommand);
                     }
                 }
-                else
-                {
-                    _queueSpeed.Sleep();
-                }
+                //else
+                //{
+                //    _queueSpeed.Sleep();
+                //}
             }
         }
 
@@ -102,6 +101,8 @@ namespace CommandMessenger
                 Queue.Enqueue(commandStrategy);
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
+            // Give a signal to indicate that a new item has been queued
+            EventWaiter.Set();
             if (NewLineReceived != null) NewLineReceived(this, new NewLineEvent.NewLineArgs(commandStrategy.Command));
         }
     }

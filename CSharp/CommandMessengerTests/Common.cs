@@ -18,6 +18,7 @@
 #endregion
 using System;
 using CommandMessenger;
+using CommandMessenger.Serialport;
 using CommandMessenger.TransportLayer;
 using System.IO;
 
@@ -62,7 +63,7 @@ namespace CommandMessengerTests
             // Attach to NewLineReceived and NewLineSent for logging purposes
             LogCommands(true);
 
-            CmdMessenger.StartListening();
+            CmdMessenger.Connect();
             return CmdMessenger;
         }
 
@@ -99,7 +100,7 @@ namespace CommandMessengerTests
         public static void Disconnect()
         {
             LogCommands(false);
-            CmdMessenger.StopListening();
+            CmdMessenger.Disconnect();
             CmdMessenger.Dispose();            
         }
 

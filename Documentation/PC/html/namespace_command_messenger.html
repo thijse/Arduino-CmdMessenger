@@ -61,6 +61,9 @@
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="namespaces"></a>
 Packages</h2></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">package &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_command_messenger_1_1_bluetooth.html">Bluetooth</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">package &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_command_messenger_1_1_connection_manager2.html">ConnectionManager2</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">package &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_command_messenger_1_1_serialport.html">Serialport</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">package &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespace_command_messenger_1_1_transport_layer.html">TransportLayer</a></td></tr>
 <tr><td colspan="2"><h2><a name="nested-classes"></a>
 Classes</h2></td></tr>
@@ -70,7 +73,10 @@ Classes</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_command.html">Command</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">A command to be send by <a class="el" href="class_command_messenger_1_1_cmd_messenger.html" title="Command messenger main class.">CmdMessenger</a>.  <a href="class_command_messenger_1_1_command.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_communication_manager.html">CommunicationManager</a></td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Fas Manager for serial port data.  <a href="class_command_messenger_1_1_communication_manager.html#details">More...</a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Manager for data over transport layer.  <a href="class_command_messenger_1_1_communication_manager.html#details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager_progress_event_args.html">ConnectionManagerProgressEventArgs</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html">ConnectionManager</a></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_console_utils.html">ConsoleUtils</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_disposable_object.html">DisposableObject</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_dispose_stack.html">DisposeStack</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">The dispose stack takes manages disposal of objects that are pushed onto the stack. When the stack is disposed all objects are disposed (in reversed order).  <a href="class_command_messenger_1_1_dispose_stack.html#details">More...</a><br/></td></tr>
@@ -78,6 +84,7 @@ Classes</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Class for bookkeeping which characters in the stream are escaped.  <a href="class_command_messenger_1_1_is_escaped.html#details">More...</a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_escaping.html">Escaping</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Utility class providing escaping functions.  <a href="class_command_messenger_1_1_escaping.html#details">More...</a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_event_waiter.html">EventWaiter</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_new_line_event.html">NewLineEvent</a></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_collapse_command_strategy.html">CollapseCommandStrategy</a></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Collapse command strategy. The purpose of the strategy is to avoid duplicates of a certain command on the queue to avoid lagging.  <a href="class_command_messenger_1_1_collapse_command_strategy.html#details">More...</a><br/></td></tr>
@@ -134,12 +141,17 @@ Enumerations</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>BoardType</b> { <b>Bit16</b>, 
 <b>Bit32</b>
  }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><b>ConnectionManagerStates</b> { <b>Scan</b>, 
+<b>Watchdog</b>, 
+<b>Wait</b>, 
+<b>Stop</b>
+ }</td></tr>
 </table>
 </div><!-- contents -->
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat May 17 2014 22:39:22 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Sep 4 2014 21:12:55 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
