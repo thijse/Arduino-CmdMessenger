@@ -30,7 +30,6 @@ namespace CommandMessenger
         public String Description { get; set; }
     }
 
-
     public enum ConnectionManagerStates
     {
         Scan,
@@ -39,7 +38,7 @@ namespace CommandMessenger
         Stop
     }
 
-    public class ConnectionManager : IDisposable 
+    public abstract class ConnectionManager : IDisposable 
     {
         protected Control ControlToInvokeOn;
         protected readonly CmdMessenger CmdMessenger;
@@ -56,35 +55,43 @@ namespace CommandMessenger
         private long _lastCheckTime;
         private long _nextTimeOutCheck;
         private uint _watchdogTries;
-        public bool Connected { get; set; }
-        public long WatchdogTimeOut { get; set; }
-        public long WatchdogRetryTimeOut { get; set; }
+
+        public bool Connected { get; protected set; }
+
+        public int WatchdogTimeOut { get; set; }
+        public int WatchdogRetryTimeOut { get; set; }
         public uint MaxWatchdogTries     { get; set; }
         public bool WatchdogEnabled { get; set; }
 
         protected ConnectionManager(CmdMessenger cmdMessenger, int challengeCommandId, int responseCommandId)
         {
+            if (cmdMessenger == null)
+                throw new ArgumentNullException("cmdMessenger", "Command Messenger is null.");
+            
             WatchdogTimeOut = 2000;
             WatchdogRetryTimeOut = 1000;        
             MaxWatchdogTries = 3;
             
-            if (cmdMessenger == null) return;
-
             ControlToInvokeOn = null;
             CmdMessenger = cmdMessenger;
+
             _scanThread = new BackgroundWorker {WorkerSupportsCancellation = true, WorkerReportsProgress = false};
             _scanThread.DoWork += ScanThreadDoWork;
             _challengeCommandId = challengeCommandId;
             _responseCommandId = responseCommandId;
 
-            CmdMessenger.Attach((int) responseCommandId, OnResponseCommandId);
+            CmdMessenger.Attach(responseCommandId, OnResponseCommandId);
         }
 
+        /// <summary>
+        /// Connect to device.
+        /// </summary>
+        public abstract bool Connect();
 
         /// <summary>
         /// Start connection manager. Will set up thread, but will not start scanning
         /// </summary>
-        public void StartConnectionManager()
+        protected void StartConnectionManager()
         {
             ConnectionManagerState = ConnectionManagerStates.Wait;
             if (_scanThread.IsBusy != true)
@@ -97,7 +104,7 @@ namespace CommandMessenger
         /// <summary>
         /// Stop connection manager.
         /// </summary>
-        public void StopConnectionManager()
+        protected void StopConnectionManager()
         {
             ConnectionManagerState = ConnectionManagerStates.Stop;
 
@@ -240,7 +247,6 @@ namespace CommandMessenger
                 return;
             }
 
-            _lastCheckTime = currentTimeStamp;
             // Apparently, other side has not reacted in time
             // If too many tries, notify and stop
             if (_watchdogTries >= MaxWatchdogTries)
@@ -281,7 +287,7 @@ namespace CommandMessenger
 
         public bool ArduinoAvailable(int timeOut, int tries)
         {
-            for (var i = 0; i < tries; i++)
+            for (var i = 1; i <= tries; i++)
             {
                 Log(3, "Polling Arduino, try # " + i);
                 if (ArduinoAvailable(timeOut)) return true;
@@ -312,7 +318,6 @@ namespace CommandMessenger
         /// </summary>
         public void StartWatchDog()
         {
-            
             Log(1, "Starting Watchdog");
             _lastCheckTime = TimeUtils.Millis;
             _nextTimeOutCheck = _lastCheckTime + WatchdogTimeOut;
@@ -360,7 +365,6 @@ namespace CommandMessenger
             {
                 StopConnectionManager();
             }
-
         }
     }
 }

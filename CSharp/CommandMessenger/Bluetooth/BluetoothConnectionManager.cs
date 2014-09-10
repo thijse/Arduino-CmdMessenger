@@ -70,14 +70,9 @@ namespace CommandMessenger.Bluetooth
         public BluetoothConnectionManager(BluetoothTransport bluetoothTransport, CmdMessenger cmdMessenger, int challengeCommandId, int responseCommandId) : 
             base(cmdMessenger, challengeCommandId,responseCommandId)
         {
-            WatchdogTimeOut = 2000;
-            WatchdogRetryTimeOut = 1000;
-            MaxWatchdogTries = 3;
+            if (bluetoothTransport == null) 
+                throw new ArgumentNullException("bluetoothTransport", "Transport is null.");
 
-            if (bluetoothTransport == null) return;
-            if (cmdMessenger       == null) return;
-
-            ControlToInvokeOn = null;
             _bluetoothTransport = bluetoothTransport;
 
             _bluetoothConfiguration = new BluetoothConfiguration();
@@ -88,7 +83,6 @@ namespace CommandMessenger.Bluetooth
 
             StartConnectionManager();
         }
-
 
         protected override void DoWorkScan()
         {
@@ -164,7 +158,12 @@ namespace CommandMessenger.Bluetooth
             return device.Authenticated;
         }
 
-        public bool TryConnection(BluetoothAddress bluetoothAddress,  int timeOut)
+        public override bool Connect()
+        {
+            return TryConnection(WatchdogTimeOut);
+        }
+
+        public bool TryConnection(BluetoothAddress bluetoothAddress, int timeOut)
         {
             if (bluetoothAddress == null) return false;
             // Find

@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -45,9 +44,12 @@ namespace CommandMessenger.Serialport
     public class SerialConnectionManager :  ConnectionManager 
     {
         const string SettingsFileName = @"LastConnectedSerialSetting.cfg";
+
         private LastConnectedSetting _lastConnectedSetting;
         private readonly SerialTransport _serialTransport;
         private int _scanType = 0;
+
+        protected bool _fixedPort;
 
         // The control to invoke the callback on
         private readonly object _tryConnectionLock = new object();
@@ -58,12 +60,8 @@ namespace CommandMessenger.Serialport
         public SerialConnectionManager(SerialTransport serialTransport, CmdMessenger cmdMessenger, int challengeCommandId, int responseCommandId) :
             base(cmdMessenger, challengeCommandId, responseCommandId)
         {
-            WatchdogTimeOut = 2000;
-            WatchdogRetryTimeOut = 1000;
-            MaxWatchdogTries = 3;
-
-            if (serialTransport == null) return;
-            if (cmdMessenger    == null) return;
+            if (serialTransport == null) 
+                throw new ArgumentNullException("serialTransport", "Transport is null.");
 
             _serialTransport = serialTransport;
 
@@ -72,6 +70,16 @@ namespace CommandMessenger.Serialport
             _serialTransport.UpdatePortCollection();
 
             StartConnectionManager();
+        }
+
+        public override bool Connect()
+        {
+            bool result = TryConnection(WatchdogTimeOut);
+            if (result)
+            {
+                ConnectionFoundEvent();
+            }
+            return result;
         }
 
         /// <summary>
@@ -97,8 +105,8 @@ namespace CommandMessenger.Serialport
         /// <returns>true if succesfully connected</returns>
         public bool TryConnection(int timeOut)
         {
-            lock(_tryConnectionLock)
-            Connected = false;
+            lock(_tryConnectionLock) Connected = false;
+
             Log(1, @"Trying serial port " + _serialTransport.CurrentSerialSettings.PortName + @" baud rate " + _serialTransport.CurrentSerialSettings.BaudRate);
             if (_serialTransport.Connect())
             {
@@ -148,7 +156,6 @@ namespace CommandMessenger.Serialport
             {
                 ConnectionManagerState = ConnectionManagerStates.Wait;
                 ConnectionFoundEvent();
-
             } 
         }
 

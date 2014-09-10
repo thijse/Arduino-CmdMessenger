@@ -337,7 +337,7 @@ namespace CommandMessenger
         /// <param name="sendCommand"> The command to sent. </param>
         public ReceivedCommand SendCommand(SendCommand sendCommand)
         {
-            return SendCommand(sendCommand, SendQueue.InFrontQueue,ReceiveQueue.Default);
+            return SendCommand(sendCommand, SendQueue.InFrontQueue, ReceiveQueue.Default);
         }
 
         /// <summary> Sends a command. 
