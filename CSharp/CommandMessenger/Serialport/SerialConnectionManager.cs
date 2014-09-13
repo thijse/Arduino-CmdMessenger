@@ -43,13 +43,14 @@ namespace CommandMessenger.Serialport
     /// </summary>
     public class SerialConnectionManager :  ConnectionManager 
     {
+        private enum ScanType { None, Quick, Thorough }
+
         const string SettingsFileName = @"LastConnectedSerialSetting.cfg";
 
         private LastConnectedSetting _lastConnectedSetting;
         private readonly SerialTransport _serialTransport;
-        private int _scanType = 0;
 
-        protected bool _fixedPort;
+        private ScanType _scanType = ScanType.None;
 
         // The control to invoke the callback on
         private readonly object _tryConnectionLock = new object();
@@ -65,21 +66,13 @@ namespace CommandMessenger.Serialport
 
             _serialTransport = serialTransport;
 
+            UseFixedPort = !string.IsNullOrEmpty(_serialTransport.CurrentSerialSettings.PortName);
+
             _lastConnectedSetting = new LastConnectedSetting();
             ReadSettings();
             _serialTransport.UpdatePortCollection();
 
             StartConnectionManager();
-        }
-
-        public override bool Connect()
-        {
-            bool result = TryConnection(WatchdogTimeOut);
-            if (result)
-            {
-                ConnectionFoundEvent();
-            }
-            return result;
         }
 
         /// <summary>
@@ -131,30 +124,43 @@ namespace CommandMessenger.Serialport
             return false;
         }
 
+        protected override void DoWorkConnect()
+        {
+            var activeConnection = false;
+
+            try { activeConnection = TryConnection(WatchdogTimeout); }
+            catch { }
+
+            if (activeConnection)
+            {
+                ConnectionFoundEvent();
+            } 
+        }
+
         protected override void DoWorkScan()
         {
-            if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "BluetoothConnectionManager";
             var activeConnection = false;
             
+            if (_scanType == ScanType.None)
             {
-                if (_scanType == 0)
-                {
-                    _scanType = 1;
-                    try { activeConnection = QuickScan(); }
-                    catch { }
-                }
-                else if (_scanType == 1)
-                {
-                    _scanType = 0;
-                    try { activeConnection = ThoroughScan(); }
-                    catch { }
-                }
+                _scanType = ScanType.Quick;
+                try { activeConnection = QuickScan(); }
+                catch { }
+            }
+            else if (_scanType == ScanType.Quick)
+            {
+                _scanType = ScanType.Thorough;
+                try { activeConnection = ThoroughScan(); }
+                catch { }
+            }
+            else
+            {
+                _scanType = ScanType.None;
             }
 
             // Trigger event when a connection was made
             if (activeConnection)
             {
-                ConnectionManagerState = ConnectionManagerStates.Wait;
                 ConnectionFoundEvent();
             } 
         }
@@ -173,7 +179,7 @@ namespace CommandMessenger.Serialport
             if (TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate, longTimeOut)) return true;
 
             // Then see if port list has changed
-            //if (NewPortInList().Count > 0) { _scanType = 2; return false; }
+            //if (NewPortInList().Count > 0) { _scanType = ScanType.Thorough; return false; }
 
             // Quickly run through most used ports
             int[] commonBaudRates =
@@ -183,7 +189,7 @@ namespace CommandMessenger.Serialport
                     9600    // Often used as default, but slow!
                 };
             _serialTransport.UpdatePortCollection();
-            for (var port = _serialTransport.CurrentSerialSettings.PortNameCollection.Length- 1; port >= 0; port--)
+            for (var port = _serialTransport.CurrentSerialSettings.PortNameCollection.Length - 1; port >= 0; port--)
             {
                 // If port list has changed, interrupt scan and test new ports first
                 if (NewPortScan()) return true;
@@ -198,7 +204,6 @@ namespace CommandMessenger.Serialport
                 //  Now loop through baud rate collection
                 foreach (var commonBaudRate in commonBaudRates)
                 {
-
                     if (_serialTransport.CurrentSerialSettings.BaudRateCollection.Contains(commonBaudRate))
                     {
 
@@ -334,6 +339,5 @@ namespace CommandMessenger.Serialport
                 fileStream.Close();
             }
         }
-
     }
 }

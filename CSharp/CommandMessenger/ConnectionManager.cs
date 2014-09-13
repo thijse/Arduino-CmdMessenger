@@ -33,6 +33,7 @@ namespace CommandMessenger
     public enum ConnectionManagerStates
     {
         Scan,
+        Connect,
         Watchdog,
         Wait,
         Stop
@@ -48,7 +49,7 @@ namespace CommandMessenger
         public event EventHandler ConnectionFound;
         public event EventHandler<ConnectionManagerProgressEventArgs> Progress;
 
-        private readonly BackgroundWorker _scanThread;
+        private readonly BackgroundWorker _workerThread;
         private readonly int _challengeCommandId;
         private readonly int _responseCommandId;
 
@@ -58,25 +59,28 @@ namespace CommandMessenger
 
         public bool Connected { get; protected set; }
 
-        public int WatchdogTimeOut { get; set; }
-        public int WatchdogRetryTimeOut { get; set; }
-        public uint MaxWatchdogTries     { get; set; }
+        public int WatchdogTimeout { get; set; }
+        public int WatchdogRetryTimeout { get; set; }
+        public uint MaxWatchdogTries { get; set; }
         public bool WatchdogEnabled { get; set; }
+        public bool UseFixedPort { get; set; }
 
         protected ConnectionManager(CmdMessenger cmdMessenger, int challengeCommandId, int responseCommandId)
         {
             if (cmdMessenger == null)
                 throw new ArgumentNullException("cmdMessenger", "Command Messenger is null.");
             
-            WatchdogTimeOut = 2000;
-            WatchdogRetryTimeOut = 1000;        
+            WatchdogTimeout = 2000;
+            WatchdogRetryTimeout = 1000;        
             MaxWatchdogTries = 3;
+
+            UseFixedPort = false;
             
             ControlToInvokeOn = null;
             CmdMessenger = cmdMessenger;
 
-            _scanThread = new BackgroundWorker {WorkerSupportsCancellation = true, WorkerReportsProgress = false};
-            _scanThread.DoWork += ScanThreadDoWork;
+            _workerThread = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = false };
+
             _challengeCommandId = challengeCommandId;
             _responseCommandId = responseCommandId;
 
@@ -84,20 +88,17 @@ namespace CommandMessenger
         }
 
         /// <summary>
-        /// Connect to device.
-        /// </summary>
-        public abstract bool Connect();
-
-        /// <summary>
         /// Start connection manager. Will set up thread, but will not start scanning
         /// </summary>
         protected void StartConnectionManager()
         {
+            _workerThread.DoWork += WorkerThreadDoWork;
+
             ConnectionManagerState = ConnectionManagerStates.Wait;
-            if (_scanThread.IsBusy != true)
+            if (!_workerThread.IsBusy)
             {
                 // Start the asynchronous operation.
-                _scanThread.RunWorkerAsync();
+                _workerThread.RunWorkerAsync();
             }
         }
 
@@ -108,12 +109,12 @@ namespace CommandMessenger
         {
             ConnectionManagerState = ConnectionManagerStates.Stop;
 
-            if (_scanThread.WorkerSupportsCancellation)
+            if (_workerThread.WorkerSupportsCancellation)
             {
                 // Cancel the asynchronous operation.
-                _scanThread.CancelAsync();
+                _workerThread.CancelAsync();
             }
-            _scanThread.DoWork -= ScanThreadDoWork;
+            _workerThread.DoWork -= WorkerThreadDoWork;
         }
 
         /// <summary> Sets a control to invoke on. </summary>
@@ -147,6 +148,8 @@ namespace CommandMessenger
 
         protected void ConnectionFoundEvent()
         {
+            ConnectionManagerState = ConnectionManagerStates.Wait;
+
             if (WatchdogEnabled)
             {
                 StartWatchDog();
@@ -162,7 +165,15 @@ namespace CommandMessenger
             if (WatchdogEnabled)
             {
                 StopWatchDog();
-                StartScan();
+
+                if (PortScanEnabled)
+                {
+                    StartScan();
+                }
+                else
+                {
+                    StartConnect();
+                }
             }
         }
 
@@ -196,20 +207,21 @@ namespace CommandMessenger
             InvokeEvent(Progress, args);
         }
 
-        private void OnResponseCommandId(ReceivedCommand arguments)
+        protected virtual void OnResponseCommandId(ReceivedCommand arguments)
         {
             // Do nothing. 
         }
 
-        private void ScanThreadDoWork(object sender, DoWorkEventArgs e)
+        private void WorkerThreadDoWork(object sender, DoWorkEventArgs e)
         {
+            if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "SerialConnectionManager";
+
             while (ConnectionManagerState != ConnectionManagerStates.Stop)
             {
                 // Check if thread is being canceled
                 var worker = sender as BackgroundWorker;
                 if (worker != null && worker.CancellationPending)
                 {
-                    ConnectionManagerState = ConnectionManagerStates.Stop;
                     break;
                 }
 
@@ -219,57 +231,16 @@ namespace CommandMessenger
                     case ConnectionManagerStates.Scan:
                         DoWorkScan();
                         break;
+                    case ConnectionManagerStates.Connect:
+                        DoWorkConnect();
+                        break;
                     case ConnectionManagerStates.Watchdog:
                         DoWorkWatchdog();
                         break;
-                    default:
-                        Thread.Sleep(1000);
-                        break;
                 }
+
+                Thread.Sleep(1000);
             }
-        }
-
-        private void ConnectionWatchDog()
-        {
-            var lastLineTimeStamp = CmdMessenger.LastReceivedCommandTimeStamp;
-            var currentTimeStamp = TimeUtils.Millis;
-
-            // If timeout has not elapsed, wait till next watch time
-            if (currentTimeStamp < _nextTimeOutCheck) return;
-
-            // if a command has been received recently, set next check time
-            if (lastLineTimeStamp > _lastCheckTime)
-            {
-                Log(3, "Successful watchdog response");
-                _lastCheckTime = currentTimeStamp;
-                _nextTimeOutCheck = _lastCheckTime + WatchdogTimeOut;
-                _watchdogTries = 0;
-                return;
-            }
-
-            // Apparently, other side has not reacted in time
-            // If too many tries, notify and stop
-            if (_watchdogTries >= MaxWatchdogTries)
-            {
-                Log(3, "No watchdog response after final try");
-                _watchdogTries = 0;
-                ConnectionManagerState = ConnectionManagerStates.Wait;
-                ConnectionTimeoutEvent();
-            }
-
-            // We'll try another time
-            // We queue the command in order to not be intrusive, but put it in front to get a quick answer
-            CmdMessenger.SendCommand(new SendCommand(_challengeCommandId), SendQueue.InFrontQueue, ReceiveQueue.Default);
-            _watchdogTries++;
-
-            _lastCheckTime = currentTimeStamp;
-            _nextTimeOutCheck = _lastCheckTime + WatchdogRetryTimeOut;
-            Log(3, "No watchdog response, performing try #" + _watchdogTries);
-        }
-
-        protected virtual void DoWorkScan()
-        {
-            Thread.Sleep(1000);
         }
 
         /// <summary>
@@ -279,7 +250,6 @@ namespace CommandMessenger
         /// <returns>Result. True if succesfull</returns>
         public bool ArduinoAvailable(int timeOut)
         {
-            //Log(3, "Polling Arduino");
             var challengeCommand = new SendCommand(_challengeCommandId, _responseCommandId, timeOut);
             var responseCommand = CmdMessenger.SendCommand(challengeCommand,SendQueue.InFrontQueue,ReceiveQueue.Default,UseQueue.BypassQueue);
             return responseCommand.Ok;
@@ -295,11 +265,48 @@ namespace CommandMessenger
             return false;
         }
 
-        private void DoWorkWatchdog()
+        protected abstract void DoWorkScan();
+
+        protected abstract void DoWorkConnect();
+
+        protected virtual void DoWorkWatchdog()
         {
-            
-            try { ConnectionWatchDog(); }
-            catch { }
+            var lastLineTimeStamp = CmdMessenger.LastReceivedCommandTimeStamp;
+            var currentTimeStamp = TimeUtils.Millis;
+
+            // If timeout has not elapsed, wait till next watch time
+            if (currentTimeStamp < _nextTimeOutCheck) return;
+
+            // if a command has been received recently, set next check time
+            if (lastLineTimeStamp > _lastCheckTime)
+            {
+                Log(3, "Successful watchdog response");
+                _lastCheckTime = currentTimeStamp;
+                _nextTimeOutCheck = _lastCheckTime + WatchdogTimeout;
+                _watchdogTries = 0;
+                return;
+            }
+
+            // Apparently, other side has not reacted in time
+            // If too many tries, notify and stop
+            if (_watchdogTries >= MaxWatchdogTries)
+            {
+                Log(3, "No watchdog response after final try");
+                _watchdogTries = 0;
+                ConnectionManagerState = ConnectionManagerStates.Wait;
+                ConnectionTimeoutEvent();
+                return;
+            }
+
+            // We'll try another time
+            // We queue the command in order to not be intrusive, but put it in front to get a quick answer
+            CmdMessenger.SendCommand(new SendCommand(_challengeCommandId), SendQueue.InFrontQueue, ReceiveQueue.Default);
+            _watchdogTries++;
+
+            _lastCheckTime = currentTimeStamp;
+            _nextTimeOutCheck = _lastCheckTime + WatchdogRetryTimeout;
+            Log(3, "No watchdog response, performing try #" + _watchdogTries);
+
             Thread.Sleep(100);
         }
 
@@ -309,18 +316,23 @@ namespace CommandMessenger
         /// <returns>true if sucessfully disconnected</returns>
         public bool Disconnect()
         {
-            Connected = false;
-            return CmdMessenger.Disconnect();
+            if (Connected)
+            {
+                Connected = false;
+                return CmdMessenger.Disconnect();
+            }
+
+            return true;
         }
 
         /// <summary>
         /// Start watchdog. Will check if connection gets interrupted
         /// </summary>
-        public void StartWatchDog()
+        protected virtual void StartWatchDog()
         {
             Log(1, "Starting Watchdog");
             _lastCheckTime = TimeUtils.Millis;
-            _nextTimeOutCheck = _lastCheckTime + WatchdogTimeOut;
+            _nextTimeOutCheck = _lastCheckTime + WatchdogTimeout;
             _watchdogTries = 0;
             ConnectionManagerState = ConnectionManagerStates.Watchdog;
         }
@@ -328,7 +340,7 @@ namespace CommandMessenger
         /// <summary>
         /// Stop watchdog.
         /// </summary>
-        public void StopWatchDog()
+        protected virtual void StopWatchDog()
         {
             Log(1, "Stopping Watchdog");
             ConnectionManagerState = ConnectionManagerStates.Wait;
@@ -350,6 +362,15 @@ namespace CommandMessenger
         {
             Log(1, "Starting device scan");
             ConnectionManagerState = ConnectionManagerStates.Scan;
+        }
+
+        /// <summary>
+        /// Start scanning for devices
+        /// </summary>
+        public void StartConnect()
+        {
+            Log(1, "Starting connecting to device");
+            ConnectionManagerState = ConnectionManagerStates.Connect;
         }
 
         // Dispose 

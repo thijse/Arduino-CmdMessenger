@@ -84,6 +84,11 @@ namespace CommandMessenger.Bluetooth
             StartConnectionManager();
         }
 
+        protected override void DoWorkConnect()
+        {
+            
+        }
+
         protected override void DoWorkScan()
         {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "BluetoothConnectionManager";
@@ -107,7 +112,6 @@ namespace CommandMessenger.Bluetooth
             // Trigger event when a connection was made
             if (activeConnection)
             {
-                ConnectionManagerState = ConnectionManagerStates.Wait;
                 ConnectionFoundEvent();
                                 
             } 
@@ -156,11 +160,6 @@ namespace CommandMessenger.Bluetooth
 
             device.Update();
             return device.Authenticated;
-        }
-
-        public override bool Connect()
-        {
-            return TryConnection(WatchdogTimeOut);
         }
 
         public bool TryConnection(BluetoothAddress bluetoothAddress, int timeOut)
