@@ -132,11 +132,6 @@ namespace DataLogging
                 _connectionManager = new BluetoothConnectionManager((_transport as BluetoothTransport), _cmdMessenger, (int)Command.RequestId, (int)Command.SendId);
             else
                 _connectionManager = new SerialConnectionManager   ((_transport as SerialTransport),    _cmdMessenger, (int)Command.RequestId, (int)Command.SendId);                    
-            
-			// Enable the watchdog. 
-			// This will watch the connection for disconnection
-			// and start reconnecting
-            _connectionManager.WatchdogEnabled = true;
 
             // Tell the Connection manager to "Invoke" commands on the thread running the WinForms UI
             _connectionManager.SetControlToInvokeOn(chartForm);
@@ -154,7 +149,7 @@ namespace DataLogging
             InitializeTemperatureControl(); 
 
             // Start scanning for ports/devices
-            _connectionManager.StartScan();           
+            _connectionManager.StartConnectionManager();           
         }
 
         private void InitializeTemperatureControl()
