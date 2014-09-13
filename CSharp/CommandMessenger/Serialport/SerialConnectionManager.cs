@@ -66,8 +66,6 @@ namespace CommandMessenger.Serialport
 
             _serialTransport = serialTransport;
 
-            UseFixedPort = !string.IsNullOrEmpty(_serialTransport.CurrentSerialSettings.PortName);
-
             _lastConnectedSetting = new LastConnectedSetting();
             ReadSettings();
             _serialTransport.UpdatePortCollection();
@@ -206,7 +204,7 @@ namespace CommandMessenger.Serialport
                     {
 
                         Log(1,
-                            "Trying Port" + portName + ", possible speeds " +
+                            "Trying port " + portName + ", possible speeds " +
                             baudRateCollection.Count + " " +
                             (baudRateCollection.Count > commonBaudRates.Length ? ", trying " + commonBaudRates.Length : "")
                             );
@@ -247,7 +245,7 @@ namespace CommandMessenger.Serialport
                 //  Now loop through baud rate collection
                 var baudRateCollection = _serialTransport.CurrentSerialSettings.BaudRateCollection;
 
-                Log(1, "Trying Port" + portName + ", possible speeds " + baudRateCollection.Count);
+                Log(1, "Trying port " + portName + ", possible speeds " + baudRateCollection.Count);
 
                 foreach (var baudRate in baudRateCollection)
                 {
