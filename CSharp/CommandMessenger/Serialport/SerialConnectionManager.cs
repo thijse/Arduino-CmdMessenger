@@ -71,8 +71,6 @@ namespace CommandMessenger.Serialport
             _lastConnectedSetting = new LastConnectedSetting();
             ReadSettings();
             _serialTransport.UpdatePortCollection();
-
-            StartConnectionManager();
         }
 
         /// <summary>
@@ -103,7 +101,7 @@ namespace CommandMessenger.Serialport
             Log(1, @"Trying serial port " + _serialTransport.CurrentSerialSettings.PortName + @" baud rate " + _serialTransport.CurrentSerialSettings.BaudRate);
             if (_serialTransport.Connect())
             {
-                Connected = (ArduinoAvailable(timeOut,2));
+                Connected = ArduinoAvailable(timeOut, 2);
                 
                 if (Connected)
                 {
@@ -314,29 +312,34 @@ namespace CommandMessenger.Serialport
             return portCollection.Where(port => !oldPortCollection.Any(port.Contains)).ToList();
         }
 
-        private void StoreSettings()
+        protected override void StoreSettings()
         {
-            _lastConnectedSetting.Port = _serialTransport.CurrentSerialSettings.PortName;
-            _lastConnectedSetting.BaudRate = _serialTransport.CurrentSerialSettings.BaudRate;
+            if (PersistentSettings)
+            {
+                _lastConnectedSetting.Port = _serialTransport.CurrentSerialSettings.PortName;
+                _lastConnectedSetting.BaudRate = _serialTransport.CurrentSerialSettings.BaudRate;
 
-            var fileStream = File.Create(SettingsFileName);
-            var serializer = new BinaryFormatter();
-            serializer.Serialize(fileStream,_lastConnectedSetting);
-            fileStream.Close();
+                var fileStream = File.Create(SettingsFileName);
+                var serializer = new BinaryFormatter();
+                serializer.Serialize(fileStream, _lastConnectedSetting);
+                fileStream.Close();
+            }
         }
 
-        private void ReadSettings()
+        protected override void ReadSettings()
         {
             // Read from file
-
-            _lastConnectedSetting.Port = "COM1";
-            _lastConnectedSetting.BaudRate = 115200;
-            if (File.Exists(SettingsFileName))
+            if (PersistentSettings)
             {
-                var fileStream = File.OpenRead(SettingsFileName);
-                var deserializer = new BinaryFormatter();
-                _lastConnectedSetting = (LastConnectedSetting)deserializer.Deserialize(fileStream);
-                fileStream.Close();
+                _lastConnectedSetting.Port = "COM1";
+                _lastConnectedSetting.BaudRate = 115200;
+                if (File.Exists(SettingsFileName))
+                {
+                    var fileStream = File.OpenRead(SettingsFileName);
+                    var deserializer = new BinaryFormatter();
+                    _lastConnectedSetting = (LastConnectedSetting) deserializer.Deserialize(fileStream);
+                    fileStream.Close();
+                }
             }
         }
     }

@@ -80,8 +80,6 @@ namespace CommandMessenger.Bluetooth
 
             _deviceList = new List<BluetoothDeviceInfo>();
             _prevDeviceList = new List<BluetoothDeviceInfo>();
-
-            StartConnectionManager();
         }
 
         protected override void DoWorkConnect()
@@ -197,7 +195,7 @@ namespace CommandMessenger.Bluetooth
                     Log(3,
                         @"Connected with Bluetooth device " + _bluetoothTransport.CurrentBluetoothDeviceInfo.DeviceName +
                         ", requesting response");
-                    Connected = (ArduinoAvailable(timeOut, 5));
+                    Connected = ArduinoAvailable(timeOut, 5);
 
                     if (Connected)
                     {
@@ -317,20 +315,23 @@ namespace CommandMessenger.Bluetooth
             return (from device in _deviceList from prevdevice in _prevDeviceList where device.DeviceAddress != prevdevice.DeviceAddress select device).ToList();
         }
 
-        private void StoreSettings()
+        protected override void StoreSettings()
         {
-            _bluetoothConfiguration.BluetoothAddress = _bluetoothTransport.CurrentBluetoothDeviceInfo.DeviceAddress;            
+            if (PersistentSettings)
+            {
+                _bluetoothConfiguration.BluetoothAddress = _bluetoothTransport.CurrentBluetoothDeviceInfo.DeviceAddress;
 
-            var fileStream = File.Create(SettingsFileName);
-            var serializer = new BinaryFormatter();
-            serializer.Serialize(fileStream,_bluetoothConfiguration);
-            fileStream.Close();
+                var fileStream = File.Create(SettingsFileName);
+                var serializer = new BinaryFormatter();
+                serializer.Serialize(fileStream, _bluetoothConfiguration);
+                fileStream.Close();
+            }
         }
 
-        private void ReadSettings()
+        protected override void ReadSettings()
         {
             // Read from file
-            if (File.Exists(SettingsFileName))
+            if (PersistentSettings && File.Exists(SettingsFileName))
             {
                 var fileStream = File.OpenRead(SettingsFileName);
                 var deserializer = new BinaryFormatter();
