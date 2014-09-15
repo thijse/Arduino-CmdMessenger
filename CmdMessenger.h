@@ -178,7 +178,7 @@ public:
 	bool next();
 	bool available();
 	bool isArgOk();
-	uint8_t CommandID();
+	uint8_t commandID();
 
 	// ****  Command sending ****
 

@@ -263,9 +263,9 @@ bool CmdMessenger::isArgOk()
 }
 
 /**
- * Returns the CommandID of the current command
+ * Returns the commandID of the current command
  */
-uint8_t CmdMessenger::CommandID()
+uint8_t CmdMessenger::commandID()
 {
 	return lastCommandId;
 }
