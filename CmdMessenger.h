@@ -98,8 +98,8 @@ private:
   
   inline uint8_t processLine (char serialChar) __attribute__((always_inline));
   inline void handleMessage() __attribute__((always_inline));
-  inline bool blockedTillReply (unsigned long timeout = DEFAULT_TIMEOUT, int ackCmdId = 1) __attribute__((always_inline));
-  inline bool CheckForAck (int AckCommand) __attribute__((always_inline));
+  inline bool blockedTillReply(unsigned int timeout = DEFAULT_TIMEOUT, byte ackCmdId = 1) __attribute__((always_inline));
+  inline bool checkForAck(byte AckCommand) __attribute__((always_inline));
 
   // **** Command sending ****
    
@@ -169,7 +169,7 @@ public:
 				const char cmd_separator = ';', 
                 const char esc_character = '/');
   
-  void printLfCr (bool addNewLine=true);
+  void printLfCr (bool addNewLine = true);
   void attach (messengerCallbackFunction newFunction);
   void attach (byte msgId, messengerCallbackFunction newFunction);
   
@@ -188,8 +188,8 @@ public:
    * Note that the argument is sent as string
    */
   template < class T >
-    bool sendCmd (int cmdId, T arg, bool reqAc = false, int ackCmdId = 1, 
-				  int timeout = DEFAULT_TIMEOUT)
+  bool sendCmd(byte cmdId, T arg, bool reqAc = false, byte ackCmdId = 1,
+				  unsigned int timeout = DEFAULT_TIMEOUT)
   {
     if (!startCommand) {
 		sendCmdStart (cmdId);
@@ -204,8 +204,8 @@ public:
    * Note that the argument is sent in binary format
    */
   template < class T >
-    bool sendBinCmd (int cmdId, T arg, bool reqAc = false, int ackCmdId = 1,
-                     int timeout = DEFAULT_TIMEOUT)
+    bool sendBinCmd (byte cmdId, T arg, bool reqAc = false, byte ackCmdId = 1,
+                     unsigned int timeout = DEFAULT_TIMEOUT)
   {
     if (!startCommand) {
 		sendCmdStart (cmdId);
@@ -215,14 +215,14 @@ public:
 	return false;
   }
 
-  bool sendCmd (int cmdId);
-  bool sendCmd (int cmdId, bool reqAc, int ackCmdId );
+  bool sendCmd (byte cmdId);
+  bool sendCmd (byte cmdId, bool reqAc, byte ackCmdId );
   // **** Command sending with multiple arguments ****
   
-  void sendCmdStart (int cmdId);
+  void sendCmdStart (byte cmdId);
   void sendCmdEscArg (char *arg);
   void sendCmdfArg (char *fmt, ...);
-  bool sendCmdEnd (bool reqAc = false, int ackCmdId = 1, int timeout = DEFAULT_TIMEOUT);
+  bool sendCmdEnd (bool reqAc = false, byte ackCmdId = 1, unsigned int timeout = DEFAULT_TIMEOUT);
   
   /**
    * Send a single argument as string 
@@ -240,7 +240,7 @@ public:
    * Send a single argument as string with custom accuracy
    *  Note that this will only succeed if a sendCmdStart has been issued first
    */
-  template < class T > void sendCmdArg (T arg, int n)
+  template < class T > void sendCmdArg (T arg, unsigned int n)
   {
     if (startCommand) {
         comms->print (field_separator);
@@ -252,7 +252,7 @@ public:
    * Send double argument in scientific format.
    *  This will overcome the boundary of normal d sending which is limited to abs(f) <= MAXLONG
   */
-  void sendCmdSciArg(double arg, int n=6);
+  void sendCmdSciArg(double arg, unsigned int n = 6);
 
   
   /**

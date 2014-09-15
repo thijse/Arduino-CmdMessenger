@@ -187,14 +187,14 @@ void CmdMessenger::handleMessage()
 /**
  * Waits for reply from sender or timeout before continuing
  */
-bool CmdMessenger::blockedTillReply(unsigned long timeout, int ackCmdId)
+bool CmdMessenger::blockedTillReply(unsigned int timeout, byte ackCmdId)
 {
     unsigned long time  = millis();
     unsigned long start = time;
     bool receivedAck    = false;
     while( (time - start ) < timeout && !receivedAck) {
         time = millis();
-        receivedAck = CheckForAck(ackCmdId);
+        receivedAck = checkForAck(ackCmdId);
     }
     return receivedAck;
 }
@@ -202,14 +202,14 @@ bool CmdMessenger::blockedTillReply(unsigned long timeout, int ackCmdId)
 /**
  *   Loops as long data is available to determine if acknowledge has come in 
  */
-bool CmdMessenger::CheckForAck(int AckCommand)
+bool CmdMessenger::checkForAck(byte ackCommand)
 {
-    while (  comms->available() ) {
+    while ( comms->available() ) {
 		//Processes a byte and determines if an acknowlegde has come in
 		int messageState = processLine(comms->read());
 		if ( messageState == kEndOfMessage ) {
 			int id = readInt16Arg();
-			if (AckCommand==id && ArgOk) {
+			if (ackCommand == id && ArgOk) {
 				return true;
 			} else {
 				return false;
@@ -273,7 +273,7 @@ uint8_t CmdMessenger::CommandID()
 /**
  * Send start of command. This makes it easy to send multiple arguments per command
  */
-void CmdMessenger::sendCmdStart(int cmdId)
+void CmdMessenger::sendCmdStart(byte cmdId)
 {
     if (!startCommand) {
 		startCommand   = true;
@@ -316,7 +316,7 @@ void CmdMessenger::sendCmdfArg(char *fmt, ...)
  * Send double argument in scientific format.
  *  This will overcome the boundary of normal float sending which is limited to abs(f) <= MAXLONG
  */
-void CmdMessenger::sendCmdSciArg (double arg, int n)
+void CmdMessenger::sendCmdSciArg (double arg, unsigned int n)
 {
 if (startCommand)
   {
@@ -328,7 +328,7 @@ if (startCommand)
 /**
  * Send end of command
  */
-bool CmdMessenger::sendCmdEnd(bool reqAc, int ackCmdId, int timeout)
+bool CmdMessenger::sendCmdEnd(bool reqAc, byte ackCmdId, unsigned int timeout)
 {
     bool ackReply = false;
     if (startCommand) {
@@ -347,7 +347,7 @@ bool CmdMessenger::sendCmdEnd(bool reqAc, int ackCmdId, int timeout)
 /**
  * Send a command without arguments, with acknowledge
  */
-bool CmdMessenger::sendCmd (int cmdId, bool reqAc, int ackCmdId)
+bool CmdMessenger::sendCmd (byte cmdId, bool reqAc, byte ackCmdId)
 {
     if (!startCommand) {
         sendCmdStart (cmdId);
@@ -359,7 +359,7 @@ bool CmdMessenger::sendCmd (int cmdId, bool reqAc, int ackCmdId)
 /**
  * Send a command without arguments, without acknowledge
  */
-bool CmdMessenger::sendCmd (int cmdId)
+bool CmdMessenger::sendCmd (byte cmdId)
 {
     if (!startCommand) {
         sendCmdStart (cmdId);
