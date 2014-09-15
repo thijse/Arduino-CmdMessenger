@@ -23,8 +23,7 @@ namespace DataLogging
 {
     enum Command
     {
-        RequestId,          // Command to request application ID
-        SendId,             // Command to send application ID
+        Identify,           // Command to identify device
         Acknowledge,        // Command to acknowledge a received command
         Error,              // Command to message that an error has occurred
         StartLogging,       // Command to turn on data logging
@@ -42,6 +41,8 @@ namespace DataLogging
 
     public class TemperatureControl
     {
+        private const string UniqueDeviceId = "77FAEDD5-FAC8-46BD-875E-5E9B6D44F85C";
+
         // This class (kind of) contains presentation logic, and domain model.
         // ChartForm.cs contains the view components 
         private ITransport            _transport;
@@ -129,9 +130,12 @@ namespace DataLogging
 
             // Set up connection manager 
             if (transportMode == TransportMode.Bluetooth)
-                _connectionManager = new BluetoothConnectionManager((_transport as BluetoothTransport), _cmdMessenger, (int)Command.RequestId, (int)Command.SendId);
+                _connectionManager = new BluetoothConnectionManager((_transport as BluetoothTransport), _cmdMessenger, (int)Command.Identify, UniqueDeviceId);
             else
-                _connectionManager = new SerialConnectionManager   ((_transport as SerialTransport),    _cmdMessenger, (int)Command.RequestId, (int)Command.SendId);                    
+                _connectionManager = new SerialConnectionManager   ((_transport as SerialTransport),    _cmdMessenger, (int)Command.Identify, UniqueDeviceId);
+
+            // Enable watchdog functionality.
+            _connectionManager.WatchdogEnabled = true;
 
             // Tell the Connection manager to "Invoke" commands on the thread running the WinForms UI
             _connectionManager.SetControlToInvokeOn(chartForm);
