@@ -58,8 +58,8 @@ namespace CommandMessenger.Serialport
         /// <summary>
         /// Connection manager for serial port connection
         /// </summary
-        public SerialConnectionManager(SerialTransport serialTransport, CmdMessenger cmdMessenger, int challengeCommandId, int responseCommandId) :
-            base(cmdMessenger, challengeCommandId, responseCommandId)
+        public SerialConnectionManager(SerialTransport serialTransport, CmdMessenger cmdMessenger, int watchdogCommandId = 0, string uniqueDeviceId = null) :
+            base(cmdMessenger, watchdogCommandId, uniqueDeviceId)
         {
             if (serialTransport == null) 
                 throw new ArgumentNullException("serialTransport", "Transport is null.");
@@ -170,9 +170,12 @@ namespace CommandMessenger.Serialport
             // First try if currentConnection is open or can be opened
             if (TryConnection(longTimeOut)) return true;
 
-            // Then try if last stored connection can be opened
-            Log(3, "Trying last stored connection");
-            if (TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate, longTimeOut)) return true;
+            if (PersistentSettings)
+            {
+                // Then try if last stored connection can be opened
+                Log(3, "Trying last stored connection");
+                if (TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate, longTimeOut)) return true;
+            }
 
             // Then see if port list has changed
             //if (NewPortInList().Count > 0) { _scanType = ScanType.Thorough; return false; }

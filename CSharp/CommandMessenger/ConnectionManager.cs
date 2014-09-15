@@ -51,12 +51,13 @@ namespace CommandMessenger
         public event EventHandler<ConnectionManagerProgressEventArgs> Progress;
 
         private readonly BackgroundWorker _workerThread;
-        private readonly int _challengeCommandId;
-        private readonly int _responseCommandId;
+        private readonly int _identifyCommandId;
+        private readonly string _uniqueDeviceId;
 
         private long _lastCheckTime;
         private long _nextTimeOutCheck;
         private uint _watchdogTries;
+        private bool _watchdogEnabled;
 
         /// <summary>
         /// Is connection manager currently connected to device.
@@ -68,9 +69,18 @@ namespace CommandMessenger
         public uint WatchdogTries { get; set; }
 
         /// <summary>
-        /// Enables or disables connection watchdog functionality.
+        /// Enables or disables connection watchdog functionality using identify command and unique device id.
         /// </summary>
-        public bool WatchdogEnabled { get; set; }
+        public bool WatchdogEnabled
+        {
+            get { return _watchdogEnabled; }
+            set
+            {
+                if (value && string.IsNullOrEmpty(_uniqueDeviceId))
+                    throw new InvalidOperationException("Watchdog can't be enabled without Unique Device ID.");
+                _watchdogEnabled = value;
+            }
+        }
 
         /// <summary>
         /// Use this property to tell connection manager to connect only to specific port provided by transport.
@@ -82,15 +92,18 @@ namespace CommandMessenger
         /// </summary>
         public bool PersistentSettings { get; set; }
 
-        protected ConnectionManager(CmdMessenger cmdMessenger, int challengeCommandId, int responseCommandId)
+        protected ConnectionManager(CmdMessenger cmdMessenger, int identifyCommandId = 0, string uniqueDeviceId = null)
         {
             if (cmdMessenger == null)
                 throw new ArgumentNullException("cmdMessenger", "Command Messenger is null.");
-            
-            WatchdogTimeout = 2000;
+
+            _identifyCommandId = identifyCommandId;
+            _uniqueDeviceId = uniqueDeviceId;
+
+            WatchdogTimeout = 3000;
             WatchdogRetryTimeout = 1000;        
             WatchdogTries = 3;
-            WatchdogEnabled = true;
+            WatchdogEnabled = false;
 
             PersistentSettings = true;
             UseFixedPort = false;
@@ -102,10 +115,8 @@ namespace CommandMessenger
 
             _workerThread = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = false };
 
-            _challengeCommandId = challengeCommandId;
-            _responseCommandId = responseCommandId;
-
-            CmdMessenger.Attach(responseCommandId, OnResponseCommandId);
+            if (!string.IsNullOrEmpty(uniqueDeviceId))
+                CmdMessenger.Attach(identifyCommandId, OnIdentifyResponse);
         }
 
         /// <summary>
@@ -249,7 +260,7 @@ namespace CommandMessenger
             InvokeEvent(Progress, args);
         }
 
-        protected virtual void OnResponseCommandId(ReceivedCommand arguments)
+        protected virtual void OnIdentifyResponse(ReceivedCommand arguments)
         {
             // Do nothing. 
         }
@@ -288,13 +299,20 @@ namespace CommandMessenger
         /// <summary>
         ///  Check if Arduino is available
         /// </summary>
-        /// <param name="timeOut">timout for waiting on response</param>
+        /// <param name="timeOut">Timout for waiting on response</param>
         /// <returns>Result. True if succesfull</returns>
         public bool ArduinoAvailable(int timeOut)
         {
-            var challengeCommand = new SendCommand(_challengeCommandId, _responseCommandId, timeOut);
-            var responseCommand = CmdMessenger.SendCommand(challengeCommand,SendQueue.InFrontQueue,ReceiveQueue.Default,UseQueue.BypassQueue);
-            return responseCommand.Ok;
+            var challengeCommand = new SendCommand(_identifyCommandId, _identifyCommandId, timeOut);
+            var responseCommand = CmdMessenger.SendCommand(challengeCommand, SendQueue.InFrontQueue, ReceiveQueue.Default, UseQueue.BypassQueue);
+
+            bool isOk = responseCommand.Ok;
+            if (isOk && !string.IsNullOrEmpty(_uniqueDeviceId))
+            {
+                isOk = ValidateDeviceUniqueId(responseCommand);
+            }
+
+            return isOk;
         }
 
         /// <summary>
@@ -311,6 +329,11 @@ namespace CommandMessenger
                 if (ArduinoAvailable(timeOut)) return true;
             }
             return false;
+        }
+
+        protected virtual bool ValidateDeviceUniqueId(ReceivedCommand responseCommand)
+        {
+            return _uniqueDeviceId == responseCommand.ReadStringArg();
         }
 
         protected abstract void DoWorkScan();
@@ -348,7 +371,7 @@ namespace CommandMessenger
 
             // We'll try another time
             // We queue the command in order to not be intrusive, but put it in front to get a quick answer
-            CmdMessenger.SendCommand(new SendCommand(_challengeCommandId), SendQueue.InFrontQueue, ReceiveQueue.Default);
+            CmdMessenger.SendCommand(new SendCommand(_identifyCommandId), SendQueue.InFrontQueue, ReceiveQueue.Default);
             _watchdogTries++;
 
             _lastCheckTime = currentTimeStamp;

@@ -67,8 +67,8 @@ namespace CommandMessenger.Bluetooth
         /// <summary>
         /// Connection manager for Bluetooth devices
         /// </summary>
-        public BluetoothConnectionManager(BluetoothTransport bluetoothTransport, CmdMessenger cmdMessenger, int challengeCommandId, int responseCommandId) : 
-            base(cmdMessenger, challengeCommandId,responseCommandId)
+        public BluetoothConnectionManager(BluetoothTransport bluetoothTransport, CmdMessenger cmdMessenger, int watchdogCommandId = 0, string uniqueDeviceId = null) :
+            base(cmdMessenger, watchdogCommandId, uniqueDeviceId)
         {
             if (bluetoothTransport == null) 
                 throw new ArgumentNullException("bluetoothTransport", "Transport is null.");
@@ -243,10 +243,12 @@ namespace CommandMessenger.Bluetooth
             // Do a quick rescan of all devices in range
             QuickScanDevices();
 
-            // Then try if last stored connection can be opened
-            Log(3, "Trying last stored connection");
-
-            if (TryConnection(_bluetoothConfiguration.BluetoothAddress, longTimeOut)) return true;
+            if (PersistentSettings)
+            {
+                // Then try if last stored connection can be opened
+                Log(3, "Trying last stored connection");
+                if (TryConnection(_bluetoothConfiguration.BluetoothAddress, longTimeOut)) return true;
+            }
 
             // Then see if new devices have been added to the list 
             if (NewDevicesScan()) return true;
