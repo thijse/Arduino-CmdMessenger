@@ -42,8 +42,6 @@ namespace CommandMessenger
     public abstract class ConnectionManager : IDisposable 
     {
         protected readonly CmdMessenger CmdMessenger;
-        
-        protected Control ControlToInvokeOn;
         protected ConnectionManagerState ConnectionManagerState;
 
         public event EventHandler ConnectionTimeout;
@@ -67,6 +65,8 @@ namespace CommandMessenger
         public int WatchdogTimeout { get; set; }
         public int WatchdogRetryTimeout { get; set; }
         public uint WatchdogTries { get; set; }
+
+        internal Control ControlToInvokeOn { get { return CmdMessenger.ControlToInvokeOn; } }
 
         /// <summary>
         /// Enables or disables connection watchdog functionality using identify command and unique device id.
@@ -108,7 +108,6 @@ namespace CommandMessenger
             PersistentSettings = true;
             UseFixedPort = false;
             
-            ControlToInvokeOn = null;
             CmdMessenger = cmdMessenger;
 
             ConnectionManagerState = ConnectionManagerState.Stop;
@@ -170,13 +169,6 @@ namespace CommandMessenger
             }
         }
 
-        /// <summary> Sets a control to invoke on. </summary>
-        /// <param name="controlToInvokeOn"> The control to invoke on. </param>
-        public void SetControlToInvokeOn(Control controlToInvokeOn)
-        {
-            ControlToInvokeOn = controlToInvokeOn;
-        }
-
         protected virtual void ConnectionFoundEvent()
         {
             ConnectionManagerState = ConnectionManagerState.Wait;
@@ -211,8 +203,7 @@ namespace CommandMessenger
         {
             try
             {
-                if (eventHandler == null) return;
-                if (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed) return;
+                if (eventHandler == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
                 if (ControlToInvokeOn != null && ControlToInvokeOn.InvokeRequired)
                 {
                     //Asynchronously call on UI thread
@@ -235,8 +226,7 @@ namespace CommandMessenger
         {
             try
             {
-                if (eventHandler == null) return;
-                if (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed) return;
+                if (eventHandler == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
                 if (ControlToInvokeOn != null && ControlToInvokeOn.InvokeRequired)
                 {
                     //Asynchronously call on UI thread

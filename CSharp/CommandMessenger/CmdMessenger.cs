@@ -138,7 +138,7 @@ namespace CommandMessenger
         //public String LogFileReceiveCommands { get; set; }
 
         // The control to invoke the callback on
-        private Control _controlToInvokeOn;
+        internal Control ControlToInvokeOn;
         
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
@@ -202,7 +202,7 @@ namespace CommandMessenger
         private void Init(ITransport transport, char fieldSeparator, char commandSeparator,
                           char escapeCharacter, int sendBufferMaxLength)
         {           
-            _controlToInvokeOn = null;
+            ControlToInvokeOn = null;
             
             _receiveCommandQueue  = new ReceiveCommandQueue(DisposeStack, this);
             _communicationManager = new CommunicationManager(DisposeStack, transport, _receiveCommandQueue, commandSeparator, fieldSeparator, escapeCharacter);
@@ -254,7 +254,7 @@ namespace CommandMessenger
         /// <param name="controlToInvokeOn"> The control to invoke on. </param>
         public void SetControlToInvokeOn(Control controlToInvokeOn)
         {
-            _controlToInvokeOn = controlToInvokeOn;
+            ControlToInvokeOn = controlToInvokeOn;
         }
 
         /// <summary>  Stop listening and end serial port connection. </summary>
@@ -472,11 +472,12 @@ namespace CommandMessenger
         {
             try
             {
-                if (newLineHandler == null) return;
-                if (_controlToInvokeOn != null && _controlToInvokeOn.InvokeRequired)
+                if (newLineHandler == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
+
+                if (ControlToInvokeOn != null && ControlToInvokeOn.InvokeRequired)
                 {
                     //Asynchronously call on UI thread
-                    _controlToInvokeOn.Invoke((MethodInvoker)(() => newLineHandler(this, newLineArgs)));
+                    ControlToInvokeOn.Invoke((MethodInvoker)(() => newLineHandler(this, newLineArgs)));
                 }
                 else
                 {
@@ -496,12 +497,12 @@ namespace CommandMessenger
         {
             try
             {
-                if (messengerCallbackFunction == null) return;
+                if (messengerCallbackFunction == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
 
-                if (_controlToInvokeOn != null && _controlToInvokeOn.InvokeRequired)
+                if (ControlToInvokeOn != null && ControlToInvokeOn.InvokeRequired)
                 {
                     //Asynchronously call on UI thread
-                    _controlToInvokeOn.Invoke(new MessengerCallbackFunction(messengerCallbackFunction), (object)command);
+                    ControlToInvokeOn.Invoke(new MessengerCallbackFunction(messengerCallbackFunction), (object)command);
                 }
                 else
                 {
@@ -518,7 +519,7 @@ namespace CommandMessenger
         /// <summary> Finaliser. </summary>
         ~CmdMessenger()
         {
-            _controlToInvokeOn = null;
+            ControlToInvokeOn = null;
             _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
             _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
         }
@@ -530,7 +531,7 @@ namespace CommandMessenger
         {
             if (disposing)
             {
-                _controlToInvokeOn = null;
+                ControlToInvokeOn = null;
                 _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
                 _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
                // _sendCommandLogger.Close();

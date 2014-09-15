@@ -137,9 +137,6 @@ namespace DataLogging
             // Enable watchdog functionality.
             _connectionManager.WatchdogEnabled = true;
 
-            // Tell the Connection manager to "Invoke" commands on the thread running the WinForms UI
-            _connectionManager.SetControlToInvokeOn(chartForm);
-
             // Event when the connection manager finds a connection
             _connectionManager.ConnectionFound += ConnectionFound;
 
