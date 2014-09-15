@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7-TemperatureControl", "Tem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessengerTests", "CommandMessengerTests\CommandMessengerTests.csproj", "{B869057C-DAB3-4C19-958C-C89D3B1521EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "8-SimpleWatchdog", "8-SimpleWatchdog\8-SimpleWatchdog.csproj", "{0D783DF1-9DEB-406D-8410-33A789B1FFD4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "8-SimpleWatchdog", "SimpleWatchdog\8-SimpleWatchdog.csproj", "{0D783DF1-9DEB-406D-8410-33A789B1FFD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
