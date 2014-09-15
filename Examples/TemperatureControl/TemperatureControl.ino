@@ -23,7 +23,7 @@
 
 
 // Attach a new CmdMessenger object to the default Serial port
-CmdMessenger cmdMessenger = CmdMessenger(Serial);
+CmdMessenger cmdMessenger(Serial);
 
 
 
@@ -72,8 +72,7 @@ PID pid(&CurrentTemperature, &heaterSteerValue, &goalTemperature,pidP,pidI,pidD,
 enum
 {
   // Commands
-  kRequestId           , // Command to request application ID
-  kSendId              , // Command to send application ID
+  kWatchdog            , // Command to request application ID
   kAcknowledge         , // Command to acknowledge a received command
   kError               , // Command to message that an error has occurred
   kStartLogging        , // Command to request logging start              
@@ -89,7 +88,7 @@ void attachCommandCallbacks()
 {
   // Attach callback methods
   cmdMessenger.attach(OnUnknownCommand);
-  cmdMessenger.attach(kRequestId, OnRequestId);
+  cmdMessenger.attach(kWatchdog, OnWatchdogRequest);
   cmdMessenger.attach(kStartLogging, OnStartLogging);
   cmdMessenger.attach(kStopLogging, OnStopLogging);
   cmdMessenger.attach(kSetGoalTemperature, OnSetGoalTemperature);
@@ -104,9 +103,10 @@ void OnUnknownCommand()
   cmdMessenger.sendCmd(kError,"Command without attached callback");
 }
 
-void OnRequestId()
+void OnWatchdogRequest()
 {
-  cmdMessenger.sendCmd(kSendId,"TemperatureControl");
+  // Will respond with same command ID and Unique device identifier.
+  cmdMessenger.sendCmd(kWatchdog, "77FAEDD5-FAC8-46BD-875E-5E9B6D44F85C");
 }
 
 // Callback function that responds that Arduino is ready (has booted up)
