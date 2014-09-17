@@ -122,9 +122,10 @@ namespace CommandMessenger.Serialport
 
         protected override void DoWorkConnect()
         {
+            const int timeOut = 1000;
             var activeConnection = false;
 
-            try { activeConnection = TryConnection(WatchdogTimeout); }
+            try { activeConnection = TryConnection(timeOut); }
             catch { }
 
             if (activeConnection)

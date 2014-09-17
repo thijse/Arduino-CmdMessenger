@@ -84,7 +84,16 @@ namespace CommandMessenger.Bluetooth
 
         protected override void DoWorkConnect()
         {
-            
+            const int timeOut = 1000;
+            var activeConnection = false;
+
+            try { activeConnection = TryConnection(timeOut); }
+            catch { }
+
+            if (activeConnection)
+            {
+                ConnectionFoundEvent();
+            } 
         }
 
         protected override void DoWorkScan()
@@ -111,7 +120,6 @@ namespace CommandMessenger.Bluetooth
             if (activeConnection)
             {
                 ConnectionFoundEvent();
-                                
             } 
         }
 
@@ -220,8 +228,6 @@ namespace CommandMessenger.Bluetooth
                 return false;
             }
         }
-
-
 
         // Single scan on foreground thread
         public bool SingleScan()

@@ -250,9 +250,12 @@ namespace CommandMessenger
             InvokeEvent(Progress, args);
         }
 
-        protected virtual void OnIdentifyResponse(ReceivedCommand arguments)
+        protected virtual void OnIdentifyResponse(ReceivedCommand responseCommand)
         {
-            // Do nothing. 
+            if (responseCommand.Ok && !string.IsNullOrEmpty(_uniqueDeviceId))
+            {
+                ValidateDeviceUniqueId(responseCommand);
+            }
         }
 
         private void WorkerThreadDoWork(object sender, DoWorkEventArgs e)
@@ -323,7 +326,13 @@ namespace CommandMessenger
 
         protected virtual bool ValidateDeviceUniqueId(ReceivedCommand responseCommand)
         {
-            return _uniqueDeviceId == responseCommand.ReadStringArg();
+            bool valid = _uniqueDeviceId == responseCommand.ReadStringArg();
+            if (!valid)
+            {
+                Log(3, "Invalid device response. Device ID mismatch.");
+            }
+
+            return valid;
         }
 
         protected abstract void DoWorkScan();
