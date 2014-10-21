@@ -23,6 +23,8 @@ using System.Reflection;
 using System.Linq;
 using System.Threading;
 using CommandMessenger.TransportLayer;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace CommandMessenger.Serialport
 {
@@ -73,11 +75,11 @@ namespace CommandMessenger.Serialport
         }
 
         /// <summary> Initializes this object. </summary>
-        public void Initialize()
+        protected void Initialize()
         {            
            // _queueSpeed.Name = "Serial";
             // Find installed serial ports on hardware
-            _currentSerialSettings.PortNameCollection = SerialPort.GetPortNames();         
+            _currentSerialSettings.PortNameCollection = GetPortNames();         
 
             // If serial ports are found, we select the first one
             if (_currentSerialSettings.PortNameCollection.Length > 0)
@@ -222,7 +224,7 @@ namespace CommandMessenger.Serialport
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool PortExists()
         {
-            return SerialPort.GetPortNames().Contains(_serialPort.PortName);
+            return GetPortNames().Contains(_serialPort.PortName);
         }
 
         /// <summary> Closes the serial port. </summary>
@@ -311,6 +313,11 @@ namespace CommandMessenger.Serialport
                             _currentSerialSettings.UpdateBaudRateCollection(dwSettableBaud);
                         }
                     }
+					else
+					{
+						// Can't determine possible baud rates, will use all possible
+						_currentSerialSettings.UpdateBaudRateCollection(int.MaxValue);
+					}
                 }
             }
             catch
@@ -319,11 +326,27 @@ namespace CommandMessenger.Serialport
             }
             return true;
         }
-
+		
+		public string[] GetPortNames()
+		{
+			/**
+			 * Under Linux SerialPort.GetPortNames() returns /dev/ttyS* devices,
+			 * but Arduino is detected as ttyACM* or ttyUSB*
+			 * */
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+			{
+				var searchPattern = new Regex("ttyACM.+|ttyUSB.+");
+				return Directory.GetFiles("/dev").Where(f => searchPattern.IsMatch(f)).ToArray();
+			}
+			else
+			{
+            	return SerialPort.GetPortNames();  
+			}
+		}
 
         public void UpdatePortCollection()
         {
-            _currentSerialSettings.PortNameCollection = SerialPort.GetPortNames();  
+			_currentSerialSettings.PortNameCollection = GetPortNames();
         }
 
         /// <summary> Reads the serial buffer into the string buffer. </summary>

@@ -94,8 +94,14 @@ namespace CommandMessenger.Serialport
         /// <returns>true if succesfully connected</returns>
         public bool TryConnection(int timeOut)
         {
-            lock(_tryConnectionLock) Connected = false;
-
+			lock(_tryConnectionLock) Connected = false;
+			
+			if (string.IsNullOrEmpty(_serialTransport.CurrentSerialSettings.PortName)
+			    || _serialTransport.CurrentSerialSettings.BaudRate == 0) 
+			{
+				return false;
+			}
+			
             Log(1, @"Trying serial port " + _serialTransport.CurrentSerialSettings.PortName + @" baud rate " + _serialTransport.CurrentSerialSettings.BaudRate);
             if (_serialTransport.Connect())
             {
@@ -108,6 +114,7 @@ namespace CommandMessenger.Serialport
                 }
                 return Connected;
             }
+			
             return false;
         }
 
@@ -211,9 +218,9 @@ namespace CommandMessenger.Serialport
 
                         Log(1,
                             "Trying port " + portName + ", possible speeds " +
-                            baudRateCollection.Count + " " +
+                            baudRateCollection.Count +
                             (baudRateCollection.Count > commonBaudRates.Length ? ", trying " + commonBaudRates.Length : "")
-                            );
+						);
                         if (TryConnection(portName,commonBaudRate, shortTimeOut)) return true;
                         Thread.Sleep(25); 
                     }                    
@@ -236,33 +243,32 @@ namespace CommandMessenger.Serialport
             // Then try if last stored connection can be opened
             if (TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate, longTimeOut)) return true;
 
-
-
             // Slowly walk through 
             _serialTransport.UpdatePortCollection();
             foreach (var portName in _serialTransport.CurrentSerialSettings.PortNameCollection)
             {
-
-
                 // First set port name
                 _serialTransport.CurrentSerialSettings.PortName = portName;
                 // update BaudRate Collection
                 _serialTransport.UpdateBaudRateCollection();
                 //  Now loop through baud rate collection
                 var baudRateCollection = _serialTransport.CurrentSerialSettings.BaudRateCollection;
+				
+				if (baudRateCollection.Count > 0)
+				{
+                	Log(1, "Trying port " + portName + ", possible speeds " + baudRateCollection.Count);
 
-                Log(1, "Trying port " + portName + ", possible speeds " + baudRateCollection.Count);
-
-                foreach (var baudRate in baudRateCollection)
-                {
-                    // If port list has changed, interrupt scan and test new ports first
-                    if (NewPortScan()) return true;
-                    {
-                        if (TryConnection(portName,baudRate, shortTimeOut))
-                            return true;
-                        Thread.Sleep(100); 
-                    }
-                }
+	                foreach (var baudRate in baudRateCollection)
+	                {
+	                    // If port list has changed, interrupt scan and test new ports first
+	                    if (NewPortScan()) return true;
+	                    {
+	                        if (TryConnection(portName,baudRate, shortTimeOut))
+	                            return true;
+	                        Thread.Sleep(100); 
+	                    }
+	                }
+				}
             }
             return false;
         }
@@ -312,7 +318,7 @@ namespace CommandMessenger.Serialport
         private List<string> NewPortInList()
         {
             var oldPortCollection = _serialTransport.CurrentSerialSettings.PortNameCollection;
-            var portCollection    = SerialPort.GetPortNames();
+            var portCollection    = _serialTransport.GetPortNames();
             return portCollection.Where(port => !oldPortCollection.Any(port.Contains)).ToList();
         }
 
@@ -335,8 +341,6 @@ namespace CommandMessenger.Serialport
             // Read from file
             if (PersistentSettings)
             {
-                _lastConnectedSetting.Port = "COM1";
-                _lastConnectedSetting.BaudRate = 115200;
                 if (File.Exists(SettingsFileName))
                 {
                     var fileStream = File.OpenRead(SettingsFileName);

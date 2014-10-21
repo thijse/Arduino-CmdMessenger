@@ -48,7 +48,7 @@ namespace CommandMessenger
             get { return _portName; }
             set
             {
-                if (!_portName.Equals(value))
+                if (string.Compare(_portName, value, true) != 0)
                 {
                     _portName = value;
                 }
