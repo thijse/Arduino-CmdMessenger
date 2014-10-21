@@ -82,6 +82,7 @@ namespace CommandMessenger.Bluetooth
             _prevDeviceList = new List<BluetoothDeviceInfo>();
         }
 
+        //Try to connect using current connections settings and trigger event if succesful
         protected override void DoWorkConnect()
         {
             const int timeOut = 1000;
@@ -96,6 +97,7 @@ namespace CommandMessenger.Bluetooth
             } 
         }
 
+        // Perform scan to find connected systems
         protected override void DoWorkScan()
         {
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "BluetoothConnectionManager";

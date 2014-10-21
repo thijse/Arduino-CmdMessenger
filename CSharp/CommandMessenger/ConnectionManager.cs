@@ -335,9 +335,11 @@ namespace CommandMessenger
             return valid;
         }
 
-        protected abstract void DoWorkScan();
-
+        //Try to connect using current connections settings
         protected abstract void DoWorkConnect();
+
+        // Perform scan to find connected systems
+        protected abstract void DoWorkScan();
 
         protected virtual void DoWorkWatchdog()
         {
@@ -361,7 +363,7 @@ namespace CommandMessenger
             // If too many tries, notify and stop
             if (_watchdogTries >= WatchdogTries)
             {
-                Log(3, "No watchdog response after final try");
+                Log(2, "Watchdog received no response after final try #" + WatchdogTries);
                 _watchdogTries = 0;
                 ConnectionManagerState = ConnectionManagerState.Wait;
                 ConnectionTimeoutEvent();
@@ -375,7 +377,7 @@ namespace CommandMessenger
 
             _lastCheckTime = currentTimeStamp;
             _nextTimeOutCheck = _lastCheckTime + WatchdogRetryTimeout;
-            Log(3, "No watchdog response, performing try #" + _watchdogTries);
+            Log(3, _watchdogTries == 1 ? "Watchdog detected no communication for "+WatchdogTimeout/1000.0+" s, asking for response" : "Watchdog received no response, performing try #" + _watchdogTries);
         }
 
         /// <summary>

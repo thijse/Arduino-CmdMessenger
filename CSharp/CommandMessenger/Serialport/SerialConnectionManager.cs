@@ -120,6 +120,7 @@ namespace CommandMessenger.Serialport
             return false;
         }
 
+        //Try to connect using current connections settings and trigger event if succesful
         protected override void DoWorkConnect()
         {
             const int timeOut = 1000;
@@ -134,6 +135,7 @@ namespace CommandMessenger.Serialport
             } 
         }
 
+        // Perform scan to find connected systems
         protected override void DoWorkScan()
         {
             var activeConnection = false;
