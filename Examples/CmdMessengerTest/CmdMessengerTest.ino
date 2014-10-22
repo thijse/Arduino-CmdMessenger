@@ -128,7 +128,7 @@ void OnUnknownCommand()
   cmdMessenger.sendCmd(kError,"Unknown command");
   cmdMessenger.sendCmdStart(kYouAreReady);  
   cmdMessenger.sendCmdArg("Command without attached callback");    
-  cmdMessenger.sendCmdArg(cmdMessenger.CommandID());    
+  cmdMessenger.sendCmdArg(cmdMessenger.commandID());    
   cmdMessenger.sendCmdEnd();
 }
 

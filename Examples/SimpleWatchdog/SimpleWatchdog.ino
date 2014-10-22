@@ -54,8 +54,7 @@ void onIdentifyRequest()
 // Callback to perform some action
 void onTurnLedOn()
 {
-  // initialize the digital pin as an output.
-  pinMode(ledPin, OUTPUT);
+
   // turn led on (this happens after connection)
   digitalWrite(ledPin, HIGH);
 }
@@ -68,7 +67,10 @@ void setup()
   // Attach my application's user-defined callback methods
   attachCommandCallbacks();
   
-  // Make sure led is turned off after start (or reset)
+  // initialize the digital pin as an output.
+  pinMode(ledPin, OUTPUT);
+  
+  // Make sure led is turned off after start or reset
   digitalWrite(ledPin, LOW);
 }
 

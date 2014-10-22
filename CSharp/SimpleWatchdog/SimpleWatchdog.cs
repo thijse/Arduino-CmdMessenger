@@ -40,7 +40,7 @@ namespace SimpleWatchdog
         public void Setup()
         {
             _transport = new SerialTransport {CurrentSerialSettings = {DtrEnable = false}};
-                // some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.                        
+            // some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.                        
             // We do not need to set serial port and baud rate: it will be found by the connection manager                                                           
 
             // Initialize the command messenger with the Serial Port transport layer
@@ -49,7 +49,6 @@ namespace SimpleWatchdog
                 BoardType = BoardType.Bit16, // Set if it is communicating with a 16- or 32-bit Arduino board
                 PrintLfCr = false // Do not print newLine at end of command, to reduce data being sent
             };
-
 
             // We don't need to provide a handler for identify command - this is a job for Connection Manager.
             _connectionManager = new SerialConnectionManager(

@@ -17,11 +17,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "5-DataLogging", "DataLoggin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "6-ArduinoController", "ArduinoController\6-ArduinoController.csproj", "{F994C186-EB6F-4E71-B274-DBF46F3534BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7-TemperatureControl", "TemperatureControl\7-TemperatureControl.csproj", "{78810760-E45A-4ACB-8D94-0E359E2F73FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "8-TemperatureControl", "TemperatureControl\8-TemperatureControl.csproj", "{78810760-E45A-4ACB-8D94-0E359E2F73FB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessengerTests", "CommandMessengerTests\CommandMessengerTests.csproj", "{B869057C-DAB3-4C19-958C-C89D3B1521EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "8-SimpleWatchdog", "SimpleWatchdog\8-SimpleWatchdog.csproj", "{0D783DF1-9DEB-406D-8410-33A789B1FFD4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7-SimpleWatchdog", "SimpleWatchdog\7-SimpleWatchdog.csproj", "{0D783DF1-9DEB-406D-8410-33A789B1FFD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
