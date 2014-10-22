@@ -17,13 +17,22 @@ namespace SimpleWatchdog
     {
         enum Command
         {
-            Identify,          // Command to identify device
-            Acknowledge        // Command to acknowledge a received command
+            Identify,           // Command to identify device
+            Acknowledge,        // Command to acknowledge a received command
+            DoSomething         // Perform some task
         };
 
         public bool RunLoop { get; set; }
 
-        private const string UniqueDeviceId = "BFAF4176-766E-436A-ADF2-96133C02B03C";
+        // Most of the time you want to be sure you are connecting with the correct device.
+        // This can by done by checking for a specific Communication Identifier. 
+        // You can make a unique identifier per device, 
+        // see http://pragmateek.com/4-ways-to-generate-a-guid/         
+        private const string CommunicationIdentifier = "BFAF4176-766E-436A-ADF2-96133C02B03C";
+        
+        // You could also check for the first device that has the correct (sketch) application and version running
+        //private const string CommunicationIdentifier = "SimpleWatchdog__1_0_1";
+        
         private static ITransport _transport;
         private static CmdMessenger _cmdMessenger;
         private static ConnectionManager _connectionManager;
@@ -46,8 +55,11 @@ namespace SimpleWatchdog
             _cmdMessenger.Attach((int) Command.Acknowledge, OnAcknowledge);
 
             // We don't need to provide a handler for identify command - this is a job for Connection Manager.
-            _connectionManager = new SerialConnectionManager((_transport as SerialTransport), _cmdMessenger,
-                (int) Command.Identify, UniqueDeviceId)
+            _connectionManager = new SerialConnectionManager(
+                _transport as SerialTransport, 
+                _cmdMessenger,
+                (int) Command.Identify, 
+                CommunicationIdentifier)
             {
                 // Enable watchdog functionality.
                 WatchdogEnabled = true,
@@ -63,7 +75,7 @@ namespace SimpleWatchdog
             // Show all connection progress on command line             
             _connectionManager.Progress += (sender, eventArgs) =>
             {
-                // If you want to reduce verbosity, you can only show events of level 1 or 2
+                // If you want to reduce verbosity, you can only show events of level <=2 or ==1
                 if (eventArgs.Level <= 3) Console.WriteLine(eventArgs.Description);
             };
         
@@ -96,7 +108,7 @@ namespace SimpleWatchdog
 
         static void OnAcknowledge(ReceivedCommand command)
         {
-            // Add your handling of command acknowlegdement here
+            // Add your handling of command acknowledgement here
         }
     }
 }
