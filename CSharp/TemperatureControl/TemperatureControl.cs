@@ -47,9 +47,8 @@ namespace DataLogging
         // ChartForm.cs contains the view components 
         private ITransport            _transport;
         private CmdMessenger          _cmdMessenger;
-        private ConnectionManager    _connectionManager;
+        private ConnectionManager     _connectionManager;
         private ChartForm             _chartForm;
-        //private float                 _startTime;
         private double                _goalTemperature;
         
         // ------------------ MAIN  ----------------------
