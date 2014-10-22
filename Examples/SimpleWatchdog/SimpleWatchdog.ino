@@ -8,6 +8,9 @@
 
 #include <CmdMessenger.h>  // CmdMessenger
 
+// Internal led 
+const int ledPin = 13;
+
 // Listen on serial connection for messages from the pc
 CmdMessenger messenger(Serial);
 
@@ -15,17 +18,16 @@ CmdMessenger messenger(Serial);
 // In order to receive, attach a callback function to these events
 enum
 {
-	kIdentify, // This command will be used both to identify exact device and for watchdog if multiple devices is connected to PC with serial communication
-	kAcknowledge,
-	kDoSomething
+    kIdentify, // This command will be used both to identify exact device and for watchdog if multiple devices is connected to PC with serial communication
+    kTurnLedOn, // This command will be used to turn the internal led on after connection has been established
 };
 
 void attachCommandCallbacks()
 {
   // Attach callback methods
   messenger.attach(onUnknownCommand);
-  messenger.attach(kIdentify   , onIdentifyRequest);
-  messenger.attach(kDoSomething, onDoSomething);
+  messenger.attach(kIdentify  , onIdentifyRequest);
+  messenger.attach(kTurnLedOn , onTurnLedOn);
 }
 
 // ------------------  C A L L B A C K S -----------------------
@@ -39,20 +41,23 @@ void onUnknownCommand()
 // Auto connection handshake. 
 void onIdentifyRequest()
 {
-	// Here we will send back our communication identifier. Make sure it 
-	// corresponds the Id in the C# code. Use F() macro to store ID in PROGMEM
-	
-	// You can make a unique identifier per device
-	messenger.sendCmd(kIdentify, F("BFAF4176-766E-436A-ADF2-96133C02B03C"));
-	
-	// You could also check for the first device that has the correct application+version running
-	//messenger.sendCmd(kIdentify, F("SimpleWatchdog__1_0_1"));
+  // Here we will send back our communication identifier. Make sure it 
+  // corresponds the Id in the C# code. Use F() macro to store ID in PROGMEM
+    
+  // You can make a unique identifier per device
+  messenger.sendCmd(kIdentify, F("BFAF4176-766E-436A-ADF2-96133C02B03C"));
+    
+  // You could also check for the first device that has the correct application+version running
+  //messenger.sendCmd(kIdentify, F("SimpleWatchdog__1_0_1"));
 }
 
 // Callback to perform some action
-void onDoSomething()
+void onTurnLedOn()
 {
-	// do something
+  // initialize the digital pin as an output.
+  pinMode(ledPin, OUTPUT);
+  // turn led on (this happens after connection)
+  digitalWrite(ledPin, HIGH);
 }
 
 // ------------------ M A I N  ----------------------
@@ -62,12 +67,15 @@ void setup()
 {
   // Attach my application's user-defined callback methods
   attachCommandCallbacks();
+  
+  // Make sure led is turned off after start (or reset)
+  digitalWrite(ledPin, LOW);
 }
 
 // Loop function
 void loop()
 {
     // Process incoming serial data, and perform callbacks
-	messenger.feedinSerialData();
+    messenger.feedinSerialData();
 }
 

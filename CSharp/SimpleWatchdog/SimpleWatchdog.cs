@@ -18,8 +18,7 @@ namespace SimpleWatchdog
         enum Command
         {
             Identify,           // Command to identify device
-            Acknowledge,        // Command to acknowledge a received command
-            DoSomething         // Perform some task
+            TurnLedOn,          // Command to request led to be turned on
         };
 
         public bool RunLoop { get; set; }
@@ -51,8 +50,6 @@ namespace SimpleWatchdog
                 PrintLfCr = false // Do not print newLine at end of command, to reduce data being sent
             };
 
-            _cmdMessenger.Attach(OnUnknownCommand);
-            _cmdMessenger.Attach((int) Command.Acknowledge, OnAcknowledge);
 
             // We don't need to provide a handler for identify command - this is a job for Connection Manager.
             _connectionManager = new SerialConnectionManager(
@@ -78,7 +75,22 @@ namespace SimpleWatchdog
                 // If you want to reduce verbosity, you can only show events of level <=2 or ==1
                 if (eventArgs.Level <= 3) Console.WriteLine(eventArgs.Description);
             };
-        
+
+            // If connection found, tell the arduino to turn the (internal) led on
+            _connectionManager.ConnectionFound += (sender, eventArgs) =>
+            {
+                // Create command
+                var command = new SendCommand((int)Command.TurnLedOn);
+                // Send command
+                _cmdMessenger.SendCommand(command);
+            };
+
+            //You can also do something when the connection is lost
+            _connectionManager.ConnectionTimeout += (sender, eventArgs) =>
+            {
+                //Do something
+            };
+
             // Finally - activate connection manager
             _connectionManager.StartConnectionManager();
         }
@@ -101,14 +113,5 @@ namespace SimpleWatchdog
             _transport.Dispose();
         }
 
-        static void OnUnknownCommand(ReceivedCommand command)
-        {
-            // Add your handling of unknown commands here
-        }
-
-        static void OnAcknowledge(ReceivedCommand command)
-        {
-            // Add your handling of command acknowledgement here
-        }
     }
 }
