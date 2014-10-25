@@ -30,17 +30,15 @@ namespace CommandMessenger
     public class CommunicationManager : DisposableObject
     {
         private ITransport _transport;
-        public readonly Encoding StringEncoder = Encoding.GetEncoding("ISO-8859-1");	// The string encoder
-        private string _buffer = "";	                                                // The buffer
+        private readonly Encoding _stringEncoder = Encoding.GetEncoding("ISO-8859-1");	// The string encoder
+        private string _buffer = string.Empty;	                                        // The buffer
 
         private ReceiveCommandQueue _receiveCommandQueue;
-        private IsEscaped _isEscaped;                                           // The is escaped
+        private IsEscaped _isEscaped;                                       // The is escaped
         private char _fieldSeparator;                                       // The field separator
         private char _commandSeparator;                                     // The command separator
         private char _escapeCharacter;                                      // The escape character
-        private object _parseLinesLock = new object();
-
-     
+        private readonly object _parseLinesLock = new object();
 
         /// <summary> Default constructor. </summary>
         /// /// <param name="disposeStack"> The DisposeStack</param>
@@ -144,7 +142,7 @@ namespace CommandMessenger
         /// <param name="value"> The string to write. </param>
         public void WriteLine(string value)
         {
-            byte[] writeBytes = StringEncoder.GetBytes(value + '\n');
+            byte[] writeBytes = _stringEncoder.GetBytes(value + '\n');
             _transport.Write(writeBytes);
         }
 
@@ -154,7 +152,7 @@ namespace CommandMessenger
         public void WriteLine<T>(T value)
         {        
             var writeString = value.ToString();
-            byte[] writeBytes = StringEncoder.GetBytes(writeString + '\n');
+            byte[] writeBytes = _stringEncoder.GetBytes(writeString + '\n');
             _transport.Write(writeBytes);
         }
 
@@ -164,7 +162,7 @@ namespace CommandMessenger
         public void Write<T>(T value)
         {
             var writeString = value.ToString();
-            byte[] writeBytes = StringEncoder.GetBytes(writeString);
+            byte[] writeBytes = _stringEncoder.GetBytes(writeString);
             _transport.Write(writeBytes);
         }
 
@@ -177,7 +175,7 @@ namespace CommandMessenger
         private void ReadInBuffer()
         {
             var data = _transport.Read();
-            _buffer += StringEncoder.GetString(data);
+            _buffer += _stringEncoder.GetString(data);
         }
 
         private void ParseLines()
@@ -226,7 +224,7 @@ namespace CommandMessenger
         /// <returns> Whether a complete line was present in the buffer. </returns>
         private string ParseLine()
         {
-            if (string.IsNullOrEmpty(_buffer))
+            if (!string.IsNullOrEmpty(_buffer))
             {
                 // Check if an End-Of-Line is present in the string, and split on first
                 //var i = _buffer.IndexOf(CommandSeparator);
