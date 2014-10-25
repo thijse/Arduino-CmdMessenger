@@ -231,7 +231,6 @@ namespace CommandMessenger.Serialport
 
         public bool ThoroughScan()
         {
-            Console.WriteLine("Performing thorough scan");
             Log(1, "Performing thorough scan");
             // First try last used connection
             const int longTimeOut = 1000;
@@ -281,7 +280,6 @@ namespace CommandMessenger.Serialport
             var newPorts = NewPortInList();
             if (newPorts.Count == 0) { return false; }
 
-            Console.WriteLine("Trying new ports");
             Log(1, "Trying new ports");
 
             // Quickly run through most used ports
