@@ -126,7 +126,7 @@ namespace CommandMessenger.Serialport
 
         #region Methods
 
-        protected  void ProcessQueue()
+        protected void ProcessQueue()
         {
             // Endless loop
             while (ThreadRunState != ThreadRunStates.Abort)

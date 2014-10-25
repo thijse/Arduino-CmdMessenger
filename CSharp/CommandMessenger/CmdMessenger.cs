@@ -392,7 +392,7 @@ namespace CommandMessenger
             
             if (receiveQueueState == ReceiveQueue.WaitForEmptyQueue)
             {
-                while (_receiveCommandQueue.Count>0) Thread.Sleep(1);
+                while (_receiveCommandQueue.Count > 0) Thread.Sleep(1);
             }
 
             if (synchronizedSend)

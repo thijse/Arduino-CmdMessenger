@@ -263,7 +263,7 @@ namespace CommandMessenger.Bluetooth
 
             foreach (var device in _deviceList)
             {
-                Thread.Sleep(200);
+                Thread.Sleep(100);
                 Log(1, "Trying Device " + device.DeviceName + " (" + device.DeviceAddress + ") " );
                 if (TryConnection(device, shortTimeOut)) return true;
             }
@@ -292,7 +292,7 @@ namespace CommandMessenger.Bluetooth
 
             foreach (var device in _deviceList)
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(100);
                 if (PairDevice(device))
                 {
                     Log(1, "Trying Device " + device.DeviceName + " (" + device.DeviceAddress + ") ");

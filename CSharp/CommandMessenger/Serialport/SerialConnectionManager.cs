@@ -307,8 +307,8 @@ namespace CommandMessenger.Serialport
 
                 foreach (var currentBaudRate in sortedBaudRates)
                 {
-                        if (TryConnection(portName, currentBaudRate, shortTimeOut)) return true;
-                        Thread.Sleep(100);
+                    if (TryConnection(portName, currentBaudRate, shortTimeOut)) return true;
+                    Thread.Sleep(100);
                 }
             }
             return false;
