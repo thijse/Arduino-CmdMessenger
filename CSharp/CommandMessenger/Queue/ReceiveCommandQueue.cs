@@ -17,8 +17,6 @@
 */
 #endregion
 
-using System.Linq;
-
 namespace CommandMessenger
 {
     /// <summary> Queue of received commands.  </summary>
@@ -45,7 +43,7 @@ namespace CommandMessenger
             ReceivedCommand receivedCommand = null;
             lock (Queue)
             {
-                if (Queue.Any())
+                if (!IsEmpty)
                 {
                     foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
                     var commandStrategy = Queue.Dequeue();
@@ -65,7 +63,9 @@ namespace CommandMessenger
                 //_queueSpeed.SetCount(Queue.Count);
                 //_queueSpeed.CalcSleepTime();
 
-                if (!Queue.Any()) EventWaiter.Wait(1000);
+                bool empty;
+                lock(Queue) empty = IsEmpty;
+                if (empty) EventWaiter.Wait(1000);
 
                 // Process queue unless stopped
                 if (ThreadRunState == ThreadRunStates.Start)

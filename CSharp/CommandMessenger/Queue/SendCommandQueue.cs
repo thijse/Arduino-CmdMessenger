@@ -18,7 +18,6 @@
 #endregion
 
 using System;
-using System.Linq;
 using System.Threading;
 
 namespace CommandMessenger
@@ -62,7 +61,9 @@ namespace CommandMessenger
                 //_queueSpeed.SetCount(Queue.Count);
                 //_queueSpeed.CalcSleepTime();
 
-                if (!Queue.Any()) EventWaiter.Wait(1000);
+                bool empty;
+                lock (Queue) empty = IsEmpty;
+                if (empty) EventWaiter.Wait(1000);
 
                 // Process queue unless stopped
                 if (ThreadRunState == ThreadRunStates.Start)
@@ -88,11 +89,11 @@ namespace CommandMessenger
             CommandStrategy eventCommandStrategy = null;
 
             // while maximum buffer string is not reached, and command in queue, AND    
-            while (_sendBuffer.Length < _sendBufferMaxLength && Queue.Any())
+            while (_sendBuffer.Length < _sendBufferMaxLength && Queue.Count > 0)
             {
                 lock (Queue)
                 {
-                    var commandStrategy = Queue.Any() ? Queue.Peek() : null;
+                    var commandStrategy = !IsEmpty ? Queue.Peek() : null;
                     if (commandStrategy != null)
                     {
                         if (commandStrategy.Command != null)

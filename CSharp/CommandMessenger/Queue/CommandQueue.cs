@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace CommandMessenger
@@ -66,11 +67,16 @@ namespace CommandMessenger
             }
         }
 
-        /// <summary> Gets or sets the run state of the thread . </summary>
-        /// <value> The thread run state. </value>
+        /// <summary>Gets count of records in queue.</summary>
         public int Count
         {
             get { return Queue.Count; }
+        }
+
+        /// <summary>Gets is queue is empty. NOT THREAD-SAFE.</summary>
+        public bool IsEmpty
+        {
+            get { return !Queue.Any(); }
         }
 
         /// <summary> command queue constructor. </summary>
