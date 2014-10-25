@@ -199,14 +199,13 @@ namespace CommandMessenger
         /// <summary> Processes the byte message and add to queue. </summary>
         public void ProcessLine(string line)
         {            
-                // Read line from raw buffer and make command
-                var currentReceivedCommand = ParseMessage(line);
-                currentReceivedCommand.RawString = line;
-                // Set time stamp
-                currentReceivedCommand.TimeStamp = LastLineTimeStamp;
-                // And put on queue
-                _receiveCommandQueue.QueueCommand(currentReceivedCommand);
-
+            // Read line from raw buffer and make command
+            var currentReceivedCommand = ParseMessage(line);
+            currentReceivedCommand.RawString = line;
+            // Set time stamp
+            currentReceivedCommand.TimeStamp = LastLineTimeStamp;
+            // And put on queue
+            _receiveCommandQueue.QueueCommand(currentReceivedCommand);
         }
 
         /// <summary> Parse message. </summary>
@@ -218,35 +217,33 @@ namespace CommandMessenger
             var cleanedLine = line.Trim('\r', '\n');
             cleanedLine = Escaping.Remove(cleanedLine, _commandSeparator, _escapeCharacter);
 
-            return
-                new ReceivedCommand(Escaping.Split(cleanedLine, _fieldSeparator, _escapeCharacter,
-                                    StringSplitOptions.RemoveEmptyEntries));
+            return new ReceivedCommand(
+                Escaping.Split(cleanedLine, _fieldSeparator, 
+                _escapeCharacter, StringSplitOptions.RemoveEmptyEntries));
         }
 
         /// <summary> Reads a float line from the buffer, if complete. </summary>
         /// <returns> Whether a complete line was present in the buffer. </returns>
         private string ParseLine()
         {
-
-                if (_buffer != "")
+            if (string.IsNullOrEmpty(_buffer))
+            {
+                // Check if an End-Of-Line is present in the string, and split on first
+                //var i = _buffer.IndexOf(CommandSeparator);
+                var i = FindNextEol();
+                if (i >= 0 && i < _buffer.Length)
                 {
-                    // Check if an End-Of-Line is present in the string, and split on first
-                    //var i = _buffer.IndexOf(CommandSeparator);
-                    var i = FindNextEol();
-                    if (i >= 0 && i < _buffer.Length)
+                    var line = _buffer.Substring(0, i + 1);
+                    if (!string.IsNullOrEmpty(line))
                     {
-                        var line = _buffer.Substring(0, i + 1);
-                        if (!String.IsNullOrEmpty(line))
-                        {
-                            _buffer = _buffer.Substring(i + 1);
-                            return line;
-                        }
                         _buffer = _buffer.Substring(i + 1);
-                        return "";
+                        return line;
                     }
+                    _buffer = _buffer.Substring(i + 1);
+                    return string.Empty;
                 }
-                return "";
-
+            }
+            return string.Empty;
         }
 
         /// <summary> Searches for the next End-Of-Line. </summary>

@@ -17,12 +17,13 @@
 */
 #endregion
 
+using System.Linq;
+
 namespace CommandMessenger
 {
     /// <summary> Queue of received commands.  </summary>
     public class ReceiveCommandQueue : CommandQueue
     {
-        
         public event NewLineEvent.NewLineHandler NewLineReceived;
         private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
 
@@ -44,7 +45,7 @@ namespace CommandMessenger
             ReceivedCommand receivedCommand = null;
             lock (Queue)
             {
-                if (Queue.Count != 0)
+                if (Queue.Any())
                 {
                     foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
                     var commandStrategy = Queue.Dequeue();
@@ -63,7 +64,8 @@ namespace CommandMessenger
                 // Calculate sleep time based on incoming command speed
                 //_queueSpeed.SetCount(Queue.Count);
                 //_queueSpeed.CalcSleepTime();
-                EventWaiter.Wait(1000);
+
+                if (!Queue.Any()) EventWaiter.Wait(1000);
 
                 // Process queue unless stopped
                 if (ThreadRunState == ThreadRunStates.Start)

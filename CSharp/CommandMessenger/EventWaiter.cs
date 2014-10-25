@@ -17,6 +17,8 @@
 */
 
 #endregion
+
+using System;
 using System.Threading;
 
 namespace CommandMessenger
@@ -84,7 +86,7 @@ namespace CommandMessenger
                 // Wait under conditions
                 while (elapsed < timeOut && _block && !_quit)
                 {
-                    Monitor.Wait(_key,timeOut);
+                    Monitor.Wait(_key, timeOut);
                     elapsed = TimeUtils.Millis - millisBefore;
                 }
 

@@ -18,6 +18,7 @@
 #endregion
 
 using System;
+using System.Linq;
 using System.Threading;
 
 namespace CommandMessenger
@@ -30,7 +31,7 @@ namespace CommandMessenger
         private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
         //private readonly int _sendBufferMaxLength = 512;
         private readonly int _sendBufferMaxLength = 62;
-        string _sendBuffer = "";
+        string _sendBuffer = string.Empty;
         int _commandCount = 0;
 
         public uint MaxQueueLength { get; set; }
@@ -60,7 +61,8 @@ namespace CommandMessenger
                 // Calculate sleep time based on incoming command speed
                 //_queueSpeed.SetCount(Queue.Count);
                 //_queueSpeed.CalcSleepTime();
-                EventWaiter.Wait(1000);
+
+                if (!Queue.Any()) EventWaiter.Wait(1000);
 
                 // Process queue unless stopped
                 if (ThreadRunState == ThreadRunStates.Start)
@@ -82,14 +84,15 @@ namespace CommandMessenger
         private void SendCommandsFromQueue()
         {
             _commandCount = 0;
-            _sendBuffer = "";
+            _sendBuffer = string.Empty;
             CommandStrategy eventCommandStrategy = null;
 
-            while (_sendBuffer.Length < _sendBufferMaxLength  && Queue.Count != 0)         // while maximum buffer string is not reached, and command in queue, AND    
+            // while maximum buffer string is not reached, and command in queue, AND    
+            while (_sendBuffer.Length < _sendBufferMaxLength && Queue.Any())
             {
                 lock (Queue)
                 {
-                    var commandStrategy = Queue.Count != 0 ? Queue.Peek() : null;
+                    var commandStrategy = Queue.Any() ? Queue.Peek() : null;
                     if (commandStrategy != null)
                     {
                         if (commandStrategy.Command != null)

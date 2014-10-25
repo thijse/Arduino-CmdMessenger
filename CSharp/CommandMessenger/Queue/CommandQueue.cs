@@ -86,7 +86,7 @@ namespace CommandMessenger
             // Create queue thread and wait for it to start
             QueueThread = new Thread(ProcessQueue) {Priority = ThreadPriority.Normal};
             QueueThread.Start();
-            while (!QueueThread.IsAlive && QueueThread.ThreadState!=ThreadState.Running)
+            while (!QueueThread.IsAlive && QueueThread.ThreadState != ThreadState.Running)
             {
                 Thread.Sleep(TimeSpan.FromMilliseconds(25));
             }
