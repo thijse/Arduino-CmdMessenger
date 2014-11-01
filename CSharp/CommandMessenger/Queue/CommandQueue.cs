@@ -87,7 +87,7 @@ namespace CommandMessenger
             CmdMessenger = cmdMessenger;
             disposeStack.Push(this);
 
-            EventWaiter = new EventWaiter();
+            EventWaiter = new EventWaiter(true);
 
             // Create queue thread and wait for it to start
             QueueThread = new Thread(ProcessQueue) {Priority = ThreadPriority.Normal};

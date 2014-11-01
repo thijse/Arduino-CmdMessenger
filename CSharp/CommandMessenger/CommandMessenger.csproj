@@ -85,7 +85,6 @@
     <Compile Include="TransportLayer\ITransport.cs" />
     <Compile Include="Serialport\SerialSettings.cs" />
     <Compile Include="StringUtils.cs" />
-    <Compile Include="TimedAction.cs" />
     <Compile Include="TimeUtils.cs" />
     <Compile Include="TransportLayer\Logger.cs" />
     <Compile Include="Serialport\SerialTransport.cs" />

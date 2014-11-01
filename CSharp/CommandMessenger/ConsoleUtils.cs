@@ -11,7 +11,6 @@ namespace CommandMessenger
         {
             _handler = ConsoleEventCallback;
             SetConsoleCtrlHandler(_handler, true);
-            Console.WriteLine("check");
         }
 
         static bool ConsoleEventCallback(int eventType)

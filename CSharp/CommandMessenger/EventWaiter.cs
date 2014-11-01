@@ -18,13 +18,12 @@
 
 #endregion
 
-using System;
 using System.Threading;
 
 namespace CommandMessenger
 {
     // Functionality comparable to AutoResetEvent (http://www.albahari.com/threading/part2.aspx#_AutoResetEvent)
-    // but it implements a time-out and since it's based on the monitor class it should be more efficient.
+    // but implemented using the monitor class: not inter processs, but ought to be more efficient.
     public class EventWaiter
     {
         public enum WaitState
@@ -39,71 +38,71 @@ namespace CommandMessenger
         bool _quit;
 
 
-        // start blocked (waiting for signal)
-        public EventWaiter()
+        /// <summary>
+        /// start blocked (waiting for signal)
+        /// </summary>
+        public EventWaiter() 
         {
             lock (_key)
             {
                 _block = true;
+                Monitor.Pulse(_key);
             }
         }
 
-        // start blocked (waiting for signal) or not blocked (pass through)
-        public EventWaiter(bool block)
+        /// <summary>
+        /// start blocked or signalled. 
+        /// </summary>
+        /// <param name="set">If true, first Wait will directly continue</param>
+        public EventWaiter(bool set)
         {
             lock (_key)
             {
-                _block = block;
+                _block = !set;
+                Monitor.Pulse(_key);
             }
         }
 
-        // Wait function. Blocks until signal is set or time-out
-        public WaitState Wait(int timeOut)
+        /// <summary>
+        /// Wait function. Blocks until signal is set or time-out
+        /// </summary>
+        /// <param name="timeOut">time-out in ms</param>
+        /// <returns></returns>
+        public WaitState WaitOne(int timeOut)
         {
             lock (_key)
             {
                 // Check if quit has been raised before the wait function is entered
-                if (_quit)
-                {
-                    // If so, reset quit and exit
-                    _quit = false;
-                    return WaitState.Quit;
-                }
+                if (_quit) { return WaitState.Quit; }
 
-                // Check if signal has already been raised before the wait function is entered
-                
+                // Check if signal has already been raised before the wait function is entered                
                 if (!_block)
                 {
                     // If so, reset event for next time and exit wait loop
                     _block = true;
                     return WaitState.Normal;
-                }
-                
-                // Set time 
-                var millisBefore = TimeUtils.Millis;
-                long elapsed = 0;
+                }               
 
                 // Wait under conditions
-                while (elapsed < timeOut && _block && !_quit)
+                bool noTimeOut = true;
+                while (noTimeOut && _block)
                 {
-                    Monitor.Wait(_key, timeOut);
-                    elapsed = TimeUtils.Millis - millisBefore;
+                    noTimeOut = Monitor.Wait(_key, timeOut);
                 }
-
+                // Block Wait for next entry
                 _block = true;
+
                 // Check if quit signal has already been raised after wait                
-                if (_quit)
-                {
-                    _quit = false;
-                    return WaitState.Quit;
-                }
+                if (_quit) { return WaitState.Quit; }
 
                 // Return whether the Wait function was quit because of an Set event or timeout
-                return elapsed >= timeOut ? WaitState.TimeOut : WaitState.Normal;
+                return noTimeOut ? WaitState.Normal : WaitState.TimeOut;
             }
         }
 
-        // Sets signal, will unblock thread in Wait function
+        /// <summary>
+        /// Sets signal, will unblock thread in Wait function
+        /// </summary>
         public void Set()
         {
             lock (_key)
@@ -113,25 +112,43 @@ namespace CommandMessenger
             }
         }
 
-        // Resets signal, will block threads entering Wait function
+        /// <summary>
+        /// Resets signal, will block threads entering Wait function
+        /// </summary>
         public void Reset()
         {
             lock (_key)
             {
                 _block = true;
-                Monitor.Pulse(_key);
             }
         }
 
-        // Quit. Unblocks thread in Wait function and exits
+        /// <summary>
+        /// Quit. Unblocks thread in Wait function and exits
+        // will not block again until Resume is called
+        /// </summary>
         public void Quit()
         {
             lock (_key)
             {
+                _block = false;
                 _quit = true;
                 Monitor.Pulse(_key);
             }
         }
 
+        /// <summary>
+        /// Resumes functionallity
+        /// </summary>
+        /// <param name="set">If true, first Wait will directly continue</param>
+        public void Resume(bool set)
+        {
+            lock (_key)
+            {
+                _block = !set;
+                _quit = false;
+                Monitor.Pulse(_key);
+            }
+        }
     }
 }

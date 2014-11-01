@@ -63,7 +63,7 @@ namespace CommandMessenger
 
                 bool empty;
                 lock (Queue) empty = IsEmpty;
-                if (empty) EventWaiter.Wait(1000);
+                if (empty) EventWaiter.WaitOne(1000);
 
                 // Process queue unless stopped
                 if (ThreadRunState == ThreadRunStates.Start)
