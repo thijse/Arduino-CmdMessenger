@@ -29,8 +29,8 @@ namespace CommandMessenger.TransportLayer
         bool Connect();
         bool Disconnect();
         bool IsConnected();
-        void StartPolling();
-        void StopPolling();
+        void StartListening();
+        void StopListening();
         void Write(byte[] buffer);
         event EventHandler NewDataReceived; 
     }

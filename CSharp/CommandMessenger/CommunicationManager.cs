@@ -129,13 +129,13 @@ namespace CommandMessenger
         /// <summary> Starts polling. </summary>
         public void StartPolling()
         {
-            _transport.StartPolling();
+            _transport.StartListening();
         }
 
         /// <summary> Stop polling. </summary>
         public void StopPolling()
         {
-            _transport.StopPolling();
+            _transport.StopListening();
         }
 
         /// <summary> Writes a string to the transport layer. </summary>

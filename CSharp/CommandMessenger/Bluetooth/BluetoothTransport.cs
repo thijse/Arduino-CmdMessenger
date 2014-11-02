@@ -40,13 +40,8 @@ namespace CommandMessenger.Bluetooth
     /// </summary>
     public class BluetoothTransport : DisposableObject, ITransport
     {
-        //private BluetoothEndPoint _localEndpoint;
-        //private BluetoothClient _localClient;
-        //private BluetoothComponent _localComponent;
         private NetworkStream _stream;
-        //private Guid _guid = Guid.NewGuid();          
-        //private Guid_guid = new Guid("{00112233-4455-6677-8899-aabbccddeeff}");
-        private readonly QueueSpeed _queueSpeed = new QueueSpeed(4,10);
+        //private readonly QueueSpeed _queueSpeed = new QueueSpeed(4,10);
         private Thread _queueThread;
         private ThreadRunStates _threadRunState;
         private readonly object _threadRunStateLock = new object();
@@ -133,15 +128,15 @@ namespace CommandMessenger.Bluetooth
             {
                 Poll(ThreadRunState);
             }
-            _queueSpeed.Sleep(50);
+            //_queueSpeed.Sleep(50);
         }        
 
-        public void StartPolling()
+        public void StartListening()
         {
             ThreadRunState = ThreadRunStates.Start;
         }
 
-        public void StopPolling()
+        public void StopListening()
         {
             ThreadRunState = ThreadRunStates.Stop;
         }
@@ -192,9 +187,6 @@ namespace CommandMessenger.Bluetooth
 
                 // synchronous connection method
                 BluetoothClient.Connect(CurrentBluetoothDeviceInfo.DeviceAddress, BluetoothService.SerialPort);
-                //Console.WriteLine("New connection");
-                //BluetoothClient.Connect(CurrentBluetoothDeviceInfo.DeviceAddress, _guid);
-                //BluetoothUtils.ConnectDevice(CurrentBluetoothDeviceInfo,null);
 
                 if (!Open())
                 {
@@ -224,7 +216,8 @@ namespace CommandMessenger.Bluetooth
         {
             if (!BluetoothClient.Connected) return false;
             _stream = BluetoothClient.GetStream();
-            _stream.ReadTimeout = 5;
+            _stream.ReadTimeout = 2000;
+            _stream.WriteTimeout = 1000;
             return (true);
         }
 

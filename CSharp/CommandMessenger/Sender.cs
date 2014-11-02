@@ -91,7 +91,7 @@ namespace CommandMessenger
             _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
 
             // Disable thread based polling of Serial Interface
-            //_communicationManager.StopPolling();
+            //_communicationManager.StopListening();
 
             var start = TimeUtils.Millis;
             var time = start;
@@ -108,7 +108,7 @@ namespace CommandMessenger
             }
 
             // Re enable thread based polling of Serial Interface
-            //_communicationManager.StartPolling();
+            //_communicationManager.StartListening();
 
             // Re-enable invoking command callbacks
             _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Start;

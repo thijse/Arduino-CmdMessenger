@@ -40,11 +40,15 @@ namespace CommandMessenger.Serialport
     /// </summary>
     public class SerialTransport : DisposableObject, ITransport
     {
-        private readonly QueueSpeed _queueSpeed = new QueueSpeed(4,10);
+        //private readonly QueueSpeed _queueSpeed = new QueueSpeed(4,10);
         private Thread _queueThread;
         private ThreadRunStates _threadRunState;
         private readonly object _threadRunStateLock = new object();
         private readonly object _serialReadWriteLock = new object();
+        private readonly object _readLock = new object();
+        private const int BufferMax = 4096;
+        readonly byte[] _readBuffer = new byte[BufferMax];
+        private int _bufferFilled;
 
         /// <summary> Gets or sets the run state of the thread . </summary>
         /// <value> The thread run state. </value>
@@ -76,7 +80,7 @@ namespace CommandMessenger.Serialport
 
         /// <summary> Initializes this object. </summary>
         protected void Initialize()
-        {            
+        {          
            // _queueSpeed.Name = "Serial";
             // Find installed serial ports on hardware
             _currentSerialSettings.PortNameCollection = GetPortNames();         
@@ -133,25 +137,32 @@ namespace CommandMessenger.Serialport
             {
                 Poll(ThreadRunState);
             }
-            _queueSpeed.Sleep(50);
+            //_queueSpeed.Sleep(50);
         }        
 
-        public void StartPolling()
+        /// <summary>
+        /// Start Listening
+        /// </summary>
+        public void StartListening()
         {
             ThreadRunState = ThreadRunStates.Start;
         }
 
-        public void StopPolling()
+        /// <summary>
+        /// Stop Listening
+        /// </summary>
+        public void StopListening()
         {
             ThreadRunState = ThreadRunStates.Stop;
         }
 
         private void Poll(ThreadRunStates threadRunState)
         {
-            var bytes = BytesInBuffer();
-            _queueSpeed.SetCount(bytes);
-            _queueSpeed.CalcSleepTimeWithoutLoad();
-            _queueSpeed.Sleep();
+            //var bytes = BytesInBuffer();
+            var bytes = UpdateBuffer();
+            //_queueSpeed.SetCount(bytes);
+            //_queueSpeed.CalcSleepTimeWithoutLoad();
+            //_queueSpeed.Sleep();
             if (threadRunState == ThreadRunStates.Start)
             {
                 if (bytes > 0)
@@ -184,10 +195,10 @@ namespace CommandMessenger.Serialport
                 _currentSerialSettings.StopBits)
                 {
                     DtrEnable = _currentSerialSettings.DtrEnable,
-                    WriteTimeout = 1000
+                    WriteTimeout = 1000,
+                    ReadTimeout  = 2000
                 };
-
-
+       
             // Subscribe to event and open serial port for data
             ThreadRunState = ThreadRunStates.Start;
             return Open();
@@ -349,33 +360,78 @@ namespace CommandMessenger.Serialport
 			_currentSerialSettings.PortNameCollection = GetPortNames();
         }
 
-        /// <summary> Reads the serial buffer into the string buffer. </summary>
-        public byte[] Read()
+
+        private int UpdateBuffer()
         {
-            var buffer = new byte[0];
             if (IsOpen())
             {
                 try
                 {
-                    lock (_serialReadWriteLock)
+                    lock (_readLock)
                     {
-                        var dataLength = _serialPort.BytesToRead;
-                        buffer = new byte[dataLength];
-                        int nbrDataRead = _serialPort.Read(buffer, 0, dataLength);
-                        if (nbrDataRead == 0) return new byte[0];
+                        var nbrDataRead = _serialPort.Read(_readBuffer, _bufferFilled, (BufferMax - _bufferFilled));
+                            _bufferFilled += nbrDataRead;
                     }
+                    return _bufferFilled;
                 }
-                catch
-                { }
+                catch (IOException)
+                {
+                    // Already communicating
+                }
+                catch (TimeoutException)
+                {
+                    // Timeout (expected)
+                }
             }
-            return buffer;
+            return 0;
+        }
+
+        /// <summary> Reads the serial buffer into the string buffer. </summary>
+        //public byte[] Read()
+        //{
+        //    var buffer = new byte[0];
+        //    if (IsOpen())
+        //    {
+        //        try
+        //        {
+        //            lock (_readLock)
+        //            {
+        //                var dataLength = _serialPort.BytesToRead;
+        //                buffer = new byte[dataLength];
+        //                int nbrDataRead = _serialPort.Read(buffer, 0, dataLength);
+        //                if (nbrDataRead == 0) return new byte[0];
+        //            }
+        //        }
+        //        catch
+        //        { }
+        //    }
+        //    return buffer;
+        //}
+
+
+        /// <summary> Reads the serial buffer into the string buffer. </summary>
+        public byte[] Read()
+        {
+            if (IsOpen())
+            {
+                byte[] buffer;
+                lock (_readLock)
+                {
+                    buffer = new byte[_bufferFilled];
+                    Array.Copy(_readBuffer, buffer, _bufferFilled);
+                    _bufferFilled = 0;
+                }
+                return buffer;
+            }
+            return new byte[0];
         }
 
         /// <summary> Gets the bytes in buffer. </summary>
         /// <returns> Bytes in buffer </returns>
         public int BytesInBuffer()
         {
-            return IsOpen()? _serialPort.BytesToRead:0;
+            //return IsOpen()? _serialPort.BytesToRead:0;
+            return _bufferFilled;
         }
 
         /// <summary> Kills this object. </summary>
