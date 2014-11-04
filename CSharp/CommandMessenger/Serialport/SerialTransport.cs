@@ -47,12 +47,12 @@ namespace CommandMessenger.Serialport
         private readonly object _serialReadWriteLock = new object();
         private readonly object _readLock = new object();
         private const int BufferMax = 4096;
-        readonly byte[] _readBuffer = new byte[BufferMax];
+        private readonly byte[] _readBuffer = new byte[BufferMax];
         private int _bufferFilled;
 
         /// <summary> Gets or sets the run state of the thread . </summary>
         /// <value> The thread run state. </value>
-        public ThreadRunStates ThreadRunState  
+        private ThreadRunStates ThreadRunState  
         {
             set
             {
@@ -79,7 +79,7 @@ namespace CommandMessenger.Serialport
         }
 
         /// <summary> Initializes this object. </summary>
-        protected void Initialize()
+        private void Initialize()
         {          
            // _queueSpeed.Name = "Serial";
             // Find installed serial ports on hardware
@@ -90,7 +90,6 @@ namespace CommandMessenger.Serialport
                 _currentSerialSettings.PortName = _currentSerialSettings.PortNameCollection[0];
 
             // Create queue thread and wait for it to start
-            
             _queueThread = new Thread(ProcessQueue)
                 {
                     Priority = ThreadPriority.Normal, 
@@ -130,7 +129,7 @@ namespace CommandMessenger.Serialport
 
         #region Methods
 
-        protected void ProcessQueue()
+        private void ProcessQueue()
         {
             // Endless loop
             while (ThreadRunState != ThreadRunStates.Abort)
@@ -454,10 +453,7 @@ namespace CommandMessenger.Serialport
 
         }
 
-        /// <summary> Joins the thread. </summary>
-        /// <param name="millisecondsTimeout"> The milliseconds timeout. </param>
-        /// <returns> true if it succeeds, false if it fails. </returns>
-        public bool Join(int millisecondsTimeout)
+        private bool Join(int millisecondsTimeout)
         {
             if (_queueThread.IsAlive == false) return true;
             return _queueThread.Join(TimeSpan.FromMilliseconds(millisecondsTimeout));

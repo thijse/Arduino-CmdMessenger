@@ -51,7 +51,7 @@ namespace CommandMessenger
     }
 
     /// <summary> Utility class providing escaping functions </summary>
-    public class Escaping
+    public static class Escaping
     {
         // Remove all occurrences of removeChar unless it is escaped by escapeChar
 
