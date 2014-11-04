@@ -183,14 +183,17 @@ namespace CommandMessenger
             //if (Monitor.TryEnter(_parseLinesLock)) {
             lock(_parseLinesLock) {
             //{
-                LastLineTimeStamp = TimeUtils.Millis;
                 ReadInBuffer();
-                var currentLine = ParseLine();
-                while (!String.IsNullOrEmpty(currentLine))
+
+                do
                 {
+                    string currentLine = ParseLine();
+                    if (string.IsNullOrEmpty(currentLine)) break;
+
+                    LastLineTimeStamp = TimeUtils.Millis;
                     ProcessLine(currentLine);
-                    currentLine = ParseLine();
-                }
+                } 
+                while (true);
             }
         }
 

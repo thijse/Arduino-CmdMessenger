@@ -369,7 +369,7 @@ namespace CommandMessenger.Serialport
                     lock (_readLock)
                     {
                         var nbrDataRead = _serialPort.Read(_readBuffer, _bufferFilled, (BufferMax - _bufferFilled));
-                            _bufferFilled += nbrDataRead;
+                        _bufferFilled += nbrDataRead;
                     }
                     return _bufferFilled;
                 }
