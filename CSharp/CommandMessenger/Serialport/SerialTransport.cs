@@ -254,7 +254,7 @@ namespace CommandMessenger.Serialport
             }            
         }
 
-        /// <summary> Query ifthe serial port is open. </summary>
+        /// <summary> Query if the serial port is open. </summary>
         /// <returns> true if open, false if not. </returns>
         public bool IsOpen()
         {

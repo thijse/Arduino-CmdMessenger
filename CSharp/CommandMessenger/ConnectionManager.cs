@@ -105,7 +105,7 @@ namespace CommandMessenger
             WatchdogTries = 3;
             WatchdogEnabled = false;
 
-            PersistentSettings = true;
+            PersistentSettings = false;
             UseFixedPort = false;
             
             CmdMessenger = cmdMessenger;
@@ -180,7 +180,7 @@ namespace CommandMessenger
 
         protected virtual void ConnectionTimeoutEvent()
         {
-            Connected = false;
+            Disconnect();
 
             InvokeEvent(ConnectionTimeout);
 
