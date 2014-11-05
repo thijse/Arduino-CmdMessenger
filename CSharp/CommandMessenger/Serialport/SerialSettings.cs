@@ -31,102 +31,39 @@ namespace CommandMessenger
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private string _portName = string.Empty;
-        private int _baudRate = 115200;
         private readonly List<int> _baudRateCollection = new List<int>();
-        private Parity _parity = Parity.None;
-        private int _dataBits = 8;
-        private int[] _dataBitsCollection = { 5, 6, 7, 8 };
-        private StopBits _stopBits = StopBits.One;
-        private bool _dtrEnable;
 
         #region Properties
+
         /// <summary>
         /// The port to use (for example: COM1 or /dev/ttyACM1).
         /// </summary>
-        public string PortName
-        {
-            get { return _portName; }
-            set
-            {
-                if (string.Compare(_portName, value, StringComparison.InvariantCultureIgnoreCase) != 0)
-                {
-                    _portName = value;
-                }
-            }
-        }
+        public string PortName { get; set; }
+
         /// <summary>
-        /// The baud rate.
+        /// Port baud rate.
         /// </summary>
-        public int BaudRate
-        {
-            get { return _baudRate; }
-            set 
-            {
-                if (_baudRate != value)
-                {
-                    _baudRate = value;                    
-                }
-            }
-        }
+        public int BaudRate { get; set; }
 
         /// <summary>
         /// One of the Parity values.
         /// </summary>
-        public Parity Parity
-        {
-            get { return _parity; }
-            set 
-            {
-                if (_parity != value)
-                {
-                    _parity = value;
-                }
-            }
-        }
+        public Parity Parity { get; set; }
+
         /// <summary>
         /// The data bits value.
         /// </summary>
-        public int DataBits
-        {
-            get { return _dataBits; }
-            set
-            {
-                if (_dataBits != value)
-                {
-                    _dataBits = value;
-                }
-            }
-        }
+        public int DataBits { get; set; }
+
         /// <summary>
         /// One of the StopBits values.
         /// </summary>
-        public StopBits StopBits
-        {
-            get { return _stopBits; }
-            set
-            {
-                if (_stopBits != value)
-                {
-                    _stopBits = value;
-                }
-            }
-        }
+        public StopBits StopBits { get; set; }
 
         /// <summary>
         /// Set Data Terminal Ready.
         /// </summary>
-        public bool DtrEnable
-        {
-            get { return _dtrEnable; }
-            set
-            {
-                if (_dtrEnable != value)
-                {
-                    _dtrEnable = value;
-                }
-            }
-        }
+        public bool DtrEnable { get; set; }
 
         /// <summary>
         /// Available ports on the computer
@@ -141,16 +78,16 @@ namespace CommandMessenger
             get { return _baudRateCollection; }
         }
 
-        /// <summary>
-        /// Available data bits setting
-        /// </summary>
-        public int[] DataBitsCollection
-        {
-            get { return _dataBitsCollection; }
-            set { _dataBitsCollection = value; }
-        }
-
         #endregion
+
+        public SerialSettings()
+        {
+            StopBits = StopBits.One;
+            DataBits = 8;
+            Parity = Parity.None;
+            BaudRate = 9600;
+            PortName = string.Empty;
+        }
 
         #region Methods
         /// <summary>
@@ -229,7 +166,7 @@ namespace CommandMessenger
         /// Send a PropertyChanged event
         /// </summary>
         /// <param name="propertyName">Name of changed property</param>
-        private void SendPropertyChangedEvent(String propertyName)
+        private void SendPropertyChangedEvent(string propertyName)
         {
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
