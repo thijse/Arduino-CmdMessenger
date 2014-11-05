@@ -196,7 +196,7 @@ namespace CommandMessenger.Serialport
                 {
                     DtrEnable = _currentSerialSettings.DtrEnable,
                     WriteTimeout = 1000,
-                    ReadTimeout  = 2000
+                    ReadTimeout  = 1000  
                 };
        
             // Subscribe to event and open serial port for data
@@ -360,7 +360,6 @@ namespace CommandMessenger.Serialport
 			_currentSerialSettings.PortNameCollection = GetPortNames();
         }
 
-
         private int UpdateBuffer()
         {
             if (IsOpen())
@@ -376,7 +375,7 @@ namespace CommandMessenger.Serialport
                 }
                 catch (IOException)
                 {
-                    // Already communicating
+                    // Already communicating, is not
                 }
                 catch (TimeoutException)
                 {

@@ -5,12 +5,10 @@
 // and clean than the example projects. 
 
 
-
 using System;
 using System.IO.Ports;
 using CommandMessenger;
 using CommandMessenger.Serialport;
-using CommandMessenger.TransportLayer;
 
 namespace CommandMessengerTests
 {
@@ -33,8 +31,8 @@ namespace CommandMessengerTests
                 MinReceiveSpeed     = 2000000,         // Bits per second    
                 MinSendSpeed        = 1250000,         // Bits per second                                       
                 MinDirectSendSpeed  = 47500,           // Bits per second                     
-                BoardType           = BoardType.Bit32, // 32 architecture, needed from binary value conversion
-                sendBufferMaxLength = 512,             // Maximum send buffer size
+                BoardType           = BoardType.Bit32, // 32-bit architecture, needed from binary value conversion
+                sendBufferMaxLength = 512,             // Maximum send buffer size, optimally buffer size is similar to embedded controller
                 Transport = new SerialTransport
                     {
                         CurrentSerialSettings = new SerialSettings()
@@ -48,14 +46,15 @@ namespace CommandMessengerTests
                             
                     }
             };
+
             var arduinoNano = new systemSettings()
             {
                 Description = @"Arduino Nano /w AT mega328",
                 MinReceiveSpeed     = 84000,              // Bits per second 
                 MinSendSpeed        = 90000,              // Bits per second                                      
                 MinDirectSendSpeed  = 52000,              // Bits per second                
-                BoardType           = BoardType.Bit16,    // 32 architecture, needed from binary value conversion
-                sendBufferMaxLength = 60,                 // Maximum send buffer size
+                BoardType           = BoardType.Bit16,    // 16-bit architecture, needed from binary value conversion
+                sendBufferMaxLength = 60,                 // Maximum send buffer size, optimally buffer size is similar to embedded controller
                 Transport = new SerialTransport
                 {
                     CurrentSerialSettings = new SerialSettings()
@@ -142,11 +141,11 @@ namespace CommandMessengerTests
             Common.TestSummary();
 
             // Exit application
-            exit();            
+            Exit();            
         }
 
 
-        public void exit()
+        public void Exit()
         {
             Console.WriteLine("Press any key to stop...");
             Console.ReadKey();

@@ -222,7 +222,8 @@ namespace CommandMessenger.Serialport
                             (baudRateCollection.Count > commonBaudRates.Length ? ", trying " + commonBaudRates.Length : "")
 						);
                         if (TryConnection(portName,commonBaudRate, shortTimeOut)) return true;
-                        Thread.Sleep(25); 
+                        // Seems to work fine without the sleep
+                        //Thread.Sleep(25); 
                     }                    
                 }
             }
@@ -264,7 +265,8 @@ namespace CommandMessenger.Serialport
 	                    {
 	                        if (TryConnection(portName,baudRate, shortTimeOut))
 	                            return true;
-	                        Thread.Sleep(100); 
+                            // Seems to work fine without the sleep
+	                        //Thread.Sleep(100); 
 	                    }
 	                }
 				}
@@ -306,7 +308,8 @@ namespace CommandMessenger.Serialport
                 foreach (var currentBaudRate in sortedBaudRates)
                 {
                     if (TryConnection(portName, currentBaudRate, shortTimeOut)) return true;
-                    Thread.Sleep(100);
+                    // Seems to work fine without the sleep
+                    //Thread.Sleep(100);
                 }
             }
             return false;

@@ -284,8 +284,10 @@ namespace CommandMessenger
                         DoWorkWatchdog();
                         break;
                 }
-
-                Thread.Sleep(100);
+                // Sleep a bit before checking again. If not present, the connection manager will 
+                // consume a lot of CPU resources while waiting
+                Thread.Sleep(100);  
+                
             }
         }
 

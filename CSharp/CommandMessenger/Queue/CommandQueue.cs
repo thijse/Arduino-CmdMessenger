@@ -94,7 +94,7 @@ namespace CommandMessenger
             QueueThread.Start();
             while (!QueueThread.IsAlive && QueueThread.ThreadState != ThreadState.Running)
             {
-                Thread.Sleep(TimeSpan.FromMilliseconds(25));
+                Thread.Sleep(25);
             }
         }
 

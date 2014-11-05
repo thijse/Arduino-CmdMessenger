@@ -96,7 +96,7 @@ namespace CommandMessenger.Bluetooth
                 };
             ThreadRunState = ThreadRunStates.Start;
             _queueThread.Start();
-            while (!_queueThread.IsAlive) { Thread.Sleep(50); }
+            while (!_queueThread.IsAlive) { Thread.Sleep(25); }
         }
 
         #region Fields
