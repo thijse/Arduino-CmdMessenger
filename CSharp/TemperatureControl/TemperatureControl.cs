@@ -83,7 +83,7 @@ namespace DataLogging
             // Choose which transport mode you want to use:
             // 1. Serial port. This can be a real serial port but is usually a virtual serial port over USB. 
             //                 It can also be a virtual serial port over Bluetooth, but the direct bluetooth works better
-            // 2. Bluetooth    This bypasses the Bluetooth virtual serial port, but communicates over the RFCOMM layer                 
+            // 2. Bluetooth    This bypasses the Bluetooth virtual serial port, and instead communicates over the RFCOMM layer                 
             var transportMode = TransportMode.Serial;
             
             // getting the chart control on top of the chart form.

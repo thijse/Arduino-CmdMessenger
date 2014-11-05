@@ -35,14 +35,10 @@ namespace SendAndReceive
         {
             _ledState = false;
 
-            BluetoothInfo();
-
             // Create Bluetooth transport object
             _bluetoothTransport = new BluetoothTransport
             {
-                //CurrentBluetoothDeviceInfo = BluetoothUtils.DeviceByAdress("98-D3-31-B0-FB-B5")
-                CurrentBluetoothDeviceInfo = BluetoothUtils.DeviceByAdress("20:13:07:26:10:08")
-                
+                CurrentBluetoothDeviceInfo = BluetoothUtils.DeviceByAdress("20:13:07:26:10:08")                
             };
 
             // Create Serial Port transport object
@@ -67,23 +63,6 @@ namespace SendAndReceive
             _cmdMessenger.Connect();                                
         }
 
-        private static void BluetoothInfo()
-        {
-            // Show  adress of local primary bluetooth device 
-            Console.WriteLine("Adress of local primary bluetooth device:");
-            BluetoothUtils.PrintLocalAddress();
-            Console.WriteLine("");
-
-            //Show all paired bluetooth devices
-            Console.WriteLine("All paired bluetooth devices:");
-            BluetoothUtils.PrintPairedDevices();
-            Console.WriteLine("");
-
-            // Show Virtual serial ports associated with Bluetooth devices
-            Console.WriteLine("Virtual serial ports associated with Bluetooth devices:");
-            BluetoothUtils.PrintSerialPorts();
-            Console.WriteLine("");
-        }
 
         // Loop function
         public void Loop()

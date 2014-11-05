@@ -32,7 +32,7 @@ namespace CommandMessenger.Bluetooth
 
    
     /// <summary>
-    /// Class for storing last succesfull connection
+    /// Class for storing last succesful connection
     /// </summary>
     [Serializable]
     public class BluetoothConfiguration 
