@@ -30,25 +30,26 @@ namespace CommandMessenger
     public class SerialSettings : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        string _portName = "";
-        int _baudRate = 115200;
-        readonly List<int> _baudRateCollection = new List<int>();
-        Parity _parity = Parity.None;
-        int _dataBits = 8;
-        int[] _dataBitsCollection = { 5, 6, 7, 8 };
-        StopBits _stopBits = StopBits.One;
-        private bool _dtrEnable = false;
+
+        private string _portName = string.Empty;
+        private int _baudRate = 115200;
+        private readonly List<int> _baudRateCollection = new List<int>();
+        private Parity _parity = Parity.None;
+        private int _dataBits = 8;
+        private int[] _dataBitsCollection = { 5, 6, 7, 8 };
+        private StopBits _stopBits = StopBits.One;
+        private bool _dtrEnable;
 
         #region Properties
         /// <summary>
-        /// The port to use (for example, COM1).
+        /// The port to use (for example: COM1 or /dev/ttyACM1).
         /// </summary>
         public string PortName
         {
             get { return _portName; }
             set
             {
-                if (string.Compare(_portName, value, true) != 0)
+                if (string.Compare(_portName, value, StringComparison.InvariantCultureIgnoreCase) != 0)
                 {
                     _portName = value;
                 }
@@ -160,9 +161,9 @@ namespace CommandMessenger
         public void UpdateBaudRateCollection(int possibleBaudRates)
         {
             // ReSharper disable InconsistentNaming
-            const int BAUD_075    = 0x00000001;	// The fifth baud 07
-            const int BAUD_110    = 0x00000002;
-            const int BAUD_150    = 0x00000008;
+            //const int BAUD_075    = 0x00000001;	// The fifth baud 07
+            //const int BAUD_110    = 0x00000002;
+            //const int BAUD_150    = 0x00000008;
             const int BAUD_300    = 0x00000010;
             const int BAUD_600    = 0x00000020;
             const int BAUD_1200   = 0x00000040;
@@ -214,12 +215,12 @@ namespace CommandMessenger
                 _baudRateCollection.Add(600);
             if ((possibleBaudRates & BAUD_300) > 0)
                 _baudRateCollection.Add(300);
-            if ((possibleBaudRates & BAUD_150) > 0)
+            /*if ((possibleBaudRates & BAUD_150) > 0)
                 _baudRateCollection.Add(150);
             if ((possibleBaudRates & BAUD_110) > 0)
                 _baudRateCollection.Add(110);
             if ((possibleBaudRates & BAUD_075) > 0)
-                _baudRateCollection.Add(75);
+                _baudRateCollection.Add(75);*/
 
             SendPropertyChangedEvent("BaudRateCollection");
         }

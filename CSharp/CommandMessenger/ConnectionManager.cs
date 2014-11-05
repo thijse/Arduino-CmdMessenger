@@ -105,7 +105,7 @@ namespace CommandMessenger
             WatchdogTries = 3;
             WatchdogEnabled = false;
 
-            PersistentSettings = true;
+            PersistentSettings = false;
             UseFixedPort = false;
             
             CmdMessenger = cmdMessenger;
@@ -180,7 +180,7 @@ namespace CommandMessenger
 
         protected virtual void ConnectionTimeoutEvent()
         {
-            Connected = false;
+            Disconnect();
 
             InvokeEvent(ConnectionTimeout);
 
@@ -379,7 +379,9 @@ namespace CommandMessenger
 
             _lastCheckTime = currentTimeStamp;
             _nextTimeOutCheck = _lastCheckTime + WatchdogRetryTimeout;
-            Log(3, _watchdogTries == 1 ? "Watchdog detected no communication for "+WatchdogTimeout/1000.0+" s, asking for response" : "Watchdog received no response, performing try #" + _watchdogTries);
+            Log(3, _watchdogTries == 1 ? 
+                "Watchdog detected no communication for " + WatchdogTimeout/1000.0 + "s, asking for response" 
+                : "Watchdog received no response, performing try #" + _watchdogTries);
         }
 
         /// <summary>
