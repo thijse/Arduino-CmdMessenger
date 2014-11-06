@@ -81,6 +81,8 @@ namespace CommandMessenger.Serialport
 
             PortScanBaudRateSelection = true;
 
+            UpdateAvailablePorts();
+
             _lastConnectedSetting = new LastConnectedSetting();
             ReadSettings();
         }
@@ -140,6 +142,7 @@ namespace CommandMessenger.Serialport
 
             if (ConnectionManagerState == ConnectionManagerState.Scan)
             {
+                UpdateAvailablePorts();
                 _scanType = ScanType.None;
             }
         }
@@ -206,8 +209,6 @@ namespace CommandMessenger.Serialport
                     return true;
             }
 
-            AvailableSerialPorts = SerialUtils.GetPortNames();
-
             // Quickly run through most used baud rates
             var commonBaudRates = PortScanBaudRateSelection 
                 ? SerialUtils.CommonBaudRates 
@@ -234,10 +235,10 @@ namespace CommandMessenger.Serialport
                         if (status == DeviceStatus.Available) return true;
                         if (status == DeviceStatus.IdentityMismatch) break; // break the loop and continue to next port.
                     }
-
-                    // If port list has changed, interrupt scan and test new ports first
-                    if (NewPortScan()) return true;
                 }
+
+                // If port list has changed, interrupt scan and test new ports first
+                if (NewPortScan()) return true;
             }
 
             return false;
@@ -250,8 +251,6 @@ namespace CommandMessenger.Serialport
             // Then try if last stored connection can be opened
             if (PersistentSettings && TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate) == DeviceStatus.Available) 
                 return true;
-
-            AvailableSerialPorts = SerialUtils.GetPortNames();
 
             // Slowly walk through 
             foreach (var portName in AvailableSerialPorts)
@@ -275,10 +274,10 @@ namespace CommandMessenger.Serialport
                         if (status == DeviceStatus.Available) return true;
                         if (status == DeviceStatus.IdentityMismatch) break; // break the loop and continue to next port.
 	                }
-
-                    // If port list has changed, interrupt scan and test new ports first
-                    if (NewPortScan()) return true;
 				}
+
+                // If port list has changed, interrupt scan and test new ports first
+                if (NewPortScan()) return true;
             }
 
             return false;
@@ -328,9 +327,19 @@ namespace CommandMessenger.Serialport
             return false;
         }
 
+        private void UpdateAvailablePorts()
+        {
+            AvailableSerialPorts = SerialUtils.GetPortNames();
+        }
+
         private List<string> NewPortInList()
         {
-            var newPorts = SerialUtils.GetPortNames().Except(AvailableSerialPorts).ToList();
+            var currentPorts = SerialUtils.GetPortNames();
+            var newPorts = currentPorts.Except(AvailableSerialPorts).ToList();
+
+            // Actualize ports collection
+            AvailableSerialPorts = currentPorts;
+
             return newPorts;
         }
 
