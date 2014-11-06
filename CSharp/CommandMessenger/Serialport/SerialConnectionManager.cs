@@ -119,12 +119,14 @@ namespace CommandMessenger.Serialport
             return DeviceStatus.NotAvailable;
         }
 
-        // Single scan on foreground thread
-        public bool SingleScan()
+        protected override void StartScan()
         {
-            if (QuickScan()) return true;
-            if (ThoroughScan()) return true;
-            return false;
+            base.StartScan();
+
+            if (ConnectionManagerState == ConnectionManagerState.Scan)
+            {
+                _scanType = ScanType.None;
+            }
         }
 
         //Try to connect using current connections settings and trigger event if succesful
@@ -145,26 +147,29 @@ namespace CommandMessenger.Serialport
         protected override void DoWorkScan()
         {
             // First try if currentConnection is open or can be opened
-            var activeConnection = TryConnection() == DeviceStatus.Available;
+            var activeConnection = false;
 
-            if (!activeConnection)
-            { 
-                if (_scanType == ScanType.None)
-                {
-                    _scanType = ScanType.Quick;
-                    try { activeConnection = QuickScan(); }
-                    catch { }
-                }
-                else if (_scanType == ScanType.Quick)
-                {
-                    _scanType = ScanType.Thorough;
-                    try { activeConnection = ThoroughScan(); }
-                    catch { }
-                }
-                else
-                {
-                    _scanType = ScanType.None;
-                }
+            if (_scanType == ScanType.None)
+            {
+                try { activeConnection = TryConnection() == DeviceStatus.Available; }
+                catch { }
+
+                _scanType = ScanType.Quick;
+                
+            }
+            else if (_scanType == ScanType.Quick)
+            {
+                try { activeConnection = QuickScan(); }
+                catch { }
+
+                _scanType = ScanType.Thorough;
+            }
+            else if (_scanType == ScanType.Thorough)
+            {
+                try { activeConnection = ThoroughScan(); }
+                catch { }
+
+                _scanType = ScanType.None;
             }
 
             // Trigger event when a connection was made
@@ -262,10 +267,11 @@ namespace CommandMessenger.Serialport
             var newPorts = NewPortInList();
             if (!newPorts.Any()) { return false; }
 
-            Log(1, "Trying new ports.");
+            const int waitTime = 3000;
+            Log(1, "New port(s) " + string.Join(",", newPorts) + " detected, wait for " + (waitTime / 1000.0) + "s before attempt to connect.");
 
-            // Wait a second before new port will be available
-            Thread.Sleep(1000);
+            // Wait a bit before new port will be available then try to connect
+            Thread.Sleep(waitTime);
 
             // Quickly run through most used ports
             var commonBaudRates = SerialUtils.CommonBaudRates;
