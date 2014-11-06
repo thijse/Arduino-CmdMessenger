@@ -205,7 +205,9 @@ namespace CommandMessenger.Bluetooth
                     Log(3,
                         @"Connected with Bluetooth device " + _bluetoothTransport.CurrentBluetoothDeviceInfo.DeviceName +
                         ", requesting response");
-                    Connected = ArduinoAvailable(timeOut, 5);
+
+                    DeviceStatus status = ArduinoAvailable(timeOut, 5);
+                    Connected = (status == DeviceStatus.Available);
 
                     if (Connected)
                     {

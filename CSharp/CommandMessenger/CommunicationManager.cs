@@ -74,7 +74,7 @@ namespace CommandMessenger
         /// <param name="escapeCharacter"> The escape character. </param>
         /// <param name="disposeStack"> The DisposeStack</param>
         /// /// <param name="transport"> The Transport Layer</param>
-        public void Initialize(DisposeStack disposeStack, ITransport transport, ReceiveCommandQueue receiveCommandQueue, char commandSeparator, char fieldSeparator, char escapeCharacter)
+        private void Initialize(DisposeStack disposeStack, ITransport transport, ReceiveCommandQueue receiveCommandQueue, char commandSeparator, char fieldSeparator, char escapeCharacter)
         {
             disposeStack.Push(this);
             _transport = transport;
@@ -180,9 +180,8 @@ namespace CommandMessenger
 
         private void ParseLines()
         {
-            //if (Monitor.TryEnter(_parseLinesLock)) {
-            lock(_parseLinesLock) {
-            //{
+            lock(_parseLinesLock) 
+            {
                 ReadInBuffer();
 
                 do

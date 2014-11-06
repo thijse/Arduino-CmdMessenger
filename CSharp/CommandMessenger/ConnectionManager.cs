@@ -39,6 +39,13 @@ namespace CommandMessenger
         Stop
     }
 
+    public enum DeviceStatus
+    {
+        NotAvailable,
+        Available,
+        IdentityMismatch
+    }
+
     public abstract class ConnectionManager : IDisposable 
     {
         protected readonly CmdMessenger CmdMessenger;
@@ -101,7 +108,7 @@ namespace CommandMessenger
             _uniqueDeviceId = uniqueDeviceId;
 
             WatchdogTimeout = 3000;
-            WatchdogRetryTimeout = 1000;        
+            WatchdogRetryTimeout = 1500;        
             WatchdogTries = 3;
             WatchdogEnabled = false;
 
@@ -284,10 +291,10 @@ namespace CommandMessenger
                         DoWorkWatchdog();
                         break;
                 }
+
                 // Sleep a bit before checking again. If not present, the connection manager will 
                 // consume a lot of CPU resources while waiting
                 Thread.Sleep(100);  
-                
             }
         }
 
@@ -295,19 +302,18 @@ namespace CommandMessenger
         ///  Check if Arduino is available
         /// </summary>
         /// <param name="timeOut">Timout for waiting on response</param>
-        /// <returns>Result. True if succesfull</returns>
-        public bool ArduinoAvailable(int timeOut)
+        /// <returns>Check result.</returns>
+        public DeviceStatus ArduinoAvailable(int timeOut)
         {
             var challengeCommand = new SendCommand(_identifyCommandId, _identifyCommandId, timeOut);
             var responseCommand = CmdMessenger.SendCommand(challengeCommand, SendQueue.InFrontQueue, ReceiveQueue.Default, UseQueue.BypassQueue);
 
-            bool isOk = responseCommand.Ok;
-            if (isOk && !string.IsNullOrEmpty(_uniqueDeviceId))
+            if (responseCommand.Ok && !string.IsNullOrEmpty(_uniqueDeviceId))
             {
-                isOk = ValidateDeviceUniqueId(responseCommand);
+                return ValidateDeviceUniqueId(responseCommand) ? DeviceStatus.Available : DeviceStatus.IdentityMismatch;
             }
 
-            return isOk;
+            return responseCommand.Ok ? DeviceStatus.Available : DeviceStatus.NotAvailable;
         }
 
         /// <summary>
@@ -315,15 +321,18 @@ namespace CommandMessenger
         /// </summary>
         /// <param name="timeOut">Timout for waiting on response</param>
         /// <param name="tries">Number of tries</param>
-        /// <returns>Result. True if succesfull</returns>
-        public bool ArduinoAvailable(int timeOut, int tries)
+        /// <returns>Check result.</returns>
+        public DeviceStatus ArduinoAvailable(int timeOut, int tries)
         {
             for (var i = 1; i <= tries; i++)
             {
                 Log(3, "Polling Arduino, try # " + i);
-                if (ArduinoAvailable(timeOut)) return true;
+
+                DeviceStatus status = ArduinoAvailable(timeOut);
+                if (status == DeviceStatus.Available 
+                    || status == DeviceStatus.IdentityMismatch) return status;
             }
-            return false;
+            return DeviceStatus.NotAvailable;
         }
 
         protected virtual bool ValidateDeviceUniqueId(ReceivedCommand responseCommand)

@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Ports;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
@@ -68,7 +67,6 @@ namespace CommandMessenger.Serialport
 
             _lastConnectedSetting = new LastConnectedSetting();
             ReadSettings();
-            _serialTransport.UpdatePortCollection();
         }
 
         /// <summary>
@@ -76,48 +74,50 @@ namespace CommandMessenger.Serialport
         /// </summary>
         /// <param name="portName">Port name</param>
         /// <param name="baudRate">Baud rate</param>
-        /// <param name="timeOut">Time out for response</param>
-        /// <returns>true if succesfully connected</returns>
-        public bool TryConnection(string portName, int baudRate, int timeOut)
+        /// <returns>Result.</returns>
+        public DeviceStatus TryConnection(string portName, int baudRate)
         {
             // Try specific port name & baud rate
 
             _serialTransport.CurrentSerialSettings.PortName = portName;
             _serialTransport.CurrentSerialSettings.BaudRate = baudRate;
-            return TryConnection(timeOut); 
+            return TryConnection(); 
         }
 
         /// <summary>
         /// Try connection 
         /// </summary>
-        /// <param name="timeOut">Time out for response</param>
-        /// <returns>true if succesfully connected</returns>
-        public bool TryConnection(int timeOut)
+        /// <returns>Result</returns>
+        private DeviceStatus TryConnection()
         {
 			lock(_tryConnectionLock) Connected = false;
 			
 			if (string.IsNullOrEmpty(_serialTransport.CurrentSerialSettings.PortName)
 			    || _serialTransport.CurrentSerialSettings.BaudRate == 0) 
 			{
-				return false;
+                return DeviceStatus.NotAvailable;
 			}
 			
-            Log(1, @"Trying serial port " + _serialTransport.CurrentSerialSettings.PortName + @" baud rate " + _serialTransport.CurrentSerialSettings.BaudRate);
             if (_serialTransport.Connect())
             {
-                Connected = ArduinoAvailable(timeOut, 2);
+                Log(1, @"Trying serial port " + _serialTransport.CurrentSerialSettings.PortName + " at " + _serialTransport.CurrentSerialSettings.BaudRate + " bauds.");
+
+                // Calculate optimal timeout for command. It should be not less than Serial Port timeout. Lets add additional 250ms.
+                int optimalTimeout = _serialTransport.CurrentSerialSettings.Timeout + 250;
+                DeviceStatus status = ArduinoAvailable(optimalTimeout);
+
+                Connected = (status == DeviceStatus.Available);
                 
                 if (Connected)
                 {
-                    Log(1, "Connected at serial port " + _serialTransport.CurrentSerialSettings.PortName + @" baud rate " + _serialTransport.CurrentSerialSettings.BaudRate);
+                    Log(1, "Connected to serial port " + _serialTransport.CurrentSerialSettings.PortName + " at " + _serialTransport.CurrentSerialSettings.BaudRate + " bauds.");
                     StoreSettings();
                 }
-                return Connected;
+                return status;
             }
 			
-            return false;
+            return DeviceStatus.NotAvailable;
         }
-
 
         // Single scan on foreground thread
         public bool SingleScan()
@@ -130,10 +130,9 @@ namespace CommandMessenger.Serialport
         //Try to connect using current connections settings and trigger event if succesful
         protected override void DoWorkConnect()
         {
-            const int timeOut = 1000;
             var activeConnection = false;
 
-            try { activeConnection = TryConnection(timeOut); }
+            try { activeConnection = TryConnection() == DeviceStatus.Available; }
             catch { }
 
             if (activeConnection)
@@ -145,23 +144,27 @@ namespace CommandMessenger.Serialport
         // Perform scan to find connected systems
         protected override void DoWorkScan()
         {
-            var activeConnection = false;
-            
-            if (_scanType == ScanType.None)
-            {
-                _scanType = ScanType.Quick;
-                try { activeConnection = QuickScan(); }
-                catch { }
-            }
-            else if (_scanType == ScanType.Quick)
-            {
-                _scanType = ScanType.Thorough;
-                try { activeConnection = ThoroughScan(); }
-                catch { }
-            }
-            else
-            {
-                _scanType = ScanType.None;
+            // First try if currentConnection is open or can be opened
+            var activeConnection = TryConnection() == DeviceStatus.Available;
+
+            if (!activeConnection)
+            { 
+                if (_scanType == ScanType.None)
+                {
+                    _scanType = ScanType.Quick;
+                    try { activeConnection = QuickScan(); }
+                    catch { }
+                }
+                else if (_scanType == ScanType.Quick)
+                {
+                    _scanType = ScanType.Thorough;
+                    try { activeConnection = ThoroughScan(); }
+                    catch { }
+                }
+                else
+                {
+                    _scanType = ScanType.None;
+                }
             }
 
             // Trigger event when a connection was made
@@ -171,156 +174,131 @@ namespace CommandMessenger.Serialport
             } 
         }
 
-        public bool QuickScan()
+        private bool QuickScan()
         {            
             Log(3, "Performing quick scan");
-            const int longTimeOut =  1000;
-            const int shortTimeOut = 500;
-
-            // First try if currentConnection is open or can be opened
-            if (TryConnection(longTimeOut)) return true;
 
             if (PersistentSettings)
             {
                 // Then try if last stored connection can be opened
                 Log(3, "Trying last stored connection");
-                if (TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate, longTimeOut)) return true;
+                if (TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate) == DeviceStatus.Available) 
+                    return true;
             }
 
-            // Then see if port list has changed
-            //if (NewPortInList().Count > 0) { _scanType = ScanType.Thorough; return false; }
-
-            // Quickly run through most used ports
-            int[] commonBaudRates =
-                {
-                    115200, // Arduino Uno, Mega, with AT8u2 USB
-                    57600,  // Arduino Duemilanove, FTDI Serial
-                    9600    // Often used as default, but slow!
-                };
+            // Quickly run through most used baud rates
+            var commonBaudRates = SerialUtils.CommonBaudRates;
             _serialTransport.UpdatePortCollection();
-            for (var port = _serialTransport.CurrentSerialSettings.PortNameCollection.Length - 1; port >= 0; port--)
+            foreach (var portName in _serialTransport.AvailableSerialPorts)
             {
-                // If port list has changed, interrupt scan and test new ports first
-                if (NewPortScan()) return true;
+                // Get baud rates collection
+                var baudRateCollection = SerialUtils.GetSupportedBaudRates(portName);
+                var baudRates = commonBaudRates.Where(baudRateCollection.Contains).ToList();
 
-                var portName = _serialTransport.CurrentSerialSettings.PortNameCollection[port];
-                // First set port name
-                _serialTransport.CurrentSerialSettings.PortName = portName;
-                // Now update BaudRate Collection
-                _serialTransport.UpdateBaudRateCollection();
-                var baudRateCollection =_serialTransport.CurrentSerialSettings.BaudRateCollection;
-
-                //  Now loop through baud rate collection
-                foreach (var commonBaudRate in commonBaudRates)
+                if (baudRates.Any())
                 {
-                    if (_serialTransport.CurrentSerialSettings.BaudRateCollection.Contains(commonBaudRate))
-                    {
+                    Log(1, "Trying serial port " + portName + ", possible speeds " + commonBaudRates.Length);
 
-                        Log(1,
-                            "Trying port " + portName + ", possible speeds " +
-                            baudRateCollection.Count +
-                            (baudRateCollection.Count > commonBaudRates.Length ? ", trying " + commonBaudRates.Length : "")
-						);
-                        if (TryConnection(portName,commonBaudRate, shortTimeOut)) return true;
-                        // Seems to work fine without the sleep
-                        //Thread.Sleep(25); 
-                    }                    
+                    //  Now loop through baud rate collection
+                    foreach (var commonBaudRate in baudRates)
+                    {
+                        // Stop scanning if state was changed
+                        if (ConnectionManagerState != ConnectionManagerState.Scan) return false;
+
+                        DeviceStatus status = TryConnection(portName, commonBaudRate);
+                        if (status == DeviceStatus.Available) return true;
+                        if (status == DeviceStatus.IdentityMismatch) break; // break the loop and continue to next port.
+                    }
+
+                    // If port list has changed, interrupt scan and test new ports first
+                    if (NewPortScan()) return true;
                 }
             }
+
             return false;
         }
 
-        public bool ThoroughScan()
+        private bool ThoroughScan()
         {
             Log(1, "Performing thorough scan");
-            // First try last used connection
-            const int longTimeOut = 1000;
-            const int shortTimeOut = 500;
-
-            // First try if currentConnection is open or can be opened
-            if (TryConnection(longTimeOut)) return true;
 
             // Then try if last stored connection can be opened
-            if (TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate, longTimeOut)) return true;
+            if (TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate) == DeviceStatus.Available) 
+                return true;
 
             // Slowly walk through 
             _serialTransport.UpdatePortCollection();
-            foreach (var portName in _serialTransport.CurrentSerialSettings.PortNameCollection)
+            foreach (var portName in _serialTransport.AvailableSerialPorts)
             {
-                // First set port name
-                _serialTransport.CurrentSerialSettings.PortName = portName;
-                // update BaudRate Collection
-                _serialTransport.UpdateBaudRateCollection();
+                // Get baud rates collection
+                var baudRateCollection = SerialUtils.GetSupportedBaudRates(portName);
+
                 //  Now loop through baud rate collection
-                var baudRateCollection = _serialTransport.CurrentSerialSettings.BaudRateCollection;
-				
-				if (baudRateCollection.Count > 0)
+				if (baudRateCollection.Any())
 				{
-                	Log(1, "Trying port " + portName + ", possible speeds " + baudRateCollection.Count);
+                	Log(1, "Trying serial port " + portName + ", possible speeds " + baudRateCollection.Count);
 
 	                foreach (var baudRate in baudRateCollection)
 	                {
-	                    // If port list has changed, interrupt scan and test new ports first
-	                    if (NewPortScan()) return true;
-	                    {
-	                        if (TryConnection(portName,baudRate, shortTimeOut))
-	                            return true;
-                            // Seems to work fine without the sleep
-	                        //Thread.Sleep(100); 
-	                    }
+                        // Stop scanning if state was changed
+                        if (ConnectionManagerState != ConnectionManagerState.Scan) return false;
+
+                        DeviceStatus status = TryConnection(portName, baudRate);
+                        if (status == DeviceStatus.Available) return true;
+                        if (status == DeviceStatus.IdentityMismatch) break; // break the loop and continue to next port.
 	                }
+
+                    // If port list has changed, interrupt scan and test new ports first
+                    if (NewPortScan()) return true;
 				}
             }
+
             return false;
         }
 
-        public bool NewPortScan()
+        private bool NewPortScan()
         {            
-            const int shortTimeOut = 200;
-
             // Then see if port list has changed
             var newPorts = NewPortInList();
-            if (newPorts.Count == 0) { return false; }
+            if (!newPorts.Any()) { return false; }
 
-            Log(1, "Trying new ports");
+            Log(1, "Trying new ports.");
+
+            // Wait a second before new port will be available
+            Thread.Sleep(1000);
 
             // Quickly run through most used ports
-            int[] commonBaudRates =
-                {
-                    115200, // Arduino Uno, Mega, with AT8u2 USB
-                    57600,  // Arduino Duemilanove, FTDI Serial
-                    9600    // Often used as default, but slow!
-                };
+            var commonBaudRates = SerialUtils.CommonBaudRates;
             _serialTransport.UpdatePortCollection();
             foreach (var portName in newPorts)
             {
-                // First set port name
-                _serialTransport.CurrentSerialSettings.PortName = portName;
-                // Now update BaudRate Collection
-                _serialTransport.UpdateBaudRateCollection();
-                //  Now loop through baud rate collection
-                var allBaudRates = _serialTransport.CurrentSerialSettings.BaudRateCollection;
+                // Get baud rates collection
+                var baudRateCollection = SerialUtils.GetSupportedBaudRates(portName);
                 // First add commonBaudRates available
-                var sortedBaudRates = commonBaudRates.Where(allBaudRates.Contains).ToList();
+                var sortedBaudRates = commonBaudRates.Where(baudRateCollection.Contains).ToList();
                 // Then add other BaudRates 
-                sortedBaudRates.AddRange(allBaudRates.Where(baudRate => !commonBaudRates.Contains(baudRate)));              
+                sortedBaudRates.AddRange(baudRateCollection.Where(baudRate => !commonBaudRates.Contains(baudRate)));              
 
                 foreach (var currentBaudRate in sortedBaudRates)
                 {
-                    if (TryConnection(portName, currentBaudRate, shortTimeOut)) return true;
-                    // Seems to work fine without the sleep
-                    //Thread.Sleep(100);
+                    // Stop scanning if state was changed
+                    if (ConnectionManagerState != ConnectionManagerState.Scan) return false;
+                    
+                    DeviceStatus status = TryConnection(portName, currentBaudRate);
+                    if (status == DeviceStatus.Available) return true;
+                    if (status == DeviceStatus.IdentityMismatch) break; // break the loop and continue to next port.
                 }
             }
+
             return false;
         }
 
-
         private List<string> NewPortInList()
         {
-            var oldPortCollection = _serialTransport.CurrentSerialSettings.PortNameCollection;
-            var portCollection    = _serialTransport.GetPortNames();
-            return portCollection.Where(port => !oldPortCollection.Any(port.Contains)).ToList();
+            var oldPortCollection = _serialTransport.AvailableSerialPorts;
+            var portCollection = SerialUtils.GetPortNames();
+            var result = portCollection.Except(oldPortCollection).ToList();
+            return result;
         }
 
         protected override void StoreSettings()

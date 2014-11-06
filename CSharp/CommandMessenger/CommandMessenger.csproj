@@ -80,6 +80,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendCommand.cs" />
     <Compile Include="Sender.cs" />
+    <Compile Include="Serialport\SerialUtils.cs" />
     <Compile Include="StructSerializer.cs" />
     <Compile Include="Bluetooth\BluetoothTransport.cs" />
     <Compile Include="TransportLayer\ITransport.cs" />

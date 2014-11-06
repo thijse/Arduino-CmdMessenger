@@ -19,12 +19,9 @@
 
 using System;
 using System.IO.Ports;
-using System.Reflection;
-using System.Linq;
 using System.Threading;
 using CommandMessenger.TransportLayer;
 using System.IO;
-using System.Text.RegularExpressions;
 
 namespace CommandMessenger.Serialport
 {
@@ -49,6 +46,14 @@ namespace CommandMessenger.Serialport
         private readonly object _readLock = new object();
         private readonly byte[] _readBuffer = new byte[BufferMax];
         private int _bufferFilled;
+
+        /// <summary>
+        /// Available serial port names in system.
+        /// </summary>
+        public string[] AvailableSerialPorts
+        {
+            get; private set;
+        }
 
         /// <summary> Gets or sets the run state of the thread. </summary>
         /// <value> The thread run state. </value>
@@ -96,13 +101,6 @@ namespace CommandMessenger.Serialport
             set { _currentSerialSettings = value; }
         }
 
-        /// <summary> Gets the serial port. </summary>
-        /// <value> The serial port. </value>
-        public SerialPort SerialPort
-        {
-            get { return _serialPort; }
-        }
-
         #endregion
 
         #region Methods
@@ -110,13 +108,14 @@ namespace CommandMessenger.Serialport
         /// <summary> Initializes this object. </summary>
         private void Initialize()
         {
-            // _queueSpeed.Name = "Serial";
             // Find installed serial ports on hardware
-            _currentSerialSettings.PortNameCollection = GetPortNames();
+            UpdatePortCollection();
 
             // If serial ports are found, we select the first one
-            if (_currentSerialSettings.PortNameCollection.Length > 0)
-                _currentSerialSettings.PortName = _currentSerialSettings.PortNameCollection[0];
+            if (AvailableSerialPorts.Length > 0 && string.IsNullOrEmpty(_currentSerialSettings.PortName))
+            {
+                _currentSerialSettings.PortName = AvailableSerialPorts[0];
+            }
 
             // Create queue thread and wait for it to start
             _queueThread = new Thread(ProcessQueue)
@@ -131,12 +130,10 @@ namespace CommandMessenger.Serialport
 
         private void ProcessQueue()
         {
-            // Endless loop
             while (ThreadRunState != ThreadRunStates.Abort)
             {
                 Poll(ThreadRunState);
             }
-            //_queueSpeed.Sleep(50);
         }        
 
         /// <summary>
@@ -157,11 +154,7 @@ namespace CommandMessenger.Serialport
 
         private void Poll(ThreadRunStates threadRunState)
         {
-            //var bytes = BytesInBuffer();
             var bytes = UpdateBuffer();
-            //_queueSpeed.SetCount(bytes);
-            //_queueSpeed.CalcSleepTimeWithoutLoad();
-            //_queueSpeed.Sleep();
             if (threadRunState == ThreadRunStates.Start)
             {
                 if (bytes > 0)
@@ -181,8 +174,6 @@ namespace CommandMessenger.Serialport
         public bool Connect()
         {
             // Closing serial port if it is open
-
-            //if (IsOpen()) Close();
             Close();
 
             // Setting serial port settings
@@ -194,35 +185,13 @@ namespace CommandMessenger.Serialport
                 _currentSerialSettings.StopBits)
                 {
                     DtrEnable = _currentSerialSettings.DtrEnable,
-                    WriteTimeout = 1000,
-                    ReadTimeout  = 1000  
+                    WriteTimeout = _currentSerialSettings.Timeout,
+                    ReadTimeout  = _currentSerialSettings.Timeout  
                 };
        
             // Subscribe to event and open serial port for data
             ThreadRunState = ThreadRunStates.Start;
             return Open();
-        }
-
-        /// <summary> Opens the serial port. </summary>
-        /// <returns> true if it succeeds, false if it fails. </returns>
-        public bool Open()
-        {
-            if (_serialPort != null && PortExists(_serialPort.PortName) && !_serialPort.IsOpen)
-            {
-                try
-                {
-                    _serialPort.Open();
-                    _serialPort.DiscardInBuffer();
-                    _serialPort.DiscardOutBuffer();
-                    return _serialPort.IsOpen;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         /// <summary> Query if the serial port is open. </summary>
@@ -231,36 +200,12 @@ namespace CommandMessenger.Serialport
         {
             try
             {
-                return _serialPort != null && PortExists(_serialPort.PortName) && _serialPort.IsOpen;
+                return _serialPort != null && PortExists() && _serialPort.IsOpen;
             }
             catch
             {
                 return false;
             }
-        }
-
-        /// <summary> Queries if a given port exists. </summary>
-        /// <returns> true if it succeeds, false if it fails. </returns>
-        public bool PortExists(string port)
-        {
-            return GetPortNames().Contains(port);
-        }
-
-        /// <summary> Closes the serial port. </summary>
-        /// <returns> true if it succeeds, false if it fails. </returns>
-        private bool Close()
-        {
-            try
-            {
-                if (_serialPort == null || !PortExists(_serialPort.PortName)) return false;
-                if (!_serialPort.IsOpen) return true;
-                _serialPort.Close();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }            
         }
 
         /// <summary> Stops listening to the serial port. </summary>
@@ -291,71 +236,80 @@ namespace CommandMessenger.Serialport
             }
         }
 
-        /// <summary> Retrieves the possible baud rates for the currently selected serial port. </summary>
+        /// <summary> Reads the serial buffer into the string buffer. </summary>
+        public byte[] Read()
+        {
+            if (IsConnected())
+            {
+                byte[] buffer;
+                lock (_readLock)
+                {
+                    buffer = new byte[_bufferFilled];
+                    Array.Copy(_readBuffer, buffer, _bufferFilled);
+                    _bufferFilled = 0;
+                }
+                return buffer;
+            }
+            return new byte[0];
+        }
+
+        /// <summary> Gets the bytes in buffer. </summary>
+        /// <returns> Bytes in buffer </returns>
+        public int BytesInBuffer()
+        {
+            //return IsOpen()? _serialPort.BytesToRead:0;
+            return _bufferFilled;
+        }
+
+        internal void UpdatePortCollection()
+        {
+            AvailableSerialPorts = SerialUtils.GetPortNames();
+        }
+
+        /// <summary> Opens the serial port. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
-        internal bool UpdateBaudRateCollection()
+        private bool Open()
+        {
+            if (_serialPort != null && PortExists() && !_serialPort.IsOpen)
+            {
+                try
+                {
+                    _serialPort.Open();
+                    _serialPort.DiscardInBuffer();
+                    _serialPort.DiscardOutBuffer();
+                    return _serialPort.IsOpen;
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary> Closes the serial port. </summary>
+        /// <returns> true if it succeeds, false if it fails. </returns>
+        private bool Close()
         {
             try
             {
-                _currentSerialSettings.UpdateBaudRateCollection(0);
-                Close();
-                _serialPort = new SerialPort(_currentSerialSettings.PortName);
-                if (Open())
-                {
-                    var fieldInfo = _serialPort.BaseStream.GetType()
-                                               .GetField("commProp", BindingFlags.Instance | BindingFlags.NonPublic);
-                    if (fieldInfo != null)
-                    {
-                        object p = fieldInfo.GetValue(_serialPort.BaseStream);
-                        var fieldInfoValue = p.GetType()
-                                              .GetField("dwSettableBaud",
-                                                        BindingFlags.Instance | BindingFlags.NonPublic |
-                                                        BindingFlags.Public);
-                        if (fieldInfoValue != null)
-                        {
-                            var dwSettableBaud = (Int32) fieldInfoValue.GetValue(p);
-                            Close();
-                            _currentSerialSettings.UpdateBaudRateCollection(dwSettableBaud);
-                        }
-                    }
-					else
-					{
-						// Can't determine possible baud rates, will use all possible
-						_currentSerialSettings.UpdateBaudRateCollection(int.MaxValue);
-					}
-                }
+                if (_serialPort == null || !PortExists()) return false;
+                if (!_serialPort.IsOpen) return true;
+                _serialPort.Close();
+                return true;
             }
             catch
-            {                
+            {
                 return false;
-            }
-            return true;
+            }            
         }
-		
-        /// <summary>
-        /// Retrieve available serial ports.
-        /// </summary>
-        /// <returns>Array of serial port names.</returns>
-		public string[] GetPortNames()
-		{
-			/**
-			 * Under Linux SerialPort.GetPortNames() returns /dev/ttyS* devices,
-			 * but Arduino is detected as ttyACM* or ttyUSB*
-			 * */
-			if (Environment.OSVersion.Platform == PlatformID.Unix)
-			{
-				var searchPattern = new Regex("ttyACM.+|ttyUSB.+");
-				return Directory.GetFiles("/dev").Where(f => searchPattern.IsMatch(f)).ToArray();
-			}
-			else
-			{
-            	return SerialPort.GetPortNames();  
-			}
-		}
 
-        public void UpdatePortCollection()
+        /// <summary> Queries if a current port exists. </summary>
+        /// <returns> true if it succeeds, false if it fails. </returns>
+        private bool PortExists()
         {
-			_currentSerialSettings.PortNameCollection = GetPortNames();
+            return SerialUtils.PortExists(_serialPort.PortName);
         }
 
         private int UpdateBuffer()
@@ -381,31 +335,6 @@ namespace CommandMessenger.Serialport
                 }
             }
             return 0;
-        }
-
-        /// <summary> Reads the serial buffer into the string buffer. </summary>
-        public byte[] Read()
-        {
-            if (IsConnected())
-            {
-                byte[] buffer;
-                lock (_readLock)
-                {
-                    buffer = new byte[_bufferFilled];
-                    Array.Copy(_readBuffer, buffer, _bufferFilled);
-                    _bufferFilled = 0;
-                }
-                return buffer;
-            }
-            return new byte[0];
-        }
-
-        /// <summary> Gets the bytes in buffer. </summary>
-        /// <returns> Bytes in buffer </returns>
-        public int BytesInBuffer()
-        {
-            //return IsOpen()? _serialPort.BytesToRead:0;
-            return _bufferFilled;
         }
 
         /// <summary> Kills this object. </summary>

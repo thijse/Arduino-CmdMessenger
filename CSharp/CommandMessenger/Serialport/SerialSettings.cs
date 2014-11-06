@@ -17,22 +17,15 @@
 */
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.IO.Ports;
-using System.ComponentModel;
 
-namespace CommandMessenger
+namespace CommandMessenger.Serialport
 {
     /// <summary>
-    /// Class containing properties related to a serial port 
+    /// Class containing serial port configuration
     /// </summary>
-    public class SerialSettings : INotifyPropertyChanged
+    public class SerialSettings
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private readonly List<int> _baudRateCollection = new List<int>();
-
         #region Properties
 
         /// <summary>
@@ -66,17 +59,9 @@ namespace CommandMessenger
         public bool DtrEnable { get; set; }
 
         /// <summary>
-        /// Available ports on the computer
+        /// Timeout for read and write operations to serial port.
         /// </summary>
-        public string[] PortNameCollection { get; set; }
-
-        /// <summary>
-        /// Available baud rates for current serial port
-        /// </summary>
-        public List<int> BaudRateCollection
-        {
-            get { return _baudRateCollection; }
-        }
+        public int Timeout { get; set; }
 
         #endregion
 
@@ -87,91 +72,7 @@ namespace CommandMessenger
             Parity = Parity.None;
             BaudRate = 9600;
             PortName = string.Empty;
+            Timeout = 500;              // 500ms is default value for SerialPort
         }
-
-        #region Methods
-        /// <summary>
-        /// Updates the range of possible baud rates for device
-        /// </summary>
-        /// <param name="possibleBaudRates">dwSettableBaud parameter from the COMMPROP Structure</param>
-        /// <returns>An updated list of values</returns>
-        public void UpdateBaudRateCollection(int possibleBaudRates)
-        {
-            // ReSharper disable InconsistentNaming
-            //const int BAUD_075    = 0x00000001;	// The fifth baud 07
-            //const int BAUD_110    = 0x00000002;
-            //const int BAUD_150    = 0x00000008;
-            const int BAUD_300    = 0x00000010;
-            const int BAUD_600    = 0x00000020;
-            const int BAUD_1200   = 0x00000040;
-            const int BAUD_1800   = 0x00000080;
-            const int BAUD_2400   = 0x00000100;
-            const int BAUD_4800   = 0x00000200;
-            const int BAUD_7200   = 0x00000400;
-            const int BAUD_9600   = 0x00000800;
-            const int BAUD_14400  = 0x00001000;
-            const int BAUD_19200  = 0x00002000;
-            const int BAUD_38400  = 0x00004000;
-            const int BAUD_56K    = 0x00008000;
-            const int BAUD_57600  = 0x00040000;
-            const int BAUD_115200 = 0x00020000;
-            const int BAUD_128K   = 0x00010000;
-
-            _baudRateCollection.Clear();
-
-			// We start with the most common baudrates:
-            if ((possibleBaudRates & BAUD_115200) > 0)  
-                _baudRateCollection.Add(115200);        // Maxspeed Arduino Uno, Mega, with AT8u2 USB
-            if ((possibleBaudRates & BAUD_9600) > 0)    
-                _baudRateCollection.Add(9600);          // Often default speed 
-            if ((possibleBaudRates & BAUD_57600) > 0)
-                _baudRateCollection.Add(57600);         // Maxspeed Arduino Duemilanove, FTDI Serial
-            
-            // After that going from fastest to slowest baudrates:
-            if ((possibleBaudRates & BAUD_128K) > 0)
-                _baudRateCollection.Add(128000);
-            if ((possibleBaudRates & BAUD_56K) > 0)
-                _baudRateCollection.Add(56000);
-            if ((possibleBaudRates & BAUD_38400) > 0)
-                _baudRateCollection.Add(38400);
-            if ((possibleBaudRates & BAUD_19200) > 0)
-                _baudRateCollection.Add(19200);
-            if ((possibleBaudRates & BAUD_14400) > 0)
-                _baudRateCollection.Add(14400);
-            if ((possibleBaudRates & BAUD_7200) > 0)
-                _baudRateCollection.Add(7200);
-            if ((possibleBaudRates & BAUD_4800) > 0)
-                _baudRateCollection.Add(4800);
-            if ((possibleBaudRates & BAUD_2400) > 0)
-                _baudRateCollection.Add(2400);
-            if ((possibleBaudRates & BAUD_1800) > 0)
-                _baudRateCollection.Add(1800);
-            if ((possibleBaudRates & BAUD_1200) > 0)
-                _baudRateCollection.Add(1200);
-            if ((possibleBaudRates & BAUD_600) > 0)
-                _baudRateCollection.Add(600);
-            if ((possibleBaudRates & BAUD_300) > 0)
-                _baudRateCollection.Add(300);
-            /*if ((possibleBaudRates & BAUD_150) > 0)
-                _baudRateCollection.Add(150);
-            if ((possibleBaudRates & BAUD_110) > 0)
-                _baudRateCollection.Add(110);
-            if ((possibleBaudRates & BAUD_075) > 0)
-                _baudRateCollection.Add(75);*/
-
-            SendPropertyChangedEvent("BaudRateCollection");
-        }
-
-        /// <summary>
-        /// Send a PropertyChanged event
-        /// </summary>
-        /// <param name="propertyName">Name of changed property</param>
-        private void SendPropertyChangedEvent(string propertyName)
-        {
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        #endregion
     }
 }
