@@ -47,14 +47,6 @@ namespace CommandMessenger.Serialport
         private readonly byte[] _readBuffer = new byte[BufferMax];
         private int _bufferFilled;
 
-        /// <summary>
-        /// Available serial port names in system.
-        /// </summary>
-        public string[] AvailableSerialPorts
-        {
-            get; private set;
-        }
-
         /// <summary> Gets or sets the run state of the thread. </summary>
         /// <value> The thread run state. </value>
         private ThreadRunStates ThreadRunState  
@@ -108,20 +100,11 @@ namespace CommandMessenger.Serialport
         /// <summary> Initializes this object. </summary>
         private void Initialize()
         {
-            // Find installed serial ports on hardware
-            UpdatePortCollection();
-
-            // If serial ports are found, we select the first one
-            if (AvailableSerialPorts.Length > 0 && string.IsNullOrEmpty(_currentSerialSettings.PortName))
-            {
-                _currentSerialSettings.PortName = AvailableSerialPorts[0];
-            }
-
             // Create queue thread and wait for it to start
             _queueThread = new Thread(ProcessQueue)
             {
                 Priority = ThreadPriority.Normal,
-                Name = "Serial"
+                Name = "SerialTransport"
             };
             ThreadRunState = ThreadRunStates.Start;
             _queueThread.Start();
@@ -157,10 +140,8 @@ namespace CommandMessenger.Serialport
             var bytes = UpdateBuffer();
             if (threadRunState == ThreadRunStates.Start)
             {
-                if (bytes > 0)
-                {
-                    if (NewDataReceived != null) NewDataReceived(this, null);
-                }
+                if (bytes > 0 && NewDataReceived != null)
+                    NewDataReceived(this, null);
             }
         }
 
@@ -173,6 +154,9 @@ namespace CommandMessenger.Serialport
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Connect()
         {
+            if (!_currentSerialSettings.IsValid())
+                throw new InvalidOperationException("Unable to open connection - serial settings invalid.");
+
             // Closing serial port if it is open
             Close();
 
@@ -259,11 +243,6 @@ namespace CommandMessenger.Serialport
         {
             //return IsOpen()? _serialPort.BytesToRead:0;
             return _bufferFilled;
-        }
-
-        internal void UpdatePortCollection()
-        {
-            AvailableSerialPorts = SerialUtils.GetPortNames();
         }
 
         /// <summary> Opens the serial port. </summary>
@@ -359,8 +338,8 @@ namespace CommandMessenger.Serialport
 
         private bool Join(int millisecondsTimeout)
         {
-            if (_queueThread.IsAlive == false) return true;
-            return _queueThread.Join(TimeSpan.FromMilliseconds(millisecondsTimeout));
+            if (!_queueThread.IsAlive) return true;
+            return _queueThread.Join(millisecondsTimeout);
         }
 
         // Dispose

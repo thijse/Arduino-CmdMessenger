@@ -55,6 +55,15 @@ namespace CommandMessenger.Serialport
         private readonly object _tryConnectionLock = new object();
 
         /// <summary>
+        /// Available serial port names in system.
+        /// </summary>
+        public string[] AvailableSerialPorts
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
         /// In scan mode allow to try different baud rates besides that is configured in SerialSettings.
         /// </summary>
         public bool PortScanBaudRateSelection { get; set; }
@@ -197,12 +206,13 @@ namespace CommandMessenger.Serialport
                     return true;
             }
 
+            AvailableSerialPorts = SerialUtils.GetPortNames();
+
             // Quickly run through most used baud rates
             var commonBaudRates = PortScanBaudRateSelection 
                 ? SerialUtils.CommonBaudRates 
                 : new [] { _serialTransport.CurrentSerialSettings.BaudRate };
-            _serialTransport.UpdatePortCollection();
-            foreach (var portName in _serialTransport.AvailableSerialPorts)
+            foreach (var portName in AvailableSerialPorts)
             {
                 // Get baud rates collection
                 var baudRateCollection = PortScanBaudRateSelection
@@ -238,12 +248,13 @@ namespace CommandMessenger.Serialport
             Log(1, "Performing thorough scan.");
 
             // Then try if last stored connection can be opened
-            if (TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate) == DeviceStatus.Available) 
+            if (PersistentSettings && TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate) == DeviceStatus.Available) 
                 return true;
 
+            AvailableSerialPorts = SerialUtils.GetPortNames();
+
             // Slowly walk through 
-            _serialTransport.UpdatePortCollection();
-            foreach (var portName in _serialTransport.AvailableSerialPorts)
+            foreach (var portName in AvailableSerialPorts)
             {
                 // Get baud rates collection
                 var baudRateCollection = PortScanBaudRateSelection
@@ -291,7 +302,6 @@ namespace CommandMessenger.Serialport
                 ? SerialUtils.CommonBaudRates
                 : new[] { _serialTransport.CurrentSerialSettings.BaudRate };
 
-            _serialTransport.UpdatePortCollection();
             foreach (var portName in newPorts)
             {
                 // Get baud rates collection
@@ -320,10 +330,8 @@ namespace CommandMessenger.Serialport
 
         private List<string> NewPortInList()
         {
-            var oldPortCollection = _serialTransport.AvailableSerialPorts;
-            var portCollection = SerialUtils.GetPortNames();
-            var result = portCollection.Except(oldPortCollection).ToList();
-            return result;
+            var newPorts = SerialUtils.GetPortNames().Except(AvailableSerialPorts).ToList();
+            return newPorts;
         }
 
         protected override void StoreSettings()
