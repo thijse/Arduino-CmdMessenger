@@ -61,7 +61,7 @@ namespace CommandMessenger.Serialport
         /// Retrieves the possible baud rates for the provided serial port. Windows ONLY.
         /// </summary>
         /// <returns>List of supported baud rates.</returns>
-        public static List<int> GetSupportedBaudRates(string serialPortName)
+        public static int[] GetSupportedBaudRates(string serialPortName)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace CommandMessenger.Serialport
                             var dwSettableBaud = (Int32)fieldInfoValue.GetValue(p);
                             serialPort.Close();
 
-                            return BaudRateMaskToActualRates(dwSettableBaud);
+                            return BaudRateMaskToActualRates(dwSettableBaud).ToArray();
                         }
                     }
                 }
@@ -93,7 +93,7 @@ namespace CommandMessenger.Serialport
             }
 
             // Can't determine possible baud rates, will use all possible values
-            return BaudRateMaskToActualRates(int.MaxValue);
+            return BaudRateMaskToActualRates(int.MaxValue).ToArray();
         }
 
         /// <summary>

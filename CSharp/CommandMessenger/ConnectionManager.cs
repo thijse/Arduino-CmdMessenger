@@ -90,9 +90,9 @@ namespace CommandMessenger
         }
 
         /// <summary>
-        /// Use this property to tell connection manager to connect only to specific port provided by transport.
+        /// Enables or disables serial port scanning. When disabled, connection manager will try to open connection ONLY to port configured in SerialSettings.
         /// </summary>
-        public bool UseFixedPort { get; set; }
+        public bool PortScanEnabled { get; set; }
 
         /// <summary>
         /// Enables or disables storing of last connection configuration in persistent file.
@@ -113,7 +113,7 @@ namespace CommandMessenger
             WatchdogEnabled = false;
 
             PersistentSettings = false;
-            UseFixedPort = false;
+            PortScanEnabled = true;
             
             CmdMessenger = cmdMessenger;
 
@@ -133,25 +133,23 @@ namespace CommandMessenger
             if (ConnectionManagerState == ConnectionManagerState.Stop)
             {
                 ConnectionManagerState = ConnectionManagerState.Wait;
-
-                bool canStart = !_workerThread.IsBusy;
-                if (canStart)
+                if (!_workerThread.IsBusy)
                 {
                     _workerThread.DoWork += WorkerThreadDoWork;
                     // Start the asynchronous operation.
                     _workerThread.RunWorkerAsync();
-                }
 
-                if (UseFixedPort)
-                {
-                    StartConnect();
-                }
-                else
-                {
-                    StartScan();
-                }
+                    if (PortScanEnabled)
+                    {
+                        StartScan();
+                    }
+                    else
+                    {
+                        StartConnect();
+                    }
 
-                return canStart;
+                    return true;
+                }
             }
 
             return false;
@@ -187,6 +185,8 @@ namespace CommandMessenger
 
         protected virtual void ConnectionTimeoutEvent()
         {
+            ConnectionManagerState = ConnectionManagerState.Wait;
+
             Disconnect();
 
             InvokeEvent(ConnectionTimeout);
@@ -195,13 +195,13 @@ namespace CommandMessenger
             {
                 StopWatchDog();
 
-                if (UseFixedPort)
+                if (PortScanEnabled)
                 {
-                    StartConnect();
+                    StartScan();
                 }
                 else
                 {
-                    StartScan();
+                    StartConnect();
                 }
             }
         }
@@ -363,7 +363,7 @@ namespace CommandMessenger
             // if a command has been received recently, set next check time
             if (lastLineTimeStamp > _lastCheckTime)
             {
-                Log(3, "Successful watchdog response");
+                Log(3, "Successful watchdog response.");
                 _lastCheckTime = currentTimeStamp;
                 _nextTimeOutCheck = _lastCheckTime + WatchdogTimeout;
                 _watchdogTries = 0;
@@ -415,7 +415,7 @@ namespace CommandMessenger
         {
             if (ConnectionManagerState != ConnectionManagerState.Watchdog && Connected)
             {
-                Log(1, "Starting Watchdog");
+                Log(1, "Starting Watchdog.");
                 _lastCheckTime = TimeUtils.Millis;
                 _nextTimeOutCheck = _lastCheckTime + WatchdogTimeout;
                 _watchdogTries = 0;
@@ -431,7 +431,7 @@ namespace CommandMessenger
         {
             if (ConnectionManagerState == ConnectionManagerState.Watchdog)
             {
-                Log(1, "Stopping Watchdog");
+                Log(1, "Stopping Watchdog.");
                 ConnectionManagerState = ConnectionManagerState.Wait;
             }
         }
@@ -443,7 +443,7 @@ namespace CommandMessenger
         {
             if (ConnectionManagerState != ConnectionManagerState.Scan && !Connected)
             {
-                Log(1, "Starting device scan");
+                Log(1, "Starting device scan.");
                 ConnectionManagerState = ConnectionManagerState.Scan;
             }
         }
@@ -455,7 +455,7 @@ namespace CommandMessenger
         {
             if (ConnectionManagerState == ConnectionManagerState.Scan)
             {
-                Log(1, "Stopping device scan");
+                Log(1, "Stopping device scan.");
                 ConnectionManagerState = ConnectionManagerState.Wait;
             }
         }
@@ -467,7 +467,7 @@ namespace CommandMessenger
         {
             if (ConnectionManagerState != ConnectionManagerState.Connect && !Connected)
             {
-                Log(1, "Start connecting to device");
+                Log(1, "Start connecting to device.");
                 ConnectionManagerState = ConnectionManagerState.Connect;
             }
         }
@@ -479,7 +479,7 @@ namespace CommandMessenger
         {
             if (ConnectionManagerState == ConnectionManagerState.Connect)
             {
-                Log(1, "Stop connecting to device");
+                Log(1, "Stop connecting to device.");
                 ConnectionManagerState = ConnectionManagerState.Wait;
             }
         }

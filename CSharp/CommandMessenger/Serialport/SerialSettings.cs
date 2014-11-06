@@ -74,5 +74,14 @@ namespace CommandMessenger.Serialport
             PortName = string.Empty;
             Timeout = 500;              // 500ms is default value for SerialPort
         }
+
+        /// <summary>
+        /// Check is serial settings configured properly.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsValid()
+        {
+            return !string.IsNullOrEmpty(PortName) && BaudRate > 0;
+        }
     }
 }
