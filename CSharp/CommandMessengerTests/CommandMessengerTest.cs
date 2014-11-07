@@ -69,11 +69,34 @@ namespace CommandMessengerTests
                 }
             };
 
+            var arduinoLeonardoOrProMicro = new systemSettings()
+            {
+                Description = @"Arduino Leonardo or Sparkfun ProMicro /w AT mega32u4",
+                MinReceiveSpeed = 84000,              // Bits per second 
+                MinSendSpeed = 90000,              // Bits per second                                      
+                MinDirectSendSpeed = 52000,              // Bits per second                
+                BoardType = BoardType.Bit16,    // 16-bit architecture, needed from binary value conversion
+                sendBufferMaxLength = 60,                 // Maximum send buffer size, optimally buffer size is similar to embedded controller
+                Transport = new SerialTransport
+                {
+                    CurrentSerialSettings = new SerialSettings()
+                    {
+                        PortName = "COM13",                // Can be different!
+                        BaudRate = 115200,                // Bits per second
+                        DataBits = 8,                     // Data bits
+                        Parity = Parity.None,             // Bit parity
+                        DtrEnable = true,                // Some boards need to send this to enabled                                    
+                    },
+
+                }
+            };
+
             // Set up Command enumerators
             var command = DefineCommands();
 
-            // Initialize tests
-            InitializeTests(teensy31, command);
+            // Initialize tests, CHANGE "DEVICE" VARIABLE TO YOUR DEVICE!
+            var device = arduinoLeonardoOrProMicro;
+            InitializeTests(device, command);
 
             // Open log file for testing 
             Common.OpenTestLogFile(@"TestLogFile.txt");
