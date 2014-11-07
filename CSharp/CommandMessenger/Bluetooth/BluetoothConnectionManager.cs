@@ -39,6 +39,11 @@ namespace CommandMessenger.Bluetooth
     {
         public BluetoothAddress BluetoothAddress { get; set; }
         public Dictionary<BluetoothAddress, string> StoredDevicePins { get; set; }
+
+        public BluetoothConfiguration()
+        {
+            StoredDevicePins = new Dictionary<BluetoothAddress, string>();
+        }
     }
 
     /// <summary>
@@ -47,11 +52,13 @@ namespace CommandMessenger.Bluetooth
     public class BluetoothConnectionManager : ConnectionManager
     {
         private static readonly List<string> CommonDevicePins = new List<string>
-            {
-                "0000",
+            {                
+                "0000",                
                 "1111",
-                "1234"
+                "1234",
             };
+
+
 
         const string SettingsFileName = @"LastConnectedBluetoothSetting.cfg";
         private BluetoothConfiguration _bluetoothConfiguration;
@@ -114,7 +121,7 @@ namespace CommandMessenger.Bluetooth
                 else if (_scanType == 1)
                 {
                     _scanType = 0;
-                    try { activeConnection = QuickScan(); } catch { }
+                    try { activeConnection = ThoroughScan(); } catch { }
                 }
             }
 
@@ -142,32 +149,41 @@ namespace CommandMessenger.Bluetooth
 
         public bool PairDevice(BluetoothDeviceInfo device)
         {
-            //device.Update();
+            Log(2, "Trying to pair device " + device.DeviceName + " (" + device.DeviceAddress + ") ");
             if (device.Authenticated) return true;
             // Check if PIN has been stored
             if (_bluetoothConfiguration.StoredDevicePins.ContainsKey(device.DeviceAddress))
             {
+                Log(3, "Trying to stored key for device " + device.DeviceName );
                 if (BluetoothSecurity.PairRequest(device.DeviceAddress, _bluetoothConfiguration.StoredDevicePins[device.DeviceAddress]))
                 {
-                    device.Update();
-                    return device.Authenticated;
-                }                    
+                    Log(2, "Pairing device " + device.DeviceName + " succesful! ");
+                    return true;
+                }
+                // When trying PINS, you really need to wait in between
+                Thread.Sleep(1000);   
             }            
 
             // loop through common PIN numbers to see if they pair
             foreach (string devicePin in CommonDevicePins)
             {
+                // Trying to quickly can make your device lock
+                
+                Log(3, "Trying common pin " + devicePin + " for device " + device.DeviceName);
                 var isPaired = BluetoothSecurity.PairRequest(device.DeviceAddress, devicePin);
                 if (isPaired)
                 {
                     _bluetoothConfiguration.StoredDevicePins[device.DeviceAddress] = devicePin;
                     StoreSettings();
-                    break;
+                    Log(2, "Pairing device " + device.DeviceName + " succesful! ");
+                    return true;
                 }
+                // When trying PINS, you really need to wait in between
+                Thread.Sleep(1000);
             }
 
-            device.Update();
-            return device.Authenticated;
+            Log(2, "Pairing device " + device.DeviceName + " unsuccesfull ");
+            return true;
         }
 
         public bool TryConnection(BluetoothAddress bluetoothAddress, int timeOut)
@@ -265,7 +281,8 @@ namespace CommandMessenger.Bluetooth
 
             foreach (var device in _deviceList)
             {
-                Thread.Sleep(100);
+
+                Thread.Sleep(100); // Bluetooth devices seem to work more reliably with some waits 
                 Log(1, "Trying Device " + device.DeviceName + " (" + device.DeviceAddress + ") " );
                 if (TryConnection(device, shortTimeOut)) return true;
             }
@@ -294,7 +311,7 @@ namespace CommandMessenger.Bluetooth
 
             foreach (var device in _deviceList)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(100); // Bluetooth devices seem to work more reliably with some waits
                 if (PairDevice(device))
                 {
                     Log(1, "Trying Device " + device.DeviceName + " (" + device.DeviceAddress + ") ");

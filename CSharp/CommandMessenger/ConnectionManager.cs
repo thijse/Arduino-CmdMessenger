@@ -90,9 +90,12 @@ namespace CommandMessenger
         }
 
         /// <summary>
-        /// Enables or disables serial port scanning. When disabled, connection manager will try to open connection ONLY to port configured in SerialSettings.
+        /// Enables or disables device scanning scanning. 
+        /// When disabled, connection manager will try to open connection to the device configured in the setting.
+        /// - For SerialConnection this means scanning for (virtual) serial ports, 
+        /// - For BluetoothConnection this means scanning for a device on RFCOMM level
         /// </summary>
-        public bool PortScanEnabled { get; set; }
+        public bool DeviceScanEnabled { get; set; }
 
         /// <summary>
         /// Enables or disables storing of last connection configuration in persistent file.
@@ -113,7 +116,7 @@ namespace CommandMessenger
             WatchdogEnabled = false;
 
             PersistentSettings = false;
-            PortScanEnabled = true;
+            DeviceScanEnabled = true;
             
             CmdMessenger = cmdMessenger;
 
@@ -139,7 +142,7 @@ namespace CommandMessenger
                     // Start the asynchronous operation.
                     _workerThread.RunWorkerAsync();
 
-                    if (PortScanEnabled)
+                    if (DeviceScanEnabled)
                     {
                         StartScan();
                     }
@@ -195,7 +198,7 @@ namespace CommandMessenger
             {
                 StopWatchDog();
 
-                if (PortScanEnabled)
+                if (DeviceScanEnabled)
                 {
                     StartScan();
                 }

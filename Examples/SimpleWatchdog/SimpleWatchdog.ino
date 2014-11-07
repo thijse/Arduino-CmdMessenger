@@ -54,7 +54,6 @@ void onIdentifyRequest()
 // Callback to perform some action
 void onTurnLedOn()
 {
-
   // turn led on (this happens after connection)
   digitalWrite(ledPin, HIGH);
 }
@@ -64,6 +63,16 @@ void onTurnLedOn()
 // Setup function
 void setup()
 {
+  // Listen on serial connection for messages from the pc
+    
+  // 115200 is typically the maximum speed for serial over USB
+  //Serial.begin(115200);
+  
+  // Many bluetooth breakout boards (such as the HC-05/HC-06)
+  // run on 9600 at default speed
+  // The Serial setting below should match this
+  Serial.begin(9600);    
+  
   // Attach my application's user-defined callback methods
   attachCommandCallbacks();
   
