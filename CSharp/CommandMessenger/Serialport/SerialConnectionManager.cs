@@ -187,7 +187,7 @@ namespace CommandMessenger.Serialport
                 try { activeConnection = ThoroughScan(); }
                 catch { }
 
-                _scanType = ScanType.None;
+                _scanType = ScanType.Quick;
             }
 
             // Trigger event when a connection was made
@@ -241,6 +241,15 @@ namespace CommandMessenger.Serialport
                 if (NewPortScan()) return true;
             }
 
+            if (!AvailableSerialPorts.Any())
+            {
+                // Need to check for new ports if current ports list is empty
+                if (NewPortScan()) return true;
+
+                // Add small delay to reduce of Quick->Thorough->Quick->Thorough scan attempts - 400ms here + 100ms in main loop = ~500ms
+                Thread.Sleep(400);
+            }
+
             return false;
         }
 
@@ -278,6 +287,15 @@ namespace CommandMessenger.Serialport
 
                 // If port list has changed, interrupt scan and test new ports first
                 if (NewPortScan()) return true;
+            }
+
+            if (!AvailableSerialPorts.Any())
+            {
+                // Need to check for new ports if current ports list is empty
+                if (NewPortScan()) return true;
+
+                // Add small delay to reduce of Quick->Thorough->Quick->Thorough scan attempts - 400ms here + 100ms in main loop = ~500ms
+                Thread.Sleep(400);
             }
 
             return false;

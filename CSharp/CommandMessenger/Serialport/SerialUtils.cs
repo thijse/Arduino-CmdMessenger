@@ -13,6 +13,8 @@ namespace CommandMessenger.Serialport
     /// </summary>
     public static class SerialUtils
     {
+        private static bool _isMonoRuntime = (Type.GetType("Mono.Runtime") != null);
+
         /// <summary>
         /// Commonly used baud rates.
         /// </summary>
@@ -33,7 +35,14 @@ namespace CommandMessenger.Serialport
         /// <returns> true if it succeeds, false if it fails. </returns>
         public static bool PortExists(string serialPortName)
         {
-            return GetPortNames().Contains(serialPortName);
+            if (_isMonoRuntime)
+            {
+                return File.Exists(serialPortName);
+            }
+            else
+            {
+                return SerialPort.GetPortNames().Contains(serialPortName);
+            }
         }
 
         /// <summary>
@@ -43,10 +52,10 @@ namespace CommandMessenger.Serialport
         public static string[] GetPortNames()
         {
             /**
-             * Under Linux SerialPort.GetPortNames() returns /dev/ttyS* devices,
+             * Under Mono SerialPort.GetPortNames() returns /dev/ttyS* devices,
              * but Arduino is detected as ttyACM* or ttyUSB*
              * */
-            if (Environment.OSVersion.Platform == PlatformID.Unix)
+            if (_isMonoRuntime)
             {
                 var searchPattern = new Regex("ttyACM.+|ttyUSB.+");
                 return Directory.GetFiles("/dev").Where(f => searchPattern.IsMatch(f)).ToArray();
