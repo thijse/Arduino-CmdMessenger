@@ -64,8 +64,8 @@ namespace SimpleWatchdog
                 // In this way, when the application is restarted the previously succesfull settings are first tried
                 //PersistentSettings = false,
 
-                // Instead of scanning for the connected port, you can also use a fixed port. Set this port through the CurrentSerialSettings
-                //UseFixedPort = false
+                // Instead of scanning for the connected port, you can disable scanning and only try the port set in CurrentSerialSettings
+                //DeviceScanEnabled = false
             };
 
             // Show all connection progress on command line             
@@ -111,6 +111,5 @@ namespace SimpleWatchdog
             _cmdMessenger.Dispose();
             _transport.Dispose();
         }
-
     }
 }

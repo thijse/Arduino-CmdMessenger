@@ -19,9 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
@@ -35,10 +33,15 @@ namespace CommandMessenger.Bluetooth
     /// Class for storing last succesful connection
     /// </summary>
     [Serializable]
-    public class BluetoothConfiguration 
+    public class BluetoothConnectionManagerSettings 
     {
         public BluetoothAddress BluetoothAddress { get; set; }
         public Dictionary<BluetoothAddress, string> StoredDevicePins { get; set; }
+
+        public BluetoothConnectionManagerSettings()
+        {
+            StoredDevicePins = new Dictionary<BluetoothAddress, string>();
+        }
     }
 
     /// <summary>
@@ -47,17 +50,18 @@ namespace CommandMessenger.Bluetooth
     public class BluetoothConnectionManager : ConnectionManager
     {
         private static readonly List<string> CommonDevicePins = new List<string>
-            {
-                "0000",
+            {                
+                "0000",                
                 "1111",
-                "1234"
+                "1234",
             };
 
-        const string SettingsFileName = @"LastConnectedBluetoothSetting.cfg";
-        private BluetoothConfiguration _bluetoothConfiguration;
+        private enum ScanType { None, Quick, Thorough }
+        
+        private BluetoothConnectionManagerSettings _bluetoothConnectionManagerSettings;
+        private readonly IBluetoothConnectionStorer _bluetoothConnectionStorer;
         private readonly BluetoothTransport _bluetoothTransport;
-        private int _scanType;
-        //private bool _activeConnection;
+        private ScanType _scanType;
 
         // The control to invoke the callback on
         private readonly object _tryConnectionLock = new object();
@@ -67,7 +71,7 @@ namespace CommandMessenger.Bluetooth
         /// <summary>
         /// Connection manager for Bluetooth devices
         /// </summary>
-        public BluetoothConnectionManager(BluetoothTransport bluetoothTransport, CmdMessenger cmdMessenger, int watchdogCommandId = 0, string uniqueDeviceId = null) :
+        public BluetoothConnectionManager(BluetoothTransport bluetoothTransport, CmdMessenger cmdMessenger, int watchdogCommandId = 0, string uniqueDeviceId = null, IBluetoothConnectionStorer bluetoothConnectionStorer = null) :
             base(cmdMessenger, watchdogCommandId, uniqueDeviceId)
         {
             if (bluetoothTransport == null) 
@@ -75,7 +79,9 @@ namespace CommandMessenger.Bluetooth
 
             _bluetoothTransport = bluetoothTransport;
 
-            _bluetoothConfiguration = new BluetoothConfiguration();
+            _bluetoothConnectionManagerSettings = new BluetoothConnectionManagerSettings();
+            _bluetoothConnectionStorer = bluetoothConnectionStorer;
+            PersistentSettings = (_bluetoothConnectionStorer != null);
             ReadSettings();
 
             _deviceList = new List<BluetoothDeviceInfo>();
@@ -103,19 +109,22 @@ namespace CommandMessenger.Bluetooth
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "BluetoothConnectionManager";
             var activeConnection = false;
 
-            //if (!_activeConnection)
+            // Starting scan
+            if (_scanType == ScanType.None) 
             {
+                _scanType = ScanType.Quick;
+            }
 
-                if (_scanType == 0)
-                {
-                    _scanType = 1;
+            switch (_scanType)
+            {
+                case ScanType.Quick:
                     try { activeConnection = QuickScan(); } catch { }
-                }
-                else if (_scanType == 1)
-                {
-                    _scanType = 0;
-                    try { activeConnection = QuickScan(); } catch { }
-                }
+                    _scanType = ScanType.Thorough;
+                    break;
+                case ScanType.Thorough:
+                    try { activeConnection = ThoroughScan(); } catch { }
+                    _scanType = ScanType.Quick;
+                    break;
             }
 
             // Trigger event when a connection was made
@@ -133,44 +142,54 @@ namespace CommandMessenger.Bluetooth
             _deviceList.AddRange(_bluetoothTransport.BluetoothClient.DiscoverDevices(255, true, true, false, false));
         }
 
-        public void ThorougScanForDevices()
+        private void ThorougScanForDevices()
         {
             // Slow
             _deviceList.Clear();
             _deviceList.AddRange(_bluetoothTransport.BluetoothClient.DiscoverDevices(65536, true, true, true, true));
         }
 
-        public bool PairDevice(BluetoothDeviceInfo device)
+        private bool PairDevice(BluetoothDeviceInfo device)
         {
-            //device.Update();
             if (device.Authenticated) return true;
+            Log(2, "Trying to pair device " + device.DeviceName + " (" + device.DeviceAddress + ") ");
+            
             // Check if PIN has been stored
-            if (_bluetoothConfiguration.StoredDevicePins.ContainsKey(device.DeviceAddress))
+            if (_bluetoothConnectionManagerSettings.StoredDevicePins.ContainsKey(device.DeviceAddress))
             {
-                if (BluetoothSecurity.PairRequest(device.DeviceAddress, _bluetoothConfiguration.StoredDevicePins[device.DeviceAddress]))
+                Log(3, "Trying to stored key for device " + device.DeviceName );
+                if (BluetoothSecurity.PairRequest(device.DeviceAddress, _bluetoothConnectionManagerSettings.StoredDevicePins[device.DeviceAddress]))
                 {
-                    device.Update();
-                    return device.Authenticated;
-                }                    
+                    Log(2, "Pairing device " + device.DeviceName + " succesful! ");
+                    return true;
+                }
+                // When trying PINS, you really need to wait in between
+                Thread.Sleep(1000);   
             }            
 
             // loop through common PIN numbers to see if they pair
             foreach (string devicePin in CommonDevicePins)
             {
+                // Trying to quickly can make your device lock
+                
+                Log(3, "Trying common pin " + devicePin + " for device " + device.DeviceName);
                 var isPaired = BluetoothSecurity.PairRequest(device.DeviceAddress, devicePin);
                 if (isPaired)
                 {
-                    _bluetoothConfiguration.StoredDevicePins[device.DeviceAddress] = devicePin;
+                    _bluetoothConnectionManagerSettings.StoredDevicePins[device.DeviceAddress] = devicePin;
                     StoreSettings();
-                    break;
+                    Log(2, "Pairing device " + device.DeviceName + " succesful! ");
+                    return true;
                 }
+                // When trying PINS, you really need to wait in between
+                Thread.Sleep(1000);
             }
 
-            device.Update();
-            return device.Authenticated;
+            Log(2, "Pairing device " + device.DeviceName + " unsuccesfull ");
+            return true;
         }
 
-        public bool TryConnection(BluetoothAddress bluetoothAddress, int timeOut)
+        private bool TryConnection(BluetoothAddress bluetoothAddress, int timeOut)
         {
             if (bluetoothAddress == null) return false;
             // Find
@@ -184,14 +203,14 @@ namespace CommandMessenger.Bluetooth
             return false;
         }
 
-        public bool TryConnection(BluetoothDeviceInfo bluetoothDeviceInfo, int timeOut)
+        private bool TryConnection(BluetoothDeviceInfo bluetoothDeviceInfo, int timeOut)
         {
             // Try specific settings
             _bluetoothTransport.CurrentBluetoothDeviceInfo = bluetoothDeviceInfo;
             return TryConnection(timeOut); 
         }
 
-        public bool TryConnection(int timeOut)
+        private bool TryConnection(int timeOut)
         {
             lock (_tryConnectionLock)
             {
@@ -233,15 +252,17 @@ namespace CommandMessenger.Bluetooth
             }
         }
 
-        // Single scan on foreground thread
-        public bool SingleScan()
+        protected override void StartScan()
         {
-            if (QuickScan()) return true;
-            if (ThoroughScan()) return true;
-            return false;
-        }        
+            base.StartScan();
 
-        public bool QuickScan()
+            if (ConnectionManagerState == ConnectionManagerState.Scan)
+            {
+                _scanType = ScanType.None;
+            }
+        }
+    
+        private bool QuickScan()
         {            
             Log(3, "Performing quick scan");
             const int longTimeOut =  1000;
@@ -257,7 +278,7 @@ namespace CommandMessenger.Bluetooth
             {
                 // Then try if last stored connection can be opened
                 Log(3, "Trying last stored connection");
-                if (TryConnection(_bluetoothConfiguration.BluetoothAddress, longTimeOut)) return true;
+                if (TryConnection(_bluetoothConnectionManagerSettings.BluetoothAddress, longTimeOut)) return true;
             }
 
             // Then see if new devices have been added to the list 
@@ -265,7 +286,8 @@ namespace CommandMessenger.Bluetooth
 
             foreach (var device in _deviceList)
             {
-                Thread.Sleep(100);
+
+                Thread.Sleep(100); // Bluetooth devices seem to work more reliably with some waits 
                 Log(1, "Trying Device " + device.DeviceName + " (" + device.DeviceAddress + ") " );
                 if (TryConnection(device, shortTimeOut)) return true;
             }
@@ -273,7 +295,7 @@ namespace CommandMessenger.Bluetooth
             return false;
         }
 
-        public bool ThoroughScan()
+        private bool ThoroughScan()
         {
             Log(3, "Performing thorough scan");
             const int longTimeOut = 1000;
@@ -287,14 +309,14 @@ namespace CommandMessenger.Bluetooth
 
             // Then try if last stored connection can be opened
             Log(3, "Trying last stored connection");
-            if (TryConnection(_bluetoothConfiguration.BluetoothAddress,  longTimeOut)) return true;
+            if (TryConnection(_bluetoothConnectionManagerSettings.BluetoothAddress,  longTimeOut)) return true;
 
             // Then see if new devices have been added to the list 
             if (NewDevicesScan()) return true;
 
             foreach (var device in _deviceList)
             {
-                Thread.Sleep(100);
+                Thread.Sleep(100); // Bluetooth devices seem to work more reliably with some waits
                 if (PairDevice(device))
                 {
                     Log(1, "Trying Device " + device.DeviceName + " (" + device.DeviceAddress + ") ");
@@ -304,7 +326,7 @@ namespace CommandMessenger.Bluetooth
             return false;
         }
 
-        public bool NewDevicesScan()
+        private bool NewDevicesScan()
         {            
             const int shortTimeOut = 200;
 
@@ -329,27 +351,16 @@ namespace CommandMessenger.Bluetooth
 
         protected override void StoreSettings()
         {
-            if (PersistentSettings)
-            {
-                _bluetoothConfiguration.BluetoothAddress = _bluetoothTransport.CurrentBluetoothDeviceInfo.DeviceAddress;
+            if (!PersistentSettings) return;
+            _bluetoothConnectionManagerSettings.BluetoothAddress = _bluetoothTransport.CurrentBluetoothDeviceInfo.DeviceAddress;
 
-                var fileStream = File.Create(SettingsFileName);
-                var serializer = new BinaryFormatter();
-                serializer.Serialize(fileStream, _bluetoothConfiguration);
-                fileStream.Close();
-            }
+            _bluetoothConnectionStorer.StoreSettings(_bluetoothConnectionManagerSettings);
         }
 
-        protected override void ReadSettings()
+        protected override sealed void ReadSettings()
         {
-            // Read from file
-            if (PersistentSettings && File.Exists(SettingsFileName))
-            {
-                var fileStream = File.OpenRead(SettingsFileName);
-                var deserializer = new BinaryFormatter();
-                _bluetoothConfiguration = (BluetoothConfiguration)deserializer.Deserialize(fileStream);
-                fileStream.Close();
-            }
+            if (!PersistentSettings) return;
+            _bluetoothConnectionManagerSettings = _bluetoothConnectionStorer.RetrieveSettings();
         }
     }
 }
