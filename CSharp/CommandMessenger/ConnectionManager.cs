@@ -361,7 +361,7 @@ namespace CommandMessenger
             if (currentTimeStamp < _nextTimeOutCheck) return;
 
             // if a command has been received recently, set next check time
-            if (lastLineTimeStamp > _lastCheckTime)
+            if (lastLineTimeStamp >= _lastCheckTime)
             {
                 Log(3, "Successful watchdog response.");
                 _lastCheckTime = currentTimeStamp;
