@@ -58,12 +58,12 @@ namespace CommandMessenger.Bluetooth
                 "1234",
             };
 
-
+        private enum ScanType { None, Quick, Thorough }
 
         const string SettingsFileName = @"LastConnectedBluetoothSetting.cfg";
         private BluetoothConfiguration _bluetoothConfiguration;
         private readonly BluetoothTransport _bluetoothTransport;
-        private int _scanType;
+        private ScanType _scanType;
         //private bool _activeConnection;
 
         // The control to invoke the callback on
@@ -110,19 +110,21 @@ namespace CommandMessenger.Bluetooth
             if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "BluetoothConnectionManager";
             var activeConnection = false;
 
-            //if (!_activeConnection)
+            // Starting scan
+            if (_scanType == ScanType.None) 
             {
-
-                if (_scanType == 0)
-                {
-                    _scanType = 1;
-                    try { activeConnection = QuickScan(); } catch { }
-                }
-                else if (_scanType == 1)
-                {
-                    _scanType = 0;
-                    try { activeConnection = ThoroughScan(); } catch { }
-                }
+                _scanType = ScanType.Quick;
+            }
+            if (_scanType == ScanType.Quick)
+            {
+                    
+                try { activeConnection = QuickScan(); } catch { }
+                _scanType = ScanType.Thorough;
+            }
+            else if (_scanType == ScanType.Thorough)
+            {
+                try { activeConnection = ThoroughScan(); } catch { }
+                _scanType = ScanType.Quick;
             }
 
             // Trigger event when a connection was made
@@ -140,17 +142,19 @@ namespace CommandMessenger.Bluetooth
             _deviceList.AddRange(_bluetoothTransport.BluetoothClient.DiscoverDevices(255, true, true, false, false));
         }
 
-        public void ThorougScanForDevices()
+
+        private void ThorougScanForDevices()
         {
             // Slow
             _deviceList.Clear();
             _deviceList.AddRange(_bluetoothTransport.BluetoothClient.DiscoverDevices(65536, true, true, true, true));
         }
 
-        public bool PairDevice(BluetoothDeviceInfo device)
+        private bool PairDevice(BluetoothDeviceInfo device)
         {
-            Log(2, "Trying to pair device " + device.DeviceName + " (" + device.DeviceAddress + ") ");
             if (device.Authenticated) return true;
+            Log(2, "Trying to pair device " + device.DeviceName + " (" + device.DeviceAddress + ") ");
+            
             // Check if PIN has been stored
             if (_bluetoothConfiguration.StoredDevicePins.ContainsKey(device.DeviceAddress))
             {
@@ -186,7 +190,7 @@ namespace CommandMessenger.Bluetooth
             return true;
         }
 
-        public bool TryConnection(BluetoothAddress bluetoothAddress, int timeOut)
+        private bool TryConnection(BluetoothAddress bluetoothAddress, int timeOut)
         {
             if (bluetoothAddress == null) return false;
             // Find
@@ -200,14 +204,14 @@ namespace CommandMessenger.Bluetooth
             return false;
         }
 
-        public bool TryConnection(BluetoothDeviceInfo bluetoothDeviceInfo, int timeOut)
+        private bool TryConnection(BluetoothDeviceInfo bluetoothDeviceInfo, int timeOut)
         {
             // Try specific settings
             _bluetoothTransport.CurrentBluetoothDeviceInfo = bluetoothDeviceInfo;
             return TryConnection(timeOut); 
         }
 
-        public bool TryConnection(int timeOut)
+        private bool TryConnection(int timeOut)
         {
             lock (_tryConnectionLock)
             {
@@ -249,14 +253,16 @@ namespace CommandMessenger.Bluetooth
             }
         }
 
-        // Single scan on foreground thread
-        public bool SingleScan()
+        protected override void StartScan()
         {
-            if (QuickScan()) return true;
-            if (ThoroughScan()) return true;
-            return false;
-        }        
+            base.StartScan();
 
+            if (ConnectionManagerState == ConnectionManagerState.Scan)
+            {
+                _scanType = ScanType.None;
+            }
+        }
+    
         public bool QuickScan()
         {            
             Log(3, "Performing quick scan");
@@ -321,7 +327,7 @@ namespace CommandMessenger.Bluetooth
             return false;
         }
 
-        public bool NewDevicesScan()
+        private bool NewDevicesScan()
         {            
             const int shortTimeOut = 200;
 
