@@ -19,9 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 
 namespace CommandMessenger.Serialport
@@ -31,7 +29,7 @@ namespace CommandMessenger.Serialport
     /// Class for storing last succesfull connection
     /// </summary>
     [Serializable()]
-    public class LastConnectedSetting 
+    public class SerialConnectionManagerSettings 
     {
         public String Port{ get; set; }
         public int BaudRate { get; set; }
@@ -44,9 +42,8 @@ namespace CommandMessenger.Serialport
     {
         private enum ScanType { None, Quick, Thorough }
 
-        const string SettingsFileName = @"LastConnectedSerialSetting.cfg";
-
-        private LastConnectedSetting _lastConnectedSetting;
+        private SerialConnectionManagerSettings _serialConnectionManagerSettings;
+        private readonly ISerialConnectionStorer _serialConnectionStorer;
         private readonly SerialTransport _serialTransport;
 
         private ScanType _scanType = ScanType.None;
@@ -71,19 +68,22 @@ namespace CommandMessenger.Serialport
         /// <summary>
         /// Connection manager for serial port connection
         /// </summary
-        public SerialConnectionManager(SerialTransport serialTransport, CmdMessenger cmdMessenger, int watchdogCommandId = 0, string uniqueDeviceId = null) :
+        public SerialConnectionManager(SerialTransport serialTransport, CmdMessenger cmdMessenger, int watchdogCommandId = 0, string uniqueDeviceId = null, ISerialConnectionStorer serialConnectionStorer = null) :
             base(cmdMessenger, watchdogCommandId, uniqueDeviceId)
         {
+            
             if (serialTransport == null) 
                 throw new ArgumentNullException("serialTransport", "Transport is null.");
 
             _serialTransport = serialTransport;
+            _serialConnectionStorer = serialConnectionStorer;
+            PersistentSettings = (_serialConnectionStorer != null);
 
             PortScanBaudRateSelection = true;
 
             UpdateAvailablePorts();
 
-            _lastConnectedSetting = new LastConnectedSetting();
+            _serialConnectionManagerSettings = new SerialConnectionManagerSettings();
             ReadSettings();
         }
 
@@ -167,27 +167,23 @@ namespace CommandMessenger.Serialport
             // First try if currentConnection is open or can be opened
             var activeConnection = false;
 
-            if (_scanType == ScanType.None)
+            switch (_scanType)
             {
-                try { activeConnection = TryConnection() == DeviceStatus.Available; }
-                catch { }
-
-                _scanType = ScanType.Quick;
-                
-            }
-            else if (_scanType == ScanType.Quick)
-            {
-                try { activeConnection = QuickScan(); }
-                catch { }
-
-                _scanType = ScanType.Thorough;
-            }
-            else if (_scanType == ScanType.Thorough)
-            {
-                try { activeConnection = ThoroughScan(); }
-                catch { }
-
-                _scanType = ScanType.Quick;
+                case ScanType.None:
+                    try { activeConnection = TryConnection() == DeviceStatus.Available; }
+                    catch { }
+                    _scanType = ScanType.Quick;
+                    break;
+                case ScanType.Quick:
+                    try { activeConnection = QuickScan(); }
+                    catch { }
+                    _scanType = ScanType.Thorough;
+                    break;
+                case ScanType.Thorough:
+                    try { activeConnection = ThoroughScan(); }
+                    catch { }
+                    _scanType = ScanType.Quick;
+                    break;
             }
 
             // Trigger event when a connection was made
@@ -205,7 +201,7 @@ namespace CommandMessenger.Serialport
             {
                 // Then try if last stored connection can be opened
                 Log(3, "Trying last stored connection.");
-                if (TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate) == DeviceStatus.Available) 
+                if (TryConnection(_serialConnectionManagerSettings.Port, _serialConnectionManagerSettings.BaudRate) == DeviceStatus.Available) 
                     return true;
             }
 
@@ -258,7 +254,7 @@ namespace CommandMessenger.Serialport
             Log(1, "Performing thorough scan.");
 
             // Then try if last stored connection can be opened
-            if (PersistentSettings && TryConnection(_lastConnectedSetting.Port, _lastConnectedSetting.BaudRate) == DeviceStatus.Available) 
+            if (PersistentSettings && TryConnection(_serialConnectionManagerSettings.Port, _serialConnectionManagerSettings.BaudRate) == DeviceStatus.Available) 
                 return true;
 
             // Slowly walk through 
@@ -363,31 +359,18 @@ namespace CommandMessenger.Serialport
 
         protected override void StoreSettings()
         {
-            if (PersistentSettings)
-            {
-                _lastConnectedSetting.Port = _serialTransport.CurrentSerialSettings.PortName;
-                _lastConnectedSetting.BaudRate = _serialTransport.CurrentSerialSettings.BaudRate;
+            if (!PersistentSettings) return;
 
-                var fileStream = File.Create(SettingsFileName);
-                var serializer = new BinaryFormatter();
-                serializer.Serialize(fileStream, _lastConnectedSetting);
-                fileStream.Close();
-            }
+            _serialConnectionManagerSettings.Port = _serialTransport.CurrentSerialSettings.PortName;
+            _serialConnectionManagerSettings.BaudRate = _serialTransport.CurrentSerialSettings.BaudRate;
+
+            _serialConnectionStorer.StoreSettings(_serialConnectionManagerSettings);
         }
 
         protected override void ReadSettings()
         {
-            // Read from file
-            if (PersistentSettings)
-            {
-                if (File.Exists(SettingsFileName))
-                {
-                    var fileStream = File.OpenRead(SettingsFileName);
-                    var deserializer = new BinaryFormatter();
-                    _lastConnectedSetting = (LastConnectedSetting) deserializer.Deserialize(fileStream);
-                    fileStream.Close();
-                }
-            }
+            if (!PersistentSettings) return;
+            _serialConnectionManagerSettings = _serialConnectionStorer.RetrieveSettings();
         }
     }
 }
