@@ -98,6 +98,12 @@ namespace CommandMessenger.Bluetooth
             }
         }
 
+        public static string StripBluetoothAdress(string bluetoothAdress)
+        {
+            var charsToRemove = new string[] {":", "-"};
+            return charsToRemove.Aggregate(bluetoothAdress, (current, c) => current.Replace(c, string.Empty));
+        }
+
         //const int IoctlBthDisconnectDevice = 0x41000c;
         //[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         //internal static extern bool DeviceIoControl(

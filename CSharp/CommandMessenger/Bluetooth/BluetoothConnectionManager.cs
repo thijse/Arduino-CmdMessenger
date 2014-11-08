@@ -49,6 +49,11 @@ namespace CommandMessenger.Bluetooth
     /// </summary>
     public class BluetoothConnectionManager : ConnectionManager
     {
+
+        public Dictionary<string, string> DevicePins { get; set; }
+
+        public List<string> GeneralPins { get; set; }
+
         private static readonly List<string> CommonDevicePins = new List<string>
             {                
                 "0000",                
@@ -86,6 +91,9 @@ namespace CommandMessenger.Bluetooth
 
             _deviceList = new List<BluetoothDeviceInfo>();
             _prevDeviceList = new List<BluetoothDeviceInfo>();
+
+            DevicePins = new Dictionary<string, string>();
+            GeneralPins = new List<string>();
         }
 
         //Try to connect using current connections settings and trigger event if succesful
@@ -153,11 +161,28 @@ namespace CommandMessenger.Bluetooth
         {
             if (device.Authenticated) return true;
             Log(2, "Trying to pair device " + device.DeviceName + " (" + device.DeviceAddress + ") ");
-            
-            // Check if PIN has been stored
+
+            // Check if PIN  for this device has been injected in ConnectionManager  
+            string adress = device.DeviceAddress.ToString();
+
+            var matchedDevicePin = FindPin(adress);
+            if (matchedDevicePin!=null)
+            {
+                
+                Log(3, "Trying known key for device " + device.DeviceName);
+                if (BluetoothSecurity.PairRequest(device.DeviceAddress, matchedDevicePin))
+                {
+                    Log(2, "Pairing device " + device.DeviceName + " succesful! ");
+                    return true;
+                }
+                // When trying PINS, you really need to wait in between
+                Thread.Sleep(1000);
+            }  
+
+            // Check if PIN has been previously found and stored
             if (_bluetoothConnectionManagerSettings.StoredDevicePins.ContainsKey(device.DeviceAddress))
             {
-                Log(3, "Trying to stored key for device " + device.DeviceName );
+                Log(3, "Trying stored key for device " + device.DeviceName );
                 if (BluetoothSecurity.PairRequest(device.DeviceAddress, _bluetoothConnectionManagerSettings.StoredDevicePins[device.DeviceAddress]))
                 {
                     Log(2, "Pairing device " + device.DeviceName + " succesful! ");
@@ -165,13 +190,27 @@ namespace CommandMessenger.Bluetooth
                 }
                 // When trying PINS, you really need to wait in between
                 Thread.Sleep(1000);   
-            }            
+            }
+
+            // loop through general pins PIN numbers that have been injected to see if they pair
+            foreach (string devicePin in GeneralPins)
+            {
+
+                Log(3, "Trying known general pin " + devicePin + " for device " + device.DeviceName);
+                var isPaired = BluetoothSecurity.PairRequest(device.DeviceAddress, devicePin);
+                if (isPaired)
+                {
+                    _bluetoothConnectionManagerSettings.StoredDevicePins[device.DeviceAddress] = devicePin;
+                    Log(2, "Pairing device " + device.DeviceName + " succesful! ");
+                    return true;
+                }
+                // When trying PINS, you really need to wait in between
+                Thread.Sleep(1000);
+            }
 
             // loop through common PIN numbers to see if they pair
             foreach (string devicePin in CommonDevicePins)
-            {
-                // Trying to quickly can make your device lock
-                
+            {               
                 Log(3, "Trying common pin " + devicePin + " for device " + device.DeviceName);
                 var isPaired = BluetoothSecurity.PairRequest(device.DeviceAddress, devicePin);
                 if (isPaired)
@@ -187,6 +226,11 @@ namespace CommandMessenger.Bluetooth
 
             Log(2, "Pairing device " + device.DeviceName + " unsuccesfull ");
             return true;
+        }
+
+        private string FindPin(string adress)
+        {
+            return (from devicePin in DevicePins where BluetoothUtils.StripBluetoothAdress(devicePin.Key) == adress select devicePin.Value).FirstOrDefault();
         }
 
         private bool TryConnection(BluetoothAddress bluetoothAddress, int timeOut)
