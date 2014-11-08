@@ -25,10 +25,10 @@ using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 
-namespace CommandMessenger.Bluetooth
-{
+// todo: User added common PINs and per-device PINs
 
-   
+namespace CommandMessenger.Bluetooth
+{  
     /// <summary>
     /// Class for storing last succesful connection
     /// </summary>

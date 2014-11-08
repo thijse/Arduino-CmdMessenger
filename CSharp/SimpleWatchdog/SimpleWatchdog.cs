@@ -50,19 +50,22 @@ namespace SimpleWatchdog
                 PrintLfCr = false // Do not print newLine at end of command, to reduce data being sent
             };
 
-            // We don't need to provide a handler for identify command - this is a job for Connection Manager.
+            // The Connection manager is capable or storing connection settings, in order to reconnect more quickly  
+            // the next time the application is run. You can determine yourself where and how to store the settings
+            // by supplying a class, that implements ISerialConnectionStorer. For convenience, CmdMessenger provides
+            //  simple binary file storage functionality
+            var serialConnectionStorer = new SerialConnectionStorer("SerialConnectionManagerSettings.cfg");
+
+            // We don't need to provide a handler for the Identify command - this is a job for Connection Manager.
             _connectionManager = new SerialConnectionManager(
                 _transport as SerialTransport, 
                 _cmdMessenger,
                 (int) Command.Identify, 
-                CommunicationIdentifier)
+                CommunicationIdentifier,
+                serialConnectionStorer)
             {
                 // Enable watchdog functionality.
                 WatchdogEnabled = true,
-
-                // By default connection settings are persisted. 
-                // In this way, when the application is restarted the previously succesfull settings are first tried
-                //PersistentSettings = false,
 
                 // Instead of scanning for the connected port, you can disable scanning and only try the port set in CurrentSerialSettings
                 //DeviceScanEnabled = false

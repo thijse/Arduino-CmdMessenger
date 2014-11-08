@@ -1,6 +1,6 @@
 ﻿// *** TemperatureControl ***
 
-// This example expands the previous ArduinoController example. The PC will now send a start command to the Arduino,
+// This example example is where all previously described features come together in one full application
 // and wait for a response from the Arduino. The Arduino will start sending temperature data and the heater steering
 // value data which the PC will plot in a chart. With a slider we can set the goal temperature, which will make the
 // PID software on the controller adjust the setting of the heater.
@@ -9,9 +9,9 @@
 // - Send queued commands
 // - Manipulate the send and receive queue
 // - Add queue strategies
-// - Use bluetooth connection
+// - Use serial or bluetooth connection
 // - Use auto scanning and connecting
-// - Use watchdog 
+// - Use the autoconnect and watchdog 
 
 using System;
 using CommandMessenger;
@@ -84,7 +84,8 @@ namespace DataLogging
             // 1. Serial port. This can be a real serial port but is usually a virtual serial port over USB. 
             //                 It can also be a virtual serial port over Bluetooth, but the direct bluetooth works better
             // 2. Bluetooth    This bypasses the Bluetooth virtual serial port, and instead communicates over the RFCOMM layer                 
-            var transportMode = TransportMode.Serial;
+            //var transportMode = TransportMode.Serial;
+            var transportMode = TransportMode.Bluetooth;
             
             // getting the chart control on top of the chart form.
             _chartForm = chartForm;
@@ -100,10 +101,13 @@ namespace DataLogging
                 _transport = new BluetoothTransport();
                     // We do not need to set the device: it will be found by the connection manager
             else
-                _transport = new SerialTransport { CurrentSerialSettings = { DtrEnable = false } }; // some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.                        
-                    // We do not need to set serial port and baud rate: it will be found by the connection manager                                                           
+                _transport = new SerialTransport
+                {
+                    CurrentSerialSettings = { DtrEnable = false } // some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.      
+                };                   
+                 // We do not need to set serial port and baud rate: it will be found by the connection manager                                                           
 
-            // Initialize the command messenger with the Serial Port transport layer
+            // Initialize the command messenger with one of the two transport layers
             _cmdMessenger = new CmdMessenger(_transport)
             {
                 BoardType = BoardType.Bit16, // Set if it is communicating with a 16- or 32-bit Arduino board
@@ -127,7 +131,7 @@ namespace DataLogging
             // Attach to NewLineSent for logging purposes
             _cmdMessenger.NewLineSent     += NewLineSent;                       
 
-            // Set up connection manager 
+            // Set up connection manager, corresponding to the transportMode
             if (transportMode == TransportMode.Bluetooth)
                 _connectionManager = new BluetoothConnectionManager((_transport as BluetoothTransport), _cmdMessenger, (int)Command.Identify, UniqueDeviceId);
             else
@@ -233,14 +237,8 @@ namespace DataLogging
             var heaterValue = arguments.ReadBinFloatArg();
             var heaterPwm   = arguments.ReadBinBoolArg();
 
-            // do not log data if times are out of sync
-            //if (time<_startTime) return;
-
             // Update chart with new data point;
             _chartForm.UpdateGraph(time, currTemp, goalTemp, heaterValue, heaterPwm);
-
-            // Update _startTime in case it needs to be resend after disconnection
-            //_startTime = time;
         }
 
         // Log received line to console

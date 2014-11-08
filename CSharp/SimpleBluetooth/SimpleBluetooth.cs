@@ -62,6 +62,12 @@ namespace SimpleBluetooth
                 PrintLfCr = false // Do not print newLine at end of command, to reduce data being sent
             };
 
+            // The Connection manager is capable or storing connection settings, in order to reconnect more quickly  
+            // the next time the application is run. You can determine yourself where and how to store the settings
+            // by supplying a class, that implements ISerialConnectionStorer. For convenience, CmdMessenger provides
+            //  simple binary file storage functionality
+            var bluetoothConnectionStorer = new BluetoothConnectionStorer("BluetoothConnectionManagerSettings.cfg");
+
             // It is easier to let the BluetoothConnectionManager connection for you.
             // It will:
             //  - Auto discover Bluetooth devices
@@ -71,10 +77,11 @@ namespace SimpleBluetooth
                 _transport as BluetoothTransport, 
                 _cmdMessenger,
                 (int) Command.Identify, 
-                CommunicationIdentifier)
+                CommunicationIdentifier,
+                bluetoothConnectionStorer)
             {
                 // Enable watchdog functionality.
-                WatchdogEnabled = true
+                WatchdogEnabled = true,               
             };
 
             // Show all connection progress on command line             
@@ -111,9 +118,9 @@ namespace SimpleBluetooth
 
             //Show all bluetooth devices, paired and unpaired. 
             // Note that this takes a lot of time!
-            Console.WriteLine("All paired bluetooth devices:");
-            BluetoothUtils.PrintAllDevices();
-            Console.WriteLine("");          
+            //Console.WriteLine("All Bluetooth devices, paired and unpaired:");
+            //BluetoothUtils.PrintAllDevices();
+            //Console.WriteLine("");          
 
             // Show Virtual serial ports associated with Bluetooth devices
             // Note that CmdMessenger does not need these and will bypass them

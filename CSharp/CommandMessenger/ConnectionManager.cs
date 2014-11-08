@@ -100,7 +100,7 @@ namespace CommandMessenger
         /// <summary>
         /// Enables or disables storing of last connection configuration in persistent file.
         /// </summary>
-        public bool PersistentSettings { get; set; }
+        public bool PersistentSettings { get; internal set; }
 
         protected ConnectionManager(CmdMessenger cmdMessenger, int identifyCommandId = 0, string uniqueDeviceId = null)
         {
