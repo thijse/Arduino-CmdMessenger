@@ -1,12 +1,17 @@
-﻿// *** SimpleWatchdog ***
+﻿// *** SimpleBluetoothSimpleWatchdog ***
 
 // This example shows the usage of the watchdog for communication over Bluetooth, tested with the well known JY-MCU HC-05 and HC-06
 //
 // To help get you started, have a look at:
 //    - http://www.instructables.com/id/Cheap-2-Way-Bluetooth-Connection-Between-Arduino-a/step4/Set-up-your-PC-for-serial-Bluetooth-communication/
 //    - http://homepages.ihug.com.au/~npyner/Arduino/GUIDE_2BT.pdf
-//    don't worry about discovery and pairing, CmdMessenger can do that for you.
-// 
+//    basically for JY-MCU HC-05 and HC-06 you only have to make sure that
+//     1) the device is connected using a voltage divider
+//     2) the serial speed set in your script is the same as the Bluetooth speed (by default 9600)
+//     So, don't worry about discovery and pairing, CmdMessenger will do that for you.
+//     
+//      On Arduino side, use the same SimpleWatchdog.ino script as the previous example, but make sure the speed is set to 9600
+//
 // - Use bluetooth connection
 // - Use auto scanning and connecting
 // - Use watchdog 
@@ -81,7 +86,21 @@ namespace SimpleBluetooth
                 bluetoothConnectionStorer)
             {
                 // Enable watchdog functionality.
-                WatchdogEnabled = true,               
+                WatchdogEnabled = true,
+
+                // You can add PIN codes for specific devices
+                DevicePins =
+                {
+                    {"01:02:03:04:05:06","6666"},
+                    {"01:02:03:04:05:07","7777"},
+                },
+
+                // You can also add PIN code to try on all unpaired devices
+                // (the following PINs are tried by default: 0000, 1111, 1234 )
+                GeneralPins =
+                {
+                    "8888",
+                }
             };
 
             // Show all connection progress on command line             
@@ -118,9 +137,9 @@ namespace SimpleBluetooth
 
             //Show all bluetooth devices, paired and unpaired. 
             // Note that this takes a lot of time!
-            //Console.WriteLine("All Bluetooth devices, paired and unpaired:");
-            //BluetoothUtils.PrintAllDevices();
-            //Console.WriteLine("");          
+            Console.WriteLine("All Bluetooth devices, paired and unpaired:");
+            BluetoothUtils.PrintAllDevices();
+            Console.WriteLine("");          
 
             // Show Virtual serial ports associated with Bluetooth devices
             // Note that CmdMessenger does not need these and will bypass them
