@@ -90,7 +90,7 @@ namespace CommandMessenger
         }
 
         /// <summary>
-        /// Enables or disables device scanning scanning. 
+        /// Enables or disables device scanning. 
         /// When disabled, connection manager will try to open connection to the device configured in the setting.
         /// - For SerialConnection this means scanning for (virtual) serial ports, 
         /// - For BluetoothConnection this means scanning for a device on RFCOMM level

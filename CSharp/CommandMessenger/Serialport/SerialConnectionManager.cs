@@ -63,7 +63,7 @@ namespace CommandMessenger.Serialport
         /// <summary>
         /// In scan mode allow to try different baud rates besides that is configured in SerialSettings.
         /// </summary>
-        public bool PortScanBaudRateSelection { get; set; }
+        public bool DeviceScanBaudRateSelection { get; set; }
 
         /// <summary>
         /// Connection manager for serial port connection
@@ -79,7 +79,7 @@ namespace CommandMessenger.Serialport
             _serialConnectionStorer = serialConnectionStorer;
             PersistentSettings = (_serialConnectionStorer != null);
 
-            PortScanBaudRateSelection = true;
+            DeviceScanBaudRateSelection = true;
 
             UpdateAvailablePorts();
 
@@ -206,13 +206,13 @@ namespace CommandMessenger.Serialport
             }
 
             // Quickly run through most used baud rates
-            var commonBaudRates = PortScanBaudRateSelection 
+            var commonBaudRates = DeviceScanBaudRateSelection 
                 ? SerialUtils.CommonBaudRates 
                 : new [] { _serialTransport.CurrentSerialSettings.BaudRate };
             foreach (var portName in AvailableSerialPorts)
             {
                 // Get baud rates collection
-                var baudRateCollection = PortScanBaudRateSelection
+                var baudRateCollection = DeviceScanBaudRateSelection
                     ? SerialUtils.GetSupportedBaudRates(portName)
                     : new[] { _serialTransport.CurrentSerialSettings.BaudRate };
 
@@ -261,7 +261,7 @@ namespace CommandMessenger.Serialport
             foreach (var portName in AvailableSerialPorts)
             {
                 // Get baud rates collection
-                var baudRateCollection = PortScanBaudRateSelection
+                var baudRateCollection = DeviceScanBaudRateSelection
                     ? SerialUtils.GetSupportedBaudRates(portName)
                     : new[] { _serialTransport.CurrentSerialSettings.BaudRate };
 
@@ -311,14 +311,14 @@ namespace CommandMessenger.Serialport
             Thread.Sleep(waitTime);
 
             // Quickly run through most used ports
-            var commonBaudRates = PortScanBaudRateSelection 
+            var commonBaudRates = DeviceScanBaudRateSelection 
                 ? SerialUtils.CommonBaudRates
                 : new[] { _serialTransport.CurrentSerialSettings.BaudRate };
 
             foreach (var portName in newPorts)
             {
                 // Get baud rates collection
-                var baudRateCollection = PortScanBaudRateSelection
+                var baudRateCollection = DeviceScanBaudRateSelection
                     ? SerialUtils.GetSupportedBaudRates(portName)
                     : new[] { _serialTransport.CurrentSerialSettings.BaudRate };
 
