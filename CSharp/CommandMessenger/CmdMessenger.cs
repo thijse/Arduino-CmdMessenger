@@ -39,6 +39,7 @@ namespace CommandMessenger
     public enum ReceiveQueue
     {
         Default,
+        LeaveQueue,
         WaitForEmptyQueue,
         ClearQueue,
     }
@@ -368,6 +369,13 @@ namespace CommandMessenger
         {
             //_sendCommandLogger.LogLine(sendCommand.CommandString());
             var synchronizedSend = (sendCommand.ReqAc || useQueue == UseQueue.BypassQueue);
+
+            // When waiting for an acknowledge, it is typically best to wait for the ReceiveQueue to be empty
+            // This is thus the default state
+            if (sendCommand.ReqAc && receiveQueueState == ReceiveQueue.Default)
+            {
+                receiveQueueState = ReceiveQueue.WaitForEmptyQueue;
+            }
 
 
             if (sendQueueState == SendQueue.ClearQueue )

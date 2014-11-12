@@ -52,13 +52,25 @@ namespace CommandMessenger
             ReceivedCommand ackCommand;
             lock (_sendCommandDataLock)
             {
-
+                if (sendCommand.ReqAc)
+                {
+                    // Stop processing receive queue before sending. Wait until receive queue is actualy done
+                    _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
+                    _receiveCommandQueue.WaitForThreadRunStateSet();
+                }
                 if (PrintLfCr)
                     _communicationManager.WriteLine(sendCommand.CommandString());
                 else
                     _communicationManager.Write(sendCommand.CommandString());
                 ackCommand = sendCommand.ReqAc ? BlockedTillReply(sendCommand.AckCmdId, sendCommand.Timeout, sendQueueState) : new ReceivedCommand();                
-                }
+            }
+
+            if (sendCommand.ReqAc)
+            {
+                // Stop processing receive queue before sending
+                _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Start;
+                _receiveCommandQueue.WaitForThreadRunStateSet();
+            }
                 return ackCommand;
             }
 
@@ -88,8 +100,8 @@ namespace CommandMessenger
         private ReceivedCommand BlockedTillReply(int ackCmdId, int timeout, SendQueue sendQueueState)
         {
             // Disable invoking command callbacks
-            _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
-
+           //_receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
+            
             // Disable thread based polling of Serial Interface
             //_communicationManager.StopListening();
 
@@ -111,7 +123,7 @@ namespace CommandMessenger
             //_communicationManager.StartListening();
 
             // Re-enable invoking command callbacks
-            _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Start;
+            //_receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Start;
             return acknowledgeCommand;
         }
 

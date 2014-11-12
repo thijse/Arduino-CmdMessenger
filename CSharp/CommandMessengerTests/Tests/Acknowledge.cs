@@ -79,6 +79,7 @@ namespace CommandMessengerTests
             }
             if (!_systemSettings.Transport.IsConnected())
             {
+                Common.TestOk("No issues during opening connection");
             }
         }
 
@@ -96,7 +97,7 @@ namespace CommandMessengerTests
         // Test: Send a test command with acknowledgment needed
         public void TestSendCommandWithAcknowledgement()
         {
-            Common.StartTest("Test sending command and receiving acknowledgment");
+            Common.StartTest("Test sending command and receiving acknowledgment");            
             var receivedCommand = _cmdMessenger.SendCommand(new SendCommand(_command["AreYouReady"], _command["Ack"], 1000)) ;
             if (receivedCommand.Ok)
             {
@@ -121,7 +122,7 @@ namespace CommandMessengerTests
             }
 
             // Now wait for an acknowledge, terminating the command string
-            var receivedCommand = _cmdMessenger.SendCommand(new SendCommand(_command["AreYouReady"], _command["Ack"], 1000)) ;
+            var receivedCommand = _cmdMessenger.SendCommand(new SendCommand(_command["AreYouReady"], _command["Ack"], 1000), SendQueue.Default, ReceiveQueue.WaitForEmptyQueue);
             if (receivedCommand.Ok)
             {
                 Common.TestOk("Acknowledgment for command AreYouReady");                

@@ -79,10 +79,8 @@ namespace CommandMessenger
                         CmdMessenger.HandleMessage(dequeueCommand);
                     }
                 }
-                //else
-                //{
-                //    _queueSpeed.Sleep();
-                //}
+                // Update real run state
+                RunningThreadRunState = ThreadRunState;
             }
         }
 

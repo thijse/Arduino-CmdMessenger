@@ -95,7 +95,7 @@ namespace CommandMessengerTests
             var command = DefineCommands();
 
             // Initialize tests, CHANGE "DEVICE" VARIABLE TO YOUR DEVICE!
-            var device = arduinoLeonardoOrProMicro;
+            var device = arduinoNano;
             InitializeTests(device, command);
 
             // Open log file for testing 
@@ -139,26 +139,26 @@ namespace CommandMessengerTests
             // Test acknowledgment both on PC side and embedded side
             _acknowledge.RunTests();
 
-            // Test all plain text formats
+            //// Test all plain text formats
             _clearTextData.RunTests();
 
-            // Test all binary formats
+            //// Test all binary formats
             _binaryTextData.RunTests();            
             
-            // Test sending multiple arguments
+            //// Test sending multiple arguments
             _multipleArguments.RunTests();
 
-            // Test large series for completeness (2-way)
-            // todo
+            //// Test large series for completeness (2-way)
+            //// todo
             
-            // Test speed
-            _transferSpeed.RunTests();
+            //// Test speed
+            //_transferSpeed.RunTests();
 
-            // Test load
-            // todo
+            //// Test load
+            //// todo
             
-            // Test Strategies
-            // todo
+            //// Test Strategies
+            //// todo
             
             // Summary of tests
             Common.TestSummary();

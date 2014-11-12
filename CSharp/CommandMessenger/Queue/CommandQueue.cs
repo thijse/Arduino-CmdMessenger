@@ -67,6 +67,10 @@ namespace CommandMessenger
             }
         }
 
+        /// <summary> Gets or sets the run state of the thread . </summary>
+        /// <value> The thread run state. </value>
+        protected ThreadRunStates RunningThreadRunState { get;  set; }
+
         /// <summary>Gets count of records in queue.</summary>
         public int Count
         {
@@ -90,12 +94,20 @@ namespace CommandMessenger
             EventWaiter = new EventWaiter(true);
 
             // Create queue thread and wait for it to start
-            QueueThread = new Thread(ProcessQueue) {Priority = ThreadPriority.Normal};
+            QueueThread = new Thread(ProcessQueue) { Priority = ThreadPriority.Normal };
             QueueThread.Start();
             while (!QueueThread.IsAlive && QueueThread.ThreadState != ThreadState.Running)
             {
                 Thread.Sleep(25);
             }
+        }
+
+        public void WaitForThreadRunStateSet()
+        {
+            // Give a signal to indicate that process loop needs to run
+            EventWaiter.Set();
+            //  Now wait for state change
+            SpinWait.SpinUntil(() => RunningThreadRunState == ThreadRunState);
         }
 
         /// <summary> Process the queue. </summary>

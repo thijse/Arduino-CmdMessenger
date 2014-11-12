@@ -57,10 +57,6 @@ namespace CommandMessenger
             // Endless loop unless aborted
             while (ThreadRunState != ThreadRunStates.Abort)
             {
-                // Calculate sleep time based on incoming command speed
-                //_queueSpeed.SetCount(Queue.Count);
-                //_queueSpeed.CalcSleepTime();
-
                 bool empty;
                 lock (Queue) empty = IsEmpty;
                 if (empty) EventWaiter.WaitOne(1000);
@@ -69,13 +65,10 @@ namespace CommandMessenger
                 if (ThreadRunState == ThreadRunStates.Start)
                 {
                     // Only actually sleep if there are no commands in the queue
-                    SendCommandsFromQueue();
-                  //  _queueSpeed.Sleep();                    
+                    SendCommandsFromQueue();                    
                 }
-                //else
-                //{
-                //    _queueSpeed.Sleep();
-                //}
+                // Update real run state
+                RunningThreadRunState = ThreadRunState;
             }
         }
 
