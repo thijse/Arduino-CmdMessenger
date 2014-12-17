@@ -33,10 +33,14 @@ namespace CommandMessenger
             Normal
         }
 
-        readonly object _key = new object();
-        bool _block;
-        bool _quit;
+        private readonly object _key = new object();
+        private bool _block;
+        private bool _quit;
 
+        /// <summary>
+        /// Return is event waiter is blocked or not
+        /// </summary>
+        public bool IsBlocked { get { return _block; } }
 
         /// <summary>
         /// start blocked (waiting for signal)
