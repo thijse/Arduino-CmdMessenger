@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 
-namespace CommandMessenger.Bluetooth
+namespace CommandMessenger.Transport.Bluetooth
 {
     public class BluetoothUtils{
 

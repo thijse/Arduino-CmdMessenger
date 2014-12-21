@@ -6,14 +6,14 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
-namespace CommandMessenger.Serialport
+namespace CommandMessenger.Transport.Serial
 {
     /// <summary>
     /// Utility methods for serial communication handling.
     /// </summary>
     public static class SerialUtils
     {
-        private static bool _isMonoRuntime = (Type.GetType("Mono.Runtime") != null);
+        private static readonly bool IsMonoRuntime = (Type.GetType("Mono.Runtime") != null);
 
         /// <summary>
         /// Commonly used baud rates.
@@ -35,7 +35,7 @@ namespace CommandMessenger.Serialport
         /// <returns> true if it succeeds, false if it fails. </returns>
         public static bool PortExists(string serialPortName)
         {
-            if (_isMonoRuntime)
+            if (IsMonoRuntime)
             {
                 return File.Exists(serialPortName);
             }
@@ -55,7 +55,7 @@ namespace CommandMessenger.Serialport
              * Under Mono SerialPort.GetPortNames() returns /dev/ttyS* devices,
              * but Arduino is detected as ttyACM* or ttyUSB*
              * */
-            if (_isMonoRuntime)
+            if (IsMonoRuntime)
             {
                 var searchPattern = new Regex("ttyACM.+|ttyUSB.+");
                 return Directory.GetFiles("/dev").Where(f => searchPattern.IsMatch(f)).ToArray();

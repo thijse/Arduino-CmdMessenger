@@ -15,10 +15,13 @@
 
 using System;
 using CommandMessenger;
-using CommandMessenger.Serialport;
+using CommandMessenger.Queue;
+using CommandMessenger.Transport;
+using CommandMessenger.Transport.Bluetooth;
+using CommandMessenger.Transport.Serial;
 using CommandMessenger.TransportLayer;
 using System.Threading;
-using CommandMessenger.Bluetooth;
+
 namespace DataLogging
 {
     enum Command

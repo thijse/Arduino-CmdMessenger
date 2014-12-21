@@ -20,18 +20,18 @@
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace CommandMessenger.Bluetooth
+namespace CommandMessenger.Transport.Serial
 {
-    public class BluetoothConnectionStorer : IBluetoothConnectionStorer
+    public class SerialConnectionStorer : ISerialConnectionStorer
     {
         private readonly string _settingsFileName;
         /// <summary>
         /// Contructor of Store/Retreive object for SerialConnectionManagerSettings
         /// The file is serialized as a simple binary file
         /// </summary>
-        public BluetoothConnectionStorer()
+        public SerialConnectionStorer()
         {
-            _settingsFileName = @"BluetoothConnectionManagerSettings.cfg";
+            _settingsFileName = @"SerialConnectionManagerSettings.cfg";
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace CommandMessenger.Bluetooth
         /// The file is serialized as a simple binary file
         /// </summary>
         /// <param name="settingsFileName">Filename of the settings file</param>
-        public BluetoothConnectionStorer(string settingsFileName)
+        public SerialConnectionStorer(string settingsFileName)
         {
             _settingsFileName = settingsFileName;
         }
@@ -47,12 +47,12 @@ namespace CommandMessenger.Bluetooth
         /// <summary>
         /// Store SerialConnectionManagerSettings
         /// </summary>
-        /// <param name="bluetoothConnectionManagerSettings">BluetoothConnectionManagerSettings</param>
-        public void StoreSettings(BluetoothConnectionManagerSettings bluetoothConnectionManagerSettings)
+        /// <param name="serialConnectionManagerSettings">SerialConnectionManagerSettings</param>
+        public void StoreSettings(SerialConnectionManagerSettings serialConnectionManagerSettings)
         {
             var fileStream = File.Create(_settingsFileName);
             var serializer = new BinaryFormatter();
-            serializer.Serialize(fileStream, bluetoothConnectionManagerSettings);
+            serializer.Serialize(fileStream, serialConnectionManagerSettings);
             fileStream.Close();
         }
 
@@ -60,17 +60,17 @@ namespace CommandMessenger.Bluetooth
         /// Retreive SerialConnectionManagerSettings
         /// </summary>
         /// <returns>SerialConnectionManagerSettings</returns>
-        public BluetoothConnectionManagerSettings RetrieveSettings()
+        public SerialConnectionManagerSettings RetrieveSettings()
         {
-            var bluetoothConnectionManagerSettings = new BluetoothConnectionManagerSettings();
+            var serialConnectionManagerSettings = new SerialConnectionManagerSettings();
             if (File.Exists(_settingsFileName))
             {
                 var fileStream = File.OpenRead(_settingsFileName);
                 var deserializer = new BinaryFormatter();
-                bluetoothConnectionManagerSettings = (BluetoothConnectionManagerSettings)deserializer.Deserialize(fileStream);
+                serialConnectionManagerSettings = (SerialConnectionManagerSettings)deserializer.Deserialize(fileStream);
                 fileStream.Close();
             }
-            return bluetoothConnectionManagerSettings;
+            return serialConnectionManagerSettings;
         }
     }
 }

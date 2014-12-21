@@ -19,7 +19,7 @@
 
 using System.IO.Ports;
 
-namespace CommandMessenger.Serialport
+namespace CommandMessenger.Transport.Serial
 {
     /// <summary>
     /// Class containing serial port configuration

@@ -8,7 +8,7 @@
 using System;
 using System.IO.Ports;
 using CommandMessenger;
-using CommandMessenger.Serialport;
+using CommandMessenger.Transport.Serial;
 
 namespace CommandMessengerTests
 {

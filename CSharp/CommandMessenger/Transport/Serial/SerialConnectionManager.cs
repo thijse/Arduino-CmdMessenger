@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace CommandMessenger.Serialport
+namespace CommandMessenger.Transport.Serial
 {
 
     /// <summary>

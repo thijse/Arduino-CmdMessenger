@@ -18,7 +18,7 @@
 #endregion
 using System;
 using CommandMessenger;
-using CommandMessenger.Serialport;
+using CommandMessenger.Transport.Serial;
 using CommandMessenger.TransportLayer;
 using System.IO;
 

@@ -18,12 +18,11 @@
 #endregion
 
 using System;
+using System.IO;
 using System.IO.Ports;
 using System.Threading;
-using CommandMessenger.TransportLayer;
-using System.IO;
 
-namespace CommandMessenger.Serialport
+namespace CommandMessenger.Transport.Serial
 {
     /// <summary>Fas
     /// Manager for serial port data

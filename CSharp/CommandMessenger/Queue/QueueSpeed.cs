@@ -20,7 +20,7 @@
 using System;
 using System.Threading;
 
-namespace CommandMessenger
+namespace CommandMessenger.Queue
 {
     /// <summary> Class that regulates sleeping  within a queue thread.  
     /// 		  Based on load the sleep time will increase or decrease </summary>

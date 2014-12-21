@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace CommandMessenger
+namespace CommandMessenger.Queue
 {
     // Command queue base object. 
     public class CommandQueue : DisposableObject
@@ -58,7 +58,7 @@ namespace CommandMessenger
             }
             get
             {
-                var result = ThreadRunStates.Start;
+                ThreadRunStates result;
                 lock (ThreadRunStateLock)
                 {
                     result = _threadRunState;

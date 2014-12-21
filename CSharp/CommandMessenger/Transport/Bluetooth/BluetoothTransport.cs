@@ -21,12 +21,11 @@ using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
-using CommandMessenger.TransportLayer;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 
-namespace CommandMessenger.Bluetooth
+namespace CommandMessenger.Transport.Bluetooth
 {
     public enum ThreadRunStates
     {

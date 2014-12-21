@@ -18,6 +18,7 @@
 #endregion
 using System;
 using System.Threading;
+using CommandMessenger.Queue;
 
 namespace CommandMessenger
 {

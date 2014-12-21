@@ -27,7 +27,7 @@ using InTheHand.Net.Sockets;
 
 // todo: User added common PINs and per-device PINs
 
-namespace CommandMessenger.Bluetooth
+namespace CommandMessenger.Transport.Bluetooth
 {  
     /// <summary>
     /// Class for storing last succesful connection

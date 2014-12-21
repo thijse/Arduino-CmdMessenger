@@ -8,8 +8,8 @@
 using System;
 using System.Threading;
 using CommandMessenger;
-using CommandMessenger.Bluetooth;
-using CommandMessenger.Serialport;
+using CommandMessenger.Transport.Bluetooth;
+using CommandMessenger.Transport.Serial;
 
 namespace SendAndReceive
 {

@@ -20,18 +20,18 @@
 using System;
 using System.Threading;
 
-namespace CommandMessenger
+namespace CommandMessenger.Queue
 {
     /// <summary> Queue of received commands.  </summary>
     class SendCommandQueue : CommandQueue
     {
         private readonly Sender _sender;
         public event NewLineEvent.NewLineHandler NewLineSent;
-        private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
+        //private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
         //private readonly int _sendBufferMaxLength = 512;
         private readonly int _sendBufferMaxLength = 62;
         string _sendBuffer = string.Empty;
-        int _commandCount = 0;
+        int _commandCount;
 
         public uint MaxQueueLength { get; set; }
 

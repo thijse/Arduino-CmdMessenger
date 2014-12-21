@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CommandMessenger;
+using CommandMessenger.Transport;
 using CommandMessenger.TransportLayer;
 
 namespace CommandMessengerTests

@@ -1,4 +1,4 @@
-﻿#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
+﻿#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
@@ -13,25 +13,15 @@
   The above copyright notice and this permission notice shall be
   included in all copies or substantial portions of the Software.
 
-  Copyright 2013 - Thijs Elenbaas
+  Copyright 2014 - Thijs Elenbaas
 */
 #endregion
 
-using System;
-namespace CommandMessenger.TransportLayer
+namespace CommandMessenger.Transport.Bluetooth
 {
-    /// <summary> Interface for transport layer.  </summary>
-    public interface ITransport: IDisposable    
+    public interface IBluetoothConnectionStorer
     {
-        int BytesInBuffer();
-        byte[] Read();
-        void Poll();
-        bool Connect();
-        bool Disconnect();
-        bool IsConnected();
-        void StartListening();
-        void StopListening();
-        void Write(byte[] buffer);
-        event EventHandler NewDataReceived; 
+        void StoreSettings(BluetoothConnectionManagerSettings bluetoothConnectionManagerSettings);
+        BluetoothConnectionManagerSettings RetrieveSettings();
     }
 }

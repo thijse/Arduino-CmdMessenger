@@ -174,6 +174,8 @@ namespace CommandMessenger
                 }
 
                 _workerThread.DoWork -= WorkerThreadDoWork;
+
+                Disconnect();
             }
         }
 

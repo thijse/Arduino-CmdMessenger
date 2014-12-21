@@ -22,7 +22,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using CommandMessenger.TransportLayer;
+using CommandMessenger.Queue;
+using CommandMessenger.Transport;
 using ThreadState = System.Diagnostics.ThreadState;
 
 namespace CommandMessenger

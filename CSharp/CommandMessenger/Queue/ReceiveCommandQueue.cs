@@ -17,13 +17,13 @@
 */
 #endregion
 
-namespace CommandMessenger
+namespace CommandMessenger.Queue
 {
     /// <summary> Queue of received commands.  </summary>
     public class ReceiveCommandQueue : CommandQueue
     {
         public event NewLineEvent.NewLineHandler NewLineReceived;
-        private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
+        //private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
 
         /// <summary> Receive command queue constructor. </summary>
         /// <param name="disposeStack"> DisposeStack. </param>
