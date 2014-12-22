@@ -9,7 +9,6 @@ using System;
 using System.Threading;
 using CommandMessenger;
 using CommandMessenger.Transport.Serial;
-using CommandMessenger.TransportLayer;
 
 namespace Receive
 {

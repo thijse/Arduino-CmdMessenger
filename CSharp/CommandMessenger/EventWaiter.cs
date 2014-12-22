@@ -28,24 +28,25 @@ namespace CommandMessenger
     {
         public enum WaitState
         {
-            Quit,
             TimeOut,
             Normal
         }
 
         private readonly object _key = new object();
         private bool _block;
-        private bool _quit;
 
         /// <summary>
         /// Return is event waiter is blocked or not
         /// </summary>
-        public bool IsBlocked { get { return _block; } }
+        public bool IsBlocked
+        {
+            get { return _block; }
+        }
 
         /// <summary>
         /// start blocked (waiting for signal)
         /// </summary>
-        public EventWaiter() 
+        public EventWaiter()
         {
             lock (_key)
             {
@@ -76,28 +77,19 @@ namespace CommandMessenger
         {
             lock (_key)
             {
-                // Check if quit has been raised before the wait function is entered
-                if (_quit) { return WaitState.Quit; }
-
                 // Check if signal has already been raised before the wait function is entered                
                 if (!_block)
                 {
                     // If so, reset event for next time and exit wait loop
                     _block = true;
                     return WaitState.Normal;
-                }               
-
-                // Wait under conditions
-                bool noTimeOut = true;
-                while (noTimeOut && _block)
-                {
-                    noTimeOut = Monitor.Wait(_key, timeOut);
                 }
+
+                // Wait under for event
+                bool noTimeOut = Monitor.Wait(_key, timeOut);
+
                 // Block Wait for next entry
                 _block = true;
-
-                // Check if quit signal has already been raised after wait                
-                if (_quit) { return WaitState.Quit; }
 
                 // Return whether the Wait function was quit because of an Set event or timeout
                 return noTimeOut ? WaitState.Normal : WaitState.TimeOut;
@@ -124,34 +116,6 @@ namespace CommandMessenger
             lock (_key)
             {
                 _block = true;
-            }
-        }
-
-        /// <summary>
-        /// Quit. Unblocks thread in Wait function and exits
-        // will not block again until Resume is called
-        /// </summary>
-        public void Quit()
-        {
-            lock (_key)
-            {
-                _block = false;
-                _quit = true;
-                Monitor.Pulse(_key);
-            }
-        }
-
-        /// <summary>
-        /// Resumes functionallity
-        /// </summary>
-        /// <param name="set">If true, first Wait will directly continue</param>
-        public void Resume(bool set)
-        {
-            lock (_key)
-            {
-                _block = !set;
-                _quit = false;
-                Monitor.Pulse(_key);
             }
         }
     }

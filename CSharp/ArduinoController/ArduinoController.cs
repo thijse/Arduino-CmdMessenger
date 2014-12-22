@@ -14,7 +14,6 @@ using System;
 using CommandMessenger;
 using CommandMessenger.Queue;
 using CommandMessenger.Transport.Serial;
-using CommandMessenger.TransportLayer;
 
 namespace ArduinoController
 {

@@ -33,10 +33,6 @@ namespace CommandMessenger.Queue
         /// <value> A Queue of commands. </value>
         public ListQueue<CommandStrategy> CommandQueue { get; set; }
 
-        /// <summary> Gets or sets the run state of the thread. </summary>
-        /// <value> The thread run state. </value>
-        public CommandQueue.ThreadRunStates ThreadRunState { get; set; }
-
         /// <summary> Gets or sets the command. </summary>
         /// <value> The command wrapped in the strategy. </value>
         public Command Command { get; private set; }

@@ -19,7 +19,6 @@
 using System;
 using CommandMessenger;
 using CommandMessenger.Transport.Serial;
-using CommandMessenger.TransportLayer;
 using System.IO;
 
 

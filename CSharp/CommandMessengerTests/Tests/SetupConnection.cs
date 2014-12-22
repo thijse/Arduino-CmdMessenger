@@ -1,6 +1,5 @@
 using System;
 using CommandMessenger;
-using CommandMessenger.TransportLayer;
 
 namespace CommandMessengerTests
 {

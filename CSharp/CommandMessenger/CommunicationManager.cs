@@ -19,10 +19,8 @@
 
 using System;
 using System.Text;
-using System.Threading;
 using CommandMessenger.Queue;
 using CommandMessenger.Transport;
-using CommandMessenger.TransportLayer;
 
 namespace CommandMessenger
 {

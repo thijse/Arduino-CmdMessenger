@@ -20,7 +20,6 @@ using System;
 using CommandMessenger;
 using CommandMessenger.Transport;
 using CommandMessenger.Transport.Bluetooth;
-using CommandMessenger.TransportLayer;
 
 namespace SimpleBluetooth
 {

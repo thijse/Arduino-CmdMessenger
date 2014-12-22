@@ -27,8 +27,6 @@ namespace CommandMessenger.Queue
     {
         private readonly Sender _sender;
         public event NewLineEvent.NewLineHandler NewLineSent;
-        //private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
-        //private readonly int _sendBufferMaxLength = 512;
         private readonly int _sendBufferMaxLength = 62;
         string _sendBuffer = string.Empty;
         int _commandCount;
@@ -37,39 +35,19 @@ namespace CommandMessenger.Queue
 
 
         /// <summary> send command queue constructor. </summary>
-        /// <param name="disposeStack"> DisposeStack. </param>
-        /// <param name="cmdMessenger"> The command messenger. </param>
         /// <param name="sender">Object that does the actual sending of the command</param>
         /// <param name="sendBufferMaxLength">Length of the send buffer</param>
-        public SendCommandQueue(DisposeStack disposeStack, CmdMessenger cmdMessenger, Sender sender, int sendBufferMaxLength)
-            : base(disposeStack, cmdMessenger)
+        public SendCommandQueue(Sender sender, int sendBufferMaxLength)
         {
             MaxQueueLength = 5000;
-            QueueThread.Name = "SendCommandQueue";
             _sender = sender;
             _sendBufferMaxLength = sendBufferMaxLength;
-            // _queueSpeed.Name = "SendCommandQueue";            
         }
 
         /// <summary> Process the queue. </summary>
         protected override void ProcessQueue()
         {
-            // Endless loop unless aborted
-            while (ThreadRunState != ThreadRunStates.Abort)
-            {
-                bool empty;
-                lock (Queue) empty = IsEmpty;
-                if (empty) EventWaiter.WaitOne(1000);
-
-                // Process queue unless stopped
-                if (ThreadRunState == ThreadRunStates.Start)
-                {
-                    // Only actually sleep if there are no commands in the queue
-                    SendCommandsFromQueue();                    
-                }
-                // Update real run state
-                RunningThreadRunState = ThreadRunState;
-            }
+            SendCommandsFromQueue();
         }
 
         /// <summary> Sends the commands from queue. All commands will be combined until either
@@ -136,7 +114,7 @@ namespace CommandMessenger.Queue
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
             }
             // Send command
-            if (commandStrategy != null && commandStrategy.Command != null)
+            if (commandStrategy.Command != null)
                 _sender.ExecuteSendCommand((SendCommand)commandStrategy.Command, SendQueue.InFrontQueue);                     
         }
 
@@ -152,12 +130,11 @@ namespace CommandMessenger.Queue
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
             }
             // Add command
-            if (commandStrategy != null && commandStrategy.Command != null) {
+            if (commandStrategy.Command != null) {
                     _commandCount++;
                     _sendBuffer += commandStrategy.Command.CommandString();
                     if (Command.PrintLfCr) { _sendBuffer +=  Environment.NewLine; }
             }
-            
         }
 
         /// <summary> Sends a command. Note that the command is put at the front of the queue </summary>
@@ -183,18 +160,20 @@ namespace CommandMessenger.Queue
             {
                 Thread.Yield();
             }
+
             lock (Queue)
             {
                 // Process commandStrategy enqueue associated with command
                 commandStrategy.CommandQueue = Queue;
-                commandStrategy.ThreadRunState = ThreadRunState;
+                //commandStrategy.ThreadRunState = ThreadRunState;
 
                 commandStrategy.Enqueue();
 
                 // Process all generic enqueue strategies
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
-            EventWaiter.Set();
+
+            SignalWaiter();
         }
     }
 }

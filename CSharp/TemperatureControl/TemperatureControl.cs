@@ -19,7 +19,6 @@ using CommandMessenger.Queue;
 using CommandMessenger.Transport;
 using CommandMessenger.Transport.Bluetooth;
 using CommandMessenger.Transport.Serial;
-using CommandMessenger.TransportLayer;
 using System.Threading;
 
 namespace DataLogging

@@ -24,7 +24,6 @@ namespace CommandMessenger.Transport
     /// <summary> Interface for transport layer.  </summary>
     public interface ITransport: IDisposable    
     {
-        int BytesInBuffer();
         byte[] Read();
         void Poll();
         bool Connect();

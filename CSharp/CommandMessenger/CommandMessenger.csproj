@@ -70,7 +70,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Queue\TopCommandStrategy.cs" />
-    <Compile Include="Queue\QueueSpeed.cs" />
     <Compile Include="Queue\ReceiveCommandQueue.cs" />
     <Compile Include="Queue\SendCommandQueue.cs">
       <SubType>Code</SubType>

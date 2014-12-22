@@ -206,10 +206,10 @@ namespace CommandMessenger
         {           
             ControlToInvokeOn = null;
             
-            _receiveCommandQueue  = new ReceiveCommandQueue(DisposeStack, this);
+            _receiveCommandQueue  = new ReceiveCommandQueue(HandleMessage);
             _communicationManager = new CommunicationManager(DisposeStack, transport, _receiveCommandQueue, commandSeparator, fieldSeparator, escapeCharacter);
             _sender               = new Sender(_communicationManager, _receiveCommandQueue);
-            _sendCommandQueue     = new SendCommandQueue(DisposeStack, this, _sender, sendBufferMaxLength);
+            _sendCommandQueue     = new SendCommandQueue(_sender, sendBufferMaxLength);
            
             _receiveCommandQueue.NewLineReceived += (o, e) => InvokeNewLineEvent(NewLineReceived, e);
             _sendCommandQueue.NewLineSent        += (o, e) => InvokeNewLineEvent(NewLineSent, e);
@@ -228,30 +228,6 @@ namespace CommandMessenger
             CurrentReceivedLine = "";
         }
 
-        //void ReceiveCommandQueueNewLineReceived(object sender, NewLineEvent.NewLineArgs e)
-        //{
-        //    InvokeNewLineEvent(NewLineReceived, e);
-        //}
-
-        public void SetSingleCore()
-        {
-            var proc = Process.GetCurrentProcess();
-            foreach (ProcessThread pt in proc.Threads)
-            {
-                if (pt.ThreadState != ThreadState.Terminated)
-                {
-                    try
-                    {
-                        pt.IdealProcessor = 0;
-                        pt.ProcessorAffinity = (IntPtr) 1;
-                    }
-                    catch (Exception)
-                    {
-                    }
-
-                }
-            }
-        }
         /// <summary> Sets a control to invoke on. </summary>
         /// <param name="controlToInvokeOn"> The control to invoke on. </param>
         public void SetControlToInvokeOn(Control controlToInvokeOn)
@@ -263,6 +239,9 @@ namespace CommandMessenger
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Disconnect()
         {
+            _sendCommandQueue.Stop();
+            _receiveCommandQueue.Stop();
+
             return _communicationManager.Disconnect();
         }
 
@@ -270,6 +249,9 @@ namespace CommandMessenger
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Connect()
         {
+            _sendCommandQueue.Start();
+            _receiveCommandQueue.Start();
+
             if (_communicationManager.Connect())
             {
                 // Timestamp of this command is same as time stamp of serial line
@@ -528,11 +510,8 @@ namespace CommandMessenger
         /// <summary> Finaliser. </summary>
         ~CmdMessenger()
         {
-            ControlToInvokeOn = null;
-            _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
-            _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
+            Dispose(false);
         }
-
 
         /// <summary> Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </summary>
         /// <param name="disposing"> true if resources should be disposed, false if not. </param>
@@ -541,10 +520,8 @@ namespace CommandMessenger
             if (disposing)
             {
                 ControlToInvokeOn = null;
-                _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
-                _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
-               // _sendCommandLogger.Close();
             }
+
             base.Dispose(disposing);
         }
     }

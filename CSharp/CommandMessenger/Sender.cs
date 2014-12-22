@@ -56,8 +56,7 @@ namespace CommandMessenger
                 if (sendCommand.ReqAc)
                 {
                     // Stop processing receive queue before sending. Wait until receive queue is actualy done
-                    _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
-                    _receiveCommandQueue.WaitForThreadRunStateSet();
+                    _receiveCommandQueue.Suspend();
                 }
                 if (PrintLfCr)
                     _communicationManager.WriteLine(sendCommand.CommandString());
@@ -69,11 +68,11 @@ namespace CommandMessenger
             if (sendCommand.ReqAc)
             {
                 // Stop processing receive queue before sending
-                _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Start;
-                _receiveCommandQueue.WaitForThreadRunStateSet();
+                _receiveCommandQueue.Resume();
             }
-                return ackCommand;
-            }
+
+            return ackCommand;
+        }
 
         /// <summary> Directly executes the send string operation. </summary>
         /// <param name="commandsString"> The string to sent. </param>
