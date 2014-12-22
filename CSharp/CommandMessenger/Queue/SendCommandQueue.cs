@@ -44,10 +44,10 @@ namespace CommandMessenger.Queue
             _sendBufferMaxLength = sendBufferMaxLength;
         }
 
-        /// <summary> Process the queue. </summary>
-        protected override void ProcessQueue()
+        protected override bool ProcessQueue()
         {
             SendCommandsFromQueue();
+            lock (Queue) return !IsEmpty;
         }
 
         /// <summary> Sends the commands from queue. All commands will be combined until either
@@ -173,7 +173,7 @@ namespace CommandMessenger.Queue
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
 
-            SignalWaiter();
+            SignalWorker();
         }
     }
 }

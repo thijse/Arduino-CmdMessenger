@@ -37,27 +37,29 @@ namespace CommandMessenger.Queue
         /// <returns> The received command. </returns>
         public ReceivedCommand DequeueCommand()
         {
-            ReceivedCommand receivedCommand = null;
             lock (Queue)
             {
-                if (!IsEmpty)
-                {
-                    foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
-                    var commandStrategy = Queue.Dequeue();
-                    receivedCommand = (ReceivedCommand)commandStrategy.Command;                    
-                }
+                return DequeueCommandInternal();
             }        
-            return receivedCommand;
         }
 
-        /// <summary> Process the queue. </summary>
-        protected override void ProcessQueue()
+        protected override bool ProcessQueue()
         {
-            var dequeueCommand = DequeueCommand();
+            ReceivedCommand dequeueCommand;
+            bool hasMoreWork;
+
+            lock (Queue)
+            {
+                dequeueCommand = DequeueCommandInternal();
+                hasMoreWork = !IsEmpty;
+            }
+
             if (dequeueCommand != null)
             {
                 _receivedCommandHandler(dequeueCommand);
             }
+
+            return hasMoreWork;
         }
 
         /// <summary> Queue the received command. </summary>
@@ -78,8 +80,20 @@ namespace CommandMessenger.Queue
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
             // Give a signal to indicate that a new item has been queued
-            SignalWaiter();
+            SignalWorker();
             if (NewLineReceived != null) NewLineReceived(this, new NewLineEvent.NewLineArgs(commandStrategy.Command));
+        }
+
+        private ReceivedCommand DequeueCommandInternal()
+        {
+            ReceivedCommand receivedCommand = null;
+            if (!IsEmpty)
+            {
+                foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
+                var commandStrategy = Queue.Dequeue();
+                receivedCommand = (ReceivedCommand)commandStrategy.Command;
+            }
+            return receivedCommand;
         }
     }
 }

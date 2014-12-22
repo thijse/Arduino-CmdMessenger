@@ -19,27 +19,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace CommandMessenger.Queue
 {
     // Command queue base object. 
-    public class CommandQueue : IDisposable
+    public abstract class CommandQueue : IDisposable
     {
-        private enum WorkerState
-        {
-            Stopped,
-            Running,
-            Suspended
-        }
-
-        private volatile WorkerState _state = WorkerState.Stopped;
-        private volatile WorkerState _requestedState = WorkerState.Stopped;
-
-        private Task _queueTask;
-        private readonly object _lock = new object();
-        private readonly EventWaiter _eventWaiter = new EventWaiter();
+        private readonly Worker _worker;
 
         protected readonly ListQueue<CommandStrategy> Queue = new ListQueue<CommandStrategy>();   // Buffer for commands
         protected readonly List<GeneralStrategy> GeneralStrategies = new List<GeneralStrategy>(); // Buffer for command independent strategies
@@ -56,108 +42,15 @@ namespace CommandMessenger.Queue
             get { return Queue.Count == 0; }
         }
 
-        public void Start()
-        {
-            lock (_lock)
-            {
-                if (_state == WorkerState.Stopped)
-                {
-                    _requestedState = _state = WorkerState.Running;
-                    _eventWaiter.Reset();
-
-                    // http://blogs.msdn.com/b/pfxteam/archive/2010/06/13/10024153.aspx
-                    // prefer using Task.Factory.StartNew for .net 4.0. For .net 4.5 Task.Run is the better option.
-                    _queueTask = Task.Factory.StartNew(x =>
-                    {
-                        while (true)
-                        {
-                            if (_state == WorkerState.Stopped) break;
-
-                            bool empty = false;
-                            if (_state == WorkerState.Running)
-                            {
-                                ProcessQueue();
-                                lock (Queue) empty = IsEmpty;
-                            }
-                            if (empty || _state == WorkerState.Suspended) _eventWaiter.WaitOne(Timeout.Infinite);
-                            _state = _requestedState;
-                        }
-                    }, CancellationToken.None, TaskCreationOptions.LongRunning);
-
-                    SpinWait.SpinUntil(() => _queueTask.Status == TaskStatus.Running);
-                }
-                else
-                {
-                    throw new InvalidOperationException("The Command Queue is already started.");
-                }
-            }
-        }
-
-        public void Stop()
-        {
-            lock (_lock)
-            {
-                if (_state == WorkerState.Running || _state == WorkerState.Suspended)
-                {
-                    _requestedState = WorkerState.Stopped;
-                    _eventWaiter.Set();
-                    _queueTask.Wait();
-                    _queueTask.Dispose();
-                }
-                else
-                {
-                    throw new InvalidOperationException("The Command Queue is already stopped.");
-                }
-            }
-        }
-
-        public void Suspend()
-        {
-            lock (_lock)
-            {
-                if (_state == WorkerState.Running)
-                {
-                    _requestedState = WorkerState.Suspended;
-                    _eventWaiter.Set();
-                    SpinWait.SpinUntil(() => _requestedState == _state);
-                }
-                else
-                {
-                    throw new InvalidOperationException("The Command Queue is not running.");
-                }
-            }
-        }
-
-        public void Resume()
-        {
-            lock (_lock)
-            {
-                if (_state == WorkerState.Suspended)
-                {
-                    _requestedState = WorkerState.Running;
-                    _eventWaiter.Set();
-                    SpinWait.SpinUntil(() => _requestedState == _state);
-                }
-                else
-                {
-                    throw new InvalidOperationException("The Command Queue is not in suspended state.");
-                }
-            }
-        }
-
         /// <summary> Clears the queue. </summary>
         public void Clear()
         {
             lock (Queue) Queue.Clear();
         }
 
-        /// <summary> 
-        /// Queue the command wrapped in a command strategy. 
-        /// Call SignalWaiter method to continue processing of queue.
-        /// </summary>
-        /// <param name="commandStrategy"> The command strategy. </param>
-        public virtual void QueueCommand(CommandStrategy commandStrategy)
+        public CommandQueue()
         {
+            _worker = new Worker(ProcessQueue);
         }
 
         /// <summary> Adds a general strategy. This strategy is applied to all queued and dequeued commands.  </summary>
@@ -170,10 +63,42 @@ namespace CommandMessenger.Queue
             GeneralStrategies.Add(generalStrategy);
         }
 
+        /// <summary> 
+        /// Queue the command wrapped in a command strategy. 
+        /// Call SignalWaiter method to continue processing of queue.
+        /// </summary>
+        /// <param name="commandStrategy"> The command strategy. </param>
+        public abstract void QueueCommand(CommandStrategy commandStrategy);
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public void Start()
+        {
+            _worker.Start();
+        }
+
+        public void Stop()
+        {
+            _worker.Stop();
+        }
+
+        public void Suspend()
+        {
+            _worker.Suspend();
+        }
+
+        public void Resume()
+        {
+            _worker.Resume();
+        }
+
+        protected void SignalWorker()
+        {
+            _worker.Signal();
         }
 
         protected virtual void Dispose(bool disposing)
@@ -184,17 +109,7 @@ namespace CommandMessenger.Queue
             }
         }
 
-        /// <summary>
-        /// Continue processing of queue.
-        /// </summary>
-        protected void SignalWaiter()
-        {
-            if (_state == WorkerState.Running) _eventWaiter.Set();
-        }
-
         /// <summary> Process the queue. </summary>
-        protected virtual void ProcessQueue()
-        {
-        }
+        protected abstract bool ProcessQueue();
     }
 }
