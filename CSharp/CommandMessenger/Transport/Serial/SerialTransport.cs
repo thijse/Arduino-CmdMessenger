@@ -27,62 +27,20 @@ namespace CommandMessenger.Transport.Serial
     /// <summary>Fas
     /// Manager for serial port data
     /// </summary>
-    public class SerialTransport : DisposableObject, ITransport
+    public class SerialTransport : IDisposable, ITransport
     {
-        enum ThreadRunStates
-        {
-            Start,
-            Stop,
-            Abort,
-        }
-
         private const int BufferMax = 4096;
 
-        private Thread _queueThread;
-        private ThreadRunStates _threadRunState;
+        private readonly Worker _worker;
         private readonly object _threadRunStateLock = new object();
         private readonly object _serialReadWriteLock = new object();
         private readonly object _readLock = new object();
         private readonly byte[] _readBuffer = new byte[BufferMax];
         private int _bufferFilled;
 
-        /// <summary> Gets or sets the run state of the thread. </summary>
-        /// <value> The thread run state. </value>
-        private ThreadRunStates ThreadRunState  
-        {
-            set
-            {
-                lock (_threadRunStateLock)
-                {
-                    _threadRunState = value;
-                }
-            }
-            get
-            {
-                ThreadRunStates result;
-                lock (_threadRunStateLock)
-                {
-                    result = _threadRunState;
-                }
-                return result;
-            }
-        }
-
-        /// <summary> Default constructor. </summary>
-        public SerialTransport()
-        {          
-            Initialize();
-        }
-
-        #region Fields
-
         private SerialPort _serialPort;                                         // The serial port
         private SerialSettings _currentSerialSettings = new SerialSettings();   // The current serial settings
         public event EventHandler NewDataReceived;                              // Event queue for all listeners interested in NewLinesReceived events.
-
-        #endregion
-
-        #region Properties
 
         /// <summary> Gets or sets the current serial port settings. </summary>
         /// <value> The current serial settings. </value>
@@ -92,62 +50,19 @@ namespace CommandMessenger.Transport.Serial
             set { _currentSerialSettings = value; }
         }
 
-        #endregion
-
-        #region Methods
-
-        /// <summary> Initializes this object. </summary>
-        private void Initialize()
+        public SerialTransport()
         {
-            // Create queue thread and wait for it to start
-            _queueThread = new Thread(ProcessQueue)
-            {
-                Priority = ThreadPriority.Normal,
-                Name = "SerialTransport"
-            };
-            ThreadRunState = ThreadRunStates.Start;
-            _queueThread.Start();
-            while (!_queueThread.IsAlive) { Thread.Sleep(50); }
+            _worker = new Worker(ProcessQueue);
         }
 
-        private void ProcessQueue()
-        {
-            while (ThreadRunState != ThreadRunStates.Abort)
-            {
-                Poll(ThreadRunState);
-            }
-        }        
-
-        /// <summary>
-        /// Start Listening
-        /// </summary>
-        public void StartListening()
-        {
-            ThreadRunState = ThreadRunStates.Start;
-        }
-
-        /// <summary>
-        /// Stop Listening
-        /// </summary>
-        public void StopListening()
-        {
-            ThreadRunState = ThreadRunStates.Stop;
-        }
-
-        private void Poll(ThreadRunStates threadRunState)
+        private bool ProcessQueue()
         {
             var bytes = UpdateBuffer();
-            if (threadRunState == ThreadRunStates.Start)
-            {
-                if (bytes > 0 && NewDataReceived != null)
-                    NewDataReceived(this, null);
-            }
-        }
+            if (bytes > 0 && NewDataReceived != null) NewDataReceived(this, null);
 
-        public void Poll()
-        {
-            Poll(ThreadRunStates.Start);
-        }
+            // Return true as we always have work to do here. The delay is achieved by SerialPort.Read timeout.
+            return true;
+        }        
 
         /// <summary> Connects to a serial port defined through the current settings. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
@@ -169,12 +84,13 @@ namespace CommandMessenger.Transport.Serial
                 {
                     DtrEnable = _currentSerialSettings.DtrEnable,
                     WriteTimeout = _currentSerialSettings.Timeout,
-                    ReadTimeout  = _currentSerialSettings.Timeout  
+                    ReadTimeout  = _currentSerialSettings.Timeout,
                 };
-       
-            // Subscribe to event and open serial port for data
-            ThreadRunState = ThreadRunStates.Start;
-            return Open();
+
+            bool opened = Open();
+            if (opened) _worker.Start();
+
+            return opened;
         }
 
         /// <summary> Query if the serial port is open. </summary>
@@ -195,9 +111,8 @@ namespace CommandMessenger.Transport.Serial
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Disconnect()
         {
-            ThreadRunState = ThreadRunStates.Stop;
-            var state = Close();
-            return state;
+            _worker.Stop();
+            return Close();
         }
 
         /// <summary> Writes a parameter to the serial port. </summary>
@@ -242,6 +157,12 @@ namespace CommandMessenger.Transport.Serial
         {
             //return IsOpen()? _serialPort.BytesToRead:0;
             return _bufferFilled;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary> Opens the serial port. </summary>
@@ -315,42 +236,13 @@ namespace CommandMessenger.Transport.Serial
             return 0;
         }
 
-        /// <summary> Kills this object. </summary>
-        private void Kill()
-        {
-            // Signal thread to stop
-            ThreadRunState = ThreadRunStates.Abort;
-
-            //Wait for thread to die
-            Join(1200);
-            if (_queueThread.IsAlive) _queueThread.Abort();
-
-            // Releasing serial port 
-            Close();
-            if (_serialPort != null)
-            {
-                _serialPort.Dispose();
-                _serialPort = null;
-            }
-
-        }
-
-        private bool Join(int millisecondsTimeout)
-        {
-            if (!_queueThread.IsAlive) return true;
-            return _queueThread.Join(millisecondsTimeout);
-        }
-
-        // Dispose
-        protected override void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                Kill();
+                Disconnect();
+                _serialPort.Dispose();
             }
-            base.Dispose(disposing);
         }
-
-        #endregion
     }
 }

@@ -25,12 +25,12 @@ namespace CommandMessenger.Transport
     public interface ITransport: IDisposable    
     {
         byte[] Read();
-        void Poll();
+        //void Poll();
         bool Connect();
         bool Disconnect();
         bool IsConnected();
-        void StartListening();
-        void StopListening();
+        //void StartListening();
+        //void StopListening();
         void Write(byte[] buffer);
         event EventHandler NewDataReceived; 
     }

@@ -378,12 +378,12 @@ namespace CommandMessenger
                 (synchronizedSend && sendQueueState == SendQueue.AtEndQueue)
             )
             {
-                while (_sendCommandQueue.Count > 0) Thread.Sleep(1);
+                SpinWait.SpinUntil(() => _sendCommandQueue.IsEmpty);
             }
             
             if (receiveQueueState == ReceiveQueue.WaitForEmptyQueue)
             {
-                while (_receiveCommandQueue.Count > 0) Thread.Sleep(1);
+                SpinWait.SpinUntil(() => _receiveCommandQueue.IsEmpty);
             }
 
             if (synchronizedSend)

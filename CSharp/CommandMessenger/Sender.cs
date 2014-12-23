@@ -26,7 +26,7 @@ namespace CommandMessenger
     {
         readonly CommunicationManager _communicationManager;
         readonly ReceiveCommandQueue _receiveCommandQueue;
-        private readonly Object _sendCommandDataLock = new Object();        // The process serial data lock
+        private readonly object _sendCommandDataLock = new object();        // The process serial data lock
                 
         /// <summary> Gets or sets the current received command. </summary>
         /// <value> The current received command. </value>
@@ -92,38 +92,25 @@ namespace CommandMessenger
             return new ReceivedCommand();
         }
 
-                /// <summary> Blocks until acknowledgement reply has been received. </summary>
+        /// <summary> Blocks until acknowledgement reply has been received. </summary>
         /// <param name="ackCmdId"> acknowledgement command ID </param>
         /// <param name="timeout">  Timeout on acknowledge command. </param>
         /// <param name="sendQueueState"></param>
         /// <returns> A received command. </returns>
         private ReceivedCommand BlockedTillReply(int ackCmdId, int timeout, SendQueue sendQueueState)
         {
-            // Disable invoking command callbacks
-           //_receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
-            
-            // Disable thread based polling of Serial Interface
-            //_communicationManager.StopListening();
-
             var start = TimeUtils.Millis;
             var time = start;
             var acknowledgeCommand = new ReceivedCommand();
             while ((time - start < timeout) && !acknowledgeCommand.Ok)
             {
                 time = TimeUtils.Millis;                                
-                // Force updating the transport buffer
-                //_communicationManager.UpdateTransportBuffer();
                 // Yield to other threads in order to process data in the buffer
                 Thread.Yield();
                 // Check if an acknowledgment command has come in
                 acknowledgeCommand = CheckForAcknowledge(ackCmdId, sendQueueState);
             }
 
-            // Re enable thread based polling of Serial Interface
-            //_communicationManager.StartListening();
-
-            // Re-enable invoking command callbacks
-            //_receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Start;
             return acknowledgeCommand;
         }
 
@@ -157,6 +144,5 @@ namespace CommandMessenger
             // Return not Ok received command
             return new ReceivedCommand();
         }
-
     }
 }

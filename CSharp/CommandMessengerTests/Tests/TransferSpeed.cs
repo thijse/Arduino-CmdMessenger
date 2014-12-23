@@ -153,7 +153,7 @@ namespace CommandMessengerTests
             // Now wait until all values have arrived
             while (!_receiveSeriesFinished)
             {
-                Thread.Sleep(10);
+                Thread.Sleep(100);
             }
         }
 
@@ -261,7 +261,7 @@ namespace CommandMessengerTests
             // Now wait until receiving party acknowledges that values have arrived
             while (!_sendSeriesFinished)
             {
-                Thread.Sleep(10);
+                Thread.Sleep(100);
             }
         }
 
@@ -321,7 +321,7 @@ namespace CommandMessengerTests
             // Now wait until receiving party acknowledges that values have arrived
             while (!_sendSeriesFinished)
             {
-                Thread.Sleep(10);
+                Thread.Sleep(100);
             }
         }
 

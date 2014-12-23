@@ -202,44 +202,6 @@ namespace CommandMessenger.Transport.Bluetooth
             ConnectDevice(device, null);
         }
 
-
-        //public void Read()
-        //{
-        //    //keep connection open
-        //    var buffer = new byte[2048];
-        //    int bytesReceived = 0;
-        //    bool listening = true;
-        //    while (listening)
-        //    {
-        //        Thread.Yield();
-        //        try
-        //        {
-        //            bytesReceived = _stream.Read(buffer, 0, 2048);
-        //        }
-        //        catch(Exception e)
-        //        {
-        //           Console.WriteLine("error during read: "+e.Message); 
-        //        }
-
-        //        if (bytesReceived > 0)
-        //        {
-        //            var stringReceived = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
-        //            Console.Write(stringReceived);
-
-        //        }
-        //        else
-        //        {
-        //            QuickScanForDevices();
-        //            // Do read to force connection check
-        //            _stream.Read(buffer, 0, 0);
-        //            if (!_localClient.Connected)
-        //            {
-        //                Console.WriteLine("Disconnected!");
-        //            }
-        //        }
-        //    }
-        //}
-
         public static List<SerialPort> GetSerialPorts()
         {
             var portIdentifiers = new[]

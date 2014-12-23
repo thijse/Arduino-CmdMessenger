@@ -130,7 +130,7 @@ namespace CommandMessenger.Transport.Bluetooth
             //_queueSpeed.Sleep(50);
         }        
 
-        public void StartListening()
+        /*public void StartListening()
         {
             ThreadRunState = ThreadRunStates.Start;
         }
@@ -138,7 +138,7 @@ namespace CommandMessenger.Transport.Bluetooth
         public void StopListening()
         {
             ThreadRunState = ThreadRunStates.Stop;
-        }
+        }*/
 
         private void Poll(ThreadRunStates threadRunState)
         {

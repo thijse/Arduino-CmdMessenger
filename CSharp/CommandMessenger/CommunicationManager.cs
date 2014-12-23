@@ -126,18 +126,6 @@ namespace CommandMessenger
             return _transport.Disconnect();
         }
 
-        /// <summary> Starts polling. </summary>
-        public void StartPolling()
-        {
-            _transport.StartListening();
-        }
-
-        /// <summary> Stop polling. </summary>
-        public void StopPolling()
-        {
-            _transport.StopListening();
-        }
-
         /// <summary> Writes a string to the transport layer. </summary>
         /// <param name="value"> The string to write. </param>
         public void WriteLine(string value)
@@ -164,11 +152,6 @@ namespace CommandMessenger
             var writeString = value.ToString();
             byte[] writeBytes = _stringEncoder.GetBytes(writeString);
             _transport.Write(writeBytes);
-        }
-
-        public void UpdateTransportBuffer()
-        {
-            _transport.Poll();
         }
 
         /// <summary> Reads the transport buffer into the string buffer. </summary>
