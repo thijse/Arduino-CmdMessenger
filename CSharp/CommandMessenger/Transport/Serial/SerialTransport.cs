@@ -20,19 +20,17 @@
 using System;
 using System.IO;
 using System.IO.Ports;
-using System.Threading;
 
 namespace CommandMessenger.Transport.Serial
 {
     /// <summary>Fas
     /// Manager for serial port data
     /// </summary>
-    public class SerialTransport : IDisposable, ITransport
+    public class SerialTransport : ITransport
     {
         private const int BufferMax = 4096;
 
         private readonly AsyncWorker _worker;
-        private readonly object _threadRunStateLock = new object();
         private readonly object _serialReadWriteLock = new object();
         private readonly object _readLock = new object();
         private readonly byte[] _readBuffer = new byte[BufferMax];
@@ -52,10 +50,10 @@ namespace CommandMessenger.Transport.Serial
 
         public SerialTransport()
         {
-            _worker = new AsyncWorker(ProcessQueue);
+            _worker = new AsyncWorker(Poll);
         }
 
-        private bool ProcessQueue()
+        private bool Poll()
         {
             var bytes = UpdateBuffer();
             if (bytes > 0 && NewDataReceived != null) NewDataReceived(this, null);
@@ -84,7 +82,7 @@ namespace CommandMessenger.Transport.Serial
                 {
                     DtrEnable = _currentSerialSettings.DtrEnable,
                     WriteTimeout = _currentSerialSettings.Timeout,
-                    ReadTimeout  = _currentSerialSettings.Timeout,
+                    ReadTimeout  = 500, // read timeout is used for polling in worker thread
                 };
 
             bool opened = Open();

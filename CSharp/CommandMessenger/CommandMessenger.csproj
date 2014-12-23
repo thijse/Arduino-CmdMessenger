@@ -58,7 +58,6 @@
     <Compile Include="CmdMessenger.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CommunicationManager.cs" />
-    <Compile Include="ConsoleUtils.cs" />
     <Compile Include="Transport\Serial\ISerialConnectionStorer.cs" />
     <Compile Include="Transport\Serial\SerialConnectionManager.cs" />
     <Compile Include="DisposableObject.cs" />
