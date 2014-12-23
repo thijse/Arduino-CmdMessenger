@@ -25,7 +25,7 @@ namespace CommandMessenger.Queue
     // Command queue base object. 
     public abstract class CommandQueue : IDisposable
     {
-        private readonly Worker _worker;
+        private readonly AsyncWorker _worker;
 
         protected readonly ListQueue<CommandStrategy> Queue = new ListQueue<CommandStrategy>();   // Buffer for commands
         protected readonly List<GeneralStrategy> GeneralStrategies = new List<GeneralStrategy>(); // Buffer for command independent strategies
@@ -50,7 +50,7 @@ namespace CommandMessenger.Queue
 
         public CommandQueue()
         {
-            _worker = new Worker(ProcessQueue);
+            _worker = new AsyncWorker(ProcessQueue);
         }
 
         /// <summary> Adds a general strategy. This strategy is applied to all queued and dequeued commands.  </summary>

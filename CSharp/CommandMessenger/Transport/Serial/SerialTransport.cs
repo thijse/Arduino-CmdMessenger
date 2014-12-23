@@ -31,7 +31,7 @@ namespace CommandMessenger.Transport.Serial
     {
         private const int BufferMax = 4096;
 
-        private readonly Worker _worker;
+        private readonly AsyncWorker _worker;
         private readonly object _threadRunStateLock = new object();
         private readonly object _serialReadWriteLock = new object();
         private readonly object _readLock = new object();
@@ -52,7 +52,7 @@ namespace CommandMessenger.Transport.Serial
 
         public SerialTransport()
         {
-            _worker = new Worker(ProcessQueue);
+            _worker = new AsyncWorker(ProcessQueue);
         }
 
         private bool ProcessQueue()

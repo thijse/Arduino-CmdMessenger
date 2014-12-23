@@ -92,7 +92,7 @@
     <Compile Include="TimeUtils.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Transport\Serial\SerialTransport.cs" />
-    <Compile Include="Worker.cs" />
+    <Compile Include="AsyncWorker.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

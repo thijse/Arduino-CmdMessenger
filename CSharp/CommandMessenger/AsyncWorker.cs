@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace CommandMessenger
 {
-    public class Worker
+    public class AsyncWorker
     {
-        public enum WorkerState
+        public enum State
         {
             Stopped,
             Running,
@@ -17,20 +17,23 @@ namespace CommandMessenger
         /// Main worker method to do some work.
         /// </summary>
         /// <returns>true is there is more work to do, otherwise false and worker will wait until signalled with SignalWorker().</returns>
-        public delegate bool WorkerJob();
+        public delegate bool AsyncWorkerJob();
 
-        private volatile WorkerState _state = WorkerState.Stopped;
-        private volatile WorkerState _requestedState = WorkerState.Stopped;
+        private volatile State _state = State.Stopped;
+        private volatile State _requestedState = State.Stopped;
 
         private readonly object _lock = new object();
         private readonly EventWaiter _eventWaiter = new EventWaiter();
 
-        private readonly WorkerJob _workerJob = () => false;
+        private readonly AsyncWorkerJob _workerJob;
 
         private Task _workerTask;
 
-        public Worker(WorkerJob workerJob)
+        public State WorkerState { get { return _state; } }
+
+        public AsyncWorker(AsyncWorkerJob workerJob)
         {
+            if (workerJob == null) throw new ArgumentNullException("workerJob");
             _workerJob = workerJob;
         }
 
@@ -38,9 +41,9 @@ namespace CommandMessenger
         {
             lock (_lock)
             {
-                if (_state == WorkerState.Stopped)
+                if (_state == State.Stopped)
                 {
-                    _requestedState = _state = WorkerState.Running;
+                    _requestedState = _state = State.Running;
                     _eventWaiter.Reset();
 
                     // http://blogs.msdn.com/b/pfxteam/archive/2010/06/13/10024153.aspx
@@ -49,14 +52,14 @@ namespace CommandMessenger
                     {
                         while (true)
                         {
-                            if (_state == WorkerState.Stopped) break;
+                            if (_state == State.Stopped) break;
 
                             bool haveMoreWork = false;
-                            if (_state == WorkerState.Running)
+                            if (_state == State.Running)
                             {
                                 haveMoreWork = _workerJob();
                             }
-                            if (!haveMoreWork || _state == WorkerState.Suspended) _eventWaiter.WaitOne(Timeout.Infinite);
+                            if (!haveMoreWork || _state == State.Suspended) _eventWaiter.WaitOne(Timeout.Infinite);
                             _state = _requestedState;
                         }
                     }, CancellationToken.None, TaskCreationOptions.LongRunning);
@@ -74,9 +77,9 @@ namespace CommandMessenger
         {
             lock (_lock)
             {
-                if (_state == WorkerState.Running || _state == WorkerState.Suspended)
+                if (_state == State.Running || _state == State.Suspended)
                 {
-                    _requestedState = WorkerState.Stopped;
+                    _requestedState = State.Stopped;
                     _eventWaiter.Set();
                     _workerTask.Wait();
                     _workerTask.Dispose();
@@ -92,9 +95,9 @@ namespace CommandMessenger
         {
             lock (_lock)
             {
-                if (_state == WorkerState.Running)
+                if (_state == State.Running)
                 {
-                    _requestedState = WorkerState.Suspended;
+                    _requestedState = State.Suspended;
                     _eventWaiter.Set();
                     SpinWait.SpinUntil(() => _requestedState == _state);
                 }
@@ -109,9 +112,9 @@ namespace CommandMessenger
         {
             lock (_lock)
             {
-                if (_state == WorkerState.Suspended)
+                if (_state == State.Suspended)
                 {
-                    _requestedState = WorkerState.Running;
+                    _requestedState = State.Running;
                     _eventWaiter.Set();
                     SpinWait.SpinUntil(() => _requestedState == _state);
                 }
@@ -127,7 +130,7 @@ namespace CommandMessenger
         /// </summary>
         public void Signal()
         {
-            if (_state == WorkerState.Running) _eventWaiter.Set();
+            if (_state == State.Running) _eventWaiter.Set();
         }
     }
 }
