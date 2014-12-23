@@ -95,7 +95,7 @@ namespace CommandMessengerTests
             var command = DefineCommands();
 
             // Initialize tests, CHANGE "DEVICE" VARIABLE TO YOUR DEVICE!
-            var device = arduinoLeonardoOrProMicro;//arduinoNano;
+            var device = arduinoNano;
             InitializeTests(device, command);
 
             // Open log file for testing 
