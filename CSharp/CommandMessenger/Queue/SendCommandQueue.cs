@@ -23,24 +23,25 @@ using System.Threading;
 namespace CommandMessenger.Queue
 {
     /// <summary> Queue of received commands.  </summary>
-    class SendCommandQueue : CommandQueue
+    public class SendCommandQueue : CommandQueue
     {
-        private readonly Sender _sender;
-        public event NewLineEvent.NewLineHandler NewLineSent;
+        public event EventHandler<CommandEventArgs> NewLineSent;
+        
+        private readonly CommunicationManager _communicationManager;
         private readonly int _sendBufferMaxLength = 62;
-        string _sendBuffer = string.Empty;
-        int _commandCount;
+        private string _sendBuffer = string.Empty;
+        private int _commandCount;
 
         public uint MaxQueueLength { get; set; }
 
-
         /// <summary> send command queue constructor. </summary>
-        /// <param name="sender">Object that does the actual sending of the command</param>
+        /// <param name="communicationManager">The communication manager instance</param>
         /// <param name="sendBufferMaxLength">Length of the send buffer</param>
-        public SendCommandQueue(Sender sender, int sendBufferMaxLength)
+        public SendCommandQueue(CommunicationManager communicationManager, int sendBufferMaxLength)
         {
             MaxQueueLength = 5000;
-            _sender = sender;
+
+            _communicationManager = communicationManager;
             _sendBufferMaxLength = sendBufferMaxLength;
         }
 
@@ -90,7 +91,7 @@ namespace CommandMessenger.Queue
                 // event callback outside lock for performance
                 if (eventCommandStrategy != null)
                 {
-                    if (NewLineSent != null) NewLineSent(this, new NewLineEvent.NewLineArgs(eventCommandStrategy.Command));
+                    if (NewLineSent != null) NewLineSent(this, new CommandEventArgs(eventCommandStrategy.Command));
                     eventCommandStrategy = null;
                 }
             }
@@ -98,7 +99,7 @@ namespace CommandMessenger.Queue
             // Now check if a command string has been filled
             if (_sendBuffer.Length > 0)
             {
-                _sender.ExecuteSendString(_sendBuffer, SendQueue.InFrontQueue);              
+                _communicationManager.ExecuteSendString(_sendBuffer, SendQueue.InFrontQueue);              
             }
         }
 
@@ -115,7 +116,7 @@ namespace CommandMessenger.Queue
             }
             // Send command
             if (commandStrategy.Command != null)
-                _sender.ExecuteSendCommand((SendCommand)commandStrategy.Command, SendQueue.InFrontQueue);                     
+                _communicationManager.ExecuteSendCommand((SendCommand)commandStrategy.Command, SendQueue.InFrontQueue);                     
         }
 
         /// <summary> Adds a commandStrategy to the commands string.  </summary>

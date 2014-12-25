@@ -9,8 +9,8 @@ using InTheHand.Net.Sockets;
 
 namespace CommandMessenger.Transport.Bluetooth
 {
-    public class BluetoothUtils{
-
+    public class BluetoothUtils
+    {
         public static BluetoothEndPoint LocalEndpoint { get; private set; }
         public static BluetoothClient LocalClient { get; private set; }
         public static BluetoothRadio PrimaryRadio { get; private set; }

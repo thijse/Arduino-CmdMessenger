@@ -38,7 +38,7 @@ namespace CommandMessenger.Transport.Serial
 
         private SerialPort _serialPort;                                         // The serial port
         private SerialSettings _currentSerialSettings = new SerialSettings();   // The current serial settings
-        public event EventHandler DataReceived;                              // Event queue for all listeners interested in NewLinesReceived events.
+        public event EventHandler DataReceived;                                 // Event queue for all listeners interested in NewLinesReceived events.
 
         /// <summary> Gets or sets the current serial port settings. </summary>
         /// <value> The current serial settings. </value>

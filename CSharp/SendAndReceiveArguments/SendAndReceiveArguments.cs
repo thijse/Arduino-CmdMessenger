@@ -151,13 +151,13 @@ namespace SendAndReceiveArguments
         }
 
         // Log received line to console
-        private void NewLineReceived(object sender, NewLineEvent.NewLineArgs e)
+        private void NewLineReceived(object sender, CommandEventArgs e)
         {
             Console.WriteLine(@"Received > " + e.Command.CommandString());
         }
 
         // Log sent line to console
-        private void NewLineSent(object sender, NewLineEvent.NewLineArgs e)
+        private void NewLineSent(object sender, CommandEventArgs e)
         {
             Console.WriteLine(@"Sent > " + e.Command.CommandString());
         }

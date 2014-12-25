@@ -37,7 +37,7 @@ namespace CommandMessenger.Transport.Bluetooth
         private readonly AsyncWorker _worker;
         private readonly object _readLock = new object();
         private readonly object _writeLock = new object();
-        readonly byte[] _readBuffer = new byte[BufferSize];
+        private readonly byte[] _readBuffer = new byte[BufferSize];
         private int _bufferFilled;
 
         // Event queue for all listeners interested in NewLinesReceived events.

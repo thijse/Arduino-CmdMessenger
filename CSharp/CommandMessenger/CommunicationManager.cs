@@ -19,6 +19,7 @@
 
 using System;
 using System.Text;
+using System.Threading;
 using CommandMessenger.Queue;
 using CommandMessenger.Transport;
 
@@ -27,121 +28,87 @@ namespace CommandMessenger
     /// <summary>
     /// Manager for data over transport layer. 
     /// </summary>
-    public class CommunicationManager : DisposableObject
+    public class CommunicationManager : IDisposable
     {
-        private ITransport _transport;
         private readonly Encoding _stringEncoder = Encoding.GetEncoding("ISO-8859-1");	// The string encoder
-        private string _buffer = string.Empty;	                                        // The buffer
-
-        private ReceiveCommandQueue _receiveCommandQueue;
-        private IsEscaped _isEscaped;                                       // The is escaped
-        private char _fieldSeparator;                                       // The field separator
-        private char _commandSeparator;                                     // The command separator
-        private char _escapeCharacter;                                      // The escape character
+        private readonly object _sendCommandDataLock = new object();        // The process serial data lock
         private readonly object _parseLinesLock = new object();
+        private readonly ReceiveCommandQueue _receiveCommandQueue;
 
-        /// <summary> Default constructor. </summary>
-        /// /// <param name="disposeStack"> The DisposeStack</param>
-        /// <param name="transport"> The Transport Layer</param>
-        /// <param name="receiveCommandQueue"></param>
-        public CommunicationManager(DisposeStack disposeStack, ITransport transport, ReceiveCommandQueue receiveCommandQueue)
-        {
-            Initialize(disposeStack,transport, receiveCommandQueue, ';', ',', '/');
-        }
+        private readonly ITransport _transport;
+        private readonly IsEscaped _isEscaped;                                       // The is escaped
+        private readonly char _fieldSeparator;                                       // The field separator
+        private readonly char _commandSeparator;                                     // The command separator
+        private readonly char _escapeCharacter;                                      // The escape character
+
+        private string _buffer = string.Empty;
+
+        /// <summary> Gets or sets a whether to print a line feed carriage return after each command. </summary>
+        /// <value> true if print line feed carriage return, false if not. </value>
+        public bool PrintLfCr { get; set; }
+
+        /// <summary> Gets or sets the time stamp of the last received line. </summary>
+        /// <value> time stamp of the last received line. </value>
+        public long LastLineTimeStamp { get; private set; }
 
         /// <summary> Constructor. </summary>
         /// <param name="receiveCommandQueue"></param>
         /// <param name="commandSeparator">    The End-Of-Line separator. </param>
         /// <param name="fieldSeparator"></param>
         /// <param name="escapeCharacter"> The escape character. </param>
-        /// <param name="disposeStack"> The DisposeStack</param>
         /// <param name="transport"> The Transport Layer</param>
-        public CommunicationManager(DisposeStack disposeStack,ITransport transport, ReceiveCommandQueue receiveCommandQueue, char commandSeparator,  char fieldSeparator, char escapeCharacter)
+        public CommunicationManager(ITransport transport, ReceiveCommandQueue receiveCommandQueue, 
+            char commandSeparator = ';',  char fieldSeparator = ',', char escapeCharacter = '/')
         {
-            Initialize(disposeStack, transport, receiveCommandQueue, commandSeparator, fieldSeparator, escapeCharacter);
-        }
-
-        /// <summary> Finaliser. </summary>
-        ~CommunicationManager()
-        {
-            Dispose(false);
-        }
-
-        /// <summary> Initializes this object. </summary>
-        /// <param name="receiveCommandQueue"></param>
-        /// <param name="commandSeparator">    The End-Of-Line separator. </param>
-        /// <param name="fieldSeparator"></param>
-        /// <param name="escapeCharacter"> The escape character. </param>
-        /// <param name="disposeStack"> The DisposeStack</param>
-        /// /// <param name="transport"> The Transport Layer</param>
-        private void Initialize(DisposeStack disposeStack, ITransport transport, ReceiveCommandQueue receiveCommandQueue, char commandSeparator, char fieldSeparator, char escapeCharacter)
-        {
-            disposeStack.Push(this);
             _transport = transport;
-            _receiveCommandQueue = receiveCommandQueue;
             _transport.DataReceived += NewDataReceived;
+
+            _receiveCommandQueue = receiveCommandQueue;
             _commandSeparator = commandSeparator;
             _fieldSeparator = fieldSeparator;
             _escapeCharacter = escapeCharacter;
 
-            _isEscaped = new IsEscaped();           
+            _isEscaped = new IsEscaped();
         }
 
-        #region Fields
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-        /// <summary> Gets or sets the time stamp of the last received line. </summary>
-        /// <value> time stamp of the last received line. </value>
-        public long LastLineTimeStamp { get; set; }
-
-        #endregion
-
-        #region Properties
-
-
-        #endregion
-
-        #region Event handlers
-
-        /// <summary> transport layer data received. </summary>
         private void NewDataReceived(object o, EventArgs e)
         {
             ParseLines();
         }
 
-        #endregion
-
-        #region Methods
-
         /// <summary> Connects to a transport layer defined through the current settings. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Connect()
         {
-            return _transport.Connect();
+            return !_transport.IsConnected() && _transport.Connect();
         }
 
         /// <summary> Stops listening to the transport layer </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Disconnect()
         {
-            return _transport.Disconnect();
+            return _transport.IsConnected() && _transport.Disconnect();
         }
 
         /// <summary> Writes a string to the transport layer. </summary>
         /// <param name="value"> The string to write. </param>
         public void WriteLine(string value)
         {
-            byte[] writeBytes = _stringEncoder.GetBytes(value + '\n');
-            _transport.Write(writeBytes);
+            Write(value + '\n');
         }
 
         /// <summary> Writes a parameter to the transport layer followed by a NewLine. </summary>
         /// <typeparam name="T"> Generic type parameter. </typeparam>
         /// <param name="value"> The value. </param>
         public void WriteLine<T>(T value)
-        {        
-            var writeString = value.ToString();
-            byte[] writeBytes = _stringEncoder.GetBytes(writeString + '\n');
-            _transport.Write(writeBytes);
+        {
+            WriteLine(value.ToString());
         }
 
         /// <summary> Writes a parameter to the transport layer. </summary>
@@ -149,23 +116,126 @@ namespace CommandMessenger
         /// <param name="value"> The value. </param>
         public void Write<T>(T value)
         {
-            var writeString = value.ToString();
-            byte[] writeBytes = _stringEncoder.GetBytes(writeString);
+            Write(value.ToString());
+        }
+
+        /// <summary> Writes a string to the transport layer. </summary>
+        /// <param name="value"> The string to write. </param>
+        public void Write(string value)
+        {
+            byte[] writeBytes = _stringEncoder.GetBytes(value);
             _transport.Write(writeBytes);
         }
 
-        /// <summary> Reads the transport buffer into the string buffer. </summary>
-        private void ReadInBuffer()
+        /// <summary> Directly executes the send command operation. </summary>
+        /// <param name="sendCommand">    The command to sent. </param>
+        /// <param name="sendQueueState"> Property to optionally clear the send and receive queues. </param>
+        /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
+        public ReceivedCommand ExecuteSendCommand(SendCommand sendCommand, SendQueue sendQueueState)
         {
-            var data = _transport.Read();
-            _buffer += _stringEncoder.GetString(data);
+            // Disable listening, all callbacks are disabled until after command was sent
+
+            ReceivedCommand ackCommand;
+            lock (_sendCommandDataLock)
+            {
+                if (sendCommand.ReqAc)
+                {
+                    // Stop processing receive queue before sending. Wait until receive queue is actualy done
+                    _receiveCommandQueue.Suspend();
+                }
+                if (PrintLfCr)
+                    WriteLine(sendCommand.CommandString());
+                else
+                    Write(sendCommand.CommandString());
+                ackCommand = sendCommand.ReqAc ? BlockedTillReply(sendCommand.AckCmdId, sendCommand.Timeout, sendQueueState) : new ReceivedCommand();
+            }
+
+            if (sendCommand.ReqAc)
+            {
+                // Stop processing receive queue before sending
+                _receiveCommandQueue.Resume();
+            }
+
+            return ackCommand;
+        }
+
+        /// <summary> Directly executes the send string operation. </summary>
+        /// <param name="commandsString"> The string to sent. </param>
+        /// <param name="sendQueueState"> Property to optionally clear the send and receive queues. </param>
+        /// <returns> The received command is added for compatibility. It will not yield a response. </returns>
+        public ReceivedCommand ExecuteSendString(String commandsString, SendQueue sendQueueState)
+        {
+            lock (_sendCommandDataLock)
+            {
+                if (PrintLfCr)
+                    WriteLine(commandsString);
+                else
+                {
+                    Write(commandsString);
+                }
+            }
+            return new ReceivedCommand();
+        }
+
+        /// <summary> Blocks until acknowledgement reply has been received. </summary>
+        /// <param name="ackCmdId"> acknowledgement command ID </param>
+        /// <param name="timeout">  Timeout on acknowledge command. </param>
+        /// <param name="sendQueueState"></param>
+        /// <returns> A received command. </returns>
+        private ReceivedCommand BlockedTillReply(int ackCmdId, int timeout, SendQueue sendQueueState)
+        {
+            var start = TimeUtils.Millis;
+            var time = start;
+            var acknowledgeCommand = new ReceivedCommand();
+            while ((time - start < timeout) && !acknowledgeCommand.Ok)
+            {
+                time = TimeUtils.Millis;
+                // Yield to other threads in order to process data in the buffer
+                Thread.Yield();
+                // Check if an acknowledgment command has come in
+                acknowledgeCommand = CheckForAcknowledge(ackCmdId, sendQueueState);
+            }
+
+            return acknowledgeCommand;
+        }
+
+        /// <summary> Listen to the receive queue and check for a specific acknowledge command. </summary>
+        /// <param name="ackCmdId">        acknowledgement command ID. </param>
+        /// <param name="sendQueueState"> Property to optionally clear the send and receive queues. </param>
+        /// <returns> The first received command that matches the command ID. </returns>
+        private ReceivedCommand CheckForAcknowledge(int ackCmdId, SendQueue sendQueueState)
+        {
+            // Read command from received queue
+            ReceivedCommand currentReceivedCommand = _receiveCommandQueue.DequeueCommand();
+            if (currentReceivedCommand != null)
+            {
+                // Check if received command is valid
+                if (!currentReceivedCommand.Ok) return currentReceivedCommand;
+
+                // If valid, check if is same as command we are waiting for
+                if (currentReceivedCommand.CmdId == ackCmdId)
+                {
+                    // This is command we are waiting for, so return
+                    return currentReceivedCommand;
+                }
+
+                // This is not command we are waiting for
+                if (sendQueueState != SendQueue.ClearQueue)
+                {
+                    // Add to queue for later processing
+                    _receiveCommandQueue.QueueCommand(currentReceivedCommand);
+                }
+            }
+            // Return not Ok received command
+            return new ReceivedCommand();
         }
 
         private void ParseLines()
         {
             lock(_parseLinesLock) 
             {
-                ReadInBuffer();
+                var data = _transport.Read();
+                _buffer += _stringEncoder.GetString(data);
 
                 do
                 {
@@ -180,7 +250,7 @@ namespace CommandMessenger
         }
 
         /// <summary> Processes the byte message and add to queue. </summary>
-        public void ProcessLine(string line)
+        private void ProcessLine(string line)
         {            
             // Read line from raw buffer and make command
             var currentReceivedCommand = ParseMessage(line);
@@ -246,19 +316,13 @@ namespace CommandMessenger
             return pos;
         }
 
-        // Dispose
-        /// <summary> Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </summary>
-        /// <param name="disposing"> true if resources should be disposed, false if not. </param>
-        protected override void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {                
                 // Stop polling
                 _transport.DataReceived -= NewDataReceived;
             }
-            base.Dispose(disposing);
         }
-
-        #endregion
     }
 }

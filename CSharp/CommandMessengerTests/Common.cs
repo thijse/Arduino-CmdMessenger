@@ -236,14 +236,14 @@ namespace CommandMessengerTests
             _testElementFailCount++;
         }
 
-        public static void NewLineReceived(object sender, NewLineEvent.NewLineArgs e)
+        public static void NewLineReceived(object sender, CommandEventArgs e)
         {
             var message = e.Command.CommandString();
             //var message = CmdMessenger.CurrentReceivedLine;
             WriteLine(IdentSt + "Received > " + Silence(message));
         }
 
-        public static void NewLineSent(object sender, NewLineEvent.NewLineArgs e)
+        public static void NewLineSent(object sender, CommandEventArgs e)
         {
             //// Log data to text box
             var message = e.Command.CommandString();

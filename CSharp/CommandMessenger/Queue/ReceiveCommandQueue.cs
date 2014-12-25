@@ -17,6 +17,8 @@
 */
 #endregion
 
+using System;
+
 namespace CommandMessenger.Queue
 {
     /// <summary> Queue of received commands.  </summary>
@@ -24,7 +26,7 @@ namespace CommandMessenger.Queue
     {
         public delegate void HandleReceivedCommandDelegate(ReceivedCommand receivedCommand);
 
-        public event NewLineEvent.NewLineHandler NewLineReceived;
+        public event EventHandler<CommandEventArgs> NewLineReceived;
 
         private readonly HandleReceivedCommandDelegate _receivedCommandHandler;
 
@@ -81,7 +83,7 @@ namespace CommandMessenger.Queue
             }
             // Give a signal to indicate that a new item has been queued
             SignalWorker();
-            if (NewLineReceived != null) NewLineReceived(this, new NewLineEvent.NewLineArgs(commandStrategy.Command));
+            if (NewLineReceived != null) NewLineReceived(this, new CommandEventArgs(commandStrategy.Command));
         }
 
         private ReceivedCommand DequeueCommandInternal()
