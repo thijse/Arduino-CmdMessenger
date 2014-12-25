@@ -104,9 +104,9 @@ namespace CommandMessengerTests
             {
                 _cmdMessenger.SendCommand(new SendCommand(_command["AreYouReady"]));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Common.TestNotOk("Exception during sending of command");
+                Common.TestNotOk("Exception during sending of command: " + e.Message);
                 Common.EndTest();
                 return;
             }

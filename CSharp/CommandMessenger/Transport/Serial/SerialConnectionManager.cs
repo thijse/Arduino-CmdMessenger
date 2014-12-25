@@ -38,7 +38,7 @@ namespace CommandMessenger.Transport.Serial
     /// <summary>
     /// Connection manager for serial port connection
     /// </summary>
-    public class SerialConnectionManager :  ConnectionManager 
+    public class SerialConnectionManager : ConnectionManager 
     {
         private enum ScanType { None, Quick, Thorough }
 

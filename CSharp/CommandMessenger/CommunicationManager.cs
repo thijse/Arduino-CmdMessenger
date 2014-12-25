@@ -79,7 +79,7 @@ namespace CommandMessenger
             disposeStack.Push(this);
             _transport = transport;
             _receiveCommandQueue = receiveCommandQueue;
-            _transport.NewDataReceived += NewDataReceived;
+            _transport.DataReceived += NewDataReceived;
             _commandSeparator = commandSeparator;
             _fieldSeparator = fieldSeparator;
             _escapeCharacter = escapeCharacter;
@@ -254,7 +254,7 @@ namespace CommandMessenger
             if (disposing)
             {                
                 // Stop polling
-                _transport.NewDataReceived -= NewDataReceived;
+                _transport.DataReceived -= NewDataReceived;
             }
             base.Dispose(disposing);
         }

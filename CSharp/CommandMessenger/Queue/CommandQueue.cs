@@ -48,7 +48,7 @@ namespace CommandMessenger.Queue
             lock (Queue) Queue.Clear();
         }
 
-        public CommandQueue()
+        protected CommandQueue()
         {
             _worker = new AsyncWorker(ProcessQueue);
         }
@@ -84,6 +84,7 @@ namespace CommandMessenger.Queue
         public void Stop()
         {
             _worker.Stop();
+            Clear();
         }
 
         public void Suspend()

@@ -28,17 +28,17 @@ namespace CommandMessenger.Transport.Serial
     /// </summary>
     public class SerialTransport : ITransport
     {
-        private const int BufferMax = 4096;
+        private const int BufferSize = 4096;
 
         private readonly AsyncWorker _worker;
         private readonly object _serialReadWriteLock = new object();
         private readonly object _readLock = new object();
-        private readonly byte[] _readBuffer = new byte[BufferMax];
+        private readonly byte[] _readBuffer = new byte[BufferSize];
         private int _bufferFilled;
 
         private SerialPort _serialPort;                                         // The serial port
         private SerialSettings _currentSerialSettings = new SerialSettings();   // The current serial settings
-        public event EventHandler NewDataReceived;                              // Event queue for all listeners interested in NewLinesReceived events.
+        public event EventHandler DataReceived;                              // Event queue for all listeners interested in NewLinesReceived events.
 
         /// <summary> Gets or sets the current serial port settings. </summary>
         /// <value> The current serial settings. </value>
@@ -56,7 +56,7 @@ namespace CommandMessenger.Transport.Serial
         private bool Poll()
         {
             var bytes = UpdateBuffer();
-            if (bytes > 0 && NewDataReceived != null) NewDataReceived(this, null);
+            if (bytes > 0 && DataReceived != null) DataReceived(this, EventArgs.Empty);
 
             // Return true as we always have work to do here. The delay is achieved by SerialPort.Read timeout.
             return true;
@@ -217,7 +217,7 @@ namespace CommandMessenger.Transport.Serial
                 {
                     lock (_readLock)
                     {
-                        var nbrDataRead = _serialPort.Read(_readBuffer, _bufferFilled, (BufferMax - _bufferFilled));
+                        var nbrDataRead = _serialPort.Read(_readBuffer, _bufferFilled, (BufferSize - _bufferFilled));
                         _bufferFilled += nbrDataRead;
                     }
                     return _bufferFilled;

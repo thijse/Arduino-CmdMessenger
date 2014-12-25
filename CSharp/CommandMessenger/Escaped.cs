@@ -84,7 +84,7 @@ namespace CommandMessenger
         /// <returns> The string with all removeChars removed. </returns>
         public static string Remove(string input, char removeChar, char escapeChar)
         {
-            var output = "";
+            var output = string.Empty;
             var escaped = new IsEscaped();
             for (var i = 0; i < input.Length; i++)
             {
@@ -109,7 +109,7 @@ namespace CommandMessenger
         public static String[] Split(string input, char separator, char escapeCharacter,
                                      StringSplitOptions stringSplitOptions)
         {
-            var word = "";
+            var word = string.Empty;
             var result = new List<string>();
             for (var i = 0; i < input.Length; i++)
             {
@@ -117,7 +117,7 @@ namespace CommandMessenger
                 if (t == separator)
                 {
                     result.Add(word);
-                    word = "";
+                    word = string.Empty;
                 }
                 else
                 {
@@ -157,7 +157,7 @@ namespace CommandMessenger
         /// <returns> The unescaped output string. </returns>
         public static string Unescape(string input)
         {
-            string output = "";
+            string output = string.Empty;
             // Move unescaped characters right
             for (var fromChar = 0; fromChar < input.Length; fromChar++)
             {

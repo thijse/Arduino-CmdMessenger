@@ -31,16 +31,17 @@ namespace CommandMessenger.Transport.Bluetooth
     /// </summary>
     public class BluetoothTransport : ITransport
     {
+        private const int BufferSize = 4096;
+
         private NetworkStream _stream;
         private readonly AsyncWorker _worker;
         private readonly object _readLock = new object();
         private readonly object _writeLock = new object();
-        private const int BufferMax = 4096;
-        readonly byte[] _readBuffer = new byte[BufferMax];
+        readonly byte[] _readBuffer = new byte[BufferSize];
         private int _bufferFilled;
 
         // Event queue for all listeners interested in NewLinesReceived events.
-        public event EventHandler NewDataReceived;
+        public event EventHandler DataReceived;
 
         /// <summary> Gets or sets the current serial port settings. </summary>
         /// <value> The current serial settings. </value>
@@ -59,7 +60,7 @@ namespace CommandMessenger.Transport.Bluetooth
         private bool Poll()
         {
             var bytes = UpdateBuffer();
-            if (bytes > 0 && NewDataReceived != null) NewDataReceived(this, null);
+            if (bytes > 0 && DataReceived != null) DataReceived(this, EventArgs.Empty);
 
             return true;
         }        
@@ -198,7 +199,7 @@ namespace CommandMessenger.Transport.Bluetooth
                 {
                     lock (_readLock)
                     {
-                        var nbrDataRead = _stream.Read(_readBuffer, _bufferFilled, (BufferMax - _bufferFilled));
+                        var nbrDataRead = _stream.Read(_readBuffer, _bufferFilled, (BufferSize - _bufferFilled));
                         _bufferFilled += nbrDataRead;
                     }
                     return _bufferFilled;

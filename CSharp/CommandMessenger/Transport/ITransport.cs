@@ -24,14 +24,13 @@ namespace CommandMessenger.Transport
     /// <summary> Interface for transport layer.  </summary>
     public interface ITransport: IDisposable    
     {
-        byte[] Read();
-        //void Poll();
         bool Connect();
         bool Disconnect();
         bool IsConnected();
-        //void StartListening();
-        //void StopListening();
+
+        byte[] Read();
         void Write(byte[] buffer);
-        event EventHandler NewDataReceived; 
+
+        event EventHandler DataReceived; 
     }
 }
