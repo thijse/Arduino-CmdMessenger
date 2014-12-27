@@ -130,7 +130,7 @@ namespace CommandMessenger
                 }
             }
             result.Add(word);
-            if (stringSplitOptions == StringSplitOptions.RemoveEmptyEntries) result.RemoveAll(item => item == "");
+            if (stringSplitOptions == StringSplitOptions.RemoveEmptyEntries) result.RemoveAll(item => item == string.Empty);
             return result.ToArray();
         }
 

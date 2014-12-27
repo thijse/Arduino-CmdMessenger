@@ -42,10 +42,8 @@ namespace SendAndReceiveArguments
             };
 
             // Initialize the command messenger with the Serial Port transport layer
-            _cmdMessenger = new CmdMessenger(_serialTransport)
-            {
-                    BoardType = BoardType.Bit16 // Set if it is communicating with a 16- or 32-bit Arduino board
-            };
+            // Set if it is communicating with a 16- or 32-bit Arduino board
+            _cmdMessenger = new CmdMessenger(_serialTransport, BoardType.Bit16);
 
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();

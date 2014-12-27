@@ -60,7 +60,7 @@ namespace CommandMessenger.Queue
             _sendBuffer = string.Empty;
             CommandStrategy eventCommandStrategy = null;
 
-            // while maximum buffer string is not reached, and command in queue, AND    
+            // while maximum buffer string is not reached, and command in queue    
             while (_sendBuffer.Length < _sendBufferMaxLength && Queue.Count > 0)
             {
                 lock (Queue)
@@ -71,6 +71,8 @@ namespace CommandMessenger.Queue
                         if (commandStrategy.Command != null)
                         {
                             var sendCommand = (SendCommand)commandStrategy.Command;
+                            sendCommand.CommunicationManager = _communicationManager;
+                            sendCommand.InitArguments();
 
                             if (sendCommand.ReqAc)
                             {
@@ -83,7 +85,7 @@ namespace CommandMessenger.Queue
                             else
                             {                                
                                 eventCommandStrategy = commandStrategy;
-                                AddToCommandsString(commandStrategy);
+                                AddToCommandString(commandStrategy);
                             }
                         }                        
                     }
@@ -121,7 +123,7 @@ namespace CommandMessenger.Queue
 
         /// <summary> Adds a commandStrategy to the commands string.  </summary>
         /// <param name="commandStrategy"> The command strategy to add. </param>
-        private void AddToCommandsString(CommandStrategy commandStrategy)
+        private void AddToCommandString(CommandStrategy commandStrategy)
         {
             // Dequeue
             lock (Queue)
@@ -131,10 +133,11 @@ namespace CommandMessenger.Queue
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
             }
             // Add command
-            if (commandStrategy.Command != null) {
-                    _commandCount++;
-                    _sendBuffer += commandStrategy.Command.CommandString();
-                    if (Command.PrintLfCr) { _sendBuffer +=  Environment.NewLine; }
+            if (commandStrategy.Command != null) 
+            {
+                _commandCount++;
+                _sendBuffer += commandStrategy.Command.CommandString();
+                if (_communicationManager.PrintLfCr) { _sendBuffer += "\r\n"; }
             }
         }
 
@@ -166,7 +169,6 @@ namespace CommandMessenger.Queue
             {
                 // Process commandStrategy enqueue associated with command
                 commandStrategy.CommandQueue = Queue;
-                //commandStrategy.ThreadRunState = ThreadRunState;
 
                 commandStrategy.Enqueue();
 

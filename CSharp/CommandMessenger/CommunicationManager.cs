@@ -37,15 +37,23 @@ namespace CommandMessenger
 
         private readonly ITransport _transport;
         private readonly IsEscaped _isEscaped;                                       // The is escaped
-        private readonly char _fieldSeparator;                                       // The field separator
-        private readonly char _commandSeparator;                                     // The command separator
-        private readonly char _escapeCharacter;                                      // The escape character
 
         private string _buffer = string.Empty;
+
+        /// <summary> The field separator </summary>
+        public char FieldSeparator { get; private set; }
+
+        /// <summary>The command separator </summary>
+        public char CommandSeparator { get; private set; }
+
+        /// <summary> The escape character </summary>
+        public char EscapeCharacter { get; private set; }
 
         /// <summary> Gets or sets a whether to print a line feed carriage return after each command. </summary>
         /// <value> true if print line feed carriage return, false if not. </value>
         public bool PrintLfCr { get; set; }
+
+        public BoardType BoardType { get; set; }
 
         /// <summary> Gets or sets the time stamp of the last received line. </summary>
         /// <value> time stamp of the last received line. </value>
@@ -53,20 +61,23 @@ namespace CommandMessenger
 
         /// <summary> Constructor. </summary>
         /// <param name="receiveCommandQueue"></param>
-        /// <param name="commandSeparator">    The End-Of-Line separator. </param>
+        /// <param name="boardType">The Board Type. </param>
+        /// <param name="commandSeparator">The End-Of-Line separator. </param>
         /// <param name="fieldSeparator"></param>
         /// <param name="escapeCharacter"> The escape character. </param>
         /// <param name="transport"> The Transport Layer</param>
         public CommunicationManager(ITransport transport, ReceiveCommandQueue receiveCommandQueue, 
-            char commandSeparator = ';',  char fieldSeparator = ',', char escapeCharacter = '/')
+            BoardType boardType, char commandSeparator,  char fieldSeparator, char escapeCharacter)
         {
             _transport = transport;
             _transport.DataReceived += NewDataReceived;
 
             _receiveCommandQueue = receiveCommandQueue;
-            _commandSeparator = commandSeparator;
-            _fieldSeparator = fieldSeparator;
-            _escapeCharacter = escapeCharacter;
+
+            BoardType = boardType;
+            CommandSeparator = commandSeparator;
+            FieldSeparator = fieldSeparator;
+            EscapeCharacter = escapeCharacter;
 
             _isEscaped = new IsEscaped();
         }
@@ -100,7 +111,7 @@ namespace CommandMessenger
         /// <param name="value"> The string to write. </param>
         public void WriteLine(string value)
         {
-            Write(value + '\n');
+            Write(value + "\r\n");
         }
 
         /// <summary> Writes a parameter to the transport layer followed by a NewLine. </summary>
@@ -138,6 +149,9 @@ namespace CommandMessenger
             ReceivedCommand ackCommand;
             lock (_sendCommandDataLock)
             {
+                sendCommand.CommunicationManager = this;
+                sendCommand.InitArguments();
+
                 if (sendCommand.ReqAc)
                 {
                     // Stop processing receive queue before sending. Wait until receive queue is actualy done
@@ -148,6 +162,7 @@ namespace CommandMessenger
                 else
                     Write(sendCommand.CommandString());
                 ackCommand = sendCommand.ReqAc ? BlockedTillReply(sendCommand.AckCmdId, sendCommand.Timeout, sendQueueState) : new ReceivedCommand();
+                ackCommand.CommunicationManager = this;
             }
 
             if (sendCommand.ReqAc)
@@ -160,21 +175,21 @@ namespace CommandMessenger
         }
 
         /// <summary> Directly executes the send string operation. </summary>
-        /// <param name="commandsString"> The string to sent. </param>
+        /// <param name="commandString"> The string to sent. </param>
         /// <param name="sendQueueState"> Property to optionally clear the send and receive queues. </param>
         /// <returns> The received command is added for compatibility. It will not yield a response. </returns>
-        public ReceivedCommand ExecuteSendString(String commandsString, SendQueue sendQueueState)
+        public ReceivedCommand ExecuteSendString(String commandString, SendQueue sendQueueState)
         {
             lock (_sendCommandDataLock)
             {
                 if (PrintLfCr)
-                    WriteLine(commandsString);
+                    WriteLine(commandString);
                 else
                 {
-                    Write(commandsString);
+                    Write(commandString);
                 }
             }
-            return new ReceivedCommand();
+            return new ReceivedCommand { CommunicationManager = this };
         }
 
         /// <summary> Blocks until acknowledgement reply has been received. </summary>
@@ -186,7 +201,7 @@ namespace CommandMessenger
         {
             var start = TimeUtils.Millis;
             var time = start;
-            var acknowledgeCommand = new ReceivedCommand();
+            var acknowledgeCommand = new ReceivedCommand { CommunicationManager = this };
             while ((time - start < timeout) && !acknowledgeCommand.Ok)
             {
                 time = TimeUtils.Millis;
@@ -226,8 +241,9 @@ namespace CommandMessenger
                     _receiveCommandQueue.QueueCommand(currentReceivedCommand);
                 }
             }
+
             // Return not Ok received command
-            return new ReceivedCommand();
+            return new ReceivedCommand { CommunicationManager = this };
         }
 
         private void ParseLines()
@@ -268,11 +284,10 @@ namespace CommandMessenger
         {
             // Trim and clean line
             var cleanedLine = line.Trim('\r', '\n');
-            cleanedLine = Escaping.Remove(cleanedLine, _commandSeparator, _escapeCharacter);
+            cleanedLine = Escaping.Remove(cleanedLine, CommandSeparator, EscapeCharacter);
 
             return new ReceivedCommand(
-                Escaping.Split(cleanedLine, _fieldSeparator, 
-                _escapeCharacter, StringSplitOptions.RemoveEmptyEntries));
+                Escaping.Split(cleanedLine, FieldSeparator, EscapeCharacter, StringSplitOptions.RemoveEmptyEntries)) { CommunicationManager = this };
         }
 
         /// <summary> Reads a float line from the buffer, if complete. </summary>
@@ -307,7 +322,7 @@ namespace CommandMessenger
             while (pos < _buffer.Length)
             {
                 var escaped = _isEscaped.EscapedChar(_buffer[pos]);
-                if (_buffer[pos] == _commandSeparator && !escaped)
+                if (_buffer[pos] == CommandSeparator && !escaped)
                 {
                     return pos;
                 }

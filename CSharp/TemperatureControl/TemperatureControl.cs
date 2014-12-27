@@ -110,14 +110,14 @@ namespace DataLogging
                  // We do not need to set serial port and baud rate: it will be found by the connection manager                                                           
 
             // Initialize the command messenger with one of the two transport layers
-            _cmdMessenger = new CmdMessenger(_transport)
+            // Set if it is communicating with a 16- or 32-bit Arduino board
+            _cmdMessenger = new CmdMessenger(_transport, BoardType.Bit16)
             {
-                BoardType = BoardType.Bit16, // Set if it is communicating with a 16- or 32-bit Arduino board
                 PrintLfCr = false            // Do not print newLine at end of command, to reduce data being sent
             };
 
             // Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
-            _cmdMessenger.SetControlToInvokeOn(chartForm);
+            _cmdMessenger.ControlToInvokeOn = chartForm;
 
             // Set command strategy to continuously to remove all commands on the receive queue that 
             // are older than 1 sec. This makes sure that if data logging comes in faster that it can 

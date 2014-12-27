@@ -50,13 +50,11 @@ namespace DataLogging
             };
 
             // Initialize the command messenger with the Serial Port transport layer
-            _cmdMessenger = new CmdMessenger(_serialTransport)
-            {
-                BoardType = BoardType.Bit16 // Set if it is communicating with a 16- or 32-bit Arduino board
-            };
+            // Set if it is communicating with a 16- or 32-bit Arduino board
+            _cmdMessenger = new CmdMessenger(_serialTransport, BoardType.Bit16);
 
             // Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
-            _cmdMessenger.SetControlToInvokeOn(chartForm);
+            _cmdMessenger.ControlToInvokeOn = chartForm;
 
             // Set Received command strategy that removes commands that are older than 1 sec
             _cmdMessenger.AddReceiveCommandStrategy(new StaleGeneralStrategy(1000));

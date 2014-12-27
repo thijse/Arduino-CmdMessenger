@@ -65,46 +65,25 @@ namespace CommandMessenger
         public event EventHandler<CommandEventArgs> NewLineSent;               // Event handler for a new line received
               
         private CommunicationManager _communicationManager;                 // The communication manager
-
-        private char _fieldSeparator;                                       // The field separator
-        private char _commandSeparator;                                     // The command separator
-        private bool _printLfCr;                                            // Add Linefeed + CarriageReturn 
-        private BoardType _boardType;
         private MessengerCallbackFunction _defaultCallback;                 // The default callback
         private Dictionary<int, MessengerCallbackFunction> _callbackList;   // List of callbacks
 
         private SendCommandQueue _sendCommandQueue;                         // The queue of commands to be sent
         private ReceiveCommandQueue _receiveCommandQueue;                   // The queue of commands to be processed
 
-        //private Logger _sendCommandLogger = new Logger(@"d:\sendCommands.txt");
-        
-        /// <summary> Embedded Processor type. Needed to translate variables between sides. </summary>
-        /// <value> The current received line. </value>
-        public BoardType BoardType {
-            get { return _boardType;  }
-            set
-            {
-                _boardType = value;
-                Command.BoardType = _boardType;
-            }
-        }
-
         /// <summary> Gets or sets a whether to print a line feed carriage return after each command. </summary>
         /// <value> true if print line feed carriage return, false if not. </value>
-        public bool PrintLfCr 
-        { 
-            get { return _printLfCr; } 
-            set 
-            {
-                _printLfCr = value;
-                Command.PrintLfCr = _printLfCr;
-                _communicationManager.PrintLfCr = _printLfCr;
-            } 
+        public bool PrintLfCr
+        {
+            get { return _communicationManager.PrintLfCr; }
+            set { _communicationManager.PrintLfCr = value; }
         }
 
         /// The control to invoke the callback on
         public Control ControlToInvokeOn { get; set; }
 
+        //private Logger _sendCommandLogger = new Logger(@"d:\sendCommands.txt");
+        
         // Enable logging send commands to file
         //public bool LogSendCommandsEnabled
         //{
@@ -131,70 +110,77 @@ namespace CommandMessenger
 
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
-        public CmdMessenger(ITransport transport)
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
+        public CmdMessenger(ITransport transport, BoardType boardType = BoardType.Bit16)
         {
-            Init(transport, ',', ';', '/', 60);
+            Init(transport, boardType, ',', ';', '/', 60);
         }
 
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
         /// <param name="sendBufferMaxLength"> The maximum size of the send buffer</param>
-        public CmdMessenger(ITransport transport, int sendBufferMaxLength)
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
+        public CmdMessenger(ITransport transport, int sendBufferMaxLength, BoardType boardType = BoardType.Bit16)
         {
-            Init(transport, ',', ';', '/', sendBufferMaxLength);
+            Init(transport, boardType, ',', ';', '/', sendBufferMaxLength);
         }
 
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
         /// <param name="fieldSeparator"> The field separator. </param>
-        public CmdMessenger(ITransport transport, char fieldSeparator)
+        public CmdMessenger(ITransport transport, BoardType boardType, char fieldSeparator)
         {
-            Init(transport, fieldSeparator, ';', '/', 60);
+            Init(transport, boardType, fieldSeparator, ';', '/', 60);
         }
 
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
         /// <param name="fieldSeparator"> The field separator. </param>
         /// <param name="sendBufferMaxLength"> The maximum size of the send buffer</param>
-        public CmdMessenger(ITransport transport, char fieldSeparator, int sendBufferMaxLength)
+        public CmdMessenger(ITransport transport, BoardType boardType, char fieldSeparator, int sendBufferMaxLength)
         {
-            Init(transport, fieldSeparator, ';', '/', sendBufferMaxLength);
+            Init(transport, boardType, fieldSeparator, ';', '/', sendBufferMaxLength);
         }
 
         /// <summary> Constructor. </summary>
         /// <param name="transport">   The transport layer. </param>
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
-        public CmdMessenger(ITransport transport, char fieldSeparator, char commandSeparator)
+        public CmdMessenger(ITransport transport, BoardType boardType, char fieldSeparator, char commandSeparator)
         {
-            Init(transport, fieldSeparator, commandSeparator, commandSeparator, 60);
+            Init(transport, boardType, fieldSeparator, commandSeparator, commandSeparator, 60);
         }
 
         /// <summary> Constructor. </summary>
         /// <param name="transport">   The transport layer. </param>
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
         /// <param name="escapeCharacter">  The escape character. </param>
         /// <param name="sendBufferMaxLength"> The maximum size of the send buffer</param>
-        public CmdMessenger(ITransport transport, char fieldSeparator, char commandSeparator,
+        public CmdMessenger(ITransport transport, BoardType boardType, char fieldSeparator, char commandSeparator,
                             char escapeCharacter, int sendBufferMaxLength)
         {
-            Init(transport, fieldSeparator, commandSeparator, escapeCharacter, sendBufferMaxLength);
+            Init(transport, boardType, fieldSeparator, commandSeparator, escapeCharacter, sendBufferMaxLength);
         }
 
         /// <summary> Initializes this object. </summary>
         /// <param name="transport">   The transport layer. </param>
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
         /// <param name="escapeCharacter">  The escape character. </param>
         /// <param name="sendBufferMaxLength"> The maximum size of the send buffer</param>
-        private void Init(ITransport transport, char fieldSeparator, char commandSeparator,
+        private void Init(ITransport transport, BoardType boardType, char fieldSeparator, char commandSeparator,
                           char escapeCharacter, int sendBufferMaxLength)
         {           
             ControlToInvokeOn = null;
             
             _receiveCommandQueue = new ReceiveCommandQueue(HandleMessage);
-            _communicationManager = new CommunicationManager(transport, _receiveCommandQueue, commandSeparator, fieldSeparator, escapeCharacter);
+            _communicationManager = new CommunicationManager(transport, _receiveCommandQueue, boardType, commandSeparator, fieldSeparator, escapeCharacter);
             _sendCommandQueue = new SendCommandQueue(_communicationManager, sendBufferMaxLength);
 
             PrintLfCr = false;
@@ -202,14 +188,7 @@ namespace CommandMessenger
             _receiveCommandQueue.NewLineReceived += (o, e) => InvokeNewLineEvent(NewLineReceived, e);
             _sendCommandQueue.NewLineSent        += (o, e) => InvokeNewLineEvent(NewLineSent, e);
 
-            _fieldSeparator = fieldSeparator;
-            _commandSeparator = commandSeparator;
-
-            Command.FieldSeparator = _fieldSeparator;
-            Command.CommandSeparator = _commandSeparator;
-            Command.PrintLfCr = PrintLfCr;            
-
-            Escaping.EscapeChars(_fieldSeparator, _commandSeparator, escapeCharacter);
+            Escaping.EscapeChars(fieldSeparator, commandSeparator, escapeCharacter);
             _callbackList = new Dictionary<int, MessengerCallbackFunction>();
 
             _sendCommandQueue.Start();
@@ -289,7 +268,7 @@ namespace CommandMessenger
             else
             {
                 // Empty command
-                receivedCommand = new ReceivedCommand();
+                receivedCommand = new ReceivedCommand { CommunicationManager = _communicationManager };
             }
 
             InvokeCallBack(callback, receivedCommand);
@@ -371,7 +350,7 @@ namespace CommandMessenger
                 // Put command at bottom of command queue
                 _sendCommandQueue.QueueCommand(sendCommand);
             }
-            return new ReceivedCommand();
+            return new ReceivedCommand { CommunicationManager = _communicationManager };
         }
 
         /// <summary> Synchronized send a command. </summary>

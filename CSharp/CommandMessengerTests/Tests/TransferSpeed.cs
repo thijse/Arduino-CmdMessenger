@@ -329,7 +329,7 @@ namespace CommandMessengerTests
         private static int CountBytesInCommand(Command command, bool printLfCr)
         {
             var bytes = command.CommandString().Length; // Command + command separator
-            if (printLfCr) bytes += Environment.NewLine.Length; // Add  bytes for carriage return ('\r') and /or a newline  ('\n')
+            if (printLfCr) bytes += 2; // Add  bytes for carriage return ('\r') and /or a newline  ('\n')
             return bytes;
         }
 

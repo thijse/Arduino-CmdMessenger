@@ -102,7 +102,7 @@ namespace CommandMessenger.TransportLayer
 
         public void LogLine(string logString)
         {
-            Log(logString + '\n');
+            Log(logString + Environment.NewLine);
         }
     }
 }

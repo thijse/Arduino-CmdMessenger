@@ -26,6 +26,8 @@ namespace CommandMessenger
     /// <summary> A command to be send by CmdMessenger </summary>
     public class SendCommand : Command
     {
+        private readonly List<Action> _lazyArguments = new List<Action>();
+
         /// <summary> Indicates if we want to wait for an acknowledge command. </summary>
         /// <value> true if request acknowledge, false if not. </value>
         public bool ReqAc { get; set; }
@@ -234,7 +236,6 @@ namespace CommandMessenger
             CmdId = cmdId;
             AckCmdId = ackCmdId;
             Timeout = timeout;
-            _arguments = new List<string>();
         }
 
         // ***** String based **** /
@@ -244,7 +245,7 @@ namespace CommandMessenger
         public void AddArgument(string argument)
         {
             if (argument != null)
-                _arguments.Add(argument);
+                _lazyArguments.Add(() => CmdArgs.Add(argument));
         }
 
         /// <summary> Adds command arguments.  </summary>
@@ -252,46 +253,47 @@ namespace CommandMessenger
         public void AddArguments(string[] arguments)
         {
             if (arguments != null)
-                _arguments.AddRange(arguments);
+                _lazyArguments.Add(() => CmdArgs.AddRange(arguments));
         }
-
-
 
         /// <summary> Adds a command argument. </summary>
         /// <param name="argument"> The argument. </param>
         public void AddArgument(float argument)
         {
-            _arguments.Add(argument.ToString("R",CultureInfo.InvariantCulture));
+            _lazyArguments.Add(() => CmdArgs.Add(argument.ToString("R", CultureInfo.InvariantCulture)));
         }
 
         /// <summary> Adds a command argument. </summary>
         /// <param name="argument"> The argument. </param>
         public void AddArgument(Double argument)
         {
-            if (BoardType == BoardType.Bit16)
+            _lazyArguments.Add(() =>
             {
-                // Not completely sure if this is needed for plain text sending.
-                var floatArg = (float) argument;
-                _arguments.Add(floatArg.ToString("R",CultureInfo.InvariantCulture));
-            }
-            else
-            {
-                _arguments.Add(argument.ToString("R",CultureInfo.InvariantCulture));
-            }
+                if (CommunicationManager.BoardType == BoardType.Bit16)
+                {
+                    // Not completely sure if this is needed for plain text sending.
+                    var floatArg = (float) argument;
+                    CmdArgs.Add(floatArg.ToString("R", CultureInfo.InvariantCulture));
+                }
+                else
+                {
+                    CmdArgs.Add(argument.ToString("R", CultureInfo.InvariantCulture));
+                }
+            });
         }
 
         /// <summary> Adds a command argument. </summary>
         /// <param name="argument"> The argument. </param>
         public void AddArgument(Int16 argument)
         {
-            _arguments.Add(argument.ToString(CultureInfo.InvariantCulture));
+            _lazyArguments.Add(() => CmdArgs.Add(argument.ToString(CultureInfo.InvariantCulture)));
         }
 
         /// <summary> Adds a command argument. </summary>
         /// <param name="argument"> The argument. </param>
         public void AddArgument(UInt16 argument)
         {
-            _arguments.Add(argument.ToString(CultureInfo.InvariantCulture));
+            _lazyArguments.Add(() => CmdArgs.Add(argument.ToString(CultureInfo.InvariantCulture)));
         }
 
         /// <summary> Adds a command argument. </summary>
@@ -299,7 +301,7 @@ namespace CommandMessenger
         public void AddArgument(Int32 argument)
         {
             // Make sure the other side can read this: on a 16 processor, read as Long
-            _arguments.Add(argument.ToString(CultureInfo.InvariantCulture));
+            _lazyArguments.Add(() => CmdArgs.Add(argument.ToString(CultureInfo.InvariantCulture)));
         }
 
         /// <summary> Adds a command argument. </summary>
@@ -307,7 +309,7 @@ namespace CommandMessenger
         public void AddArgument(UInt32 argument)
         {
             // Make sure the other side can read this: on a 16 processor, read as Long
-            _arguments.Add(argument.ToString(CultureInfo.InvariantCulture));
+            _lazyArguments.Add(() => CmdArgs.Add(argument.ToString(CultureInfo.InvariantCulture)));
         }
 
         /// <summary> Adds a command argument. </summary>
@@ -323,58 +325,67 @@ namespace CommandMessenger
         /// <param name="argument"> The argument. </param>
         public void AddBinArgument(string argument)
         {
-            _arguments.Add(Escaping.Escape(argument));
+            _lazyArguments.Add(() => CmdArgs.Add(Escaping.Escape(argument)));
         }
 
         /// <summary> Adds a binary command argument. </summary>
         /// <param name="argument"> The argument. </param>
         public void AddBinArgument(float argument)
         {
-            _arguments.Add(BinaryConverter.ToString(argument));
+            _lazyArguments.Add(() => CmdArgs.Add(BinaryConverter.ToString(argument)));
         }
 
         /// <summary> Adds a binary command argument. </summary>
         /// <param name="argument"> The argument. </param>
         public void AddBinArgument(Double argument)
         {
-            _arguments.Add(BoardType == BoardType.Bit16
+            _lazyArguments.Add(() => CmdArgs.Add(CommunicationManager.BoardType == BoardType.Bit16
                 ? BinaryConverter.ToString((float)argument)
-                : BinaryConverter.ToString(argument));
+                : BinaryConverter.ToString(argument)));
         }
 
         /// <summary> Adds a binary command argument. </summary>
         /// <param name="argument"> The argument. </param>
         public void AddBinArgument(Int16 argument)
         {
-            _arguments.Add(BinaryConverter.ToString(argument));
+            _lazyArguments.Add(() => CmdArgs.Add(BinaryConverter.ToString(argument)));
         }
 
         /// <summary> Adds a binary command argument. </summary>
         /// <param name="argument"> The argument. </param>
         public void AddBinArgument(UInt16 argument)
         {
-            _arguments.Add(BinaryConverter.ToString(argument));
+            _lazyArguments.Add(() => CmdArgs.Add(BinaryConverter.ToString(argument)));
         }
 
         /// <summary> Adds a binary command argument. </summary>
         /// <param name="argument"> The argument. </param>
         public void AddBinArgument(Int32 argument)
         {
-            _arguments.Add(BinaryConverter.ToString(argument));
+            _lazyArguments.Add(() => CmdArgs.Add(BinaryConverter.ToString(argument)));
         }
 
         /// <summary> Adds a binary command argument. </summary>
         /// <param name="argument"> The argument. </param>
         public void AddBinArgument(UInt32 argument)
         {
-            _arguments.Add(BinaryConverter.ToString(argument));
+            _lazyArguments.Add(() => CmdArgs.Add(BinaryConverter.ToString(argument)));
         }
 
         /// <summary> Adds a binary command argument. </summary>
         /// <param name="argument"> The argument. </param>
         public void AddBinArgument(bool argument)
         {
-            _arguments.Add(BinaryConverter.ToString(argument ? (byte) 1 : (byte) 0));
+            _lazyArguments.Add(() => CmdArgs.Add(BinaryConverter.ToString(argument ? (byte) 1 : (byte) 0)));
+        }
+
+        internal void InitArguments()
+        {
+            CmdArgs.Clear();
+            foreach (var action in _lazyArguments)
+            {
+                action.Invoke();
+            }
         }
     }
 }

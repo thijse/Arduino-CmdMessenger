@@ -36,14 +36,6 @@ namespace CommandMessenger
         private bool _block;
 
         /// <summary>
-        /// Return is event waiter is blocked or not
-        /// </summary>
-        public bool IsBlocked
-        {
-            get { return _block; }
-        }
-
-        /// <summary>
         /// start blocked (waiting for signal)
         /// </summary>
         public EventWaiter()
@@ -85,8 +77,12 @@ namespace CommandMessenger
                     return WaitState.Normal;
                 }
 
-                // Wait under for event
-                bool noTimeOut = Monitor.Wait(_key, timeOut);
+                // Wait under conditions
+                bool noTimeOut = true;
+                while (noTimeOut && _block)
+                {
+                    noTimeOut = Monitor.Wait(_key, timeOut);
+                }
 
                 // Block Wait for next entry
                 _block = true;
