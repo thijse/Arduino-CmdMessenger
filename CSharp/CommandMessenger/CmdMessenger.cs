@@ -75,7 +75,7 @@ namespace CommandMessenger
         private SendCommandQueue _sendCommandQueue;                         // The queue of commands to be sent
         private ReceiveCommandQueue _receiveCommandQueue;                   // The queue of commands to be processed
 
-        //private Logger _sendCommandLogger = new Logger(@"d:\sendCommands.txt");
+        
         /// <summary> Definition of the messenger callback function. </summary>
         /// <param name="receivedCommand"> The received command. </param>
         public delegate void MessengerCallbackFunction(ReceivedCommand receivedCommand);
@@ -105,38 +105,6 @@ namespace CommandMessenger
         /// <summary> Gets or sets the current received command line. </summary>
         /// <value> The current received line. </value>
         public String CurrentReceivedLine { get; private set; }
-
-
-
-        /// <summary> Gets or sets the currently sent line. </summary>
-        /// <value> The currently sent line. </value>
-        //public String CurrentSentLine { get; private set; }
-
-        // Enable logging send commands to file
-        //public bool LogSendCommandsEnabled
-        //{
-        //    get { return _sendCommandLogger.isEnabled; }
-        //    set { 
-        //        _sendCommandLogger.isEnabled = value;
-        //        if  (!_sendCommandLogger.isOpen) {
-        //            _sendCommandLogger.Open();
-        //        }
-        //    }
-        //}
-
-        /// <summary> Gets or sets the log file of send commands. </summary>
-        /// <value> The logfile name for send commands. </value>
-        //public String LogFileSendCommands
-        //{
-        //    get { return _sendCommandLogger.LogFileName; }
-        //    set { _sendCommandLogger.LogFileName = value; }
-        //}
-
-   
-
-        /// <summary> Gets or sets the log file of receive commands. </summary>
-        /// <value> The logfile name for receive commands. </value>
-        //public String LogFileReceiveCommands { get; set; }
 
         // The control to invoke the callback on
         internal Control ControlToInvokeOn;
@@ -205,6 +173,9 @@ namespace CommandMessenger
         {           
             ControlToInvokeOn = null;
             
+            //Logger.Open(@"sendCommands.txt");
+            Logger.DirectFlush = true;
+
             _receiveCommandQueue  = new ReceiveCommandQueue(DisposeStack, this);
             _communicationManager = new CommunicationManager(DisposeStack, transport, _receiveCommandQueue, commandSeparator, fieldSeparator, escapeCharacter);
             _sender               = new Sender(_communicationManager, _receiveCommandQueue);
@@ -226,11 +197,6 @@ namespace CommandMessenger
             //CurrentSentLine = "";
             CurrentReceivedLine = "";
         }
-
-        //void ReceiveCommandQueueNewLineReceived(object sender, NewLineEvent.NewLineArgs e)
-        //{
-        //    InvokeNewLineEvent(NewLineReceived, e);
-        //}
 
         public void SetSingleCore()
         {
@@ -308,8 +274,6 @@ namespace CommandMessenger
         public void HandleMessage(ReceivedCommand receivedCommand)
         {
             CurrentReceivedLine = receivedCommand.RawString;
-            // Send message that a new line has been received and is due to be processed
-            //InvokeEvent(NewLineReceived);
 
             MessengerCallbackFunction callback = null;
             if (receivedCommand.Ok)
@@ -367,7 +331,6 @@ namespace CommandMessenger
         /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
         public ReceivedCommand SendCommand(SendCommand sendCommand, SendQueue sendQueueState, ReceiveQueue receiveQueueState, UseQueue useQueue)
         {
-            //_sendCommandLogger.LogLine(sendCommand.CommandString());
             var synchronizedSend = (sendCommand.ReqAc || useQueue == UseQueue.BypassQueue);
 
             // When waiting for an acknowledge, it is typically best to wait for the ReceiveQueue to be empty
@@ -376,7 +339,6 @@ namespace CommandMessenger
             {
                 receiveQueueState = ReceiveQueue.WaitForEmptyQueue;
             }
-
 
             if (sendQueueState == SendQueue.ClearQueue )
             {
@@ -521,7 +483,6 @@ namespace CommandMessenger
             catch (Exception)
             {
             }
-
         }
 
         /// <summary> Finaliser. </summary>
@@ -542,7 +503,6 @@ namespace CommandMessenger
                 ControlToInvokeOn = null;
                 _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
                 _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
-               // _sendCommandLogger.Close();
             }
             base.Dispose(disposing);
         }

@@ -128,7 +128,6 @@ namespace CommandMessenger.Bluetooth
             {
                 Poll(ThreadRunState);
             }
-            //_queueSpeed.Sleep(50);
         }        
 
         public void StartListening()
@@ -302,6 +301,12 @@ namespace CommandMessenger.Bluetooth
                 {
                     // Timeout (expected)
                 }
+            }
+            else
+            {
+                // In case of no connection 
+                // Sleep a bit otherwise CPU load will go through roof
+                Thread.Sleep(25);
             }
             return 0;
         }

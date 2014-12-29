@@ -18,6 +18,8 @@
 
 #endregion
 
+using System;
+using System.Net.Configuration;
 using System.Threading;
 
 namespace CommandMessenger
@@ -28,15 +30,15 @@ namespace CommandMessenger
     {
         public enum WaitState
         {
-            Quit,
-            TimeOut,
+            KeepOpen,
+            KeepBlocked,
+            TimedOut,
             Normal
         }
 
         readonly object _key = new object();
         bool _block;
-        bool _quit;
-
+        private WaitState _waitState = WaitState.Normal;
 
         /// <summary>
         /// start blocked (waiting for signal)
@@ -73,7 +75,7 @@ namespace CommandMessenger
             lock (_key)
             {
                 // Check if quit has been raised before the wait function is entered
-                if (_quit) { return WaitState.Quit; }
+                if (_waitState == WaitState.KeepOpen) { return _waitState; }
 
                 // Check if signal has already been raised before the wait function is entered                
                 if (!_block)
@@ -85,7 +87,9 @@ namespace CommandMessenger
 
                 // Wait under conditions
                 bool noTimeOut = true;
-                while (noTimeOut && _block)
+
+  
+                while (IsBlocked(_block,noTimeOut,_waitState))
                 {
                     noTimeOut = Monitor.Wait(_key, timeOut);
                 }
@@ -93,10 +97,29 @@ namespace CommandMessenger
                 _block = true;
 
                 // Check if quit signal has already been raised after wait                
-                if (_quit) { return WaitState.Quit; }
+                if (_waitState == WaitState.KeepOpen) { return _waitState; }
+
+                // Check if quit signal has already been raised after wait                
+                if (_waitState == WaitState.KeepBlocked)
+                {
+                    throw new Exception("Blocked state unexpected");
+                }
 
                 // Return whether the Wait function was quit because of an Set event or timeout
-                return noTimeOut ? WaitState.Normal : WaitState.TimeOut;
+                return noTimeOut ? WaitState.Normal : WaitState.TimedOut;
+            }
+        }
+
+        private bool IsBlocked(bool block, bool noTimeOut, WaitState waitState)
+        {
+            switch (waitState)
+            {
+                case WaitState.KeepBlocked:
+                    return true;
+                case WaitState.KeepOpen:
+                    return false;
+                default:
+                    return (noTimeOut && block);
             }
         }
 
@@ -124,15 +147,31 @@ namespace CommandMessenger
         }
 
         /// <summary>
-        /// Quit. Unblocks thread in Wait function and exits
-        // will not block again until Resume is called
+        /// KeepOpen. Unblocks thread in Wait function and exits
+        // will not block again until Normal is called
         /// </summary>
-        public void Quit()
+        public void KeepOpen()
         {
             lock (_key)
             {
                 _block = false;
-                _quit = true;
+                //_quit = true;
+                _waitState = WaitState.KeepOpen;
+                Monitor.Pulse(_key);
+            }
+        }
+
+        /// <summary>
+        /// KeepBlocked. Blocks thread in Wait function and exits
+        // will not unblock until Normal is called
+        /// </summary>
+        public void KeepBlocked()
+        {
+            lock (_key)
+            {
+                _block = false;
+                //_quit = true;
+                _waitState = WaitState.KeepBlocked;
                 Monitor.Pulse(_key);
             }
         }
@@ -141,12 +180,12 @@ namespace CommandMessenger
         /// Resumes functionallity
         /// </summary>
         /// <param name="set">If true, first Wait will directly continue</param>
-        public void Resume(bool set)
+        public void Normal(bool set)
         {
             lock (_key)
             {
                 _block = !set;
-                _quit = false;
+                _waitState = WaitState.Normal;
                 Monitor.Pulse(_key);
             }
         }

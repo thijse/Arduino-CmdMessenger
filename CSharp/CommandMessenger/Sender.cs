@@ -52,27 +52,14 @@ namespace CommandMessenger
             ReceivedCommand ackCommand;
             lock (_sendCommandDataLock)
             {
-                if (sendCommand.ReqAc)
-                {
-                    // Stop processing receive queue before sending. Wait until receive queue is actualy done
-                    _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
-                    _receiveCommandQueue.WaitForThreadRunStateSet();
-                }
                 if (PrintLfCr)
                     _communicationManager.WriteLine(sendCommand.CommandString());
                 else
                     _communicationManager.Write(sendCommand.CommandString());
                 ackCommand = sendCommand.ReqAc ? BlockedTillReply(sendCommand.AckCmdId, sendCommand.Timeout, sendQueueState) : new ReceivedCommand();                
             }
-
-            if (sendCommand.ReqAc)
-            {
-                // Stop processing receive queue before sending
-                _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Start;
-                _receiveCommandQueue.WaitForThreadRunStateSet();
-            }
-                return ackCommand;
-            }
+            return ackCommand;
+        }
 
         /// <summary> Directly executes the send string operation. </summary>
         /// <param name="commandsString"> The string to sent. </param>
@@ -92,38 +79,18 @@ namespace CommandMessenger
             return new ReceivedCommand();
         }
 
-                /// <summary> Blocks until acknowledgement reply has been received. </summary>
-        /// <param name="ackCmdId"> acknowledgement command ID </param>
-        /// <param name="timeout">  Timeout on acknowledge command. </param>
-        /// <param name="sendQueueState"></param>
-        /// <returns> A received command. </returns>
         private ReceivedCommand BlockedTillReply(int ackCmdId, int timeout, SendQueue sendQueueState)
         {
-            // Disable invoking command callbacks
-           //_receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Stop;
-            
-            // Disable thread based polling of Serial Interface
-            //_communicationManager.StopListening();
+            // Start direct processing. This will block the processQueue thread
+            _receiveCommandQueue.DirectProcessing();
 
-            var start = TimeUtils.Millis;
-            var time = start;
-            var acknowledgeCommand = new ReceivedCommand();
-            while ((time - start < timeout) && !acknowledgeCommand.Ok)
-            {
-                time = TimeUtils.Millis;                                
-                // Force updating the transport buffer
-                //_communicationManager.UpdateTransportBuffer();
-                // Yield to other threads in order to process data in the buffer
-                Thread.Yield();
-                // Check if an acknowledgment command has come in
-                acknowledgeCommand = CheckForAcknowledge(ackCmdId, sendQueueState);
-            }
+            // Wait for matching command
+           var acknowledgeCommand = _receiveCommandQueue.ReceivedCommandSignal.WaitForCmd(10000, ackCmdId, sendQueueState) ?? new ReceivedCommand();
 
-            // Re enable thread based polling of Serial Interface
-            //_communicationManager.StartListening();
+           // Return to queued processing. This will unblock the processQueue thread
+            _receiveCommandQueue.QueuedProcessing();
 
-            // Re-enable invoking command callbacks
-            //_receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Start;
+            // return acknowledgeCommand
             return acknowledgeCommand;
         }
 

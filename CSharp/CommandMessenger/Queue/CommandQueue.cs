@@ -32,7 +32,7 @@ namespace CommandMessenger
         protected readonly List<GeneralStrategy> GeneralStrategies = new List<GeneralStrategy>(); // Buffer for command independent strategies
         protected readonly CmdMessenger CmdMessenger;
         private ThreadRunStates _threadRunState;
-        protected readonly EventWaiter EventWaiter;
+        protected readonly EventWaiter ItemPutOnQueueSignal;
         protected object ThreadRunStateLock = new object();
 
         /// <summary> Run state of thread running the queue.  </summary>
@@ -54,6 +54,8 @@ namespace CommandMessenger
                 lock (ThreadRunStateLock)
                 {
                     _threadRunState = value;
+                    // Give a signal to indicate that process loop needs to run
+                    ItemPutOnQueueSignal.Set();
                 }
             }
             get
@@ -91,11 +93,13 @@ namespace CommandMessenger
             CmdMessenger = cmdMessenger;
             disposeStack.Push(this);
 
-            EventWaiter = new EventWaiter(true);
+            ItemPutOnQueueSignal = new EventWaiter(true);
 
             // Create queue thread and wait for it to start
-            QueueThread = new Thread(ProcessQueue) { Priority = ThreadPriority.Normal };
+            QueueThread = new Thread(ProcessQueueLoop) { Priority = ThreadPriority.Normal };
             QueueThread.Start();
+
+            // Wait for thread to properly initialize
             while (!QueueThread.IsAlive && QueueThread.ThreadState != ThreadState.Running)
             {
                 Thread.Sleep(25);
@@ -103,11 +107,33 @@ namespace CommandMessenger
         }
 
         public void WaitForThreadRunStateSet()
-        {
-            // Give a signal to indicate that process loop needs to run
-            EventWaiter.Set();
+        {           
             //  Now wait for state change
             SpinWait.SpinUntil(() => RunningThreadRunState == ThreadRunState);
+        }
+
+        private void ProcessQueueLoop()
+        {
+            while (ThreadRunState != ThreadRunStates.Abort)
+            {
+                bool empty;
+                lock(Queue) empty = IsEmpty;
+                if (empty) ItemPutOnQueueSignal.WaitOne(1000);
+
+                // Process queue unless stopped
+                if (ThreadRunState == ThreadRunStates.Start)
+                {
+                    ProcessQueue();
+                }
+                else
+                {
+                    //Thread.SpinWait(100000);
+                    Thread.Yield();
+                    //Thread.Sleep(100);
+                }
+                // Update real run state
+                RunningThreadRunState = ThreadRunState;
+            }
         }
 
         /// <summary> Process the queue. </summary>
@@ -144,7 +170,7 @@ namespace CommandMessenger
         public void Kill()
         {
             ThreadRunState = ThreadRunStates.Abort;
-            EventWaiter.Quit();
+            ItemPutOnQueueSignal.KeepOpen();
             //Wait for thread to die
             Join(2000);
             if (QueueThread.IsAlive) QueueThread.Abort();

@@ -27,8 +27,6 @@ namespace CommandMessenger
     {
         private readonly Sender _sender;
         public event NewLineEvent.NewLineHandler NewLineSent;
-        private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
-        //private readonly int _sendBufferMaxLength = 512;
         private readonly int _sendBufferMaxLength = 62;
         string _sendBuffer = string.Empty;
         int _commandCount = 0;
@@ -54,22 +52,8 @@ namespace CommandMessenger
         /// <summary> Process the queue. </summary>
         protected override void ProcessQueue()
         {
-            // Endless loop unless aborted
-            while (ThreadRunState != ThreadRunStates.Abort)
-            {
-                bool empty;
-                lock (Queue) empty = IsEmpty;
-                if (empty) EventWaiter.WaitOne(1000);
-
-                // Process queue unless stopped
-                if (ThreadRunState == ThreadRunStates.Start)
-                {
-                    // Only actually sleep if there are no commands in the queue
-                    SendCommandsFromQueue();                    
-                }
-                // Update real run state
-                RunningThreadRunState = ThreadRunState;
-            }
+            // ProcessQueue is triggered by ProcessQueueLoop if a new item has been queued
+            SendCommandsFromQueue();
         }
 
         /// <summary> Sends the commands from queue. All commands will be combined until either
@@ -194,7 +178,7 @@ namespace CommandMessenger
                 // Process all generic enqueue strategies
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
-            EventWaiter.Set();
+            ItemPutOnQueueSignal.Set();
         }
     }
 }

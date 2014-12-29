@@ -4,6 +4,8 @@
 // Note that the primary function is not to serve as an example, so the code may be less documented 
 // and clean than the example projects. 
 
+//Check bluetooth connection
+//Merge with other tree
 
 using System;
 using System.IO.Ports;
@@ -50,7 +52,7 @@ namespace CommandMessengerTests
             var arduinoNano = new systemSettings()
             {
                 Description = @"Arduino Nano /w AT mega328",
-                MinReceiveSpeed     = 84000,              // Bits per second 
+                MinReceiveSpeed     = 82000,              // Bits per second 
                 MinSendSpeed        = 90000,              // Bits per second                                      
                 MinDirectSendSpeed  = 52000,              // Bits per second                
                 BoardType           = BoardType.Bit16,    // 16-bit architecture, needed from binary value conversion
@@ -72,20 +74,20 @@ namespace CommandMessengerTests
             var arduinoLeonardoOrProMicro = new systemSettings()
             {
                 Description = @"Arduino Leonardo or Sparkfun ProMicro /w AT mega32u4",
-                MinReceiveSpeed = 84000,              // Bits per second 
-                MinSendSpeed = 90000,              // Bits per second                                      
-                MinDirectSendSpeed = 52000,              // Bits per second                
-                BoardType = BoardType.Bit16,    // 16-bit architecture, needed from binary value conversion
-                sendBufferMaxLength = 60,                 // Maximum send buffer size, optimally buffer size is similar to embedded controller
+                MinReceiveSpeed     = 82000,               // Bits per second 
+                MinSendSpeed        = 90000,               // Bits per second                                      
+                MinDirectSendSpeed  = 52000,               // Bits per second                
+                BoardType           = BoardType.Bit16,     // 16-bit architecture, needed from binary value conversion
+                sendBufferMaxLength = 60,                  // Maximum send buffer size, optimally buffer size is similar to embedded controller
                 Transport = new SerialTransport
                 {
                     CurrentSerialSettings = new SerialSettings()
                     {
-                        PortName = "COM13",                // Can be different!
+                        PortName = "COM13",               // Can be different!
                         BaudRate = 115200,                // Bits per second
                         DataBits = 8,                     // Data bits
                         Parity = Parity.None,             // Bit parity
-                        DtrEnable = true,                // Some boards need to send this to enabled                                    
+                        DtrEnable = true,                 // Some boards need to send this to enabled                                    
                     },
 
                 }
@@ -133,6 +135,9 @@ namespace CommandMessengerTests
 
         private void RunTests()
         {
+
+            //Todo: implement autoconnect tests
+
             // Test opening and closing connection
             _setupConnection.RunTests();
             
@@ -152,7 +157,7 @@ namespace CommandMessengerTests
             //// todo
             
             //// Test speed
-            //_transferSpeed.RunTests();
+            _transferSpeed.RunTests();
 
             //// Test load
             //// todo

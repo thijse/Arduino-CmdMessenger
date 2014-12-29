@@ -19,11 +19,18 @@
 
 namespace CommandMessenger
 {
+
+
     /// <summary> Queue of received commands.  </summary>
     public class ReceiveCommandQueue : CommandQueue
     {
+        private bool _directProcessing = false;
+
         public event NewLineEvent.NewLineHandler NewLineReceived;
-        private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
+
+        public ReceivedCommandSignal ReceivedCommandSignal { get; private set; }
+
+        //private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
 
         /// <summary> Receive command queue constructor. </summary>
         /// <param name="disposeStack"> DisposeStack. </param>
@@ -32,9 +39,25 @@ namespace CommandMessenger
             : base(disposeStack, cmdMessenger)
         {
             disposeStack.Push(this);
+            ReceivedCommandSignal = new ReceivedCommandSignal();
             QueueThread.Name = "ReceiveCommandQueue";
            // _queueSpeed.Name = "ReceiveCommandQueue";
         }
+
+        public void DirectProcessing()
+        {
+            // Disable processing queue
+            ItemPutOnQueueSignal.KeepBlocked();
+            _directProcessing = true;
+        }
+
+        public void QueuedProcessing()
+        {
+            // Enable processing queue
+            ItemPutOnQueueSignal.Normal(true);
+            _directProcessing = false;
+        }
+
 
         /// <summary> Dequeue the received command. </summary>
         /// <returns> The received command. </returns>
@@ -56,31 +79,10 @@ namespace CommandMessenger
         /// <summary> Process the queue. </summary>
         protected override void ProcessQueue()
         {
-            // Endless loop unless aborted
-            while (ThreadRunState != ThreadRunStates.Abort)
-            {               
-                // Calculate sleep time based on incoming command speed
-                //_queueSpeed.SetCount(Queue.Count);
-                //_queueSpeed.CalcSleepTime();
-
-                bool empty;
-                lock(Queue) empty = IsEmpty;
-                if (empty) EventWaiter.WaitOne(1000);
-
-                // Process queue unless stopped
-                if (ThreadRunState == ThreadRunStates.Start)
-                {
-                    // Only actually sleep if there are no commands in the queue
-                    //if (Queue.Count == 0) _queueSpeed.Sleep();
-
-                    var dequeueCommand = DequeueCommand();
-                    if (dequeueCommand != null)
-                    {
-                        CmdMessenger.HandleMessage(dequeueCommand);
-                    }
-                }
-                // Update real run state
-                RunningThreadRunState = ThreadRunState;
+            var dequeueCommand = DequeueCommand();
+            if (dequeueCommand != null)
+            {
+                CmdMessenger.HandleMessage(dequeueCommand);
             }
         }
 
@@ -95,15 +97,30 @@ namespace CommandMessenger
         /// <param name="commandStrategy"> The command strategy. </param>
         public override void QueueCommand(CommandStrategy commandStrategy)
         {
+            // See if we should redirect the command to the live thread for synchronous processing
+            // or put on the queue
+            if (_directProcessing)
+            {
+                // Directly send this command to waiting thread
+                var addToQueue = ReceivedCommandSignal.ProcessCommand((ReceivedCommand)commandStrategy.Command);
+                // check if the item needs to be added to the queue for later processing. If not return directly
+                if (!addToQueue) return;
+            }
+
+            // Put it on the queue
             lock (Queue)
             {
                 // Process all generic enqueue strategies
                 Queue.Enqueue(commandStrategy);
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
-            // Give a signal to indicate that a new item has been queued
-            EventWaiter.Set();
-            if (NewLineReceived != null) NewLineReceived(this, new NewLineEvent.NewLineArgs(commandStrategy.Command));
+
+            // If queue-ing, give a signal to queue processor to indicate that a new item has been queued
+            if (!_directProcessing)
+            {
+                ItemPutOnQueueSignal.Set();
+                if (NewLineReceived != null) NewLineReceived(this, new NewLineEvent.NewLineArgs(commandStrategy.Command));
+            }
         }
     }
 }

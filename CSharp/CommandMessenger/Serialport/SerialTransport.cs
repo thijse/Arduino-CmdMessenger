@@ -306,12 +306,18 @@ namespace CommandMessenger.Serialport
                 }
                 catch (IOException)
                 {
-                    // Already communicating, is not
+                    // IO exception (seems to happen every so much time)
                 }
                 catch (TimeoutException)
                 {
-                    // Timeout (expected)
+                    // Timeout (this is expected)
                 }
+            }
+            else
+            {
+                // In case of no connection 
+                // Sleep a bit otherwise CPU load will go through roof
+                Thread.Sleep(25);
             }
             return 0;
         }

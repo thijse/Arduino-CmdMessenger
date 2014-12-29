@@ -51,7 +51,6 @@
     <Compile Include="ConnectionManager.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="EventWaiter.cs" />
     <Compile Include="BinaryConverter.cs" />
     <Compile Include="Bluetooth\BluetoothConnectionManager.cs" />
     <Compile Include="Bluetooth\BluetoothUtils.cs" />
@@ -59,6 +58,10 @@
     <Compile Include="Command.cs" />
     <Compile Include="CommunicationManager.cs" />
     <Compile Include="ConsoleUtils.cs" />
+    <Compile Include="EventWaiter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ReceivedCommandSignal.cs" />
     <Compile Include="Serialport\ISerialConnectionStorer.cs" />
     <Compile Include="Serialport\SerialConnectionManager.cs" />
     <Compile Include="DisposableObject.cs" />
@@ -91,7 +94,7 @@
     <Compile Include="Serialport\SerialSettings.cs" />
     <Compile Include="StringUtils.cs" />
     <Compile Include="TimeUtils.cs" />
-    <Compile Include="TransportLayer\Logger.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Serialport\SerialTransport.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
