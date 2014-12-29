@@ -229,13 +229,6 @@ namespace CommandMessenger.Transport.Bluetooth
             return new byte[0];
         }
 
-        /// <summary> Gets the bytes in buffer. </summary>
-        /// <returns> Bytes in buffer </returns>
-        public int BytesInBuffer()
-        {
-            return IsOpen() ? _bufferFilled : 0;
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)

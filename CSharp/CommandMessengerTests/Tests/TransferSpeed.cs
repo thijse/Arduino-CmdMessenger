@@ -251,9 +251,9 @@ namespace CommandMessengerTests
                 var sendSeries = new SendCommand(_command["SendSeries"]);
                 sendSeries.AddArgument(sendItemsCount * SeriesBase);
 
+                _cmdMessenger.QueueCommand(sendSeries);
                 _receivedBytesCount += CountBytesInCommand(sendSeries, _cmdMessenger.PrintLfCr);
 
-                _cmdMessenger.QueueCommand(sendSeries);
                 if (sendItemsCount % (SeriesLength / 10) == 0)
                     Common.WriteLine("Send value: " + sendItemsCount * SeriesBase);
             }
@@ -308,9 +308,8 @@ namespace CommandMessengerTests
                 var sendSeries = new SendCommand(_command["SendSeries"]);
                 sendSeries.AddArgument(sendItemsCount * SeriesBase);
 
-                _receivedBytesCount += CountBytesInCommand(sendSeries, _cmdMessenger.PrintLfCr);
-
                 _cmdMessenger.SendCommand(sendSeries, SendQueue.Default, ReceiveQueue.Default, UseQueue.BypassQueue);
+                _receivedBytesCount += CountBytesInCommand(sendSeries, _cmdMessenger.PrintLfCr);
      
                 if (sendItemsCount%(SeriesLength/10) == 0)
                 {

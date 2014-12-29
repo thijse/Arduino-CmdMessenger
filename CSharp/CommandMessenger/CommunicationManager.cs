@@ -157,10 +157,12 @@ namespace CommandMessenger
                     // Stop processing receive queue before sending. Wait until receive queue is actualy done
                     _receiveCommandQueue.Suspend();
                 }
+
                 if (PrintLfCr)
                     WriteLine(sendCommand.CommandString());
                 else
                     Write(sendCommand.CommandString());
+
                 ackCommand = sendCommand.ReqAc ? BlockedTillReply(sendCommand.AckCmdId, sendCommand.Timeout, sendQueueState) : new ReceivedCommand();
                 ackCommand.CommunicationManager = this;
             }

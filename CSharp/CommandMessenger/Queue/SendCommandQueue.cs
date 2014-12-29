@@ -71,8 +71,6 @@ namespace CommandMessenger.Queue
                         if (commandStrategy.Command != null)
                         {
                             var sendCommand = (SendCommand)commandStrategy.Command;
-                            sendCommand.CommunicationManager = _communicationManager;
-                            sendCommand.InitArguments();
 
                             if (sendCommand.ReqAc)
                             {
@@ -169,6 +167,8 @@ namespace CommandMessenger.Queue
             {
                 // Process commandStrategy enqueue associated with command
                 commandStrategy.CommandQueue = Queue;
+                commandStrategy.Command.CommunicationManager = _communicationManager;
+                ((SendCommand)commandStrategy.Command).InitArguments();
 
                 commandStrategy.Enqueue();
 
