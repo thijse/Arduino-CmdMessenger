@@ -129,6 +129,11 @@ namespace CommandMessenger.Transport.Serial
                         Log(1, "Connected to serial port " + _serialTransport.CurrentSerialSettings.PortName + " at " + _serialTransport.CurrentSerialSettings.BaudRate + " bauds.");
                         StoreSettings();
                     }
+                    else
+                    {
+                        _serialTransport.Disconnect();
+                    }
+
                     return status;
                 }
 			

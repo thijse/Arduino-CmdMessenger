@@ -31,6 +31,8 @@ namespace CommandMessenger
 
         public State WorkerState { get { return _state; } }
 
+        public bool IsRunning { get { return _state == State.Running; } }
+
         public AsyncWorker(AsyncWorkerJob workerJob)
         {
             if (workerJob == null) throw new ArgumentNullException("workerJob");
