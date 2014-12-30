@@ -19,6 +19,7 @@
 
 using System;
 using System.Text;
+using System.Threading;
 using CommandMessenger.Queue;
 using CommandMessenger.Transport;
 
@@ -143,11 +144,19 @@ namespace CommandMessenger
         /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
         public ReceivedCommand ExecuteSendCommand(SendCommand sendCommand, SendQueue sendQueueState)
         {
+            // Disable listening, all callbacks are disabled until after command was sent
+
             ReceivedCommand ackCommand;
             lock (_sendCommandDataLock)
             {
                 sendCommand.CommunicationManager = this;
                 sendCommand.InitArguments();
+
+                if (sendCommand.ReqAc)
+                {
+                    // Stop processing receive queue before sending. Wait until receive queue is actualy done
+                    _receiveCommandQueue.Suspend();
+                }
 
                 if (PrintLfCr)
                     WriteLine(sendCommand.CommandString());
@@ -156,6 +165,12 @@ namespace CommandMessenger
 
                 ackCommand = sendCommand.ReqAc ? BlockedTillReply(sendCommand.AckCmdId, sendCommand.Timeout, sendQueueState) : new ReceivedCommand();
                 ackCommand.CommunicationManager = this;
+            }
+
+            if (sendCommand.ReqAc)
+            {
+                // Stop processing receive queue before sending
+                _receiveCommandQueue.Resume();
             }
 
             return ackCommand;
@@ -186,16 +201,8 @@ namespace CommandMessenger
         /// <returns> A received command. </returns>
         private ReceivedCommand BlockedTillReply(int ackCmdId, int timeout, SendQueue sendQueueState)
         {
-            // Start direct processing. This will block the processQueue thread
-            _receiveCommandQueue.DirectProcessing();
-
             // Wait for matching command
             var acknowledgeCommand = _receiveCommandQueue.WaitForCmd(timeout, ackCmdId, sendQueueState) ?? new ReceivedCommand();
-
-            // Return to queued processing. This will unblock the processQueue thread
-            _receiveCommandQueue.QueuedProcessing();
-
-            // return acknowledgeCommand
             return acknowledgeCommand;
         }
 

@@ -29,33 +29,11 @@ namespace CommandMessenger.Queue
         public event EventHandler<CommandEventArgs> NewLineReceived;
 
         private readonly HandleReceivedCommandDelegate _receivedCommandHandler;
-
-        private volatile bool _directProcessing;
-
         private ReceivedCommandSignal _receivedCommandSignal = new ReceivedCommandSignal();
 
         public ReceiveCommandQueue(HandleReceivedCommandDelegate receivedCommandHandler)
         {
             _receivedCommandHandler = receivedCommandHandler;
-        }
-
-        public void DirectProcessing()
-        {
-            // Disable processing queue
-            Suspend();
-            _directProcessing = true;
-        }
-
-        public void QueuedProcessing()
-        {
-            // Enable processing queue
-            Resume();
-            _directProcessing = false;
-        }
-
-        public ReceivedCommand WaitForCmd(int timeOut, int cmdId, SendQueue sendQueueState)
-        {
-            return _receivedCommandSignal.WaitForCmd(timeOut, cmdId, sendQueueState);
         }
 
         /// <summary> Dequeue the received command. </summary>
@@ -87,6 +65,11 @@ namespace CommandMessenger.Queue
             return hasMoreWork;
         }
 
+        public ReceivedCommand WaitForCmd(int timeOut, int cmdId, SendQueue sendQueueState)
+        {
+            return _receivedCommandSignal.WaitForCmd(timeOut, cmdId, sendQueueState);
+        }
+
         /// <summary> Queue the received command. </summary>
         /// <param name="receivedCommand"> The received command. </param>
         public void QueueCommand(ReceivedCommand receivedCommand)
@@ -98,9 +81,7 @@ namespace CommandMessenger.Queue
         /// <param name="commandStrategy"> The command strategy. </param>
         public override void QueueCommand(CommandStrategy commandStrategy)
         {
-            // See if we should redirect the command to the live thread for synchronous processing
-            // or put on the queue
-            if (_directProcessing)
+            if (IsSuspended)
             {
                 // Directly send this command to waiting thread
                 var addToQueue = _receivedCommandSignal.ProcessCommand((ReceivedCommand)commandStrategy.Command);
@@ -115,9 +96,9 @@ namespace CommandMessenger.Queue
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
 
-            // If queue-ing, give a signal to queue processor to indicate that a new item has been queued
-            if (!_directProcessing)
+            if (!IsSuspended)
             {
+                // Give a signal to indicate that a new item has been queued
                 SignalWorker();
                 if (NewLineReceived != null) NewLineReceived(this, new CommandEventArgs(commandStrategy.Command));
             }
