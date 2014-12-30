@@ -99,7 +99,8 @@ namespace CommandMessenger.Transport.Bluetooth
                     return false;
                 }
 
-                _worker.Start();
+                // Check worker is not running as a precaution. This needs to be rechecked.
+                if (!_worker.IsRunning) _worker.Start();
                 
                 return true;
             }
@@ -154,7 +155,8 @@ namespace CommandMessenger.Transport.Bluetooth
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Disconnect()
         {
-            _worker.Stop();
+            // Check worker is running as a precaution. This needs to be rechecked.
+            if (_worker.IsRunning) _worker.Stop();
             return Close();
         }
 
@@ -242,7 +244,6 @@ namespace CommandMessenger.Transport.Bluetooth
             if (disposing)
             {
                 Disconnect();
-                //if (IsOpen()) Close();
             }
         }
     }

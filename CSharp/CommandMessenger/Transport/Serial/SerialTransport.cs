@@ -18,9 +18,7 @@
 #endregion
 
 using System;
-using System.IO;
 using System.IO.Ports;
-using System.Threading;
 
 namespace CommandMessenger.Transport.Serial
 {
@@ -177,11 +175,10 @@ namespace CommandMessenger.Transport.Serial
                 }
                 catch
                 {
-                    return false;
                 }
             }
 
-            return true;
+            return false;
         }
 
         /// <summary> Closes the serial port. </summary>
@@ -229,12 +226,6 @@ namespace CommandMessenger.Transport.Serial
                 {
                     Disconnect();
                 }
-            }
-            else
-            {
-                // In case of no connection 
-                // Sleep a bit otherwise CPU load will go through roof
-                Thread.Sleep(25);
             }
 
             return 0;
