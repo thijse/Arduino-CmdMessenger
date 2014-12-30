@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using System.Net.Configuration;
 using System.Threading;
 
 namespace CommandMessenger
@@ -43,7 +42,7 @@ namespace CommandMessenger
         /// <summary>
         /// start blocked (waiting for signal)
         /// </summary>
-        public EventWaiter() 
+        public EventWaiter()
         {
             lock (_key)
             {
@@ -83,13 +82,13 @@ namespace CommandMessenger
                     // If so, reset event for next time and exit wait loop
                     _block = true;
                     return WaitState.Normal;
-                }               
+                }
 
                 // Wait under conditions
                 bool noTimeOut = true;
 
-  
-                while (IsBlocked(_block,noTimeOut,_waitState))
+
+                while (IsBlocked(_block, noTimeOut, _waitState))
                 {
                     noTimeOut = Monitor.Wait(_key, timeOut);
                 }
