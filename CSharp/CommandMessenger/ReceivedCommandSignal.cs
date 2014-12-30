@@ -18,7 +18,6 @@
 
 #endregion
 
-using System;
 using System.Threading;
 using CommandMessenger.TransportLayer;
 
@@ -136,8 +135,8 @@ namespace CommandMessenger
                 // If main thread is not waiting for any command (not waiting for acknowlegde)
                 if (_cmdIdToMatch == null)
                 {
-                    throw new Exception("should not happen");
-                    //return true;
+                    //throw new Exception("should not happen");
+                    return true;
                 }
                 else
                 {
