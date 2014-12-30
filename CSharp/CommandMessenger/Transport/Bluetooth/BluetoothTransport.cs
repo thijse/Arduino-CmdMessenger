@@ -20,6 +20,7 @@
 using System;
 using System.IO;
 using System.Net.Sockets;
+using System.Threading;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
@@ -209,6 +210,13 @@ namespace CommandMessenger.Transport.Bluetooth
                     // Timeout (expected)
                 }
             }
+            else
+            {
+                // In case of no connection 
+                // Sleep a bit otherwise CPU load will go through roof
+                Thread.Sleep(25);
+            }
+
             return 0;
         }
 

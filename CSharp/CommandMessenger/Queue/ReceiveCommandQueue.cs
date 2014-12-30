@@ -30,9 +30,32 @@ namespace CommandMessenger.Queue
 
         private readonly HandleReceivedCommandDelegate _receivedCommandHandler;
 
+        private volatile bool _directProcessing;
+
+        private ReceivedCommandSignal _receivedCommandSignal = new ReceivedCommandSignal();
+
         public ReceiveCommandQueue(HandleReceivedCommandDelegate receivedCommandHandler)
         {
             _receivedCommandHandler = receivedCommandHandler;
+        }
+
+        public void DirectProcessing()
+        {
+            // Disable processing queue
+            Suspend();
+            _directProcessing = true;
+        }
+
+        public void QueuedProcessing()
+        {
+            // Enable processing queue
+            Resume();
+            _directProcessing = false;
+        }
+
+        public ReceivedCommand WaitForCmd(int timeOut, int cmdId, SendQueue sendQueueState)
+        {
+            return _receivedCommandSignal.WaitForCmd(timeOut, cmdId, sendQueueState);
         }
 
         /// <summary> Dequeue the received command. </summary>
@@ -75,15 +98,29 @@ namespace CommandMessenger.Queue
         /// <param name="commandStrategy"> The command strategy. </param>
         public override void QueueCommand(CommandStrategy commandStrategy)
         {
+            // See if we should redirect the command to the live thread for synchronous processing
+            // or put on the queue
+            if (_directProcessing)
+            {
+                // Directly send this command to waiting thread
+                var addToQueue = _receivedCommandSignal.ProcessCommand((ReceivedCommand)commandStrategy.Command);
+                // check if the item needs to be added to the queue for later processing. If not return directly
+                if (!addToQueue) return;
+            }
+
             lock (Queue)
             {
                 // Process all generic enqueue strategies
                 Queue.Enqueue(commandStrategy);
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
-            // Give a signal to indicate that a new item has been queued
-            SignalWorker();
-            if (NewLineReceived != null) NewLineReceived(this, new CommandEventArgs(commandStrategy.Command));
+
+            // If queue-ing, give a signal to queue processor to indicate that a new item has been queued
+            if (!_directProcessing)
+            {
+                SignalWorker();
+                if (NewLineReceived != null) NewLineReceived(this, new CommandEventArgs(commandStrategy.Command));
+            }
         }
 
         private ReceivedCommand DequeueCommandInternal()

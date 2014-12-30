@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ReceivedCommandSignal.cs" />
     <Compile Include="Transport\Bluetooth\BluetoothConnectionStorer.cs" />
     <Compile Include="Transport\Bluetooth\IBluetoothConnectionStorer.cs" />
     <Compile Include="ConnectionManager.cs">

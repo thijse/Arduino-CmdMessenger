@@ -58,6 +58,11 @@ namespace CommandMessengerTests
             SetUpConnection();
             // Test acknowledgments
             TestSendCommandWithAcknowledgement();
+
+            //TestSendCommandWithAcknowledgement();
+
+            //TestSendCommandWithAcknowledgement();
+
             TestSendCommandWithAcknowledgementByArduino();
             WaitForAcknowledgementByEmbeddedFinished();
 

@@ -132,7 +132,7 @@ namespace CommandMessenger
         /// </summary>
         public void Signal()
         {
-            if (_state == State.Running) _eventWaiter.Set();
+            if (IsRunning) _eventWaiter.Set();
         }
     }
 }

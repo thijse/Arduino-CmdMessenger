@@ -82,32 +82,6 @@ namespace CommandMessenger
         /// The control to invoke the callback on
         public Control ControlToInvokeOn { get; set; }
 
-        //private Logger _sendCommandLogger = new Logger(@"d:\sendCommands.txt");
-        
-        // Enable logging send commands to file
-        //public bool LogSendCommandsEnabled
-        //{
-        //    get { return _sendCommandLogger.isEnabled; }
-        //    set { 
-        //        _sendCommandLogger.isEnabled = value;
-        //        if  (!_sendCommandLogger.isOpen) {
-        //            _sendCommandLogger.Open();
-        //        }
-        //    }
-        //}
-
-        /// <summary> Gets or sets the log file of send commands. </summary>
-        /// <value> The logfile name for send commands. </value>
-        //public String LogFileSendCommands
-        //{
-        //    get { return _sendCommandLogger.LogFileName; }
-        //    set { _sendCommandLogger.LogFileName = value; }
-        //}
-
-        /// <summary> Gets or sets the log file of receive commands. </summary>
-        /// <value> The logfile name for receive commands. </value>
-        //public String LogFileReceiveCommands { get; set; }
-
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
         /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
@@ -178,7 +152,10 @@ namespace CommandMessenger
                           char escapeCharacter, int sendBufferMaxLength)
         {           
             ControlToInvokeOn = null;
-            
+
+            //Logger.Open(@"sendCommands.txt");
+            Logger.DirectFlush = true;
+
             _receiveCommandQueue = new ReceiveCommandQueue(HandleMessage);
             _communicationManager = new CommunicationManager(transport, _receiveCommandQueue, boardType, commandSeparator, fieldSeparator, escapeCharacter);
             _sendCommandQueue = new SendCommandQueue(_communicationManager, sendBufferMaxLength);
@@ -300,7 +277,6 @@ namespace CommandMessenger
         /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
         public ReceivedCommand SendCommand(SendCommand sendCommand, SendQueue sendQueueState, ReceiveQueue receiveQueueState, UseQueue useQueue)
         {
-            //_sendCommandLogger.LogLine(sendCommand.CommandString());
             var synchronizedSend = (sendCommand.ReqAc || useQueue == UseQueue.BypassQueue);
 
             // When waiting for an acknowledge, it is typically best to wait for the ReceiveQueue to be empty

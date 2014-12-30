@@ -2,105 +2,80 @@
 using System.IO;
 using System.Text;
 
-namespace CommandMessenger.TransportLayer
+namespace CommandMessenger
 {
-    class Logger
+    static class Logger
     {
-        public readonly Encoding StringEncoder = Encoding.GetEncoding("ISO-8859-1");	// The string encoder
-        private FileStream _fileStream;
-        private string _logFileName;
+        private static readonly Encoding StringEncoder = Encoding.GetEncoding("ISO-8859-1");	// The string encoder
+        private static FileStream _fileStream;
 
-
-        public Logger(string logFileName)
-        {
-            LogFileName = logFileName;
-            isEnabled = true;
-            isOpen = false;
-        }
-
-        public Logger()
+        static Logger()
         {
             LogFileName = null;
+            IsEnabled = true;
         }
 
-        ~Logger()
-        {
-            Close();
-        }
-
-        public bool isEnabled { get; set; }
-        public bool isOpen { get; private set; }
+        static public bool IsEnabled { get; set; }
+        static public bool IsOpen { get; private set; }
+        static public bool DirectFlush { get; set; }
 
         /// <summary> Gets or sets the log file name. </summary>
         /// <value> The logfile name . </value>
-        public String LogFileName
-        {
-            get { return _logFileName; }
-            set
-            {
-                if (value != _logFileName && value != null)
-                {
-                    _logFileName = value;
-                    if (isOpen) { Open(); }
-                }
-            }
-        }
+        static public String LogFileName { get; private set; }
 
-        public bool Open()
+
+        static public bool Open()
         {
             return Open(LogFileName);
         }
 
-        public bool Open(string logFileName)
+        static public bool Open(string logFileName)
         {
+            if (IsOpen && LogFileName == logFileName) return true;
+
             LogFileName = logFileName;
-            if (isOpen) { 
-                try
-                {
-                    _fileStream.Close();
-                }
-                catch (Exception) {}
-                isOpen = false;
-            }
-
-            try
-            {
-                _fileStream = new FileStream(logFileName, FileMode.Create, FileAccess.ReadWrite);
-                
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            isOpen = true;
-            return true;
-        }
-
-        public void Close()
-        {
-            if (isOpen)
+            if (IsOpen)
             {
                 try
                 {
                     _fileStream.Close();
                 }
                 catch (Exception) { }
-                isOpen = false;
+                IsOpen = false;
             }
-        }
 
-        public void Log(string logString)
-        {
-            if (isEnabled && isOpen)
+            try
             {
-                byte[] writeBytes = StringEncoder.GetBytes(logString);
-                _fileStream.Write(writeBytes, 0, writeBytes.Length);
-                _fileStream.Flush();
+                _fileStream = new FileStream(logFileName, FileMode.Create, FileAccess.ReadWrite);
             }
+            catch (Exception)
+            {
+                return false;
+            }
+            IsOpen = true;
+            return true;
         }
 
+        static public void Close()
+        {
+            if (!IsOpen) return;
+            try
+            {
+                _fileStream.Close();
+            }
+            catch (Exception) { }
+            IsOpen = false;
+        }
 
-        public void LogLine(string logString)
+        static public void Log(string logString)
+        {
+            if (!IsEnabled || !IsOpen) return;
+            var writeBytes = StringEncoder.GetBytes(logString);
+            _fileStream.Write(writeBytes, 0, writeBytes.Length);
+            if (DirectFlush) _fileStream.Flush();
+        }
+
+        static public void LogLine(string logString)
         {
             Log(logString + Environment.NewLine);
         }
