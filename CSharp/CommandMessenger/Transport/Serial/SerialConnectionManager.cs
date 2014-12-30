@@ -28,7 +28,7 @@ namespace CommandMessenger.Transport.Serial
     /// <summary>
     /// Class for storing last succesfull connection
     /// </summary>
-    [Serializable()]
+    [Serializable]
     public class SerialConnectionManagerSettings 
     {
         public String Port{ get; set; }
@@ -67,7 +67,7 @@ namespace CommandMessenger.Transport.Serial
 
         /// <summary>
         /// Connection manager for serial port connection
-        /// </summary
+        /// </summary>
         public SerialConnectionManager(SerialTransport serialTransport, CmdMessenger cmdMessenger, int watchdogCommandId = 0, string uniqueDeviceId = null, ISerialConnectionStorer serialConnectionStorer = null) :
             base(cmdMessenger, watchdogCommandId, uniqueDeviceId)
         {
@@ -145,7 +145,7 @@ namespace CommandMessenger.Transport.Serial
         {
             base.StartScan();
 
-            if (ConnectionManagerState == ConnectionManagerState.Scan)
+            if (ConnectionManagerMode == Mode.Scan)
             {
                 UpdateAvailablePorts();
                 _scanType = ScanType.None;
@@ -230,7 +230,7 @@ namespace CommandMessenger.Transport.Serial
                     foreach (var commonBaudRate in baudRates)
                     {
                         // Stop scanning if state was changed
-                        if (ConnectionManagerState != ConnectionManagerState.Scan) return false;
+                        if (ConnectionManagerMode != Mode.Scan) return false;
 
                         DeviceStatus status = TryConnection(portName, commonBaudRate);
                         if (status == DeviceStatus.Available) return true;
@@ -278,7 +278,7 @@ namespace CommandMessenger.Transport.Serial
 	                foreach (var baudRate in baudRateCollection)
 	                {
                         // Stop scanning if state was changed
-                        if (ConnectionManagerState != ConnectionManagerState.Scan) return false;
+                        if (ConnectionManagerMode != Mode.Scan) return false;
 
                         DeviceStatus status = TryConnection(portName, baudRate);
                         if (status == DeviceStatus.Available) return true;
@@ -335,7 +335,7 @@ namespace CommandMessenger.Transport.Serial
                 foreach (var currentBaudRate in sortedBaudRates)
                 {
                     // Stop scanning if state was changed
-                    if (ConnectionManagerState != ConnectionManagerState.Scan) return false;
+                    if (ConnectionManagerMode != Mode.Scan) return false;
                     
                     DeviceStatus status = TryConnection(portName, currentBaudRate);
                     if (status == DeviceStatus.Available) return true;
