@@ -19,7 +19,6 @@
 #endregion
 
 using System;
-using System.Net.Configuration;
 using System.Threading;
 
 namespace CommandMessenger
@@ -36,14 +35,14 @@ namespace CommandMessenger
             Normal
         }
 
-        readonly object _key = new object();
-        bool _block;
+        private readonly object _key = new object();
+        private bool _block;
         private WaitState _waitState = WaitState.Normal;
 
         /// <summary>
         /// start blocked (waiting for signal)
         /// </summary>
-        public EventWaiter() 
+        public EventWaiter()
         {
             lock (_key)
             {
@@ -83,13 +82,13 @@ namespace CommandMessenger
                     // If so, reset event for next time and exit wait loop
                     _block = true;
                     return WaitState.Normal;
-                }               
+                }
 
                 // Wait under conditions
                 bool noTimeOut = true;
 
-  
-                while (IsBlocked(_block,noTimeOut,_waitState))
+
+                while (IsBlocked(_block, noTimeOut, _waitState))
                 {
                     noTimeOut = Monitor.Wait(_key, timeOut);
                 }
@@ -102,7 +101,7 @@ namespace CommandMessenger
                 // Check if quit signal has already been raised after wait                
                 if (_waitState == WaitState.KeepBlocked)
                 {
-                    throw new Exception("Blocked state unexpected");
+                    throw new InvalidOperationException("Blocked state unexpected");
                 }
 
                 // Return whether the Wait function was quit because of an Set event or timeout

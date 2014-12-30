@@ -17,7 +17,7 @@
 */
 #endregion
 
-namespace CommandMessenger
+namespace CommandMessenger.Queue
 {
     /// <summary> Base of general strategy.  </summary>
     public class GeneralStrategy

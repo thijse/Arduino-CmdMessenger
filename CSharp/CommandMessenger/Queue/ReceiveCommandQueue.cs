@@ -17,73 +17,74 @@
 */
 #endregion
 
-namespace CommandMessenger
+using System;
+
+namespace CommandMessenger.Queue
 {
-
-
     /// <summary> Queue of received commands.  </summary>
     public class ReceiveCommandQueue : CommandQueue
     {
-        private bool _directProcessing = false;
+        public delegate void HandleReceivedCommandDelegate(ReceivedCommand receivedCommand);
 
-        public event NewLineEvent.NewLineHandler NewLineReceived;
+        public event EventHandler<CommandEventArgs> NewLineReceived;
 
-        public ReceivedCommandSignal ReceivedCommandSignal { get; private set; }
+        private readonly HandleReceivedCommandDelegate _receivedCommandHandler;
 
-        //private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
+        private volatile bool _directProcessing;
 
-        /// <summary> Receive command queue constructor. </summary>
-        /// <param name="disposeStack"> DisposeStack. </param>
-        /// <param name="cmdMessenger"> The command messenger. </param>
-        public ReceiveCommandQueue(DisposeStack disposeStack, CmdMessenger cmdMessenger )
-            : base(disposeStack, cmdMessenger)
+        private ReceivedCommandSignal _receivedCommandSignal = new ReceivedCommandSignal();
+
+        public ReceiveCommandQueue(HandleReceivedCommandDelegate receivedCommandHandler)
         {
-            disposeStack.Push(this);
-            ReceivedCommandSignal = new ReceivedCommandSignal();
-            QueueThread.Name = "ReceiveCommandQueue";
-           // _queueSpeed.Name = "ReceiveCommandQueue";
+            _receivedCommandHandler = receivedCommandHandler;
         }
 
         public void DirectProcessing()
         {
             // Disable processing queue
-            ItemPutOnQueueSignal.KeepBlocked();
+            Suspend();
             _directProcessing = true;
         }
 
         public void QueuedProcessing()
         {
             // Enable processing queue
-            ItemPutOnQueueSignal.Normal(true);
+            Resume();
             _directProcessing = false;
         }
 
+        public ReceivedCommand WaitForCmd(int timeOut, int cmdId, SendQueue sendQueueState)
+        {
+            return _receivedCommandSignal.WaitForCmd(timeOut, cmdId, sendQueueState);
+        }
 
         /// <summary> Dequeue the received command. </summary>
         /// <returns> The received command. </returns>
         public ReceivedCommand DequeueCommand()
         {
-            ReceivedCommand receivedCommand = null;
             lock (Queue)
             {
-                if (!IsEmpty)
-                {
-                    foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
-                    var commandStrategy = Queue.Dequeue();
-                    receivedCommand = (ReceivedCommand)commandStrategy.Command;                    
-                }
+                return DequeueCommandInternal();
             }        
-            return receivedCommand;
         }
 
-        /// <summary> Process the queue. </summary>
-        protected override void ProcessQueue()
+        protected override bool ProcessQueue()
         {
-            var dequeueCommand = DequeueCommand();
+            ReceivedCommand dequeueCommand;
+            bool hasMoreWork;
+
+            lock (Queue)
+            {
+                dequeueCommand = DequeueCommandInternal();
+                hasMoreWork = !IsEmpty;
+            }
+
             if (dequeueCommand != null)
             {
-                CmdMessenger.HandleMessage(dequeueCommand);
+                _receivedCommandHandler(dequeueCommand);
             }
+
+            return hasMoreWork;
         }
 
         /// <summary> Queue the received command. </summary>
@@ -102,12 +103,11 @@ namespace CommandMessenger
             if (_directProcessing)
             {
                 // Directly send this command to waiting thread
-                var addToQueue = ReceivedCommandSignal.ProcessCommand((ReceivedCommand)commandStrategy.Command);
+                var addToQueue = _receivedCommandSignal.ProcessCommand((ReceivedCommand)commandStrategy.Command);
                 // check if the item needs to be added to the queue for later processing. If not return directly
                 if (!addToQueue) return;
             }
 
-            // Put it on the queue
             lock (Queue)
             {
                 // Process all generic enqueue strategies
@@ -118,9 +118,21 @@ namespace CommandMessenger
             // If queue-ing, give a signal to queue processor to indicate that a new item has been queued
             if (!_directProcessing)
             {
-                ItemPutOnQueueSignal.Set();
-                if (NewLineReceived != null) NewLineReceived(this, new NewLineEvent.NewLineArgs(commandStrategy.Command));
+                SignalWorker();
+                if (NewLineReceived != null) NewLineReceived(this, new CommandEventArgs(commandStrategy.Command));
             }
+        }
+
+        private ReceivedCommand DequeueCommandInternal()
+        {
+            ReceivedCommand receivedCommand = null;
+            if (!IsEmpty)
+            {
+                foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
+                var commandStrategy = Queue.Dequeue();
+                receivedCommand = (ReceivedCommand)commandStrategy.Command;
+            }
+            return receivedCommand;
         }
     }
 }

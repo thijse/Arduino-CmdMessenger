@@ -8,8 +8,8 @@
 
 using System;
 using CommandMessenger;
-using CommandMessenger.Serialport;
-using CommandMessenger.TransportLayer;
+using CommandMessenger.Transport;
+using CommandMessenger.Transport.Serial;
 
 namespace SimpleWatchdog
 {
@@ -44,9 +44,9 @@ namespace SimpleWatchdog
             // We do not need to set serial port and baud rate: it will be found by the connection manager                                                           
 
             // Initialize the command messenger with the Serial Port transport layer
-            _cmdMessenger = new CmdMessenger(_transport)
+            // Set if it is communicating with a 16- or 32-bit Arduino board
+            _cmdMessenger = new CmdMessenger(_transport, BoardType.Bit16)
             {
-                BoardType = BoardType.Bit16, // Set if it is communicating with a 16- or 32-bit Arduino board
                 PrintLfCr = false // Do not print newLine at end of command, to reduce data being sent
             };
 

@@ -20,17 +20,13 @@ using System;
 
 namespace CommandMessenger
 {
-    public class NewLineEvent
+    public sealed class CommandEventArgs : EventArgs
     {
-        public delegate void NewLineHandler(object sender, NewLineArgs e);
+        public Command Command { get; private set; }
 
-        public class NewLineArgs : EventArgs
+        public CommandEventArgs(Command command)
         {
-            public Command Command { get; private set; }
-            public NewLineArgs(Command command)
-            {
-                Command = command;
-            }
+            Command = command;
         }
     }
 }

@@ -18,8 +18,7 @@
 #endregion
 using System;
 using CommandMessenger;
-using CommandMessenger.Serialport;
-using CommandMessenger.TransportLayer;
+using CommandMessenger.Transport.Serial;
 using System.IO;
 
 
@@ -41,8 +40,8 @@ namespace CommandMessengerTests
         private static bool _testStarted     = false;
         private static bool _testSetStarted  = false;
 
-        private static string _testDescription    = "";
-        private static string _testSetDescription = "";
+        private static string _testDescription = string.Empty;
+        private static string _testSetDescription = string.Empty;
 
         private static int _testElementFailCount = 0;
         private static int _testElementPassCount = 0;
@@ -59,7 +58,7 @@ namespace CommandMessengerTests
 
         public static CmdMessenger Connect(systemSettings systemSettings)
         {
-            CmdMessenger = new CmdMessenger(systemSettings.Transport, systemSettings.sendBufferMaxLength) {BoardType = systemSettings.BoardType};
+            CmdMessenger = new CmdMessenger(systemSettings.Transport, systemSettings.sendBufferMaxLength, systemSettings.BoardType);
             // Attach to NewLineReceived and NewLineSent for logging purposes
             LogCommands(true);
 
@@ -237,14 +236,14 @@ namespace CommandMessengerTests
             _testElementFailCount++;
         }
 
-        public static void NewLineReceived(object sender, NewLineEvent.NewLineArgs e)
+        public static void NewLineReceived(object sender, CommandEventArgs e)
         {
             var message = e.Command.CommandString();
             //var message = CmdMessenger.CurrentReceivedLine;
             WriteLine(IdentSt + "Received > " + Silence(message));
         }
 
-        public static void NewLineSent(object sender, NewLineEvent.NewLineArgs e)
+        public static void NewLineSent(object sender, CommandEventArgs e)
         {
             //// Log data to text box
             var message = e.Command.CommandString();

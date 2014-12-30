@@ -8,8 +8,8 @@
 using System;
 using System.Threading;
 using CommandMessenger;
-using CommandMessenger.Bluetooth;
-using CommandMessenger.Serialport;
+using CommandMessenger.Transport.Bluetooth;
+using CommandMessenger.Transport.Serial;
 
 namespace SendAndReceive
 {
@@ -49,10 +49,8 @@ namespace SendAndReceive
             };
 
             // Initialize the command messenger with the Serial Port transport layer
-            _cmdMessenger = new CmdMessenger(_bluetoothTransport) 
-                {
-                    BoardType = BoardType.Bit16 // Set if it is communicating with a 16- or 32-bit Arduino board
-                };
+            // Set if it is communicating with a 16- or 32-bit Arduino board
+            _cmdMessenger = new CmdMessenger(_bluetoothTransport, BoardType.Bit16); 
 
             // Tell CmdMessenger if it is communicating with a 16 or 32 bit Arduino board
 

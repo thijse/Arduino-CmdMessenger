@@ -19,13 +19,11 @@
 #endregion
 
 using System.Threading;
-using CommandMessenger.TransportLayer;
 
 namespace CommandMessenger
 {
     // This class will trigger the main thread when a specific command is received on the ReceiveCommandQueue thread
     // this is used when synchronously waiting for an acknowledge command in BlockedTillReply
-  
     public class ReceivedCommandSignal
     {
         public enum WaitState
@@ -34,9 +32,9 @@ namespace CommandMessenger
             Normal
         }
 
-        readonly object _key = new object();
-        bool _waitingForCommand;
-        bool _waitingForCommandProcessed;
+        private readonly object _key = new object();
+        private bool _waitingForCommand;
+        private bool _waitingForCommandProcessed;
         private int? _cmdIdToMatch;
         private SendQueue _sendQueueState;
         private ReceivedCommand _receivedCommand;

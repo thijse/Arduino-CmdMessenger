@@ -46,34 +46,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bluetooth\BluetoothConnectionStorer.cs" />
-    <Compile Include="Bluetooth\IBluetoothConnectionStorer.cs" />
+    <Compile Include="ReceivedCommandSignal.cs" />
+    <Compile Include="Transport\Bluetooth\BluetoothConnectionStorer.cs" />
+    <Compile Include="Transport\Bluetooth\IBluetoothConnectionStorer.cs" />
     <Compile Include="ConnectionManager.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="EventWaiter.cs" />
     <Compile Include="BinaryConverter.cs" />
-    <Compile Include="Bluetooth\BluetoothConnectionManager.cs" />
-    <Compile Include="Bluetooth\BluetoothUtils.cs" />
+    <Compile Include="Transport\Bluetooth\BluetoothConnectionManager.cs" />
+    <Compile Include="Transport\Bluetooth\BluetoothUtils.cs" />
     <Compile Include="CmdMessenger.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CommunicationManager.cs" />
-    <Compile Include="ConsoleUtils.cs" />
-    <Compile Include="EventWaiter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ReceivedCommandSignal.cs" />
-    <Compile Include="Serialport\ISerialConnectionStorer.cs" />
-    <Compile Include="Serialport\SerialConnectionManager.cs" />
-    <Compile Include="DisposableObject.cs" />
-    <Compile Include="DisposeStack.cs" />
-    <Compile Include="NewLineEvent.cs" />
+    <Compile Include="Transport\Serial\ISerialConnectionStorer.cs" />
+    <Compile Include="Transport\Serial\SerialConnectionManager.cs" />
+    <Compile Include="CommandEventArgs.cs" />
     <Compile Include="Queue\CollapseCommandStrategy.cs" />
     <Compile Include="Queue\CommandQueue.cs" />
     <Compile Include="Queue\CommandStrategy.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Queue\TopCommandStrategy.cs" />
-    <Compile Include="Queue\QueueSpeed.cs" />
     <Compile Include="Queue\ReceiveCommandQueue.cs" />
     <Compile Include="Queue\SendCommandQueue.cs">
       <SubType>Code</SubType>
@@ -85,18 +79,19 @@
     <Compile Include="Escaped.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SendCommand.cs" />
-    <Compile Include="Sender.cs" />
-    <Compile Include="Serialport\SerialConnectionStorer.cs" />
-    <Compile Include="Serialport\SerialUtils.cs" />
+    <Compile Include="Transport\Serial\SerialConnectionStorer.cs" />
+    <Compile Include="Transport\Serial\SerialUtils.cs" />
     <Compile Include="StructSerializer.cs" />
-    <Compile Include="Bluetooth\BluetoothTransport.cs" />
-    <Compile Include="TransportLayer\ITransport.cs" />
-    <Compile Include="Serialport\SerialSettings.cs" />
+    <Compile Include="Transport\Bluetooth\BluetoothTransport.cs" />
+    <Compile Include="Transport\ITransport.cs" />
+    <Compile Include="Transport\Serial\SerialSettings.cs" />
     <Compile Include="StringUtils.cs" />
     <Compile Include="TimeUtils.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Serialport\SerialTransport.cs" />
+    <Compile Include="Transport\Serial\SerialTransport.cs" />
+    <Compile Include="AsyncWorker.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

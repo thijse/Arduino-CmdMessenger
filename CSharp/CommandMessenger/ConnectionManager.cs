@@ -174,6 +174,8 @@ namespace CommandMessenger
                 }
 
                 _workerThread.DoWork -= WorkerThreadDoWork;
+
+                Disconnect();
             }
         }
 
@@ -217,13 +219,13 @@ namespace CommandMessenger
                 if (ControlToInvokeOn != null && ControlToInvokeOn.InvokeRequired)
                 {
                     //Asynchronously call on UI thread
-                    ControlToInvokeOn.BeginInvoke((MethodInvoker)(() => eventHandler(this, null)));
+                    ControlToInvokeOn.BeginInvoke((MethodInvoker)(() => eventHandler(this, EventArgs.Empty)));
                     Thread.Yield();
                 }
                 else
                 {
                     //Directly call
-                    eventHandler(this, null);
+                    eventHandler(this, EventArgs.Empty);
                 }
             }
             catch (Exception)

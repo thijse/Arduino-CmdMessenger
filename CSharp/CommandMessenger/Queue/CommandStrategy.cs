@@ -17,7 +17,7 @@
 */
 #endregion
 
-namespace CommandMessenger
+namespace CommandMessenger.Queue
 {
     /// <summary> Base command strategy.  </summary>
     public class CommandStrategy
@@ -32,10 +32,6 @@ namespace CommandMessenger
         /// <summary> Gets or sets the command queue. </summary>
         /// <value> A Queue of commands. </value>
         public ListQueue<CommandStrategy> CommandQueue { get; set; }
-
-        /// <summary> Gets or sets the run state of the thread. </summary>
-        /// <value> The thread run state. </value>
-        public CommandQueue.ThreadRunStates ThreadRunState { get; set; }
 
         /// <summary> Gets or sets the command. </summary>
         /// <value> The command wrapped in the strategy. </value>

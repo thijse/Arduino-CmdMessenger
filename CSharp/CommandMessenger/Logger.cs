@@ -2,13 +2,12 @@
 using System.IO;
 using System.Text;
 
-namespace CommandMessenger.TransportLayer
+namespace CommandMessenger
 {
     static class Logger
     {
-        public static readonly Encoding StringEncoder = Encoding.GetEncoding("ISO-8859-1");	// The string encoder
+        private static readonly Encoding StringEncoder = Encoding.GetEncoding("ISO-8859-1");	// The string encoder
         private static FileStream _fileStream;
-
 
         static Logger()
         {
@@ -22,8 +21,8 @@ namespace CommandMessenger.TransportLayer
 
         /// <summary> Gets or sets the log file name. </summary>
         /// <value> The logfile name . </value>
-        public static String LogFileName { get; private set; }
-       
+        static public String LogFileName { get; private set; }
+
 
         static public bool Open()
         {
@@ -35,12 +34,13 @@ namespace CommandMessenger.TransportLayer
             if (IsOpen && LogFileName == logFileName) return true;
 
             LogFileName = logFileName;
-            if (IsOpen) { 
+            if (IsOpen)
+            {
                 try
                 {
                     _fileStream.Close();
                 }
-                catch (Exception) {}
+                catch (Exception) { }
                 IsOpen = false;
             }
 
@@ -75,10 +75,9 @@ namespace CommandMessenger.TransportLayer
             if (DirectFlush) _fileStream.Flush();
         }
 
-
         static public void LogLine(string logString)
         {
-            Log(logString + '\n');
+            Log(logString + Environment.NewLine);
         }
     }
 }

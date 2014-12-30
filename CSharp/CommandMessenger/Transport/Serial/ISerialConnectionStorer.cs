@@ -17,7 +17,7 @@
 */
 #endregion
 
-namespace CommandMessenger.Serialport
+namespace CommandMessenger.Transport.Serial
 {
     public interface ISerialConnectionStorer
     {

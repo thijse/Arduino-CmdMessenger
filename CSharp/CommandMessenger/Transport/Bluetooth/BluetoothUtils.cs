@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 
-namespace CommandMessenger.Bluetooth
+namespace CommandMessenger.Transport.Bluetooth
 {
-    public class BluetoothUtils{
-
+    public class BluetoothUtils
+    {
         public static BluetoothEndPoint LocalEndpoint { get; private set; }
         public static BluetoothClient LocalClient { get; private set; }
         public static BluetoothRadio PrimaryRadio { get; private set; }
@@ -202,44 +201,6 @@ namespace CommandMessenger.Bluetooth
             var device = DeviceList[deviceId];
             ConnectDevice(device, null);
         }
-
-
-        //public void Read()
-        //{
-        //    //keep connection open
-        //    var buffer = new byte[2048];
-        //    int bytesReceived = 0;
-        //    bool listening = true;
-        //    while (listening)
-        //    {
-        //        Thread.Yield();
-        //        try
-        //        {
-        //            bytesReceived = _stream.Read(buffer, 0, 2048);
-        //        }
-        //        catch(Exception e)
-        //        {
-        //           Console.WriteLine("error during read: "+e.Message); 
-        //        }
-
-        //        if (bytesReceived > 0)
-        //        {
-        //            var stringReceived = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
-        //            Console.Write(stringReceived);
-
-        //        }
-        //        else
-        //        {
-        //            QuickScanForDevices();
-        //            // Do read to force connection check
-        //            _stream.Read(buffer, 0, 0);
-        //            if (!_localClient.Connected)
-        //            {
-        //                Console.WriteLine("Disconnected!");
-        //            }
-        //        }
-        //    }
-        //}
 
         public static List<SerialPort> GetSerialPorts()
         {

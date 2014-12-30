@@ -18,8 +18,8 @@
 
 using System;
 using CommandMessenger;
-using CommandMessenger.Bluetooth;
-using CommandMessenger.TransportLayer;
+using CommandMessenger.Transport;
+using CommandMessenger.Transport.Bluetooth;
 
 namespace SimpleBluetooth
 {
@@ -61,9 +61,9 @@ namespace SimpleBluetooth
             };
                                                          
             // Initialize the command messenger with the Serial Port transport layer
+            // Set if it is communicating with a 16- or 32-bit Arduino board
             _cmdMessenger = new CmdMessenger(_transport)
             {
-                BoardType = BoardType.Bit16, // Set if it is communicating with a 16- or 32-bit Arduino board
                 PrintLfCr = false // Do not print newLine at end of command, to reduce data being sent
             };
 

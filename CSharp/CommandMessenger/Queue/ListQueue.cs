@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 
-namespace CommandMessenger
+namespace CommandMessenger.Queue
 {
     /// <summary> Queue class.  </summary>
     /// <typeparam name="T"> Type of object to queue. </typeparam>

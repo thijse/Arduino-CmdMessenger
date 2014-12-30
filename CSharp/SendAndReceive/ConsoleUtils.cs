@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace CommandMessenger
 {
-    public class ConsoleUtils
+    public static class ConsoleUtils
     {
         public static EventHandler ConsoleClose = delegate {};
 

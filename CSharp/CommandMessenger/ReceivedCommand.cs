@@ -24,7 +24,7 @@ namespace CommandMessenger
     /// <summary> A command received from CmdMessenger </summary>
     public class ReceivedCommand : Command
     {
-        private int _parameter=-1;    // The parameter
+        private int _parameter = -1;    // The parameter
         private bool _dumped = true;  // true if parameter has been dumped
 
         /// <summary> Gets or sets the command input. </summary>
@@ -42,12 +42,12 @@ namespace CommandMessenger
         {
             int cmdId;
             CmdId = (rawArguments != null && rawArguments.Length !=0 && int.TryParse(rawArguments[0], out cmdId)) ? cmdId : -1;
-            if (CmdId<0) return;
+            if (CmdId < 0) return;
             if (rawArguments.Length > 1)
             {
                 var array = new string[rawArguments.Length - 1];
                 Array.Copy(rawArguments, 1, array, 0, array.Length);
-                _arguments.AddRange(array);
+                CmdArgs.AddRange(array);
             }
         }
 
@@ -58,7 +58,7 @@ namespace CommandMessenger
             // If this parameter has already been read, see if there is another one
             if (_dumped)
             {
-                if (_parameter < _arguments.Count-1)
+                if (_parameter < CmdArgs.Count-1)
                 {
                     _parameter++;
                     _dumped = false;
@@ -85,7 +85,7 @@ namespace CommandMessenger
             if (Next())
             {
                 Int16 current;
-                if (Int16.TryParse(_arguments[_parameter], out current))
+                if (Int16.TryParse(CmdArgs[_parameter], out current))
                 {
                     _dumped = true;
                     return current;
@@ -101,7 +101,7 @@ namespace CommandMessenger
             if (Next())
             {
                 UInt16 current;
-                if (UInt16.TryParse(_arguments[_parameter], out current))
+                if (UInt16.TryParse(CmdArgs[_parameter], out current))
                 {
                     _dumped = true;
                     return current;
@@ -124,7 +124,7 @@ namespace CommandMessenger
             if (Next())
             {
                 Int32 current;
-                if (Int32.TryParse(_arguments[_parameter], out current))
+                if (Int32.TryParse(CmdArgs[_parameter], out current))
                 {
                     _dumped = true;
                     return current;
@@ -140,7 +140,7 @@ namespace CommandMessenger
             if (Next())
             {
                 UInt32 current;
-                if (UInt32.TryParse(_arguments[_parameter], out current))
+                if (UInt32.TryParse(CmdArgs[_parameter], out current))
                 {
                     _dumped = true;
                     return current;
@@ -156,7 +156,7 @@ namespace CommandMessenger
             if (Next())
             {
                 float current;
-                if (float.TryParse(_arguments[_parameter], out current))
+                if (float.TryParse(CmdArgs[_parameter], out current))
                 {
                     _dumped = true;
                     return current;
@@ -169,12 +169,15 @@ namespace CommandMessenger
         /// <returns> The unsigned double value. </returns>
         public Double ReadDoubleArg()
         {
+            if (CommunicationManager == null)
+                throw new InvalidOperationException("CommunicationManager was not set for command.");
+
             if (Next())
             {
-                if (BoardType == BoardType.Bit16)
+                if (CommunicationManager.BoardType == BoardType.Bit16)
                 {
                     float current;
-                    if (float.TryParse(_arguments[_parameter], out current))
+                    if (float.TryParse(CmdArgs[_parameter], out current))
                     {
                         _dumped = true;
                         return (Double) current;
@@ -183,7 +186,7 @@ namespace CommandMessenger
                 else
                 {
                     Double current;
-                    if (Double.TryParse(_arguments[_parameter], out current))
+                    if (Double.TryParse(CmdArgs[_parameter], out current))
                     {
                         _dumped = true;
                         return current;
@@ -199,13 +202,13 @@ namespace CommandMessenger
         {
             if (Next())
             {
-                if (_arguments[_parameter] != null)
+                if (CmdArgs[_parameter] != null)
                 {
                     _dumped = true;
-                    return _arguments[_parameter];
+                    return CmdArgs[_parameter];
                 }
             }
-            return "";
+            return string.Empty;
         }
 
         // ***** Binary **** /
@@ -216,7 +219,7 @@ namespace CommandMessenger
         {
             if (Next())
             {
-                var current = BinaryConverter.ToFloat(_arguments[_parameter]);
+                var current = BinaryConverter.ToFloat(CmdArgs[_parameter]);
                 if (current != null)
                 {
                     _dumped = true;
@@ -230,11 +233,14 @@ namespace CommandMessenger
         /// <returns> The double value. </returns>
         public Double ReadBinDoubleArg()
         {
+            if (CommunicationManager == null)
+                throw new InvalidOperationException("CommunicationManager was not set for command.");
+
             if (Next())
             {
-                if (BoardType == BoardType.Bit16)
+                if (CommunicationManager.BoardType == BoardType.Bit16)
                 {
-                    var current = BinaryConverter.ToFloat(_arguments[_parameter]);
+                    var current = BinaryConverter.ToFloat(CmdArgs[_parameter]);
                     if (current != null)
                     {
                         _dumped = true;
@@ -243,7 +249,7 @@ namespace CommandMessenger
                 }
                 else
                 {
-                    var current = BinaryConverter.ToDouble(_arguments[_parameter]);
+                    var current = BinaryConverter.ToDouble(CmdArgs[_parameter]);
                     if (current != null)
                     {
                         _dumped = true;
@@ -260,7 +266,7 @@ namespace CommandMessenger
         {
             if (Next())
             {
-                var current = BinaryConverter.ToInt16(_arguments[_parameter]);
+                var current = BinaryConverter.ToInt16(CmdArgs[_parameter]);
                 if (current != null)
                 {
                     _dumped = true;
@@ -276,7 +282,7 @@ namespace CommandMessenger
         {
             if (Next())
             {
-                var current = BinaryConverter.ToUInt16(_arguments[_parameter]);
+                var current = BinaryConverter.ToUInt16(CmdArgs[_parameter]);
                 if (current != null)
                 {
                     _dumped = true;
@@ -292,7 +298,7 @@ namespace CommandMessenger
         {
             if (Next())
             {
-                var current = BinaryConverter.ToInt32(_arguments[_parameter]);
+                var current = BinaryConverter.ToInt32(CmdArgs[_parameter]);
                 if (current != null)
                 {
                     _dumped = true;
@@ -308,7 +314,7 @@ namespace CommandMessenger
         {
             if (Next())
             {
-                var current = BinaryConverter.ToUInt32(_arguments[_parameter]);
+                var current = BinaryConverter.ToUInt32(CmdArgs[_parameter]);
                 if (current != null)
                 {
                     _dumped = true;
@@ -324,13 +330,13 @@ namespace CommandMessenger
         {
             if (Next())
             {
-                if (_arguments[_parameter] != null)
+                if (CmdArgs[_parameter] != null)
                 {
                     _dumped = true;
-                    return Escaping.Unescape(_arguments[_parameter]);
+                    return Escaping.Unescape(CmdArgs[_parameter]);
                 }
             }
-            return "";
+            return string.Empty;
         }
 
         /// <summary> Reads the current binary argument as a boolean value. </summary>
@@ -339,7 +345,7 @@ namespace CommandMessenger
         {
             if (Next())
             {
-                var current = BinaryConverter.ToByte(_arguments[_parameter]);
+                var current = BinaryConverter.ToByte(CmdArgs[_parameter]);
                 if (current != null)
                 {
                     _dumped = true;

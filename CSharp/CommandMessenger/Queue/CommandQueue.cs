@@ -19,61 +19,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
 
-namespace CommandMessenger
+namespace CommandMessenger.Queue
 {
     // Command queue base object. 
-    public class CommandQueue : DisposableObject
+    public abstract class CommandQueue : IDisposable
     {
-        protected readonly Thread QueueThread;
+        private readonly AsyncWorker _worker;
+
         protected readonly ListQueue<CommandStrategy> Queue = new ListQueue<CommandStrategy>();   // Buffer for commands
         protected readonly List<GeneralStrategy> GeneralStrategies = new List<GeneralStrategy>(); // Buffer for command independent strategies
-        protected readonly CmdMessenger CmdMessenger;
-        private ThreadRunStates _threadRunState;
-        protected readonly EventWaiter ItemPutOnQueueSignal;
-        protected object ThreadRunStateLock = new object();
 
-        /// <summary> Run state of thread running the queue.  </summary>
-        public enum ThreadRunStates
-        {
-            Start,
-            Started,
-            Stop,
-            Stopped,
-            Abort,
-        }
-
-        /// <summary> Gets or sets the run state of the thread . </summary>
-        /// <value> The thread run state. </value>
-        public ThreadRunStates ThreadRunState  
-        {
-            set
-            {
-                lock (ThreadRunStateLock)
-                {
-                    _threadRunState = value;
-                    // Give a signal to indicate that process loop needs to run
-                    ItemPutOnQueueSignal.Set();
-                }
-            }
-            get
-            {
-                var result = ThreadRunStates.Start;
-                lock (ThreadRunStateLock)
-                {
-                    result = _threadRunState;
-                }
-                return result;
-            }
-        }
-
-        /// <summary> Gets or sets the run state of the thread . </summary>
-        /// <value> The thread run state. </value>
-        protected ThreadRunStates RunningThreadRunState { get;  set; }
-
-        /// <summary>Gets count of records in queue.</summary>
+        /// <summary>Gets count of records in queue. NOT THREAD-SAFE.</summary>
         public int Count
         {
             get { return Queue.Count; }
@@ -82,78 +39,18 @@ namespace CommandMessenger
         /// <summary>Gets is queue is empty. NOT THREAD-SAFE.</summary>
         public bool IsEmpty
         {
-            get { return !Queue.Any(); }
-        }
-
-        /// <summary> command queue constructor. </summary>
-        /// <param name="disposeStack"> DisposeStack. </param>
-        /// <param name="cmdMessenger"> The command messenger. </param>
-        public CommandQueue(DisposeStack disposeStack, CmdMessenger cmdMessenger) 
-        {
-            CmdMessenger = cmdMessenger;
-            disposeStack.Push(this);
-
-            ItemPutOnQueueSignal = new EventWaiter(true);
-
-            // Create queue thread and wait for it to start
-            QueueThread = new Thread(ProcessQueueLoop) { Priority = ThreadPriority.Normal };
-            QueueThread.Start();
-
-            // Wait for thread to properly initialize
-            while (!QueueThread.IsAlive && QueueThread.ThreadState != ThreadState.Running)
-            {
-                Thread.Sleep(25);
-            }
-        }
-
-        public void WaitForThreadRunStateSet()
-        {           
-            //  Now wait for state change
-            SpinWait.SpinUntil(() => RunningThreadRunState == ThreadRunState);
-        }
-
-        private void ProcessQueueLoop()
-        {
-            while (ThreadRunState != ThreadRunStates.Abort)
-            {
-                bool empty;
-                lock(Queue) empty = IsEmpty;
-                if (empty) ItemPutOnQueueSignal.WaitOne(1000);
-
-                // Process queue unless stopped
-                if (ThreadRunState == ThreadRunStates.Start)
-                {
-                    ProcessQueue();
-                }
-                else
-                {
-                    //Thread.SpinWait(100000);
-                    Thread.Yield();
-                    //Thread.Sleep(100);
-                }
-                // Update real run state
-                RunningThreadRunState = ThreadRunState;
-            }
-        }
-
-        /// <summary> Process the queue. </summary>
-        protected virtual void ProcessQueue()
-        {
+            get { return Queue.Count == 0; }
         }
 
         /// <summary> Clears the queue. </summary>
         public void Clear()
         {
-            lock (Queue)
-            {
-                Queue.Clear();
-            }
+            lock (Queue) Queue.Clear();
         }
 
-        /// <summary> Queue the command wrapped in a command strategy. </summary>
-        /// <param name="commandStrategy"> The command strategy. </param>
-        public virtual void QueueCommand(CommandStrategy commandStrategy)
+        protected CommandQueue()
         {
+            _worker = new AsyncWorker(ProcessQueue);
         }
 
         /// <summary> Adds a general strategy. This strategy is applied to all queued and dequeued commands.  </summary>
@@ -166,37 +63,54 @@ namespace CommandMessenger
             GeneralStrategies.Add(generalStrategy);
         }
 
-        /// <summary> Kills this object. </summary>
-        public void Kill()
+        /// <summary> 
+        /// Queue the command wrapped in a command strategy. 
+        /// Call SignalWaiter method to continue processing of queue.
+        /// </summary>
+        /// <param name="commandStrategy"> The command strategy. </param>
+        public abstract void QueueCommand(CommandStrategy commandStrategy);
+
+        public void Dispose()
         {
-            ThreadRunState = ThreadRunStates.Abort;
-            ItemPutOnQueueSignal.KeepOpen();
-            //Wait for thread to die
-            Join(2000);
-            if (QueueThread.IsAlive) QueueThread.Abort();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        /// <summary> Joins the thread. </summary>
-        /// <param name="millisecondsTimeout"> The milliseconds timeout. </param>
-        /// <returns> true if it succeeds, false if it fails. </returns>
-        public bool Join(int millisecondsTimeout)
+        public void Start()
         {
-            if (QueueThread.IsAlive == false) return true;
-            return QueueThread.Join(TimeSpan.FromMilliseconds(millisecondsTimeout));
+            _worker.Start();
         }
 
-        // Dispose
-        /// <summary> Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </summary>
-        /// <param name="disposing"> true if resources should be disposed, false if not. </param>
-        protected override void Dispose(bool disposing)
+        public void Stop()
+        {
+            _worker.Stop();
+            Clear();
+        }
+
+        public void Suspend()
+        {
+            _worker.Suspend();
+        }
+
+        public void Resume()
+        {
+            _worker.Resume();
+        }
+
+        protected void SignalWorker()
+        {
+            _worker.Signal();
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                // Stop polling
-                Kill();
+                Stop();
             }
-            base.Dispose(disposing);
         }
 
+        /// <summary> Process the queue. </summary>
+        protected abstract bool ProcessQueue();
     }
 }

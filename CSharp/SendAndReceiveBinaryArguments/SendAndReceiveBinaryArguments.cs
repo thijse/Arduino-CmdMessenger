@@ -12,8 +12,7 @@
 
 using System;
 using CommandMessenger;
-using CommandMessenger.Serialport;
-using CommandMessenger.TransportLayer;
+using CommandMessenger.Transport.Serial;
 
 namespace SendAndReceiveBinaryArguments
 {
@@ -54,10 +53,8 @@ namespace SendAndReceiveBinaryArguments
             };
 
             // Initialize the command messenger with the Serial Port transport layer
-            _cmdMessenger = new CmdMessenger(_serialTransport)
-            {
-                BoardType = BoardType.Bit16 // Set if it is communicating with a 16- or 32-bit Arduino board
-            };
+            // Set if it is communicating with a 16- or 32-bit Arduino board
+            _cmdMessenger = new CmdMessenger(_serialTransport, BoardType.Bit16);
 
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();                
@@ -172,7 +169,7 @@ namespace SendAndReceiveBinaryArguments
         {
             var bytes = command.CommandString().Length; // Command + command separator
             //var bytes = _cmdMessenger.CommandToString(command).Length + 1; // Command + command separator
-            if (printLfCr) bytes += Environment.NewLine.Length; // Add  bytes for carriage return ('\r') and /or a newline  ('\n')
+            if (printLfCr) bytes += 2; // Add  bytes for carriage return ('\r') and /or a newline  ('\n')
             return bytes;
         }
 

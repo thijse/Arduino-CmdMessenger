@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace CommandMessenger.Serialport
+namespace CommandMessenger.Transport.Serial
 {
 
     /// <summary>
@@ -38,7 +38,7 @@ namespace CommandMessenger.Serialport
     /// <summary>
     /// Connection manager for serial port connection
     /// </summary>
-    public class SerialConnectionManager :  ConnectionManager 
+    public class SerialConnectionManager : ConnectionManager 
     {
         private enum ScanType { None, Quick, Thorough }
 
@@ -129,6 +129,11 @@ namespace CommandMessenger.Serialport
                         Log(1, "Connected to serial port " + _serialTransport.CurrentSerialSettings.PortName + " at " + _serialTransport.CurrentSerialSettings.BaudRate + " bauds.");
                         StoreSettings();
                     }
+                    else
+                    {
+                        _serialTransport.Disconnect();
+                    }
+
                     return status;
                 }
 			

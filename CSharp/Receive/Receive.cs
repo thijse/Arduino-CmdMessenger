@@ -8,8 +8,7 @@
 using System;
 using System.Threading;
 using CommandMessenger;
-using CommandMessenger.Serialport;
-using CommandMessenger.TransportLayer;
+using CommandMessenger.Transport.Serial;
 
 namespace Receive
 {
@@ -50,11 +49,8 @@ namespace Receive
             _serialTransport.CurrentSerialSettings.DtrEnable = false;     // For some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.
             
             // Initialize the command messenger with the Serial Port transport layer
-            _cmdMessenger = new CmdMessenger(_serialTransport);
+            _cmdMessenger = new CmdMessenger(_serialTransport, BoardType.Bit16);
 
-            // Tell CmdMessenger if it is communicating with a 16 or 32 bit Arduino board
-            _cmdMessenger.BoardType = BoardType.Bit16;
-            
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();
             

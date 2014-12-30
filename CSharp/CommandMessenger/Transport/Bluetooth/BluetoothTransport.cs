@@ -21,91 +21,28 @@ using System;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
-using CommandMessenger.TransportLayer;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 
-namespace CommandMessenger.Bluetooth
+namespace CommandMessenger.Transport.Bluetooth
 {
-    public enum ThreadRunStates
-    {
-        Start,
-        Stop,
-        Abort,
-    }
-
     /// <summary>
     /// Manager for Bluetooth connection
     /// </summary>
-    public class BluetoothTransport : DisposableObject, ITransport
+    public class BluetoothTransport : ITransport
     {
+        private const int BufferSize = 4096;
+
         private NetworkStream _stream;
-        //private readonly QueueSpeed _queueSpeed = new QueueSpeed(4,10);
-        private Thread _queueThread;
-        private ThreadRunStates _threadRunState;
-        private readonly object _threadRunStateLock = new object();
+        private readonly AsyncWorker _worker;
         private readonly object _readLock = new object();
         private readonly object _writeLock = new object();
-        private const int BufferMax = 4096;
-        readonly byte[] _readBuffer = new byte[BufferMax];
+        private readonly byte[] _readBuffer = new byte[BufferSize];
         private int _bufferFilled;
 
-        /// <summary> Gets or sets the run state of the thread . </summary>
-        /// <value> The thread run state. </value>
-        public ThreadRunStates ThreadRunState  
-        {
-            set
-            {
-                lock (_threadRunStateLock)
-                {
-                    _threadRunState = value;
-                }
-            }
-            get
-            {
-                ThreadRunStates result;
-                lock (_threadRunStateLock)
-                {
-                    result = _threadRunState;
-                }
-                return result;
-            }
-        }
-
-        /// <summary> Default constructor. </summary>
-        public BluetoothTransport()
-        {          
-            Initialize();
-        }
-
-        ~BluetoothTransport()
-        {
-            Kill();
-        }
-
-        /// <summary> Initializes this object. </summary>
-        public void Initialize()
-        {            
-            // _queueSpeed.Name = "Bluetooth";
-
-            _queueThread = new Thread(ProcessQueue)
-                {
-                    Priority = ThreadPriority.Normal,
-                    Name = "Bluetooth"
-                };
-            ThreadRunState = ThreadRunStates.Start;
-            _queueThread.Start();
-            while (!_queueThread.IsAlive) { Thread.Sleep(25); }
-        }
-
-        #region Fields
-
-        public event EventHandler NewDataReceived;                              // Event queue for all listeners interested in NewLinesReceived events.
-
-        #endregion
-
-        #region Properties
+        // Event queue for all listeners interested in NewLinesReceived events.
+        public event EventHandler DataReceived;
 
         /// <summary> Gets or sets the current serial port settings. </summary>
         /// <value> The current serial settings. </value>
@@ -116,49 +53,18 @@ namespace CommandMessenger.Bluetooth
             get { return BluetoothUtils.LocalClient; }
         }
 
-
-        #endregion
-
-        #region Methods
-
-        protected void ProcessQueue()
+        public BluetoothTransport()
         {
-            // Endless loop
-            while (ThreadRunState != ThreadRunStates.Abort)
-            {
-                Poll(ThreadRunState);
-            }
-        }        
-
-        public void StartListening()
-        {
-            ThreadRunState = ThreadRunStates.Start;
+            _worker = new AsyncWorker(Poll);
         }
 
-        public void StopListening()
-        {
-            ThreadRunState = ThreadRunStates.Stop;
-        }
-
-        private void Poll(ThreadRunStates threadRunState)
+        private bool Poll()
         {
             var bytes = UpdateBuffer();
-            if (threadRunState == ThreadRunStates.Start)
-            {
-                if (bytes > 0)
-                {
-                    // Send an event
-                    if (NewDataReceived != null) NewDataReceived(this, null);
-                    // Signal so that processes waiting on this continue
-                }
-            }
-        }
+            if (bytes > 0 && DataReceived != null) DataReceived(this, EventArgs.Empty);
 
-        /// <summary> Polls for bluetooth device for data. </summary>
-        public void Poll()
-        {
-            Poll(ThreadRunStates.Start);
-        }
+            return true;
+        }        
 
         /// <summary> Connects to a serial port defined through the current settings. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
@@ -193,8 +99,9 @@ namespace CommandMessenger.Bluetooth
                     return false;
                 }
 
-                // Subscribe to event and open serial port for data
-                ThreadRunState = ThreadRunStates.Start;
+                // Check worker is not running as a precaution. This needs to be rechecked.
+                if (!_worker.IsRunning) _worker.Start();
+                
                 return true;
             }
             catch (SocketException)
@@ -217,7 +124,7 @@ namespace CommandMessenger.Bluetooth
             _stream = BluetoothClient.GetStream();
             _stream.ReadTimeout = 2000;
             _stream.WriteTimeout = 1000;
-            return (true);
+            return true;
         }
 
         public bool IsConnected()
@@ -248,9 +155,9 @@ namespace CommandMessenger.Bluetooth
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Disconnect()
         {
-            ThreadRunState = ThreadRunStates.Stop;
-            var state = Close();
-            return state;
+            // Check worker is running as a precaution. This needs to be rechecked.
+            if (_worker.IsRunning) _worker.Stop();
+            return Close();
         }
 
         /// <summary> Writes a byte array to the bluetooth stream. </summary>
@@ -281,6 +188,12 @@ namespace CommandMessenger.Bluetooth
             return primaryRadio.LocalAddress;
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         private int UpdateBuffer()
         {
             if (IsOpen())
@@ -289,11 +202,8 @@ namespace CommandMessenger.Bluetooth
                 {
                     lock (_readLock)
                     {
-                        //if (_stream.DataAvailable)
-                        {
-                            var nbrDataRead = _stream.Read(_readBuffer, _bufferFilled, (BufferMax - _bufferFilled));
-                            _bufferFilled += nbrDataRead;
-                        }
+                        var nbrDataRead = _stream.Read(_readBuffer, _bufferFilled, (BufferSize - _bufferFilled));
+                        _bufferFilled += nbrDataRead;
                     }
                     return _bufferFilled;
                 }
@@ -308,6 +218,7 @@ namespace CommandMessenger.Bluetooth
                 // Sleep a bit otherwise CPU load will go through roof
                 Thread.Sleep(25);
             }
+
             return 0;
         }
 
@@ -328,52 +239,12 @@ namespace CommandMessenger.Bluetooth
             return new byte[0];
         }
 
-        /// <summary> Gets the bytes in buffer. </summary>
-        /// <returns> Bytes in buffer </returns>
-        public int BytesInBuffer()
-        {
-            return IsOpen() ? _bufferFilled : 0;
-        }
-
-        /// <summary> Kills this object. </summary>
-        public void Kill()
-        {
-            // Signal thread to abort
-            ThreadRunState = ThreadRunStates.Abort;
-
-            //Wait for thread to die
-            Join(500);
-            if (_queueThread.IsAlive) _queueThread.Abort();
-
-            // Releasing stream
-            if (IsOpen()) Close();
-
-            // component is used to manage device discovery
-            //_localComponent.Dispose();
-            
-            // client is used to manage connections
-            //_localClient.Dispose();
-        }
-
-        /// <summary> Joins the thread. </summary>
-        /// <param name="millisecondsTimeout"> The milliseconds timeout. </param>
-        /// <returns> true if it succeeds, false if it fails. </returns>
-        public bool Join(int millisecondsTimeout)
-        {
-            if (_queueThread.IsAlive == false) return true;
-            return _queueThread.Join(TimeSpan.FromMilliseconds(millisecondsTimeout));
-        }
-
-        // Dispose
-        protected override void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                Kill();
+                Disconnect();
             }
-            base.Dispose(disposing);
         }
-
-        #endregion
     }
 }
