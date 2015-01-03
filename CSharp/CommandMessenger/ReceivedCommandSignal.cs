@@ -74,7 +74,7 @@ namespace CommandMessenger
         /// <param name="cmdId"></param>
         /// <param name="sendQueueState"></param>
         /// <returns></returns>
-        public  ReceivedCommand WaitForCmd(int timeOut, int cmdId, SendQueue sendQueueState)
+        public ReceivedCommand WaitForCmd(int timeOut, int cmdId, SendQueue sendQueueState)
         {
             lock (_key)
             {

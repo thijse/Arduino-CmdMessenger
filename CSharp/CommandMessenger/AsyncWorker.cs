@@ -32,6 +32,7 @@ namespace CommandMessenger
         public State WorkerState { get { return _state; } }
 
         public bool IsRunning { get { return _state == State.Running; } }
+        public bool IsSuspended { get { return _state == State.Suspended; } }
 
         public AsyncWorker(AsyncWorkerJob workerJob)
         {

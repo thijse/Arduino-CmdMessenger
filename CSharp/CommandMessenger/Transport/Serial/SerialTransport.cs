@@ -96,7 +96,7 @@ namespace CommandMessenger.Transport.Serial
         /// <returns> true if open, false if not. </returns>
         public bool IsConnected()
         {
-            return _connected;
+            return _connected && _serialPort.IsOpen;
         }
 
         /// <summary> Stops listening to the serial port. </summary>
@@ -116,7 +116,7 @@ namespace CommandMessenger.Transport.Serial
         /// <param name="buffer"> The buffer to write. </param>
         public void Write(byte[] buffer)
         {
-            if (_serialPort != null && _serialPort.IsOpen)
+            if (IsConnected())
             {
                 try
                 {
@@ -139,7 +139,7 @@ namespace CommandMessenger.Transport.Serial
         /// <summary> Reads the serial buffer into the string buffer. </summary>
         public byte[] Read()
         {
-            if (_serialPort != null && _serialPort.IsOpen)
+            if (IsConnected())
             {
                 byte[] buffer;
                 lock (_readLock)
@@ -185,7 +185,7 @@ namespace CommandMessenger.Transport.Serial
         /// <returns> true if it succeeds, false if it fails. </returns>
         private bool Close()
         {
-            if (!_connected || !_serialPort.IsOpen) return false;
+            if (!IsConnected()) return false;
 
             try
             {
@@ -207,7 +207,7 @@ namespace CommandMessenger.Transport.Serial
 
         private int UpdateBuffer()
         {
-            if (_connected && _serialPort.IsOpen)
+            if (IsConnected())
             {
                 try
                 {

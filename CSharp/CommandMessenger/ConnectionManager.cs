@@ -18,7 +18,6 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -30,13 +29,12 @@ namespace CommandMessenger
         public String Description { get; set; }
     }
 
-    public enum ConnectionManagerState
+    public enum Mode
     {
-        Scan,
-        Connect,
-        Watchdog,
         Wait,
-        Stop
+        Connect,
+        Scan,
+        Watchdog
     }
 
     public enum DeviceStatus
@@ -48,14 +46,14 @@ namespace CommandMessenger
 
     public abstract class ConnectionManager : IDisposable 
     {
-        protected readonly CmdMessenger CmdMessenger;
-        protected ConnectionManagerState ConnectionManagerState;
-
-        public event EventHandler ConnectionTimeout;
-        public event EventHandler ConnectionFound;
+        public event EventHandler<EventArgs> ConnectionTimeout;
+        public event EventHandler<EventArgs> ConnectionFound;
         public event EventHandler<ConnectionManagerProgressEventArgs> Progress;
 
-        private readonly BackgroundWorker _workerThread;
+        protected Mode ConnectionManagerMode = Mode.Wait;
+
+        private readonly CmdMessenger _cmdMessenger;
+        private readonly AsyncWorker _worker;
         private readonly int _identifyCommandId;
         private readonly string _uniqueDeviceId;
 
@@ -72,8 +70,6 @@ namespace CommandMessenger
         public int WatchdogTimeout { get; set; }
         public int WatchdogRetryTimeout { get; set; }
         public uint WatchdogTries { get; set; }
-
-        internal Control ControlToInvokeOn { get { return CmdMessenger.ControlToInvokeOn; } }
 
         /// <summary>
         /// Enables or disables connection watchdog functionality using identify command and unique device id.
@@ -107,6 +103,7 @@ namespace CommandMessenger
             if (cmdMessenger == null)
                 throw new ArgumentNullException("cmdMessenger", "Command Messenger is null.");
 
+            _cmdMessenger = cmdMessenger;
             _identifyCommandId = identifyCommandId;
             _uniqueDeviceId = uniqueDeviceId;
 
@@ -118,44 +115,27 @@ namespace CommandMessenger
             PersistentSettings = false;
             DeviceScanEnabled = true;
             
-            CmdMessenger = cmdMessenger;
-
-            ConnectionManagerState = ConnectionManagerState.Stop;
-
-            _workerThread = new BackgroundWorker { WorkerSupportsCancellation = true, WorkerReportsProgress = false };
+            _worker = new AsyncWorker(DoWork);
 
             if (!string.IsNullOrEmpty(uniqueDeviceId))
-                CmdMessenger.Attach(identifyCommandId, OnIdentifyResponse);
+                _cmdMessenger.Attach(identifyCommandId, OnIdentifyResponse);
         }
 
         /// <summary>
         /// Start connection manager.
         /// </summary>
-        public virtual bool StartConnectionManager()
+        public virtual void StartConnectionManager()
         {
-            if (ConnectionManagerState == ConnectionManagerState.Stop)
+            if (!_worker.IsRunning) _worker.Start();
+
+            if (DeviceScanEnabled)
             {
-                ConnectionManagerState = ConnectionManagerState.Wait;
-                if (!_workerThread.IsBusy)
-                {
-                    _workerThread.DoWork += WorkerThreadDoWork;
-                    // Start the asynchronous operation.
-                    _workerThread.RunWorkerAsync();
-
-                    if (DeviceScanEnabled)
-                    {
-                        StartScan();
-                    }
-                    else
-                    {
-                        StartConnect();
-                    }
-
-                    return true;
-                }
+                StartScan();
             }
-
-            return false;
+            else
+            {
+                StartConnect();
+            }
         }
 
         /// <summary>
@@ -163,38 +143,26 @@ namespace CommandMessenger
         /// </summary>
         public virtual void StopConnectionManager()
         {
-            if (ConnectionManagerState != ConnectionManagerState.Stop)
-            {
-                ConnectionManagerState = ConnectionManagerState.Stop;
-
-                if (_workerThread.WorkerSupportsCancellation)
-                {
-                    // Cancel the asynchronous operation.
-                    _workerThread.CancelAsync();
-                }
-
-                _workerThread.DoWork -= WorkerThreadDoWork;
-
-                Disconnect();
-            }
+            if (_worker.IsRunning) _worker.Stop();
+            Disconnect();
         }
 
         protected virtual void ConnectionFoundEvent()
         {
-            ConnectionManagerState = ConnectionManagerState.Wait;
+            ConnectionManagerMode = Mode.Wait;
 
             if (WatchdogEnabled) StartWatchDog();
 
-            InvokeEvent(ConnectionFound);
+            InvokeEvent(ConnectionFound, EventArgs.Empty);
         }
 
         protected virtual void ConnectionTimeoutEvent()
         {
-            ConnectionManagerState = ConnectionManagerState.Wait;
+            ConnectionManagerMode = Mode.Wait;
 
             Disconnect();
 
-            InvokeEvent(ConnectionTimeout);
+            InvokeEvent(ConnectionTimeout, EventArgs.Empty);
 
             if (WatchdogEnabled)
             {
@@ -208,51 +176,6 @@ namespace CommandMessenger
                 {
                     StartConnect();
                 }
-            }
-        }
-
-        protected virtual void InvokeEvent(EventHandler eventHandler)
-        {
-            try
-            {
-                if (eventHandler == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
-                if (ControlToInvokeOn != null && ControlToInvokeOn.InvokeRequired)
-                {
-                    //Asynchronously call on UI thread
-                    ControlToInvokeOn.BeginInvoke((MethodInvoker)(() => eventHandler(this, EventArgs.Empty)));
-                    Thread.Yield();
-                }
-                else
-                {
-                    //Directly call
-                    eventHandler(this, EventArgs.Empty);
-                }
-            }
-            catch (Exception)
-            {
-            }
-        }
-
-        protected virtual void InvokeEvent<TEventHandlerArguments>(EventHandler<TEventHandlerArguments> eventHandler,
-            TEventHandlerArguments eventHandlerArguments) where TEventHandlerArguments : EventArgs
-        {
-            try
-            {
-                if (eventHandler == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
-                if (ControlToInvokeOn != null && ControlToInvokeOn.InvokeRequired)
-                {
-                    //Asynchronously call on UI thread
-                    ControlToInvokeOn.BeginInvoke((MethodInvoker) (() => eventHandler(this, eventHandlerArguments)));
-                    Thread.Yield();
-                }
-                else
-                {
-                    //Directly call
-                    eventHandler(this, eventHandlerArguments);
-                }
-            }
-            catch (Exception)
-            {
             }
         }
 
@@ -270,37 +193,41 @@ namespace CommandMessenger
             }
         }
 
-        private void WorkerThreadDoWork(object sender, DoWorkEventArgs e)
+        private void InvokeEvent<TEventHandlerArguments>(EventHandler<TEventHandlerArguments> eventHandler,
+            TEventHandlerArguments eventHandlerArguments) where TEventHandlerArguments : EventArgs
         {
-            if (Thread.CurrentThread.Name == null) Thread.CurrentThread.Name = "SerialConnectionManager";
+            var ctrlToInvoke = _cmdMessenger.ControlToInvokeOn;
 
-            while (ConnectionManagerState != ConnectionManagerState.Stop)
+            if (eventHandler == null || (ctrlToInvoke != null && ctrlToInvoke.IsDisposed)) return;
+            if (ctrlToInvoke != null && ctrlToInvoke.InvokeRequired)
             {
-                // Check if thread is being canceled
-                var worker = sender as BackgroundWorker;
-                if (worker != null && worker.CancellationPending)
-                {
-                    break;
-                }
-
-                // Switch between waiting, device scanning and watchdog 
-                switch (ConnectionManagerState)
-                {
-                    case ConnectionManagerState.Scan:
-                        DoWorkScan();
-                        break;
-                    case ConnectionManagerState.Connect:
-                        DoWorkConnect();
-                        break;
-                    case ConnectionManagerState.Watchdog:
-                        DoWorkWatchdog();
-                        break;
-                }
-
-                // Sleep a bit before checking again. If not present, the connection manager will 
-                // consume a lot of CPU resources while waiting
-                Thread.Sleep(100);  
+                ctrlToInvoke.Invoke((MethodInvoker)(() => eventHandler(this, eventHandlerArguments)));
             }
+            else
+            {
+                //Directly call
+                eventHandler(this, eventHandlerArguments);
+            }
+        }
+
+        private bool DoWork()
+        {
+            // Switch between waiting, device scanning and watchdog 
+            switch (ConnectionManagerMode)
+            {
+                case Mode.Scan:
+                    DoWorkScan();
+                    break;
+                case Mode.Connect:
+                    DoWorkConnect();
+                    break;
+                case Mode.Watchdog:
+                    DoWorkWatchdog();
+                    break;
+            }
+
+            Thread.Sleep(100);
+            return true;
         }
 
         /// <summary>
@@ -308,10 +235,10 @@ namespace CommandMessenger
         /// </summary>
         /// <param name="timeOut">Timout for waiting on response</param>
         /// <returns>Check result.</returns>
-        public DeviceStatus ArduinoAvailable(int timeOut)
+        protected DeviceStatus ArduinoAvailable(int timeOut)
         {
             var challengeCommand = new SendCommand(_identifyCommandId, _identifyCommandId, timeOut);
-            var responseCommand = CmdMessenger.SendCommand(challengeCommand, SendQueue.InFrontQueue, ReceiveQueue.Default, UseQueue.BypassQueue);
+            var responseCommand = _cmdMessenger.SendCommand(challengeCommand, SendQueue.InFrontQueue, ReceiveQueue.Default, UseQueue.BypassQueue);
 
             if (responseCommand.Ok && !string.IsNullOrEmpty(_uniqueDeviceId))
             {
@@ -327,7 +254,7 @@ namespace CommandMessenger
         /// <param name="timeOut">Timout for waiting on response</param>
         /// <param name="tries">Number of tries</param>
         /// <returns>Check result.</returns>
-        public DeviceStatus ArduinoAvailable(int timeOut, int tries)
+        protected DeviceStatus ArduinoAvailable(int timeOut, int tries)
         {
             for (var i = 1; i <= tries; i++)
             {
@@ -359,7 +286,7 @@ namespace CommandMessenger
 
         protected virtual void DoWorkWatchdog()
         {
-            var lastLineTimeStamp = CmdMessenger.LastReceivedCommandTimeStamp;
+            var lastLineTimeStamp = _cmdMessenger.LastReceivedCommandTimeStamp;
             var currentTimeStamp = TimeUtils.Millis;
 
             // If timeout has not elapsed, wait till next watch time
@@ -381,14 +308,14 @@ namespace CommandMessenger
             {
                 Log(2, "Watchdog received no response after final try #" + WatchdogTries);
                 _watchdogTries = 0;
-                ConnectionManagerState = ConnectionManagerState.Wait;
+                ConnectionManagerMode = Mode.Wait;
                 ConnectionTimeoutEvent();
                 return;
             }
 
             // We'll try another time
             // We queue the command in order to not be intrusive, but put it in front to get a quick answer
-            CmdMessenger.SendCommand(new SendCommand(_identifyCommandId), SendQueue.InFrontQueue, ReceiveQueue.Default);
+            _cmdMessenger.SendCommand(new SendCommand(_identifyCommandId), SendQueue.InFrontQueue, ReceiveQueue.Default);
             _watchdogTries++;
 
             _lastCheckTime = currentTimeStamp;
@@ -402,15 +329,21 @@ namespace CommandMessenger
         /// Disconnect from Arduino
         /// </summary>
         /// <returns>true if sucessfully disconnected</returns>
-        public bool Disconnect()
+        private bool Disconnect()
         {
             if (Connected)
             {
                 Connected = false;
-                return CmdMessenger.Disconnect();
+                return _cmdMessenger.Disconnect();
             }
 
             return true;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -418,14 +351,14 @@ namespace CommandMessenger
         /// </summary>
         protected virtual void StartWatchDog()
         {
-            if (ConnectionManagerState != ConnectionManagerState.Watchdog && Connected)
+            if (ConnectionManagerMode != Mode.Watchdog && Connected)
             {
                 Log(1, "Starting Watchdog.");
                 _lastCheckTime = TimeUtils.Millis;
                 _nextTimeOutCheck = _lastCheckTime + WatchdogTimeout;
                 _watchdogTries = 0;
 
-                ConnectionManagerState = ConnectionManagerState.Watchdog;
+                ConnectionManagerMode = Mode.Watchdog;
             }
         }
 
@@ -434,10 +367,10 @@ namespace CommandMessenger
         /// </summary>
         protected virtual void StopWatchDog()
         {
-            if (ConnectionManagerState == ConnectionManagerState.Watchdog)
+            if (ConnectionManagerMode == Mode.Watchdog)
             {
                 Log(1, "Stopping Watchdog.");
-                ConnectionManagerState = ConnectionManagerState.Wait;
+                ConnectionManagerMode = Mode.Wait;
             }
         }
 
@@ -446,10 +379,10 @@ namespace CommandMessenger
         /// </summary>
         protected virtual void StartScan()
         {
-            if (ConnectionManagerState != ConnectionManagerState.Scan && !Connected)
+            if (ConnectionManagerMode != Mode.Scan && !Connected)
             {
                 Log(1, "Starting device scan.");
-                ConnectionManagerState = ConnectionManagerState.Scan;
+                ConnectionManagerMode = Mode.Scan;
             }
         }
 
@@ -458,10 +391,10 @@ namespace CommandMessenger
         /// </summary>
         protected virtual void StopScan()
         {
-            if (ConnectionManagerState == ConnectionManagerState.Scan)
+            if (ConnectionManagerMode == Mode.Scan)
             {
                 Log(1, "Stopping device scan.");
-                ConnectionManagerState = ConnectionManagerState.Wait;
+                ConnectionManagerMode = Mode.Wait;
             }
         }
 
@@ -470,10 +403,10 @@ namespace CommandMessenger
         /// </summary>
         protected virtual void StartConnect()
         {
-            if (ConnectionManagerState != ConnectionManagerState.Connect && !Connected)
+            if (ConnectionManagerMode != Mode.Connect && !Connected)
             {
                 Log(1, "Start connecting to device.");
-                ConnectionManagerState = ConnectionManagerState.Connect;
+                ConnectionManagerMode = Mode.Connect;
             }
         }
 
@@ -482,10 +415,10 @@ namespace CommandMessenger
         /// </summary>
         protected virtual void StopConnect()
         {
-            if (ConnectionManagerState == ConnectionManagerState.Connect)
+            if (ConnectionManagerMode == Mode.Connect)
             {
                 Log(1, "Stop connecting to device.");
-                ConnectionManagerState = ConnectionManagerState.Wait;
+                ConnectionManagerMode = Mode.Wait;
             }
         }
 
@@ -493,13 +426,6 @@ namespace CommandMessenger
 
         protected virtual void ReadSettings() { }
 
-        // Dispose 
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        // Dispose
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)

@@ -18,7 +18,6 @@
 
 #endregion
 
-using System;
 using System.Threading;
 
 namespace CommandMessenger
@@ -29,15 +28,12 @@ namespace CommandMessenger
     {
         public enum WaitState
         {
-            KeepOpen,
-            KeepBlocked,
-            TimedOut,
+            TimeOut,
             Normal
         }
 
         private readonly object _key = new object();
         private bool _block;
-        private WaitState _waitState = WaitState.Normal;
 
         /// <summary>
         /// start blocked (waiting for signal)
@@ -73,9 +69,6 @@ namespace CommandMessenger
         {
             lock (_key)
             {
-                // Check if quit has been raised before the wait function is entered
-                if (_waitState == WaitState.KeepOpen) { return _waitState; }
-
                 // Check if signal has already been raised before the wait function is entered                
                 if (!_block)
                 {
@@ -86,39 +79,16 @@ namespace CommandMessenger
 
                 // Wait under conditions
                 bool noTimeOut = true;
-
-
-                while (IsBlocked(_block, noTimeOut, _waitState))
+                while (noTimeOut && _block)
                 {
                     noTimeOut = Monitor.Wait(_key, timeOut);
                 }
+
                 // Block Wait for next entry
                 _block = true;
 
-                // Check if quit signal has already been raised after wait                
-                if (_waitState == WaitState.KeepOpen) { return _waitState; }
-
-                // Check if quit signal has already been raised after wait                
-                if (_waitState == WaitState.KeepBlocked)
-                {
-                    throw new InvalidOperationException("Blocked state unexpected");
-                }
-
                 // Return whether the Wait function was quit because of an Set event or timeout
-                return noTimeOut ? WaitState.Normal : WaitState.TimedOut;
-            }
-        }
-
-        private bool IsBlocked(bool block, bool noTimeOut, WaitState waitState)
-        {
-            switch (waitState)
-            {
-                case WaitState.KeepBlocked:
-                    return true;
-                case WaitState.KeepOpen:
-                    return false;
-                default:
-                    return (noTimeOut && block);
+                return noTimeOut ? WaitState.Normal : WaitState.TimeOut;
             }
         }
 
@@ -142,50 +112,6 @@ namespace CommandMessenger
             lock (_key)
             {
                 _block = true;
-            }
-        }
-
-        /// <summary>
-        /// KeepOpen. Unblocks thread in Wait function and exits
-        // will not block again until Normal is called
-        /// </summary>
-        public void KeepOpen()
-        {
-            lock (_key)
-            {
-                _block = false;
-                //_quit = true;
-                _waitState = WaitState.KeepOpen;
-                Monitor.Pulse(_key);
-            }
-        }
-
-        /// <summary>
-        /// KeepBlocked. Blocks thread in Wait function and exits
-        // will not unblock until Normal is called
-        /// </summary>
-        public void KeepBlocked()
-        {
-            lock (_key)
-            {
-                _block = false;
-                //_quit = true;
-                _waitState = WaitState.KeepBlocked;
-                Monitor.Pulse(_key);
-            }
-        }
-
-        /// <summary>
-        /// Resumes functionallity
-        /// </summary>
-        /// <param name="set">If true, first Wait will directly continue</param>
-        public void Normal(bool set)
-        {
-            lock (_key)
-            {
-                _block = !set;
-                _waitState = WaitState.Normal;
-                Monitor.Pulse(_key);
             }
         }
     }

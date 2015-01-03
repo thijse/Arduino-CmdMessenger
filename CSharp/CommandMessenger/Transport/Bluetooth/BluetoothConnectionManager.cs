@@ -300,7 +300,7 @@ namespace CommandMessenger.Transport.Bluetooth
         {
             base.StartScan();
 
-            if (ConnectionManagerState == ConnectionManagerState.Scan)
+            if (ConnectionManagerMode == Mode.Scan)
             {
                 _scanType = ScanType.None;
             }

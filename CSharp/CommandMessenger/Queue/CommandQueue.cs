@@ -30,6 +30,9 @@ namespace CommandMessenger.Queue
         protected readonly ListQueue<CommandStrategy> Queue = new ListQueue<CommandStrategy>();   // Buffer for commands
         protected readonly List<GeneralStrategy> GeneralStrategies = new List<GeneralStrategy>(); // Buffer for command independent strategies
 
+        public bool IsRunning { get { return _worker.IsRunning; } }
+        public bool IsSuspended { get { return _worker.IsSuspended; } }
+
         /// <summary>Gets count of records in queue. NOT THREAD-SAFE.</summary>
         public int Count
         {
