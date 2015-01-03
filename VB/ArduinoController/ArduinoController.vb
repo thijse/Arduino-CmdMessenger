@@ -11,7 +11,8 @@
 ' - Use the CollapseCommandStrategy
 Imports System
 Imports CommandMessenger
-Imports CommandMessenger.Serialport
+Imports CommandMessenger.Queue
+Imports CommandMessenger.Transport.Serial
 
 Enum CommandIds
     Acknowledge       ' Command to acknowledge a received command
@@ -49,10 +50,11 @@ Public Class ArduinoController
 
         ' Initialize the command messenger with the Serial Port transport layer
         ' Set if it is communicating with a 16- or 32-bit Arduino board
-        _cmdMessenger = New CmdMessenger(_serialTransport) With {.BoardType = BoardType.Bit16}
+        _cmdMessenger = New CmdMessenger(_serialTransport, BoardType.Bit16)
 
         ' Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
-        _cmdMessenger.SetControlToInvokeOn(_controllerForm)
+        _cmdMessenger.ControlToInvokeOn = controllerForm
+
 
         ' Attach the callbacks to the Command Messenger
         AttachCommandCallBacks()
@@ -108,12 +110,12 @@ Public Class ArduinoController
     End Sub
 
     ' Log received line to console
-    Private Sub NewLineReceived(sender As Object, e As NewLineEvent.NewLineArgs)
+    Private Sub NewLineReceived(sender As Object, e As CommandEventArgs)
         Console.WriteLine("Received > " + e.Command.CommandString())
     End Sub
 
     ' Log sent line to console
-    Private Sub NewLineSent(sender As Object, e As NewLineEvent.NewLineArgs)
+    Private Sub NewLineSent(sender As Object, e As CommandEventArgs)
         Console.WriteLine("Sent > " + e.Command.CommandString())
     End Sub
 

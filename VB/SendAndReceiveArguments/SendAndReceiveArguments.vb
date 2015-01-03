@@ -9,7 +9,7 @@
 
 Imports System
 Imports CommandMessenger
-Imports CommandMessenger.Serialport
+Imports CommandMessenger.Transport.Serial
 ' This is the list of recognized commands. These can be commands that can either be sent or received. 
 ' In order to receive, attach a callback function to these events
 Friend Enum CommandIDs
@@ -39,7 +39,7 @@ Public Class SendAndReceiveArguments
             }
         ' Initialize the command messenger with the Serial Port transport layer
 
-        _cmdMessenger = New CmdMessenger(_serialTransport) With {.BoardType = BoardType.Bit16}
+        _cmdMessenger = New CmdMessenger(_serialTransport, BoardType.Bit16)
 
         ' Attach the callbacks to the Command Messenger
         AttachCommandCallBacks()
@@ -135,12 +135,12 @@ Public Class SendAndReceiveArguments
     End Sub
 
     ' Log received line to console
-    Private Sub NewLineReceived(ByVal sender As Object, ByVal e As NewLineEvent.NewLineArgs)
+    Private Sub NewLineReceived(ByVal sender As Object, ByVal e As CommandEventArgs)
         Console.WriteLine("Received > " & e.Command.CommandString())
     End Sub
 
     ' Log sent line to console
-    Private Sub NewLineSent(ByVal sender As Object, ByVal e As NewLineEvent.NewLineArgs)
+    Private Sub NewLineSent(ByVal sender As Object, ByVal e As CommandEventArgs)
         Console.WriteLine("Sent > " & e.Command.CommandString())
     End Sub
 End Class

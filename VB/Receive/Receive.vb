@@ -7,7 +7,7 @@
 Imports System
 Imports System.Threading
 Imports CommandMessenger
-Imports CommandMessenger.Serialport
+Imports CommandMessenger.Transport.Serial
 
 ' This is the list of recognized commands. These can be commands that can either be sent or received. 
 ' In order to receive, attach a callback function to these events
@@ -42,10 +42,8 @@ Public Class Receive
         _serialTransport.CurrentSerialSettings.DtrEnable = False ' For some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.
 
         ' Initialize the command messenger with the Serial Port transport layer
-        _cmdMessenger = New CmdMessenger(_serialTransport)
+        _cmdMessenger = New CmdMessenger(_serialTransport, BoardType.Bit16)
 
-        ' Tell CmdMessenger if it is communicating with a 16 or 32 bit Arduino board
-        _cmdMessenger.BoardType = BoardType.Bit16
 
         ' Attach the callbacks to the Command Messenger
         AttachCommandCallBacks()

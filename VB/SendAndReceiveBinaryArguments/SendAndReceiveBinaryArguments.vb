@@ -12,7 +12,7 @@
 
 Imports System
 Imports CommandMessenger
-Imports CommandMessenger.Serialport
+Imports CommandMessenger.Transport.Serial
 Imports Microsoft.VisualBasic
 ' This is the list of recognized commands. These can be commands that can either be sent or received. 
 ' In order to receive, attach a callback function to these events
@@ -50,7 +50,7 @@ Public Class SendAndReceiveBinaryArguments
             }
         ' Initialize the command messenger with the Serial Port transport layer
 
-        _cmdMessenger = New CmdMessenger(_serialTransport) With {.BoardType = BoardType.Bit16}
+        _cmdMessenger = New CmdMessenger(_serialTransport, BoardType.Bit16)
 
         ' Attach the callbacks to the Command Messenger
         AttachCommandCallBacks()

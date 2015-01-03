@@ -16,9 +16,10 @@
 Imports System
 Imports System.Threading
 Imports CommandMessenger
-Imports CommandMessenger.Bluetooth
-Imports CommandMessenger.Serialport
-Imports CommandMessenger.TransportLayer
+Imports CommandMessenger.Queue
+Imports CommandMessenger.Transport
+Imports CommandMessenger.Transport.Serial
+Imports CommandMessenger.Transport.Bluetooth
 Imports Microsoft.VisualBasic
 
 Friend Enum CommandIds
@@ -80,8 +81,8 @@ Public Class TemperatureControl
         ' 2. Bluetooth    This bypasses the Bluetooth virtual serial port, and instead communicates over the RFCOMM layer       
 
         Dim transportMode As TransportMode
-        'transportMode = TransportMode.Serial;
-        transportMode = transportMode.Bluetooth
+        transportMode = transportMode.Serial
+        'transportMode = transportMode.Bluetooth
 
         ' getting the chart control on top of the chart form.
         _chartForm = chartForm
@@ -107,10 +108,10 @@ Public Class TemperatureControl
         ' We do not need to set serial port and baud rate: it will be found by the connection manager                                                           
 
         ' Initialize the command messenger with one of the two transport layers
-        _cmdMessenger = New CmdMessenger(_transport) With {.BoardType = BoardType.Bit16, .PrintLfCr = False}
+        _cmdMessenger = New CmdMessenger(_transport, BoardType.Bit16) With {.PrintLfCr = False}
 
         ' Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
-        _cmdMessenger.SetControlToInvokeOn(chartForm)
+        _cmdMessenger.ControlToInvokeOn = chartForm
 
         ' Set command strategy to continuously to remove all commands on the receive queue that 
         ' are older than 1 sec. This makes sure that if data logging comes in faster that it can 
@@ -230,12 +231,12 @@ Public Class TemperatureControl
     End Sub
 
     ' Log received line to console
-    Private Sub NewLineReceived(ByVal sender As Object, ByVal e As NewLineEvent.NewLineArgs)
+    Private Sub NewLineReceived(ByVal sender As Object, ByVal e As CommandEventArgs)
         _chartForm.LogMessage("Received > " & e.Command.CommandString())
     End Sub
 
     ' Log sent line to console
-    Private Sub NewLineSent(ByVal sender As Object, ByVal e As NewLineEvent.NewLineArgs)
+    Private Sub NewLineSent(ByVal sender As Object, ByVal e As CommandEventArgs)
         _chartForm.LogMessage("Sent > " & e.Command.CommandString())
     End Sub
 

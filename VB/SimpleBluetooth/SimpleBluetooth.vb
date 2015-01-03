@@ -18,8 +18,9 @@
 Imports System
 Imports System.Collections.Generic
 Imports CommandMessenger
-Imports CommandMessenger.Bluetooth
-Imports CommandMessenger.TransportLayer
+Imports CommandMessenger.Transport
+Imports CommandMessenger.Transport.Bluetooth
+
 
 Class SimpleWatchdog
     Private Enum CommandIds
@@ -59,8 +60,7 @@ Class SimpleWatchdog
         ' Initialize the command messenger with the Serial Port transport layer
         ' Set if it is communicating with a 16- or 32-bit Arduino board
         ' Do not print newLine at end of command, to reduce data being sent
-        _cmdMessenger = New CmdMessenger(_transport) With {
-            .BoardType = BoardType.Bit16,
+        _cmdMessenger = New CmdMessenger(_transport,BoardType.Bit16) With {
             .PrintLfCr = False
             }
 
