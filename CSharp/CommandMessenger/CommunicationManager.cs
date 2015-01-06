@@ -185,7 +185,9 @@ namespace CommandMessenger
             lock (_sendCommandDataLock)
             {
                 if (PrintLfCr)
+                {
                     WriteLine(commandString);
+                }
                 else
                 {
                     Write(commandString);
@@ -202,8 +204,7 @@ namespace CommandMessenger
         private ReceivedCommand BlockedTillReply(int ackCmdId, int timeout, SendQueue sendQueueState)
         {
             // Wait for matching command
-            var acknowledgeCommand = _receiveCommandQueue.WaitForCmd(timeout, ackCmdId, sendQueueState) ?? new ReceivedCommand();
-            return acknowledgeCommand;
+            return _receiveCommandQueue.WaitForCmd(timeout, ackCmdId, sendQueueState) ?? new ReceivedCommand();
         }
 
         private void ParseLines()
