@@ -29,7 +29,7 @@ namespace CommandMessenger.Queue
         public event EventHandler<CommandEventArgs> NewLineReceived;
 
         private readonly HandleReceivedCommandDelegate _receivedCommandHandler;
-        private ReceivedCommandSignal _receivedCommandSignal = new ReceivedCommandSignal();
+        private readonly ReceivedCommandSignal _receivedCommandSignal = new ReceivedCommandSignal();
 
         public ReceiveCommandQueue(HandleReceivedCommandDelegate receivedCommandHandler)
         {
