@@ -61,7 +61,15 @@ namespace CommandMessenger
                             if (_state == State.Running)
                             {
                                 haveMoreWork = _workerJob();
+
+                                // Check if state has been changed in workerJob thread.
+                                if (_requestedState != _state && _requestedState == State.Stopped)
+                                {
+                                    _state = _requestedState;
+                                    break;
+                                }
                             }
+
                             if (!haveMoreWork || _state == State.Suspended) _eventWaiter.WaitOne(Timeout.Infinite);
                             _state = _requestedState;
                         }
@@ -86,6 +94,25 @@ namespace CommandMessenger
                     _eventWaiter.Set();
                     _workerTask.Wait();
                     _workerTask.Dispose();
+                }
+                else
+                {
+                    throw new InvalidOperationException("The worker is already stopped.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Asynchronous stop.
+        /// Use this method if it's necessary to stop worker inside workerJob thread.
+        /// </summary>
+        public void StopAsync()
+        {
+            lock (_lock)
+            {
+                if (_state == State.Running || _state == State.Suspended)
+                {
+                    _requestedState = State.Stopped;
                 }
                 else
                 {

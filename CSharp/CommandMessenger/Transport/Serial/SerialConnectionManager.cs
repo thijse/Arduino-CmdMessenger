@@ -114,10 +114,9 @@ namespace CommandMessenger.Transport.Serial
 
                 Connected = false;
 
+                Log(1, @"Trying serial port " + _serialTransport.CurrentSerialSettings.PortName + " at " + _serialTransport.CurrentSerialSettings.BaudRate + " bauds.");
                 if (_serialTransport.Connect())
                 {
-                    Log(1, @"Trying serial port " + _serialTransport.CurrentSerialSettings.PortName + " at " + _serialTransport.CurrentSerialSettings.BaudRate + " bauds.");
-
                     // Calculate optimal timeout for command. It should be not less than Serial Port timeout. Lets add additional 250ms.
                     int optimalTimeout = _serialTransport.CurrentSerialSettings.Timeout + 250;
                     DeviceStatus status = ArduinoAvailable(optimalTimeout);

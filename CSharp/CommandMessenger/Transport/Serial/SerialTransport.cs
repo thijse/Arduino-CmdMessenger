@@ -112,6 +112,17 @@ namespace CommandMessenger.Transport.Serial
             return result;
         }
 
+        private bool DisconnectAsync()
+        {
+            bool result = Close();
+            if (_connected)
+            {
+                _connected = false;
+                _worker.StopAsync();
+            }
+            return result;
+        }
+
         /// <summary> Writes a parameter to the serial port. </summary>
         /// <param name="buffer"> The buffer to write. </param>
         public void Write(byte[] buffer)
@@ -131,7 +142,7 @@ namespace CommandMessenger.Transport.Serial
                 }
                 catch
                 {
-                    Disconnect();
+                    DisconnectAsync();
                 }
             }
         }
@@ -224,7 +235,7 @@ namespace CommandMessenger.Transport.Serial
                 }
                 catch
                 {
-                    Disconnect();
+                    DisconnectAsync();
                 }
             }
 
