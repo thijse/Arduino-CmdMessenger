@@ -91,28 +91,17 @@ namespace CommandMessenger
                 if (_state == State.Running || _state == State.Suspended)
                 {
                     _requestedState = State.Stopped;
-                    _eventWaiter.Set();
-                    _workerTask.Wait();
-                    _workerTask.Dispose();
-                }
-                else
-                {
-                    throw new InvalidOperationException("The worker is already stopped.");
-                }
-            }
-        }
 
-        /// <summary>
-        /// Asynchronous stop.
-        /// Use this method if it's necessary to stop worker inside workerJob thread.
-        /// </summary>
-        public void StopAsync()
-        {
-            lock (_lock)
-            {
-                if (_state == State.Running || _state == State.Suspended)
-                {
-                    _requestedState = State.Stopped;
+                    // Prevent deadlock by checking is we stopping from worker task or not.
+                    if (Task.CurrentId != _workerTask.Id)
+                    {
+                        _eventWaiter.Set();
+                        _workerTask.Wait();
+
+                        // http://blogs.msdn.com/b/pfxteam/archive/2012/03/25/10287435.aspx
+                        // Actually it's not required to call dispose on task, but we will do this if possible.
+                        _workerTask.Dispose();
+                    }
                 }
                 else
                 {

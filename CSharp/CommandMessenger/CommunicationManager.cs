@@ -19,7 +19,6 @@
 
 using System;
 using System.Text;
-using System.Threading;
 using CommandMessenger.Queue;
 using CommandMessenger.Transport;
 
