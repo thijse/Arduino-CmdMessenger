@@ -315,7 +315,7 @@ namespace CommandMessenger
 
             // We'll try another time
             // We queue the command in order to not be intrusive, but put it in front to get a quick answer
-            _cmdMessenger.SendCommand(new SendCommand(_identifyCommandId), SendQueue.InFrontQueue, ReceiveQueue.Default);
+            _cmdMessenger.SendCommand(new SendCommand(_identifyCommandId));
             _watchdogTries++;
 
             _lastCheckTime = currentTimeStamp;

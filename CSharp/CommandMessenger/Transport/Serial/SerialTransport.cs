@@ -175,6 +175,7 @@ namespace CommandMessenger.Transport.Serial
                 }
                 catch
                 {
+                    // Ignore.
                 }
             }
 

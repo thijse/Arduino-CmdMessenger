@@ -59,6 +59,8 @@
     <Compile Include="CmdMessenger.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="CommunicationManager.cs" />
+    <Compile Include="Transport\Network\TcpConnectionManager.cs" />
+    <Compile Include="Transport\Network\TcpTransport.cs" />
     <Compile Include="Transport\Serial\ISerialConnectionStorer.cs" />
     <Compile Include="Transport\Serial\SerialConnectionManager.cs" />
     <Compile Include="CommandEventArgs.cs" />

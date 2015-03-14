@@ -61,7 +61,15 @@ namespace CommandMessenger
                             if (_state == State.Running)
                             {
                                 haveMoreWork = _workerJob();
+
+                                // Check if state has been changed in workerJob thread.
+                                if (_requestedState != _state && _requestedState == State.Stopped)
+                                {
+                                    _state = _requestedState;
+                                    break;
+                                }
                             }
+
                             if (!haveMoreWork || _state == State.Suspended) _eventWaiter.WaitOne(Timeout.Infinite);
                             _state = _requestedState;
                         }
@@ -83,9 +91,17 @@ namespace CommandMessenger
                 if (_state == State.Running || _state == State.Suspended)
                 {
                     _requestedState = State.Stopped;
-                    _eventWaiter.Set();
-                    _workerTask.Wait();
-                    _workerTask.Dispose();
+
+                    // Prevent deadlock by checking is we stopping from worker task or not.
+                    if (Task.CurrentId != _workerTask.Id)
+                    {
+                        _eventWaiter.Set();
+                        _workerTask.Wait();
+
+                        // http://blogs.msdn.com/b/pfxteam/archive/2012/03/25/10287435.aspx
+                        // Actually it's not required to call dispose on task, but we will do this if possible.
+                        _workerTask.Dispose();
+                    }
                 }
                 else
                 {
