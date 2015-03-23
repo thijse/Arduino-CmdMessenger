@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using CommandMessenger;
 
 namespace CommandMessengerTests
@@ -34,6 +35,9 @@ namespace CommandMessengerTests
 
         public void RunTests()
         {
+            // Wait a bit before starting the test
+            Thread.Sleep(1000);
+
             // Test opening and closing connection
             Common.StartTestSet("Opening connections");
             TestOpenConnection();

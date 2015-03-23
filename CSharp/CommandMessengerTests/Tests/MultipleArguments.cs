@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using CommandMessenger;
 
 
@@ -37,6 +38,8 @@ namespace CommandMessengerTests
 
         public void RunTests()
         {
+            // Wait a bit before starting the test
+            Thread.Sleep(1000);
 
             Common.StartTestSet("Clear binary data");
             SetUpConnection();
