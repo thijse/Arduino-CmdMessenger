@@ -122,7 +122,8 @@ namespace CommandMessenger
                 }
                 else
                 {
-                    throw new InvalidOperationException("The worker is not running.");
+					// Perhaps this this does not require an Exception
+                    // throw new InvalidOperationException("The worker is not running.");
                 }
             }
         }
@@ -139,7 +140,8 @@ namespace CommandMessenger
                 }
                 else
                 {
-                    throw new InvalidOperationException("The worker is not in suspended state.");
+					// Perhaps this this does not require an Exception
+                    // throw new InvalidOperationException("The worker is not in suspended state.");
                 }
             }
         }

@@ -53,7 +53,7 @@ namespace CommandMessengerTests
             {
                 Description = @"Arduino Nano /w AT mega328",
                 MinReceiveSpeed     = 82000,              // Bits per second 
-                MinSendSpeed        = 90000,              // Bits per second                                      
+                MinSendSpeed        = 85000,              // Bits per second                                      
                 MinDirectSendSpeed  = 52000,              // Bits per second                
                 BoardType           = BoardType.Bit16,    // 16-bit architecture, needed from binary value conversion
                 sendBufferMaxLength = 60,                 // Maximum send buffer size, optimally buffer size is similar to embedded controller
