@@ -1,0 +1,13 @@
+{
+  "name": "CmdMessenger",
+  "keywords": "",
+  "description": "",
+  "include": "CmdMessenger",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/thijse/Arduino-Libraries.git"
+  },
+  "frameworks": "arduino",
+  "platforms": "atmelavr"
+}
