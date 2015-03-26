@@ -3,6 +3,12 @@
   "keywords": "protocol, message, communication, serial",
   "description": "A serial messaging library for the Arduino and .NET/Mono platform",
   "include": "CmdMessenger",
+  "exclude":
+  [
+    "CSharp",
+    "Documentation",
+    "Tools"
+  ],
   "repository":
   {
     "type": "git",
