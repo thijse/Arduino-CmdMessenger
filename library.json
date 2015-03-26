@@ -5,9 +5,9 @@
   "include": "CmdMessenger",
   "exclude":
   [
-    "CSharp",
-    "Documentation",
-    "Tools"
+    "CmdMessenger/CSharp",
+    "CmdMessenger/Documentation",
+    "CmdMessenger/Tools"
   ],
   "repository":
   {
