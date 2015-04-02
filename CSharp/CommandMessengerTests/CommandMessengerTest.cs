@@ -10,6 +10,7 @@
 using System;
 using System.IO.Ports;
 using CommandMessenger;
+using CommandMessenger.Transport.Bluetooth;
 using CommandMessenger.Transport.Serial;
 
 namespace CommandMessengerTests
@@ -61,33 +62,49 @@ namespace CommandMessengerTests
                 {
                     CurrentSerialSettings = new SerialSettings()
                     {
-                        PortName = "COM6",                // Can be different!
-                        BaudRate = 115200,                // Bits per second
-                        DataBits = 8,                     // Data bits
-                        Parity = Parity.None,             // Bit parity
-                        DtrEnable = false,                // Some boards need to send this to enabled                                    
+                        PortName  = "COM6",                  // Can be different!
+                        BaudRate  = 115200,                  // Bits per second
+                        DataBits  = 8,                       // Data bits
+                        Parity    = Parity.None,             // Bit parity
+                        DtrEnable = false,                   // Some boards need to send this to enabled                                    
                     },
 
                 }
             };
 
+
+            var arduinoNanoBluetooth = new systemSettings()
+            {
+                Description         = @"Arduino Nano /w AT mega328 - Bluetooth",
+                MinReceiveSpeed     = 6500,                         // Bits per second 
+                MinSendSpeed        = 7400,                         // Bits per second                                      
+                MinDirectSendSpeed  = 8000,                         // Bits per second                
+                BoardType           = BoardType.Bit16,              // 16-bit architecture, needed from binary value conversion
+                sendBufferMaxLength = 60,                           // Maximum send buffer size, optimally buffer size is similar to embedded controller
+                Transport           = new BluetoothTransport()
+                {
+                    CurrentBluetoothDeviceInfo = BluetoothUtils.DeviceByAdress("20:13:07:26:10:08"),
+                    LazyReconnect              = true,              // Only reconnect if really necessary
+                }
+            };
+
             var arduinoLeonardoOrProMicro = new systemSettings()
             {
-                Description = @"Arduino Leonardo or Sparkfun ProMicro /w AT mega32u4",
+                Description         = @"Arduino Leonardo or Sparkfun ProMicro /w AT mega32u4",
                 MinReceiveSpeed     = 82000,               // Bits per second 
                 MinSendSpeed        = 90000,               // Bits per second                                      
                 MinDirectSendSpeed  = 52000,               // Bits per second                
                 BoardType           = BoardType.Bit16,     // 16-bit architecture, needed from binary value conversion
                 sendBufferMaxLength = 60,                  // Maximum send buffer size, optimally buffer size is similar to embedded controller
-                Transport = new SerialTransport
+                Transport           = new SerialTransport
                 {
                     CurrentSerialSettings = new SerialSettings()
                     {
-                        PortName = "COM13",               // Can be different!
-                        BaudRate = 115200,                // Bits per second
-                        DataBits = 8,                     // Data bits
-                        Parity = Parity.None,             // Bit parity
-                        DtrEnable = true,                 // Some boards need to send this to enabled                                    
+                        PortName  = "COM13",                 // Can be different!
+                        BaudRate  = 115200,                  // Bits per second
+                        DataBits  = 8,                       // Data bits
+                        Parity    = Parity.None,             // Bit parity
+                        DtrEnable = true,                    // Some boards need to send this to enabled                                    
                     },
 
                 }
@@ -97,7 +114,7 @@ namespace CommandMessengerTests
             var command = DefineCommands();
 
             // Initialize tests, CHANGE "DEVICE" VARIABLE TO YOUR DEVICE!
-            var device = arduinoNano;
+            var device = arduinoNanoBluetooth;
             InitializeTests(device, command);
 
             // Open log file for testing 

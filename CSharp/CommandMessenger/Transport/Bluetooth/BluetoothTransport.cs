@@ -25,6 +25,10 @@ using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
 
+// Todo: 
+// remove isconnected for speedup. 
+// Test for disconnected bluetooth
+
 namespace CommandMessenger.Transport.Bluetooth
 {
     /// <summary>
@@ -40,13 +44,26 @@ namespace CommandMessenger.Transport.Bluetooth
         private readonly object _writeLock = new object();
         private readonly byte[] _readBuffer = new byte[BufferSize];
         private int _bufferFilled;
+		private static BluetoothDeviceInfo _runningBluetoothDeviceInfo;
+        
 
         // Event queue for all listeners interested in NewLinesReceived events.
         public event EventHandler DataReceived;
 
         /// <summary> Gets or sets the current serial port settings. </summary>
         /// <value> The current serial settings. </value>
+
+        private static bool _showAsConnected;
+        private static bool _lazyReconnect;
+
+
+
         public BluetoothDeviceInfo CurrentBluetoothDeviceInfo { get; set; }
+        public bool LazyReconnect
+        {
+            get { return _lazyReconnect; }
+            set { _lazyReconnect = value; }
+        }
 
         public BluetoothClient BluetoothClient
         {
@@ -55,7 +72,15 @@ namespace CommandMessenger.Transport.Bluetooth
 
         public BluetoothTransport()
         {
+            _showAsConnected = false;
+            _lazyReconnect = true;
             _worker = new AsyncWorker(Poll);
+        }
+
+
+        ~BluetoothTransport()
+        {
+            Disconnect();
         }
 
         private bool Poll()
@@ -70,8 +95,17 @@ namespace CommandMessenger.Transport.Bluetooth
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Connect()
         {
+             
+            // Reconnecting to the same device seems to fail a lot of the time, so see
+            // if we can remain connected
+            if (_runningBluetoothDeviceInfo!=null && _runningBluetoothDeviceInfo.DeviceAddress == CurrentBluetoothDeviceInfo.DeviceAddress && _lazyReconnect) {
+                CurrentBluetoothDeviceInfo = _runningBluetoothDeviceInfo;
+            } else {
+                _runningBluetoothDeviceInfo = CurrentBluetoothDeviceInfo;
+                //BluetoothClient.Close();
+            }
             // Closing serial port if it is open
-            _stream = null;
+            //_stream = null;
 
             // set pin of device to connect with            
             // check if device is paired
@@ -81,39 +115,59 @@ namespace CommandMessenger.Transport.Bluetooth
                 if (!CurrentBluetoothDeviceInfo.Authenticated)
                 {
                     //Console.WriteLine("Not authenticated");
-                    return false;
+                    _showAsConnected = false;
+                    return _showAsConnected;
                 }
 
-                if (BluetoothClient.Connected)
+                if (BluetoothClient.Connected && !LazyReconnect)
                 {
-                    //Console.WriteLine("Previously connected, setting up new connection");
+                    //Previously connected, setting up new connection"
                     BluetoothUtils.UpdateClient();
                 }
 
                 // synchronous connection method
-                BluetoothClient.Connect(CurrentBluetoothDeviceInfo.DeviceAddress, BluetoothService.SerialPort);
+                if (!BluetoothClient.Connected || !_lazyReconnect)
+                    BluetoothClient.Connect(CurrentBluetoothDeviceInfo.DeviceAddress, BluetoothService.SerialPort);
 
                 if (!Open())
                 {
-                    Console.WriteLine("Stream not opened");
-                    return false;
+                    // Desperate attempt: try full reset and open
+                    _showAsConnected = UpdateConnectOpen();
+                    return _showAsConnected;
                 }
 
                 // Check worker is not running as a precaution. This needs to be rechecked.
                 if (!_worker.IsRunning) _worker.Start();
-                
-                return true;
+
+                _showAsConnected = true;
+                return _showAsConnected;
             }
             catch (SocketException)
             {
-                //Console.WriteLine("Socket exception while trying to connect");
                 return false;
             }
             catch (InvalidOperationException)
             {
-                BluetoothUtils.UpdateClient();
+                // Desperate attempt: try full reset and open
+                _showAsConnected = UpdateConnectOpen();
+                return _showAsConnected;
+            }
+        }
+
+        
+
+        private bool UpdateConnectOpen()
+        {
+            BluetoothUtils.UpdateClient();
+            try
+            {
+                BluetoothClient.Connect(CurrentBluetoothDeviceInfo.DeviceAddress, BluetoothService.SerialPort);
+            }
+            catch
+            {
                 return false;
             }
+            return Open();
         }
 
         /// <summary> Opens the serial port. </summary>
@@ -121,16 +175,21 @@ namespace CommandMessenger.Transport.Bluetooth
         public bool Open()
         {
             if (!BluetoothClient.Connected) return false;
-            _stream = BluetoothClient.GetStream();
-            _stream.ReadTimeout = 2000;
-            _stream.WriteTimeout = 1000;
+            lock (_writeLock) { lock (_readLock) 
+            {
+                    _stream = BluetoothClient.GetStream();
+                    _stream.ReadTimeout = 2000;
+                    _stream.WriteTimeout = 1000;
+            } }
             return true;
         }
 
         public bool IsConnected()
         {
-            // note: this does not always work. Perhaps do a scan
-            return BluetoothClient.Connected;
+            // In case of lazy reconnect we will pretend to be disconnected
+            if (_lazyReconnect && !_showAsConnected) return false;
+            // If not, test if we are connected
+            return (BluetoothClient!=null) && BluetoothClient.Connected;
         }
 
         public bool IsOpen()
@@ -144,19 +203,27 @@ namespace CommandMessenger.Transport.Bluetooth
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Close()
         {
-            // No closing needed
-            if (_stream == null) return true;
-            _stream.Close();
-            _stream = null;
-            return true;
+            lock (_writeLock)
+            {
+                lock (_readLock)
+                {
+                    // No closing needed
+                    if (_stream == null) return true;
+                    _stream.Close();
+                    _stream = null;
+                    return true;
+                }
+            }
         }
 
         /// <summary> Disconnect the bluetooth stream. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Disconnect()
         {
-            // Check worker is running as a precaution. This needs to be rechecked.
+            _showAsConnected = false;
+            // Check worker is running as a precaution. 
             if (_worker.IsRunning) _worker.Stop();
+            if (_lazyReconnect) return true;
             return Close();
         }
 
@@ -200,15 +267,18 @@ namespace CommandMessenger.Transport.Bluetooth
             {
                 try
                 {
+
+                    var nbrDataRead = _stream.Read(_readBuffer, _bufferFilled, (BufferSize - _bufferFilled));
                     lock (_readLock)
                     {
-                        var nbrDataRead = _stream.Read(_readBuffer, _bufferFilled, (BufferSize - _bufferFilled));
                         _bufferFilled += nbrDataRead;
+                        //Console.WriteLine("buf: {0}", _bufferFilled.ToString().Length);
                     }
                     return _bufferFilled;
                 }
                 catch (IOException)
                 {
+                    //Console.WriteLine("buf: TO");
                     // Timeout (expected)
                 }
             }
@@ -219,13 +289,13 @@ namespace CommandMessenger.Transport.Bluetooth
                 Thread.Sleep(25);
             }
 
-            return 0;
+            return _bufferFilled;
         }
 
         /// <summary> Reads the serial buffer into the string buffer. </summary>
         public byte[] Read()
         {
-            if (IsOpen())
+            //if (IsOpen())
             {
                 byte[] buffer;
                 lock (_readLock)
@@ -238,6 +308,7 @@ namespace CommandMessenger.Transport.Bluetooth
             }
             return new byte[0];
         }
+
 
         protected virtual void Dispose(bool disposing)
         {

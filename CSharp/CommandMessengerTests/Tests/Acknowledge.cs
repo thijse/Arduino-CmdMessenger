@@ -82,6 +82,10 @@ namespace CommandMessengerTests
             {
                 _cmdMessenger = Common.Connect(_systemSettings);
                 AttachCommandCallBacks();
+                if (!Common.Connected)
+                {
+                    Common.TestNotOk("Not connected after opening connection");
+                }               
             }
             catch (Exception)
             {

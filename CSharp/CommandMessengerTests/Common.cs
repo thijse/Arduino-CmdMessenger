@@ -12,13 +12,13 @@
 
   The above copyright notice and this permission notice shall be
   included in all copies or substantial portions of the Software.
-
   Copyright 2014 - Thijs Elenbaas
 */
+
 #endregion
 using System;
 using CommandMessenger;
-using CommandMessenger.Transport.Serial;
+
 using System.IO;
 
 
@@ -34,7 +34,7 @@ namespace CommandMessengerTests
         private const string IdentSt = @"      ";
         private const string IdentWn = @"      ";
         public static CmdMessenger CmdMessenger { get; set; }
-        public static SerialTransport SerialTransport { get; set; }
+		public static bool Connected { get; private set; }
 
         private static bool _loggingCommands = false;
         private static bool _testStarted     = false;
@@ -58,11 +58,17 @@ namespace CommandMessengerTests
 
         public static CmdMessenger Connect(systemSettings systemSettings)
         {
-            CmdMessenger = new CmdMessenger(systemSettings.Transport, systemSettings.sendBufferMaxLength, systemSettings.BoardType);
+
+            if (CmdMessenger == null)
+            {
+                CmdMessenger = new CmdMessenger(systemSettings.Transport, systemSettings.sendBufferMaxLength,
+                    systemSettings.BoardType);
+            }
+
             // Attach to NewLineReceived and NewLineSent for logging purposes
             LogCommands(true);
 
-            CmdMessenger.Connect();
+            Connected = CmdMessenger.Connect();
             return CmdMessenger;
         }
 
@@ -100,7 +106,8 @@ namespace CommandMessengerTests
         {
             LogCommands(false);
             CmdMessenger.Disconnect();
-            CmdMessenger.Dispose();            
+            Connected = false;
+            //CmdMessenger.Dispose();            
         }
 
 
