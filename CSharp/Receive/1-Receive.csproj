@@ -11,7 +11,8 @@
     <RootNamespace>Receive</RootNamespace>
     <AssemblyName>Receive</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -48,10 +49,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommandMessenger.Transport.Serial\CommandMessenger.Transport.Serial.csproj">
+      <Project>{00d85f0b-00a5-41fa-8a99-428c0199c663}</Project>
+      <Name>CommandMessenger.Transport.Serial</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CommandMessenger\CommandMessenger.csproj">
       <Project>{3CF8F8FC-6F5C-46F8-94DC-C2E4C505ECA4}</Project>
       <Name>CommandMessenger</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

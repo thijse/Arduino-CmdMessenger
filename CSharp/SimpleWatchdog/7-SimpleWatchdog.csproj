@@ -46,6 +46,10 @@
     <Compile Include="SimpleWatchdog.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommandMessenger.Transport.Serial\CommandMessenger.Transport.Serial.csproj">
+      <Project>{00d85f0b-00a5-41fa-8a99-428c0199c663}</Project>
+      <Name>CommandMessenger.Transport.Serial</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CommandMessenger\CommandMessenger.csproj">
       <Project>{3CF8F8FC-6F5C-46F8-94DC-C2E4C505ECA4}</Project>
       <Name>CommandMessenger</Name>

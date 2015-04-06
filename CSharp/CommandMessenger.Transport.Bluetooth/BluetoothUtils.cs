@@ -61,7 +61,14 @@ namespace CommandMessenger.Transport.Bluetooth
 
         public static BluetoothDeviceInfo DeviceByAdress(string address)
         {
-            return new BluetoothDeviceInfo(BluetoothAddress.Parse(address));
+            try
+            {
+                return new BluetoothDeviceInfo(BluetoothAddress.Parse(address));
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public static void PrintPairedDevices()

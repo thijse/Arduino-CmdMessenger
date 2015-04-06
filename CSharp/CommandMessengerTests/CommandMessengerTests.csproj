@@ -11,7 +11,8 @@
     <RootNamespace>CommandMessengerTests</RootNamespace>
     <AssemblyName>CommandMessengerTests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -61,12 +62,22 @@
     <Compile Include="Tests\Random.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommandMessenger.Transport.Bluetooth\CommandMessenger.Transport.Bluetooth.csproj">
+      <Project>{68be9e17-9b05-4b66-bde6-f2a4c50858ea}</Project>
+      <Name>CommandMessenger.Transport.Bluetooth</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CommandMessenger.Transport.Serial\CommandMessenger.Transport.Serial.csproj">
+      <Project>{00d85f0b-00a5-41fa-8a99-428c0199c663}</Project>
+      <Name>CommandMessenger.Transport.Serial</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CommandMessenger\CommandMessenger.csproj">
       <Project>{3CF8F8FC-6F5C-46F8-94DC-C2E4C505ECA4}</Project>
       <Name>CommandMessenger</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

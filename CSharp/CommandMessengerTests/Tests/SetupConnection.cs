@@ -62,6 +62,7 @@ namespace CommandMessengerTests
             {
                 Common.TestNotOk("Exception during opening connection");
                 Common.EndTest();
+                if (_cmdMessenger==null) Common.EndTestSet();
                 return;
             }
 

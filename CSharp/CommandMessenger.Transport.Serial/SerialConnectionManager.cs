@@ -156,8 +156,14 @@ namespace CommandMessenger.Transport.Serial
         {
             var activeConnection = false;
 
-            try { activeConnection = TryConnection() == DeviceStatus.Available; }
-            catch { }
+            try
+            {
+                activeConnection = TryConnection() == DeviceStatus.Available;
+            }
+            catch
+            {
+                // Do nothing
+            }
 
             if (activeConnection)
             {
@@ -174,18 +180,36 @@ namespace CommandMessenger.Transport.Serial
             switch (_scanType)
             {
                 case ScanType.None:
-                    try { activeConnection = TryConnection() == DeviceStatus.Available; }
-                    catch { }
+                    try
+                    {
+                        activeConnection = TryConnection() == DeviceStatus.Available;
+                    }
+                    catch
+                    {
+                        // Do nothing
+                    }
                     _scanType = ScanType.Quick;
                     break;
                 case ScanType.Quick:
-                    try { activeConnection = QuickScan(); }
-                    catch { }
+                    try
+                    {
+                        activeConnection = QuickScan();
+                    }
+                    catch
+                    {
+                        // Do nothing
+                    }
                     _scanType = ScanType.Thorough;
                     break;
                 case ScanType.Thorough:
-                    try { activeConnection = ThoroughScan(); }
-                    catch { }
+                    try
+                    {
+                        activeConnection = ThoroughScan();
+                    }
+                    catch
+                    {
+                        // Do nothing
+                    }
                     _scanType = ScanType.Quick;
                     break;
             }
@@ -371,7 +395,7 @@ namespace CommandMessenger.Transport.Serial
             _serialConnectionStorer.StoreSettings(_serialConnectionManagerSettings);
         }
 
-        protected override void ReadSettings()
+        protected override sealed void ReadSettings()
         {
             if (!PersistentSettings) return;
             _serialConnectionManagerSettings = _serialConnectionStorer.RetrieveSettings();

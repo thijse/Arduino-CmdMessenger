@@ -89,6 +89,8 @@ namespace CommandMessengerTests
             }
             catch (Exception)
             {
+                Common.TestNotOk("CmdMessenger application could not be created");
+                Common.EndTestSet();
             }
             if (!_systemSettings.Transport.IsConnected())
             {

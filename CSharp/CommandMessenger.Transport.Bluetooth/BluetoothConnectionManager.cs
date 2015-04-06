@@ -102,8 +102,14 @@ namespace CommandMessenger.Transport.Bluetooth
             const int timeOut = 1000;
             var activeConnection = false;
 
-            try { activeConnection = TryConnection(timeOut); }
-            catch { }
+            try
+            {
+                activeConnection = TryConnection(timeOut);
+            }
+            catch
+            {
+                // Do nothing
+            }
 
             if (activeConnection)
             {
@@ -126,11 +132,15 @@ namespace CommandMessenger.Transport.Bluetooth
             switch (_scanType)
             {
                 case ScanType.Quick:
-                    try { activeConnection = QuickScan(); } catch { }
+                    try { activeConnection = QuickScan(); } catch {
+                        //Do nothing 
+                    }
                     _scanType = ScanType.Thorough;
                     break;
                 case ScanType.Thorough:
-                    try { activeConnection = ThoroughScan(); } catch { }
+                    try { activeConnection = ThoroughScan(); } catch {
+                        //Do nothing 
+                    }
                     _scanType = ScanType.Quick;
                     break;
             }
@@ -237,14 +247,7 @@ namespace CommandMessenger.Transport.Bluetooth
         {
             if (bluetoothAddress == null) return false;
             // Find
-            foreach (var bluetoothDeviceInfo in _deviceList)
-            {
-                if (bluetoothDeviceInfo.DeviceAddress == bluetoothAddress)
-                {
-                    return TryConnection(bluetoothDeviceInfo, timeOut);
-                }
-            }
-            return false;
+            return (from bluetoothDeviceInfo in _deviceList where bluetoothDeviceInfo.DeviceAddress == bluetoothAddress select TryConnection(bluetoothDeviceInfo, timeOut)).FirstOrDefault();
         }
 
         private bool TryConnection(BluetoothDeviceInfo bluetoothDeviceInfo, int timeOut)

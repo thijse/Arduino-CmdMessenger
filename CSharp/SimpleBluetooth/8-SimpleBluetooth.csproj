@@ -50,6 +50,10 @@
     <Compile Include="SimpleBluetooth.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommandMessenger.Transport.Bluetooth\CommandMessenger.Transport.Bluetooth.csproj">
+      <Project>{68be9e17-9b05-4b66-bde6-f2a4c50858ea}</Project>
+      <Name>CommandMessenger.Transport.Bluetooth</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CommandMessenger\CommandMessenger.csproj">
       <Project>{3CF8F8FC-6F5C-46F8-94DC-C2E4C505ECA4}</Project>
       <Name>CommandMessenger</Name>

@@ -243,6 +243,7 @@ namespace CommandMessenger.Transport.Bluetooth
             }
             catch
             {
+                //Do nothing
             }
         }
 
@@ -306,7 +307,7 @@ namespace CommandMessenger.Transport.Bluetooth
                 }
                 return buffer;
             }
-            return new byte[0];
+            //return new byte[0];
         }
 
 

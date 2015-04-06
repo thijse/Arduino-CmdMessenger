@@ -114,9 +114,9 @@ namespace CommandMessenger.Transport.Serial
         {
             #pragma warning disable 219
             // ReSharper disable InconsistentNaming
-            const int BAUD_075    = 0x00000001;
-            const int BAUD_110    = 0x00000002;
-            const int BAUD_150    = 0x00000008;
+            //const int BAUD_075  = 0x00000001;
+            //const int BAUD_110  = 0x00000002;
+            //const int BAUD_150  = 0x00000008;
             const int BAUD_300    = 0x00000010;
             const int BAUD_600    = 0x00000020;
             const int BAUD_1200   = 0x00000040;
