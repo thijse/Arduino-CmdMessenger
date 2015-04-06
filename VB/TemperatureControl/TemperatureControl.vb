@@ -20,7 +20,6 @@ Imports CommandMessenger.Queue
 Imports CommandMessenger.Transport
 Imports CommandMessenger.Transport.Serial
 Imports CommandMessenger.Transport.Bluetooth
-Imports Microsoft.VisualBasic
 
 Friend Enum CommandIds
     Identify           ' Command to identify device
