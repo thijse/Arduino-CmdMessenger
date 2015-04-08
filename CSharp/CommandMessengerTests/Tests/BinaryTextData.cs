@@ -138,7 +138,7 @@ namespace CommandMessengerTests
             // Try a lot of random numbers
             for (int i = 0; i < 1000; i++)
             {
-                ValuePingPongBinFloat(Random.RandomizeFloat(-float.MaxValue, float.MaxValue));
+                ValuePingPongBinFloat(Random.RandomizeFloat(-float.MaxValue / 100.0f, float.MaxValue / 100.0f));
             }
             Common.EndTest();
         }

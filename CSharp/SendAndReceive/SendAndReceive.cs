@@ -33,7 +33,6 @@ namespace SendAndReceive
         {
             _ledState = false;
 
-
             // Create Serial Port transport object
             // Note that for some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.
             _serialTransport = new SerialTransport

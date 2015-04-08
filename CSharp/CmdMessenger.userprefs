@@ -1,8 +1,8 @@
-﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+﻿<Properties StartupItem="CommandMessengerTests\CommandMessengerTests.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="ArduinoController\ArduinoController.cs">
     <Files>
-      <File FileName="ArduinoController\ArduinoController.cs" Line="52" Column="52" />
+      <File FileName="ArduinoController\ArduinoController.cs" Line="61" Column="4" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

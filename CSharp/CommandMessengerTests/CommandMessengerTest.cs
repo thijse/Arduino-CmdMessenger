@@ -62,7 +62,7 @@ namespace CommandMessengerTests
                 {
                     CurrentSerialSettings = new SerialSettings()
                     {
-                        PortName  = "COM6",                  // Can be different!
+                        PortName  = "COM16",                  // Can be different!
                         BaudRate  = 115200,                  // Bits per second
                         DataBits  = 8,                       // Data bits
                         Parity    = Parity.None,             // Bit parity
@@ -114,7 +114,7 @@ namespace CommandMessengerTests
             var command = DefineCommands();
 
             // Initialize tests, CHANGE "DEVICE" VARIABLE TO YOUR DEVICE!
-            var device = arduinoNanoBluetooth;
+            var device = arduinoNano;
             InitializeTests(device, command);
 
             // Open log file for testing 

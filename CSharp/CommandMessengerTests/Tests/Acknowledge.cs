@@ -60,18 +60,14 @@ namespace CommandMessengerTests
             // Test opening and closing connection
             Common.StartTestSet("Waiting for acknowledgments");
             SetUpConnection();
+            
             // Test acknowledgments
             TestSendCommandWithAcknowledgement();
-
-            //TestSendCommandWithAcknowledgement();
-
-            //TestSendCommandWithAcknowledgement();
-
             TestSendCommandWithAcknowledgementByArduino();
             WaitForAcknowledgementByEmbeddedFinished();
-
             TestSendCommandWithAcknowledgementAfterQueued();
 
+            // Test closing connection
             CloseConnection();
             Common.EndTestSet();
         }

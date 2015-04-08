@@ -146,7 +146,7 @@ namespace CommandMessengerTests
 
         public void TestSendFloatSciData()
         {
-            const float stepsize = (float)float.MaxValue/100;
+            const float stepsize = (float)float.MaxValue/100.0f;
             Common.StartTest("Ping-pong of increasing float values, returned in scientific format");
             // Try a lot of random numbers
             for (var i = 0; i < 100; i++)
@@ -158,7 +158,7 @@ namespace CommandMessengerTests
             Common.StartTest("Ping-pong of random float values, returned in scientific format");
             for (var i = 0; i < 100; i++)
             {
-                ValuePingPongFloatSci(Random.RandomizeFloat(-float.MaxValue, float.MaxValue), 0.05f);
+                ValuePingPongFloatSci(Random.RandomizeFloat(-float.MaxValue / 100.0f, float.MaxValue / 100.0f), 0.05f);
             }
             Common.EndTest();
         }
