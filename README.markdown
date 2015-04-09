@@ -48,7 +48,7 @@ Get to know the library, by trying the examples,from simple to complex:
 	  - Set up a serial connection
 	  - Send a command with a parameter to the Arduino
 
-### SentandReceive 
+### SendandReceive 
   This example expands the previous Receive example. The Arduino will now send back a status. 
   On the Arduino side, 
   * it demonstrates how to:

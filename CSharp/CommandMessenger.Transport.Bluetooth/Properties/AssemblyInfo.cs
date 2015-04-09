@@ -6,13 +6,13 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("CommandMessenger-Transport-Bluetooth")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A messaging library for the Arduino and .NET/Mono platform")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Philips Healthcare")]
-[assembly: AssemblyProduct("CommandMessenger-Transport-Bluetooth")]
-[assembly: AssemblyCopyright("Copyright © Philips Healthcare 2015")]
+[assembly: AssemblyProduct("CmdMessenger")]
+[assembly: AssemblyCopyright("Copyright © Thijs Elenbaas 2013, 2014, 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 

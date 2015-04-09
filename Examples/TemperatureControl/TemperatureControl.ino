@@ -176,11 +176,11 @@ void setup()
   // Listen on serial connection for messages from the pc
     
   // 115200 is typically the maximum speed for serial over USB
-  // Serial.begin(115200);
+  Serial.begin(115200);
     
   // Many bluetooth breakout boards run on 9600 at default speed
   // The Serial setting below should match this
-  Serial.begin(9600);    
+  //Serial.begin(9600);    
 	
   // Do not print newLine at end of command, 
   // in order to reduce data being sent

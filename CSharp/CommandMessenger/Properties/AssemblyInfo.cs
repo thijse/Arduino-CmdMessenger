@@ -8,9 +8,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("CmdMessenger")]
 [assembly: AssemblyDescription("A messaging library for the Arduino and .NET/Mono platform")]
 [assembly: AssemblyConfiguration("")]
-
 [assembly: AssemblyProduct("CmdMessenger")]
-[assembly: AssemblyCopyright("Copyright © Thijs Elenbaas 2013, 2014")]
+[assembly: AssemblyCopyright("Copyright © Thijs Elenbaas 2013, 2014, 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
