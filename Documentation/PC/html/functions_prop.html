@@ -23,7 +23,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CmdMessenger
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">3.7</span>
    </div>
    <div id="projectbrief">CmdMessenger is a serial port messaging library for the .Net / Mono Platform.</div>
   </td>
@@ -55,8 +55,8 @@
     <ul class="tablist">
       <li><a href="functions.html"><span>All</span></a></li>
       <li><a href="functions_func.html"><span>Functions</span></a></li>
-      <li><a href="functions_enum.html"><span>Enumerations</span></a></li>
       <li class="current"><a href="functions_prop.html"><span>Properties</span></a></li>
+      <li><a href="functions_evnt.html"><span>Events</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
@@ -66,15 +66,16 @@
       <li><a href="#index_c"><span>c</span></a></li>
       <li><a href="#index_d"><span>d</span></a></li>
       <li><a href="#index_e"><span>e</span></a></li>
+      <li><a href="#index_f"><span>f</span></a></li>
       <li><a href="#index_g"><span>g</span></a></li>
       <li><a href="#index_i"><span>i</span></a></li>
       <li><a href="#index_l"><span>l</span></a></li>
-      <li><a href="#index_n"><span>n</span></a></li>
       <li><a href="#index_o"><span>o</span></a></li>
       <li><a href="#index_p"><span>p</span></a></li>
       <li><a href="#index_r"><span>r</span></a></li>
       <li><a href="#index_s"><span>s</span></a></li>
       <li><a href="#index_t"><span>t</span></a></li>
+      <li><a href="#index_w"><span>w</span></a></li>
     </ul>
   </div>
 </div>
@@ -88,18 +89,18 @@
 <li>Arguments
 : <a class="el" href="class_command_messenger_1_1_command.html#a37081da85e99769325d30d3c32a4085f">CommandMessenger.Command</a>
 </li>
+<li>AvailableSerialPorts
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_connection_manager.html#ad95ef6f33111c505a92641f54d772816">CommandMessenger.Transport.Serial.SerialConnectionManager</a>
+</li>
 </ul>
 
 
 <h3><a class="anchor" id="index_b"></a>- b -</h3><ul>
 <li>BaudRate
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#a8667d9e37013446a1280471f8c80bbf6">CommandMessenger.SerialSettings</a>
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_settings.html#aabb6c29ff25c1a33ba94348d5c877baa">CommandMessenger.Transport.Serial.SerialSettings</a>
 </li>
-<li>BaudRateCollection
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#a1e5d692217a84a839ac952430630a996">CommandMessenger.SerialSettings</a>
-</li>
-<li>BoardType
-: <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a27a2a3229ee31c717fba71f93e96fab5">CommandMessenger.CmdMessenger</a>
+<li>BluetoothClient
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_bluetooth_1_1_bluetooth_transport.html#a5594bbbb1e25f7c18be3438343682df0">CommandMessenger.Transport.Bluetooth.BluetoothTransport</a>
 </li>
 </ul>
 
@@ -109,51 +110,70 @@
 : <a class="el" href="class_command_messenger_1_1_command.html#a61af9c08c0c4998715ad6ed874ac7236">CommandMessenger.Command</a>
 </li>
 <li>Command
-: <a class="el" href="class_command_messenger_1_1_command_strategy.html#a2a77dcbf8c36821eb51a357c75e526af">CommandMessenger.CommandStrategy</a>
+: <a class="el" href="class_command_messenger_1_1_queue_1_1_command_strategy.html#a87cbd1fcecf3ef9324fe734851a9b368">CommandMessenger.Queue.CommandStrategy</a>
 </li>
 <li>CommandQueue
-: <a class="el" href="class_command_messenger_1_1_general_strategy.html#abd1f669e5e0fbe1a9189197bb79c4c4c">CommandMessenger.GeneralStrategy</a>
-, <a class="el" href="class_command_messenger_1_1_command_strategy.html#a9ebf72f03d30c554fca2e9d7b6b18639">CommandMessenger.CommandStrategy</a>
+: <a class="el" href="class_command_messenger_1_1_queue_1_1_general_strategy.html#ae84871f726b236454ab7e82973ed594d">CommandMessenger.Queue.GeneralStrategy</a>
+, <a class="el" href="class_command_messenger_1_1_queue_1_1_command_strategy.html#a8f913b270203d0058d36f3f7ba8b7401">CommandMessenger.Queue.CommandStrategy</a>
+</li>
+<li>CommandSeparator
+: <a class="el" href="class_command_messenger_1_1_communication_manager.html#a35605e074cc196382dfab6822c388f4b">CommandMessenger.CommunicationManager</a>
+</li>
+<li>Connected
+: <a class="el" href="class_command_messenger_1_1_connection_manager.html#a6d72c44407ccf6bae4017758ac20a6ff">CommandMessenger.ConnectionManager</a>
+</li>
+<li>ControlToInvokeOn
+: <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#af648ee8923f39bb52472a363f18d4263">CommandMessenger.CmdMessenger</a>
 </li>
 <li>Count
-: <a class="el" href="class_command_messenger_1_1_command_queue.html#ad89f94593dab1b278128d8586c4f51de">CommandMessenger.CommandQueue</a>
+: <a class="el" href="class_command_messenger_1_1_queue_1_1_command_queue.html#ab3895746c24cc60394f8c9bef006ecca">CommandMessenger.Queue.CommandQueue</a>
 </li>
 <li>CurrentBluetoothDeviceInfo
-: <a class="el" href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_transport.html#aa7e18face65a5779952cfa4e2674404d">CommandMessenger.Bluetooth.BluetoothTransport</a>
-</li>
-<li>CurrentReceivedCommand
-: <a class="el" href="class_command_messenger_1_1_sender.html#a5045a74961cb27242b858750ca7c2efe">CommandMessenger.Sender</a>
-</li>
-<li>CurrentReceivedLine
-: <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#a1388886b01925fa3f6e78b5ee2ab6219">CommandMessenger.CmdMessenger</a>
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_bluetooth_1_1_bluetooth_transport.html#a44214b0f929a4ef66431394d540b246d">CommandMessenger.Transport.Bluetooth.BluetoothTransport</a>
 </li>
 <li>CurrentSerialSettings
-: <a class="el" href="class_command_messenger_1_1_serialport_1_1_serial_transport.html#aeb06b3783cf582717ca2ff4e261c5b63">CommandMessenger.Serialport.SerialTransport</a>
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_transport.html#a2a0c9fd75b14b3c171e778e43fd533a8">CommandMessenger.Transport.Serial.SerialTransport</a>
 </li>
 </ul>
 
 
 <h3><a class="anchor" id="index_d"></a>- d -</h3><ul>
 <li>DataBits
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#a912315b725dbce112765eab98f3ec623">CommandMessenger.SerialSettings</a>
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_settings.html#a600b2844764c65d6533f57a702533b52">CommandMessenger.Transport.Serial.SerialSettings</a>
 </li>
-<li>DataBitsCollection
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#a34b43b2898f726e4a0ce72a48dc9d1f1">CommandMessenger.SerialSettings</a>
+<li>DevicePins
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_bluetooth_1_1_bluetooth_connection_manager.html#a1fb5d1d3fff2ac0c918388fd2c4de8e1">CommandMessenger.Transport.Bluetooth.BluetoothConnectionManager</a>
+</li>
+<li>DeviceScanBaudRateSelection
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_connection_manager.html#a2b691e3c267177a30b4ab329d1d55b9b">CommandMessenger.Transport.Serial.SerialConnectionManager</a>
+</li>
+<li>DeviceScanEnabled
+: <a class="el" href="class_command_messenger_1_1_connection_manager.html#ad101f93b0ab8ae0e3bd9dbddda5c20e0">CommandMessenger.ConnectionManager</a>
 </li>
 <li>DtrEnable
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#a7704f0ee959092a9a51c30bb1d3388be">CommandMessenger.SerialSettings</a>
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_settings.html#aa372b3167c0636d84c04d8af58f19e28">CommandMessenger.Transport.Serial.SerialSettings</a>
 </li>
 </ul>
 
 
 <h3><a class="anchor" id="index_e"></a>- e -</h3><ul>
 <li>EscapeCharacter
-: <a class="el" href="class_command_messenger_1_1_escaping.html#a49217aa516aa8b1ae785b0467439cf85">CommandMessenger.Escaping</a>
+: <a class="el" href="class_command_messenger_1_1_communication_manager.html#a7c85a395f8795ac73090ff9bcf32a602">CommandMessenger.CommunicationManager</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_f"></a>- f -</h3><ul>
+<li>FieldSeparator
+: <a class="el" href="class_command_messenger_1_1_communication_manager.html#aa753e5abbc7c7cf0510b211c51f24b27">CommandMessenger.CommunicationManager</a>
 </li>
 </ul>
 
 
 <h3><a class="anchor" id="index_g"></a>- g -</h3><ul>
+<li>GeneralPins
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_bluetooth_1_1_bluetooth_connection_manager.html#a8f8f6a07bc7efbca24f8ec3bc4ad0c8e">CommandMessenger.Transport.Bluetooth.BluetoothConnectionManager</a>
+</li>
 <li>GoalTemperature
 : <a class="el" href="class_data_logging_1_1_temperature_control.html#a7dce1ca4232fa8a51bf363430c1b67b4">DataLogging.TemperatureControl</a>
 </li>
@@ -161,8 +181,8 @@
 
 
 <h3><a class="anchor" id="index_i"></a>- i -</h3><ul>
-<li>IsRunning
-: <a class="el" href="class_command_messenger_1_1_timed_action.html#a38a331aa67b868a9797d61cd0dd38e9e">CommandMessenger.TimedAction</a>
+<li>IsEmpty
+: <a class="el" href="class_command_messenger_1_1_queue_1_1_command_queue.html#aee063382aa668a1087d9c6a422175312">CommandMessenger.Queue.CommandQueue</a>
 </li>
 </ul>
 
@@ -174,15 +194,8 @@
 <li>LastReceivedCommandTimeStamp
 : <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#affed4f13807df660e56d6cbf8f8110a8">CommandMessenger.CmdMessenger</a>
 </li>
-<li>LogFileName
-: <a class="el" href="class_command_messenger_1_1_transport_layer_1_1_logger.html#ac1c04c58073ab71a288ee632dc9b2384">CommandMessenger.TransportLayer.Logger</a>
-</li>
-</ul>
-
-
-<h3><a class="anchor" id="index_n"></a>- n -</h3><ul>
-<li>Name
-: <a class="el" href="class_command_messenger_1_1_queue_speed.html#aacd1f175883a335d377cf0c0e12da9c9">CommandMessenger.QueueSpeed</a>
+<li>LazyReconnect
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_bluetooth_1_1_bluetooth_transport.html#abe2872b6bc9bdf631aa2d1e7d087e97e">CommandMessenger.Transport.Bluetooth.BluetoothTransport</a>
 </li>
 </ul>
 
@@ -196,17 +209,17 @@
 
 <h3><a class="anchor" id="index_p"></a>- p -</h3><ul>
 <li>Parity
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#a13619818d603086eb492e7ac729b4575">CommandMessenger.SerialSettings</a>
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_settings.html#a1a82be535e8e77c9d4a40b343dbac567">CommandMessenger.Transport.Serial.SerialSettings</a>
+</li>
+<li>PersistentSettings
+: <a class="el" href="class_command_messenger_1_1_connection_manager.html#a8104155ee439cc8a318e066a88241de6">CommandMessenger.ConnectionManager</a>
 </li>
 <li>PortName
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#a0469b625536ce55fbec7960d60b8e0a6">CommandMessenger.SerialSettings</a>
-</li>
-<li>PortNameCollection
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#a517ffcf0e23567962dc1822051e6641f">CommandMessenger.SerialSettings</a>
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_settings.html#a9413d8c569841f49323bb24ff64d6031">CommandMessenger.Transport.Serial.SerialSettings</a>
 </li>
 <li>PrintLfCr
 : <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#accab332ea5b404ac26f9b679327d8e29">CommandMessenger.CmdMessenger</a>
-, <a class="el" href="class_command_messenger_1_1_sender.html#ac9610b6a6cb0947bbe0ccdcf0482a00d">CommandMessenger.Sender</a>
+, <a class="el" href="class_command_messenger_1_1_communication_manager.html#a4936d152af049d1929bcb0b6461e7c63">CommandMessenger.CommunicationManager</a>
 </li>
 </ul>
 
@@ -222,11 +235,8 @@
 
 
 <h3><a class="anchor" id="index_s"></a>- s -</h3><ul>
-<li>SerialPort
-: <a class="el" href="class_command_messenger_1_1_serialport_1_1_serial_transport.html#afaa212a416e46d475ed6ecf5eb5f62a0">CommandMessenger.Serialport.SerialTransport</a>
-</li>
 <li>StopBits
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#ad979020b795ddee31e4cf60957158f59">CommandMessenger.SerialSettings</a>
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_settings.html#af8755fac117c616daeb0cffeb67f60c3">CommandMessenger.Transport.Serial.SerialSettings</a>
 </li>
 <li>StringEncoder
 : <a class="el" href="class_command_messenger_1_1_binary_converter.html#ad3db8d1ab63457eb63bae58ca57d6d0b">CommandMessenger.BinaryConverter</a>
@@ -235,24 +245,26 @@
 
 
 <h3><a class="anchor" id="index_t"></a>- t -</h3><ul>
-<li>ThreadRunState
-: <a class="el" href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_transport.html#a00e20d32b0673742342c167ec51feb0e">CommandMessenger.Bluetooth.BluetoothTransport</a>
-, <a class="el" href="class_command_messenger_1_1_command_queue.html#ac80d4deb81d6128d136734f8f22ca066">CommandMessenger.CommandQueue</a>
-, <a class="el" href="class_command_messenger_1_1_serialport_1_1_serial_transport.html#af42c58e8fa3b6ff532841d0f354f35f0">CommandMessenger.Serialport.SerialTransport</a>
-, <a class="el" href="class_command_messenger_1_1_command_strategy.html#a898b86bee6dbb444f2417d1271487b29">CommandMessenger.CommandStrategy</a>
-</li>
 <li>Timeout
 : <a class="el" href="class_command_messenger_1_1_send_command.html#ac863345feb434feab3bc9e406a466375">CommandMessenger.SendCommand</a>
+, <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_settings.html#afe1edbfea3dc634e9e8fe07bce4d7c40">CommandMessenger.Transport.Serial.SerialSettings</a>
 </li>
 <li>TimeStamp
 : <a class="el" href="class_command_messenger_1_1_command.html#a17296a6fa8f46343cfed036664456694">CommandMessenger.Command</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_w"></a>- w -</h3><ul>
+<li>WatchdogEnabled
+: <a class="el" href="class_command_messenger_1_1_connection_manager.html#a85ddeb70017892cc147eb3184350a266">CommandMessenger.ConnectionManager</a>
 </li>
 </ul>
 </div><!-- contents -->
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Sep 4 2014 21:12:56 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Apr 12 2015 22:17:10 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

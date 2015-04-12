@@ -23,7 +23,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CmdMessenger
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">3.7</span>
    </div>
    <div id="projectbrief">CmdMessenger is a serial port messaging library for the .Net / Mono Platform.</div>
   </td>
@@ -55,8 +55,8 @@
     <ul class="tablist">
       <li class="current"><a href="functions.html"><span>All</span></a></li>
       <li><a href="functions_func.html"><span>Functions</span></a></li>
-      <li><a href="functions_enum.html"><span>Enumerations</span></a></li>
       <li><a href="functions_prop.html"><span>Properties</span></a></li>
+      <li><a href="functions_evnt.html"><span>Events</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
@@ -66,11 +66,9 @@
       <li><a href="functions_0x63.html#index_c"><span>c</span></a></li>
       <li><a href="functions_0x64.html#index_d"><span>d</span></a></li>
       <li><a href="functions_0x65.html#index_e"><span>e</span></a></li>
+      <li><a href="functions_0x66.html#index_f"><span>f</span></a></li>
       <li><a href="functions_0x67.html#index_g"><span>g</span></a></li>
-      <li><a href="functions_0x68.html#index_h"><span>h</span></a></li>
       <li><a href="functions_0x69.html#index_i"><span>i</span></a></li>
-      <li><a href="functions_0x6a.html#index_j"><span>j</span></a></li>
-      <li><a href="functions_0x6b.html#index_k"><span>k</span></a></li>
       <li><a href="functions_0x6c.html#index_l"><span>l</span></a></li>
       <li><a href="functions_0x6d.html#index_m"><span>m</span></a></li>
       <li><a href="functions_0x6e.html#index_n"><span>n</span></a></li>
@@ -90,50 +88,35 @@
 
 <h3><a class="anchor" id="index_p"></a>- p -</h3><ul>
 <li>Parity
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#a13619818d603086eb492e7ac729b4575">CommandMessenger.SerialSettings</a>
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_settings.html#a1a82be535e8e77c9d4a40b343dbac567">CommandMessenger.Transport.Serial.SerialSettings</a>
 </li>
 <li>Peek()
-: <a class="el" href="class_command_messenger_1_1_list_queue-g.html#a12b60abfe88b6c97dc15c54f88579276">CommandMessenger.ListQueue&lt; T &gt;</a>
+: <a class="el" href="class_command_messenger_1_1_queue_1_1_list_queue-g.html#a5f8610b701774d3f00002d00d9e74ab8">CommandMessenger.Queue.ListQueue&lt; T &gt;</a>
 </li>
-<li>Poll()
-: <a class="el" href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_transport.html#a1393a56005c4d255f5d9df8a3f14dd34">CommandMessenger.Bluetooth.BluetoothTransport</a>
-</li>
-<li>PortExists()
-: <a class="el" href="class_command_messenger_1_1_serialport_1_1_serial_transport.html#a4c40129adfb67976e0a9fe7864f682e7">CommandMessenger.Serialport.SerialTransport</a>
+<li>PersistentSettings
+: <a class="el" href="class_command_messenger_1_1_connection_manager.html#a8104155ee439cc8a318e066a88241de6">CommandMessenger.ConnectionManager</a>
 </li>
 <li>PortName
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#a0469b625536ce55fbec7960d60b8e0a6">CommandMessenger.SerialSettings</a>
-</li>
-<li>PortNameCollection
-: <a class="el" href="class_command_messenger_1_1_serial_settings.html#a517ffcf0e23567962dc1822051e6641f">CommandMessenger.SerialSettings</a>
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_settings.html#a9413d8c569841f49323bb24ff64d6031">CommandMessenger.Transport.Serial.SerialSettings</a>
 </li>
 <li>PrintLfCr
-: <a class="el" href="class_command_messenger_1_1_sender.html#ac9610b6a6cb0947bbe0ccdcf0482a00d">CommandMessenger.Sender</a>
-, <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#accab332ea5b404ac26f9b679327d8e29">CommandMessenger.CmdMessenger</a>
+: <a class="el" href="class_command_messenger_1_1_cmd_messenger.html#accab332ea5b404ac26f9b679327d8e29">CommandMessenger.CmdMessenger</a>
+, <a class="el" href="class_command_messenger_1_1_communication_manager.html#a4936d152af049d1929bcb0b6461e7c63">CommandMessenger.CommunicationManager</a>
 </li>
-<li>ProcessLine()
-: <a class="el" href="class_command_messenger_1_1_communication_manager.html#ae59cd71ca509787030a4038e90fcb014">CommandMessenger.CommunicationManager</a>
+<li>ProcessCommand()
+: <a class="el" href="class_command_messenger_1_1_received_command_signal.html#a267cde0224412ab1dfb07eab658f3ead">CommandMessenger.ReceivedCommandSignal</a>
 </li>
 <li>ProcessQueue()
-: <a class="el" href="class_command_messenger_1_1_receive_command_queue.html#ad93978ec91805a9eec02a3649e1132ac">CommandMessenger.ReceiveCommandQueue</a>
-, <a class="el" href="class_command_messenger_1_1_command_queue.html#a1d789327697b1844b336f5ae45e8dd9e">CommandMessenger.CommandQueue</a>
-, <a class="el" href="class_command_messenger_1_1_send_command_queue.html#ad8c506b009d6f1b874cee455460c9370">CommandMessenger.SendCommandQueue</a>
-</li>
-<li>Push()
-: <a class="el" href="class_command_messenger_1_1_dispose_stack.html#aad4acc50de04e64aeacb5f1914b9d922">CommandMessenger.DisposeStack</a>
-</li>
-<li>Push&lt; T &gt;()
-: <a class="el" href="class_command_messenger_1_1_dispose_stack.html#aea9654de46819a9c19460140e69f07a8">CommandMessenger.DisposeStack</a>
-</li>
-<li>PushFront&lt; T &gt;()
-: <a class="el" href="class_command_messenger_1_1_dispose_stack.html#a7b9be631b0e33c912590d02440fee868">CommandMessenger.DisposeStack</a>
+: <a class="el" href="class_command_messenger_1_1_queue_1_1_send_command_queue.html#acd5c850457a95ec1817dbb6b241eea1b">CommandMessenger.Queue.SendCommandQueue</a>
+, <a class="el" href="class_command_messenger_1_1_queue_1_1_receive_command_queue.html#ab6d35946e769466ae6b52e361ac6060f">CommandMessenger.Queue.ReceiveCommandQueue</a>
+, <a class="el" href="class_command_messenger_1_1_queue_1_1_command_queue.html#aa67d47586fd7ceaffb6e438b16375bfd">CommandMessenger.Queue.CommandQueue</a>
 </li>
 </ul>
 </div><!-- contents -->
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Sep 4 2014 21:12:56 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Apr 12 2015 22:17:10 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

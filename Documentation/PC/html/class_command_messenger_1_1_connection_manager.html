@@ -23,7 +23,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CmdMessenger
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">3.7</span>
    </div>
    <div id="projectbrief">CmdMessenger is a serial port messaging library for the .Net / Mono Platform.</div>
   </td>
@@ -75,8 +75,9 @@ Inheritance diagram for CommandMessenger.ConnectionManager:</div>
  <div class="center">
   <img src="class_command_messenger_1_1_connection_manager.png" usemap="#CommandMessenger.ConnectionManager_map" alt=""/>
   <map id="CommandMessenger.ConnectionManager_map" name="CommandMessenger.ConnectionManager_map">
-<area href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_connection_manager.html" title="Connection manager for Bluetooth devices." alt="CommandMessenger.Bluetooth.BluetoothConnectionManager" shape="rect" coords="0,56,357,80"/>
-<area href="class_command_messenger_1_1_serialport_1_1_serial_connection_manager.html" title="Connection manager for serial port connection." alt="CommandMessenger.Serialport.SerialConnectionManager" shape="rect" coords="367,56,724,80"/>
+<area href="class_command_messenger_1_1_transport_1_1_bluetooth_1_1_bluetooth_connection_manager.html" title="Connection manager for Bluetooth devices." alt="CommandMessenger.Transport.Bluetooth.BluetoothConnectionManager" shape="rect" coords="0,56,415,80"/>
+<area href="class_command_messenger_1_1_transport_1_1_network_1_1_tcp_connection_manager.html" alt="CommandMessenger.Transport.Network.TcpConnectionManager" shape="rect" coords="425,56,840,80"/>
+<area href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_connection_manager.html" title="Connection manager for serial port connection." alt="CommandMessenger.Transport.Serial.SerialConnectionManager" shape="rect" coords="850,56,1265,80"/>
 </map>
  </div></div>
 
@@ -84,83 +85,95 @@ Inheritance diagram for CommandMessenger.ConnectionManager:</div>
 <table class="memberdecls">
 <tr><td colspan="2"><h2><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#ae00673c8579b3085091218372afa16f1">StartConnectionManager</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start connection manager. Will set up thread, but will not start scanning.  <a href="#ae00673c8579b3085091218372afa16f1"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a81426f422662d63511f30e6c0e377081">StopConnectionManager</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop connection manager.  <a href="#a81426f422662d63511f30e6c0e377081"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a4356553688cca23116659bbd9d94d2ad">SetControlToInvokeOn</a> (Control controlToInvokeOn)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a control to invoke on.  <a href="#a4356553688cca23116659bbd9d94d2ad"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a8ae5251de03d9e17cb45ae648caef943">ArduinoAvailable</a> (int timeOut)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if Arduino is available.  <a href="#a8ae5251de03d9e17cb45ae648caef943"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a52033cbe1dc7720da91fdd47bdf6e620"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ArduinoAvailable" ref="a52033cbe1dc7720da91fdd47bdf6e620" args="(int timeOut, int tries)" -->
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>ArduinoAvailable</b> (int timeOut, int tries)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a4b1bf488c245410e5fb51629b797057e">Disconnect</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Disconnect from Arduino.  <a href="#a4b1bf488c245410e5fb51629b797057e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a4d52a353bec07909700f9434b8866b51">StartWatchDog</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start watchdog. Will check if connection gets interrupted.  <a href="#a4d52a353bec07909700f9434b8866b51"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a53d951f83a6d153744b26c07679dc9f7">StopWatchDog</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop watchdog.  <a href="#a53d951f83a6d153744b26c07679dc9f7"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#ae2f70551618eb4799dea5485deb8009b">StopScan</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop scanning for devices.  <a href="#ae2f70551618eb4799dea5485deb8009b"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a49f83206527041c4c254b9b10cb13952">StartScan</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start scanning for devices.  <a href="#a49f83206527041c4c254b9b10cb13952"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a0d0b5fc509f44a1c75cf63a7872e03ed">StartConnectionManager</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start connection manager.  <a href="#a0d0b5fc509f44a1c75cf63a7872e03ed"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a27ba8b629cefad71a44bd06a533742e2">StopConnectionManager</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop connection manager.  <a href="#a27ba8b629cefad71a44bd06a533742e2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab5f1c55d182411e50b49ab7f32d10432"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::Dispose" ref="ab5f1c55d182411e50b49ab7f32d10432" args="()" -->
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Dispose</b> ()</td></tr>
 <tr><td colspan="2"><h2><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae40c4f96280ab4d1a4819d6b3edb320f"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ConnectionManager" ref="ae40c4f96280ab4d1a4819d6b3edb320f" args="(CmdMessenger cmdMessenger, int challengeCommandId, int responseCommandId)" -->
-&#160;</td><td class="memItemRight" valign="bottom"><b>ConnectionManager</b> (<a class="el" href="class_command_messenger_1_1_cmd_messenger.html">CmdMessenger</a> cmdMessenger, int challengeCommandId, int responseCommandId)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a468d7a6e933ee745ff70005f76d13e86"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::InvokeEvent" ref="a468d7a6e933ee745ff70005f76d13e86" args="(EventHandler eventHandler)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>InvokeEvent</b> (EventHandler eventHandler)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a92eb6466130c024262fd612c171baa07"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ConnectionFoundEvent" ref="a92eb6466130c024262fd612c171baa07" args="()" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>ConnectionFoundEvent</b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeda1aff7ad7938acbedb49c6abbb2b37"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::InvokeEvent&lt; TEventHandlerArguments &gt;" ref="aeda1aff7ad7938acbedb49c6abbb2b37" args="(EventHandler&lt; TEventHandlerArguments &gt; eventHandler, TEventHandlerArguments eventHandlerArguments)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>InvokeEvent&lt; TEventHandlerArguments &gt;</b> (EventHandler&lt; TEventHandlerArguments &gt; eventHandler, TEventHandlerArguments eventHandlerArguments)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0906a7758bee380a71a0126ce6e9a2df"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::Log" ref="a0906a7758bee380a71a0126ce6e9a2df" args="(int level, string logMessage)" -->
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Log</b> (int level, string logMessage)</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4b3ade94bbfb9cebae5d82a342535066"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::DoWorkScan" ref="a4b3ade94bbfb9cebae5d82a342535066" args="()" -->
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>DoWorkScan</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8e66fcc51b71a7ee66739b4f202878df"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ConnectionManager" ref="a8e66fcc51b71a7ee66739b4f202878df" args="(CmdMessenger cmdMessenger, int identifyCommandId=0, string uniqueDeviceId=null)" -->
+&#160;</td><td class="memItemRight" valign="bottom"><b>ConnectionManager</b> (<a class="el" href="class_command_messenger_1_1_cmd_messenger.html">CmdMessenger</a> cmdMessenger, int identifyCommandId=0, string uniqueDeviceId=null)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac503fed84847dabc412d7365125c6c9c"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ConnectionFoundEvent" ref="ac503fed84847dabc412d7365125c6c9c" args="()" -->
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>ConnectionFoundEvent</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2be6210151761e9519908c667c96159e"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ConnectionTimeoutEvent" ref="a2be6210151761e9519908c667c96159e" args="()" -->
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>ConnectionTimeoutEvent</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4cdb6abaf1dd02e8ded6bce7dbcf3cb4"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::Log" ref="a4cdb6abaf1dd02e8ded6bce7dbcf3cb4" args="(int level, string logMessage)" -->
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Log</b> (int level, string logMessage)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af58541e367b4d7d532951e1f374472be"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::OnIdentifyResponse" ref="af58541e367b4d7d532951e1f374472be" args="(ReceivedCommand responseCommand)" -->
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnIdentifyResponse</b> (<a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> responseCommand)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">DeviceStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a6218d3ab912fa30288add98015aa28b7">ArduinoAvailable</a> (int timeOut)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if Arduino is available.  <a href="#a6218d3ab912fa30288add98015aa28b7"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">DeviceStatus&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#ad1700b70fce30507c86bf830b2f88710">ArduinoAvailable</a> (int timeOut, int tries)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if Arduino is available.  <a href="#ad1700b70fce30507c86bf830b2f88710"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af337b7efe88df39e9194a4556bd8efc9"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ValidateDeviceUniqueId" ref="af337b7efe88df39e9194a4556bd8efc9" args="(ReceivedCommand responseCommand)" -->
+virtual bool&#160;</td><td class="memItemRight" valign="bottom"><b>ValidateDeviceUniqueId</b> (<a class="el" href="class_command_messenger_1_1_received_command.html">ReceivedCommand</a> responseCommand)</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a70a7cc2e7793f94dabbde29affdfb83f"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::DoWorkConnect" ref="a70a7cc2e7793f94dabbde29affdfb83f" args="()" -->
+abstract void&#160;</td><td class="memItemRight" valign="bottom"><b>DoWorkConnect</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7acc7c36457973d5d9aeccdd5fef1ab"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::DoWorkScan" ref="ab7acc7c36457973d5d9aeccdd5fef1ab" args="()" -->
+abstract void&#160;</td><td class="memItemRight" valign="bottom"><b>DoWorkScan</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2f4d4e2411ba5e4ace006366167be28a"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::DoWorkWatchdog" ref="a2f4d4e2411ba5e4ace006366167be28a" args="()" -->
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>DoWorkWatchdog</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a375032d832ee71be08ffaf28712d6d9f">StartWatchDog</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start watchdog. Will check if connection gets interrupted.  <a href="#a375032d832ee71be08ffaf28712d6d9f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#af0d8884d43ada7ae8b7dd8f5e886be9c">StopWatchDog</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop watchdog.  <a href="#af0d8884d43ada7ae8b7dd8f5e886be9c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a5533ab38dc4f8848f5e97c4c3b796702">StartScan</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start scanning for devices.  <a href="#a5533ab38dc4f8848f5e97c4c3b796702"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a248c0b0cde929b956d0739846b002f39">StopScan</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop scanning for devices.  <a href="#a248c0b0cde929b956d0739846b002f39"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a1b03209bc03e442743d65d68c5ae3d81">StartConnect</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Start connect to device.  <a href="#a1b03209bc03e442743d65d68c5ae3d81"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a61a656dea33a7b88548fb6280193317c">StopConnect</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Stop connect to device.  <a href="#a61a656dea33a7b88548fb6280193317c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4057cc6a10b0dd84a7931d8ff40d1256"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StoreSettings" ref="a4057cc6a10b0dd84a7931d8ff40d1256" args="()" -->
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>StoreSettings</b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3b0bf6fc1ec98a57525e907ee8f68f42"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ReadSettings" ref="a3b0bf6fc1ec98a57525e907ee8f68f42" args="()" -->
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>ReadSettings</b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1812e4cc9c4ca7235ecca4426208a10a"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::Dispose" ref="a1812e4cc9c4ca7235ecca4426208a10a" args="(bool disposing)" -->
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Dispose</b> (bool disposing)</td></tr>
 <tr><td colspan="2"><h2><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af7c48bcd1bcd0a0e19777bc666aefad8"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ControlToInvokeOn" ref="af7c48bcd1bcd0a0e19777bc666aefad8" args="" -->
-Control&#160;</td><td class="memItemRight" valign="bottom"><b>ControlToInvokeOn</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ceb0140b78492b4e734bbf08d8e8314"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::CmdMessenger" ref="a1ceb0140b78492b4e734bbf08d8e8314" args="" -->
-readonly <a class="el" href="class_command_messenger_1_1_cmd_messenger.html">CmdMessenger</a>&#160;</td><td class="memItemRight" valign="bottom"><b>CmdMessenger</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e51bac458fb160c6d7b2c2f5d7281e6"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ConnectionManagerState" ref="a2e51bac458fb160c6d7b2c2f5d7281e6" args="" -->
-ConnectionManagerStates&#160;</td><td class="memItemRight" valign="bottom"><b>ConnectionManagerState</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aecd6295316cb1370486597db430b2127"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ConnectionManagerMode" ref="aecd6295316cb1370486597db430b2127" args="" -->
+Mode&#160;</td><td class="memItemRight" valign="bottom"><b>ConnectionManagerMode</b> = Mode.Wait</td></tr>
 <tr><td colspan="2"><h2><a name="properties"></a>
 Properties</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6d72c44407ccf6bae4017758ac20a6ff"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::Connected" ref="a6d72c44407ccf6bae4017758ac20a6ff" args="" -->
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>Connected</b><code> [get, set]</code></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a745edec44999c07f90e82dcb82cb3c9d"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::WatchdogTimeOut" ref="a745edec44999c07f90e82dcb82cb3c9d" args="" -->
-long&#160;</td><td class="memItemRight" valign="bottom"><b>WatchdogTimeOut</b><code> [get, set]</code></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae5d2227e06442c7b08c69b7cef4ff510"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::WatchdogRetryTimeOut" ref="ae5d2227e06442c7b08c69b7cef4ff510" args="" -->
-long&#160;</td><td class="memItemRight" valign="bottom"><b>WatchdogRetryTimeOut</b><code> [get, set]</code></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9b36a7dd4eeaffbb31928c3335e28232"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::MaxWatchdogTries" ref="a9b36a7dd4eeaffbb31928c3335e28232" args="" -->
-uint&#160;</td><td class="memItemRight" valign="bottom"><b>MaxWatchdogTries</b><code> [get, set]</code></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a6d72c44407ccf6bae4017758ac20a6ff">Connected</a><code> [get, set]</code></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Is connection manager currently connected to device.  <a href="#a6d72c44407ccf6bae4017758ac20a6ff"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a16e4a40a01d719580291267711352713"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::WatchdogTimeout" ref="a16e4a40a01d719580291267711352713" args="" -->
+int&#160;</td><td class="memItemRight" valign="bottom"><b>WatchdogTimeout</b><code> [get, set]</code></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8a6fb606edc895b9820dc5154d79dda8"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::WatchdogRetryTimeout" ref="a8a6fb606edc895b9820dc5154d79dda8" args="" -->
+int&#160;</td><td class="memItemRight" valign="bottom"><b>WatchdogRetryTimeout</b><code> [get, set]</code></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2590341e59fa0841bc7d1f7b04a53bc9"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::WatchdogTries" ref="a2590341e59fa0841bc7d1f7b04a53bc9" args="" -->
+uint&#160;</td><td class="memItemRight" valign="bottom"><b>WatchdogTries</b><code> [get, set]</code></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a85ddeb70017892cc147eb3184350a266">WatchdogEnabled</a><code> [get, set]</code></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables or disables connection watchdog functionality using identify command and unique device id.  <a href="#a85ddeb70017892cc147eb3184350a266"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#ad101f93b0ab8ae0e3bd9dbddda5c20e0">DeviceScanEnabled</a><code> [get, set]</code></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables or disables device scanning. When disabled, connection manager will try to open connection to the device configured in the setting.  <a href="#ad101f93b0ab8ae0e3bd9dbddda5c20e0"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_command_messenger_1_1_connection_manager.html#a8104155ee439cc8a318e066a88241de6">PersistentSettings</a><code> [get, set]</code></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables or disables storing of last connection configuration in persistent file.  <a href="#a8104155ee439cc8a318e066a88241de6"></a><br/></td></tr>
 <tr><td colspan="2"><h2><a name="events"></a>
 Events</h2></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afea94aed8e24cb0800f3294eced9b787"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ConnectionTimeout" ref="afea94aed8e24cb0800f3294eced9b787" args="" -->
-EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>ConnectionTimeout</b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afecf032ae6678574ed20fda361eb358c"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ConnectionFound" ref="afecf032ae6678574ed20fda361eb358c" args="" -->
-EventHandler&#160;</td><td class="memItemRight" valign="bottom"><b>ConnectionFound</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ba516f73dd1d49ab75a270701c544e5"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ConnectionTimeout" ref="a3ba516f73dd1d49ab75a270701c544e5" args="" -->
+EventHandler&lt; EventArgs &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ConnectionTimeout</b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61de2ca277d4cd7b3fcd8bd529840b63"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ConnectionFound" ref="a61de2ca277d4cd7b3fcd8bd529840b63" args="" -->
+EventHandler&lt; EventArgs &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>ConnectionFound</b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab0c005c2fbae7edd3925060f3f1e51ef"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::Progress" ref="ab0c005c2fbae7edd3925060f3f1e51ef" args="" -->
 EventHandler<br class="typebreak"/>
 &lt; <a class="el" href="class_command_messenger_1_1_connection_manager_progress_event_args.html">ConnectionManagerProgressEventArgs</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Progress</b></td></tr>
 </table>
 <hr/><h2>Member Function Documentation</h2>
-<a class="anchor" id="a8ae5251de03d9e17cb45ae648caef943"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ArduinoAvailable" ref="a8ae5251de03d9e17cb45ae648caef943" args="(int timeOut)" -->
+<a class="anchor" id="a6218d3ab912fa30288add98015aa28b7"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ArduinoAvailable" ref="a6218d3ab912fa30288add98015aa28b7" args="(int timeOut)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="class_command_messenger_1_1_connection_manager.html#a8ae5251de03d9e17cb45ae648caef943">CommandMessenger.ConnectionManager.ArduinoAvailable</a> </td>
+          <td class="memname">DeviceStatus <a class="el" href="class_command_messenger_1_1_connection_manager.html#a6218d3ab912fa30288add98015aa28b7">CommandMessenger.ConnectionManager.ArduinoAvailable</a> </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>timeOut</em></td><td>)</td>
-          <td></td>
+          <td><code> [protected]</code></td>
         </tr>
       </table>
 </div>
@@ -169,91 +182,96 @@ EventHandler<br class="typebreak"/>
 <p>Check if Arduino is available. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">timeOut</td><td>timout for waiting on response</td></tr>
+    <tr><td class="paramname">timeOut</td><td>Timout for waiting on response</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>Result. True if succesfull</dd></dl>
-
-<p>Reimplemented in <a class="el" href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_connection_manager.html#a8192dd796d89e973c30820105ac25b01">CommandMessenger.Bluetooth.BluetoothConnectionManager</a>.</p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Check result.</dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a4b1bf488c245410e5fb51629b797057e"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::Disconnect" ref="a4b1bf488c245410e5fb51629b797057e" args="()" -->
+<a class="anchor" id="ad1700b70fce30507c86bf830b2f88710"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::ArduinoAvailable" ref="ad1700b70fce30507c86bf830b2f88710" args="(int timeOut, int tries)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="class_command_messenger_1_1_connection_manager.html#a4b1bf488c245410e5fb51629b797057e">CommandMessenger.ConnectionManager.Disconnect</a> </td>
+          <td class="memname">DeviceStatus <a class="el" href="class_command_messenger_1_1_connection_manager.html#a6218d3ab912fa30288add98015aa28b7">CommandMessenger.ConnectionManager.ArduinoAvailable</a> </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>timeOut</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>tries</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td><code> [protected]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Disconnect from Arduino. </p>
-<dl class="return"><dt><b>Returns:</b></dt><dd>true if sucessfully disconnected</dd></dl>
-
-<p>Reimplemented in <a class="el" href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_connection_manager.html#aa072a4b1cd60aaeadd823422e5922ccf">CommandMessenger.Bluetooth.BluetoothConnectionManager</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a4356553688cca23116659bbd9d94d2ad"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::SetControlToInvokeOn" ref="a4356553688cca23116659bbd9d94d2ad" args="(Control controlToInvokeOn)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="class_command_messenger_1_1_connection_manager.html#a4356553688cca23116659bbd9d94d2ad">CommandMessenger.ConnectionManager.SetControlToInvokeOn</a> </td>
-          <td>(</td>
-          <td class="paramtype">Control&#160;</td>
-          <td class="paramname"><em>controlToInvokeOn</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Sets a control to invoke on. </p>
+<p>Check if Arduino is available. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">controlToInvokeOn</td><td>The control to invoke on. </td></tr>
+    <tr><td class="paramname">timeOut</td><td>Timout for waiting on response</td></tr>
+    <tr><td class="paramname">tries</td><td>Number of tries</td></tr>
   </table>
   </dd>
 </dl>
-
-<p>Reimplemented in <a class="el" href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_connection_manager.html#a292d1511cab719f31a538c01320821d6">CommandMessenger.Bluetooth.BluetoothConnectionManager</a>.</p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>Check result.</dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="ae00673c8579b3085091218372afa16f1"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StartConnectionManager" ref="ae00673c8579b3085091218372afa16f1" args="()" -->
+<a class="anchor" id="a1b03209bc03e442743d65d68c5ae3d81"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StartConnect" ref="a1b03209bc03e442743d65d68c5ae3d81" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_command_messenger_1_1_connection_manager.html#ae00673c8579b3085091218372afa16f1">CommandMessenger.ConnectionManager.StartConnectionManager</a> </td>
+          <td class="memname">virtual void <a class="el" href="class_command_messenger_1_1_connection_manager.html#a1b03209bc03e442743d65d68c5ae3d81">CommandMessenger.ConnectionManager.StartConnect</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [protected, virtual]</code></td>
         </tr>
       </table>
 </div>
 <div class="memdoc">
 
-<p>Start connection manager. Will set up thread, but will not start scanning. </p>
+<p>Start connect to device. </p>
 
 </div>
 </div>
-<a class="anchor" id="a49f83206527041c4c254b9b10cb13952"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StartScan" ref="a49f83206527041c4c254b9b10cb13952" args="()" -->
+<a class="anchor" id="a0d0b5fc509f44a1c75cf63a7872e03ed"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StartConnectionManager" ref="a0d0b5fc509f44a1c75cf63a7872e03ed" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_command_messenger_1_1_connection_manager.html#a49f83206527041c4c254b9b10cb13952">CommandMessenger.ConnectionManager.StartScan</a> </td>
+          <td class="memname">virtual void <a class="el" href="class_command_messenger_1_1_connection_manager.html#a0d0b5fc509f44a1c75cf63a7872e03ed">CommandMessenger.ConnectionManager.StartConnectionManager</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Start connection manager. </p>
+
+</div>
+</div>
+<a class="anchor" id="a5533ab38dc4f8848f5e97c4c3b796702"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StartScan" ref="a5533ab38dc4f8848f5e97c4c3b796702" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="class_command_messenger_1_1_connection_manager.html#a5533ab38dc4f8848f5e97c4c3b796702">CommandMessenger.ConnectionManager.StartScan</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [protected, virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -261,19 +279,19 @@ EventHandler<br class="typebreak"/>
 
 <p>Start scanning for devices. </p>
 
-<p>Reimplemented in <a class="el" href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_connection_manager.html#a3890ebbeb681110343615d1562d8d423">CommandMessenger.Bluetooth.BluetoothConnectionManager</a>.</p>
+<p>Reimplemented in <a class="el" href="class_command_messenger_1_1_transport_1_1_bluetooth_1_1_bluetooth_connection_manager.html#adc6c135263d43f2ac490ac1177000e4d">CommandMessenger.Transport.Bluetooth.BluetoothConnectionManager</a>, and <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_connection_manager.html#ac476895176b083839b9ad3066143244e">CommandMessenger.Transport.Serial.SerialConnectionManager</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a4d52a353bec07909700f9434b8866b51"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StartWatchDog" ref="a4d52a353bec07909700f9434b8866b51" args="()" -->
+<a class="anchor" id="a375032d832ee71be08ffaf28712d6d9f"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StartWatchDog" ref="a375032d832ee71be08ffaf28712d6d9f" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_command_messenger_1_1_connection_manager.html#a4d52a353bec07909700f9434b8866b51">CommandMessenger.ConnectionManager.StartWatchDog</a> </td>
+          <td class="memname">virtual void <a class="el" href="class_command_messenger_1_1_connection_manager.html#a375032d832ee71be08ffaf28712d6d9f">CommandMessenger.ConnectionManager.StartWatchDog</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [protected, virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -283,15 +301,33 @@ EventHandler<br class="typebreak"/>
 
 </div>
 </div>
-<a class="anchor" id="a81426f422662d63511f30e6c0e377081"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StopConnectionManager" ref="a81426f422662d63511f30e6c0e377081" args="()" -->
+<a class="anchor" id="a61a656dea33a7b88548fb6280193317c"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StopConnect" ref="a61a656dea33a7b88548fb6280193317c" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_command_messenger_1_1_connection_manager.html#a81426f422662d63511f30e6c0e377081">CommandMessenger.ConnectionManager.StopConnectionManager</a> </td>
+          <td class="memname">virtual void <a class="el" href="class_command_messenger_1_1_connection_manager.html#a61a656dea33a7b88548fb6280193317c">CommandMessenger.ConnectionManager.StopConnect</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [protected, virtual]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Stop connect to device. </p>
+
+</div>
+</div>
+<a class="anchor" id="a27ba8b629cefad71a44bd06a533742e2"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StopConnectionManager" ref="a27ba8b629cefad71a44bd06a533742e2" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="class_command_messenger_1_1_connection_manager.html#a27ba8b629cefad71a44bd06a533742e2">CommandMessenger.ConnectionManager.StopConnectionManager</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td><code> [virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -301,15 +337,15 @@ EventHandler<br class="typebreak"/>
 
 </div>
 </div>
-<a class="anchor" id="ae2f70551618eb4799dea5485deb8009b"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StopScan" ref="ae2f70551618eb4799dea5485deb8009b" args="()" -->
+<a class="anchor" id="a248c0b0cde929b956d0739846b002f39"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StopScan" ref="a248c0b0cde929b956d0739846b002f39" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_command_messenger_1_1_connection_manager.html#ae2f70551618eb4799dea5485deb8009b">CommandMessenger.ConnectionManager.StopScan</a> </td>
+          <td class="memname">virtual void <a class="el" href="class_command_messenger_1_1_connection_manager.html#a248c0b0cde929b956d0739846b002f39">CommandMessenger.ConnectionManager.StopScan</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [protected, virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -317,19 +353,17 @@ EventHandler<br class="typebreak"/>
 
 <p>Stop scanning for devices. </p>
 
-<p>Reimplemented in <a class="el" href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_connection_manager.html#a387446f13b5485ca0115a1a0f7d9522a">CommandMessenger.Bluetooth.BluetoothConnectionManager</a>.</p>
-
 </div>
 </div>
-<a class="anchor" id="a53d951f83a6d153744b26c07679dc9f7"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StopWatchDog" ref="a53d951f83a6d153744b26c07679dc9f7" args="()" -->
+<a class="anchor" id="af0d8884d43ada7ae8b7dd8f5e886be9c"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::StopWatchDog" ref="af0d8884d43ada7ae8b7dd8f5e886be9c" args="()" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_command_messenger_1_1_connection_manager.html#a53d951f83a6d153744b26c07679dc9f7">CommandMessenger.ConnectionManager.StopWatchDog</a> </td>
+          <td class="memname">virtual void <a class="el" href="class_command_messenger_1_1_connection_manager.html#af0d8884d43ada7ae8b7dd8f5e886be9c">CommandMessenger.ConnectionManager.StopWatchDog</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td><code> [protected, virtual]</code></td>
         </tr>
       </table>
 </div>
@@ -337,18 +371,81 @@ EventHandler<br class="typebreak"/>
 
 <p>Stop watchdog. </p>
 
-<p>Reimplemented in <a class="el" href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_connection_manager.html#a1f4afaa77c7b65d8739affcf4e0baeb6">CommandMessenger.Bluetooth.BluetoothConnectionManager</a>.</p>
+</div>
+</div>
+<hr/><h2>Property Documentation</h2>
+<a class="anchor" id="a6d72c44407ccf6bae4017758ac20a6ff"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::Connected" ref="a6d72c44407ccf6bae4017758ac20a6ff" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_command_messenger_1_1_connection_manager.html#a6d72c44407ccf6bae4017758ac20a6ff">CommandMessenger.ConnectionManager.Connected</a><code> [get, set]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Is connection manager currently connected to device. </p>
+
+</div>
+</div>
+<a class="anchor" id="ad101f93b0ab8ae0e3bd9dbddda5c20e0"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::DeviceScanEnabled" ref="ad101f93b0ab8ae0e3bd9dbddda5c20e0" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_command_messenger_1_1_connection_manager.html#ad101f93b0ab8ae0e3bd9dbddda5c20e0">CommandMessenger.ConnectionManager.DeviceScanEnabled</a><code> [get, set]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Enables or disables device scanning. When disabled, connection manager will try to open connection to the device configured in the setting. </p>
+<ul>
+<li>For SerialConnection this means scanning for (virtual) serial ports,</li>
+<li>For BluetoothConnection this means scanning for a device on RFCOMM level </li>
+</ul>
+
+</div>
+</div>
+<a class="anchor" id="a8104155ee439cc8a318e066a88241de6"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::PersistentSettings" ref="a8104155ee439cc8a318e066a88241de6" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_command_messenger_1_1_connection_manager.html#a8104155ee439cc8a318e066a88241de6">CommandMessenger.ConnectionManager.PersistentSettings</a><code> [get, set]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Enables or disables storing of last connection configuration in persistent file. </p>
+
+</div>
+</div>
+<a class="anchor" id="a85ddeb70017892cc147eb3184350a266"></a><!-- doxytag: member="CommandMessenger::ConnectionManager::WatchdogEnabled" ref="a85ddeb70017892cc147eb3184350a266" args="" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="class_command_messenger_1_1_connection_manager.html#a85ddeb70017892cc147eb3184350a266">CommandMessenger.ConnectionManager.WatchdogEnabled</a><code> [get, set]</code></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Enables or disables connection watchdog functionality using identify command and unique device id. </p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>D:/My Documents/Github/Arduino-Code-and-Libraries/Libraries/CmdMessenger/CSharp/CommandMessenger/ConnectionManager.cs</li>
+<li>D:/My Documents/Github/Arduino-Libraries-Clean-Checkout/CmdMessenger/CSharp/CommandMessenger/ConnectionManager.cs</li>
 </ul>
 </div><!-- contents -->
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Sep 4 2014 21:12:56 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Apr 12 2015 22:17:09 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

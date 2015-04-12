@@ -23,7 +23,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CmdMessenger
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">3.7</span>
    </div>
    <div id="projectbrief">CmdMessenger is a serial port messaging library for the .Net / Mono Platform.</div>
   </td>
@@ -55,8 +55,8 @@
     <ul class="tablist">
       <li class="current"><a href="functions.html"><span>All</span></a></li>
       <li><a href="functions_func.html"><span>Functions</span></a></li>
-      <li><a href="functions_enum.html"><span>Enumerations</span></a></li>
       <li><a href="functions_prop.html"><span>Properties</span></a></li>
+      <li><a href="functions_evnt.html"><span>Events</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
@@ -66,11 +66,9 @@
       <li><a href="functions_0x63.html#index_c"><span>c</span></a></li>
       <li><a href="functions_0x64.html#index_d"><span>d</span></a></li>
       <li><a href="functions_0x65.html#index_e"><span>e</span></a></li>
+      <li><a href="functions_0x66.html#index_f"><span>f</span></a></li>
       <li><a href="functions_0x67.html#index_g"><span>g</span></a></li>
-      <li><a href="functions_0x68.html#index_h"><span>h</span></a></li>
       <li><a href="functions_0x69.html#index_i"><span>i</span></a></li>
-      <li><a href="functions_0x6a.html#index_j"><span>j</span></a></li>
-      <li><a href="functions_0x6b.html#index_k"><span>k</span></a></li>
       <li><a href="functions_0x6c.html#index_l"><span>l</span></a></li>
       <li><a href="functions_0x6d.html#index_m"><span>m</span></a></li>
       <li><a href="functions_0x6e.html#index_n"><span>n</span></a></li>
@@ -89,20 +87,9 @@
 <div class="textblock">Here is a list of all documented class members with links to the class documentation for each member:</div>
 
 <h3><a class="anchor" id="index_t"></a>- t -</h3><ul>
-<li>ThreadRunState
-: <a class="el" href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_transport.html#a00e20d32b0673742342c167ec51feb0e">CommandMessenger.Bluetooth.BluetoothTransport</a>
-, <a class="el" href="class_command_messenger_1_1_command_queue.html#ac80d4deb81d6128d136734f8f22ca066">CommandMessenger.CommandQueue</a>
-, <a class="el" href="class_command_messenger_1_1_serialport_1_1_serial_transport.html#af42c58e8fa3b6ff532841d0f354f35f0">CommandMessenger.Serialport.SerialTransport</a>
-, <a class="el" href="class_command_messenger_1_1_command_strategy.html#a898b86bee6dbb444f2417d1271487b29">CommandMessenger.CommandStrategy</a>
-</li>
-<li>ThreadRunStates
-: <a class="el" href="class_command_messenger_1_1_command_queue.html#a6567f97f90b63c545beba5efd565d653">CommandMessenger.CommandQueue</a>
-</li>
-<li>TimedAction()
-: <a class="el" href="class_command_messenger_1_1_timed_action.html#a0bcd051cbc3df3b894f25354190d6ff1">CommandMessenger.TimedAction</a>
-</li>
 <li>Timeout
 : <a class="el" href="class_command_messenger_1_1_send_command.html#ac863345feb434feab3bc9e406a466375">CommandMessenger.SendCommand</a>
+, <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_settings.html#afe1edbfea3dc634e9e8fe07bce4d7c40">CommandMessenger.Transport.Serial.SerialSettings</a>
 </li>
 <li>TimeStamp
 : <a class="el" href="class_command_messenger_1_1_command.html#a17296a6fa8f46343cfed036664456694">CommandMessenger.Command</a>
@@ -112,9 +99,6 @@
 </li>
 <li>ToDouble()
 : <a class="el" href="class_command_messenger_1_1_binary_converter.html#a508e13b267ece1da9af9509df066a8ef">CommandMessenger.BinaryConverter</a>
-</li>
-<li>ToExactString()
-: <a class="el" href="class_command_messenger_tests_1_1_double_converter.html#a6ec0cfbe4b989a4d4e74a2cfc64fc172">CommandMessengerTests.DoubleConverter</a>
 </li>
 <li>ToFloat()
 : <a class="el" href="class_command_messenger_1_1_binary_converter.html#a58c7b802193ab213fe3f0593be47cf5b">CommandMessenger.BinaryConverter</a>
@@ -126,10 +110,10 @@
 : <a class="el" href="class_command_messenger_1_1_binary_converter.html#a408a8dad8d79c69a7e9089ffb51c69ec">CommandMessenger.BinaryConverter</a>
 </li>
 <li>TopCommandStrategy()
-: <a class="el" href="class_command_messenger_1_1_top_command_strategy.html#a1f648b032a4557974bc2640f5ef7e737">CommandMessenger.TopCommandStrategy</a>
+: <a class="el" href="class_command_messenger_1_1_queue_1_1_top_command_strategy.html#a439644e4abc73d8223c7354adf8319e1">CommandMessenger.Queue.TopCommandStrategy</a>
 </li>
 <li>ToString()
-: <a class="el" href="class_command_messenger_1_1_binary_converter.html#ac3e553807dcf2c0c16cd96cd80fa9718">CommandMessenger.BinaryConverter</a>
+: <a class="el" href="class_command_messenger_1_1_binary_converter.html#ae61e7f39f0cbacb8f0109f995cee19b4">CommandMessenger.BinaryConverter</a>
 </li>
 <li>ToUInt16()
 : <a class="el" href="class_command_messenger_1_1_binary_converter.html#a2c7faf640b107dc6f3f6530db6d7afac">CommandMessenger.BinaryConverter</a>
@@ -137,15 +121,12 @@
 <li>ToUInt32()
 : <a class="el" href="class_command_messenger_1_1_binary_converter.html#a84af3683e27135b53061f39b9c9fe7f3">CommandMessenger.BinaryConverter</a>
 </li>
-<li>TryConnection()
-: <a class="el" href="class_command_messenger_1_1_serialport_1_1_serial_connection_manager.html#a18e2cae7c360fe0935e3500a59170cde">CommandMessenger.Serialport.SerialConnectionManager</a>
-</li>
 </ul>
 </div><!-- contents -->
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Sep 4 2014 21:12:56 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Apr 12 2015 22:17:10 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

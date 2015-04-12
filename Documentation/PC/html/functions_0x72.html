@@ -23,7 +23,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">CmdMessenger
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">3.7</span>
    </div>
    <div id="projectbrief">CmdMessenger is a serial port messaging library for the .Net / Mono Platform.</div>
   </td>
@@ -55,8 +55,8 @@
     <ul class="tablist">
       <li class="current"><a href="functions.html"><span>All</span></a></li>
       <li><a href="functions_func.html"><span>Functions</span></a></li>
-      <li><a href="functions_enum.html"><span>Enumerations</span></a></li>
       <li><a href="functions_prop.html"><span>Properties</span></a></li>
+      <li><a href="functions_evnt.html"><span>Events</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
@@ -66,11 +66,9 @@
       <li><a href="functions_0x63.html#index_c"><span>c</span></a></li>
       <li><a href="functions_0x64.html#index_d"><span>d</span></a></li>
       <li><a href="functions_0x65.html#index_e"><span>e</span></a></li>
+      <li><a href="functions_0x66.html#index_f"><span>f</span></a></li>
       <li><a href="functions_0x67.html#index_g"><span>g</span></a></li>
-      <li><a href="functions_0x68.html#index_h"><span>h</span></a></li>
       <li><a href="functions_0x69.html#index_i"><span>i</span></a></li>
-      <li><a href="functions_0x6a.html#index_j"><span>j</span></a></li>
-      <li><a href="functions_0x6b.html#index_k"><span>k</span></a></li>
       <li><a href="functions_0x6c.html#index_l"><span>l</span></a></li>
       <li><a href="functions_0x6d.html#index_m"><span>m</span></a></li>
       <li><a href="functions_0x6e.html#index_n"><span>n</span></a></li>
@@ -93,8 +91,10 @@
 : <a class="el" href="class_command_messenger_1_1_received_command.html#a188f981ef3becae99272d040e12f0bde">CommandMessenger.ReceivedCommand</a>
 </li>
 <li>Read()
-: <a class="el" href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_transport.html#a6d15078f75715aec5100b7411e41c224">CommandMessenger.Bluetooth.BluetoothTransport</a>
-, <a class="el" href="class_command_messenger_1_1_serialport_1_1_serial_transport.html#a1e2e5f4b6bca16c0a6bab1532ecfb49d">CommandMessenger.Serialport.SerialTransport</a>
+: <a class="el" href="interface_command_messenger_1_1_transport_1_1_i_transport.html#afd8eabb56c42eff140cd55509bc00108">CommandMessenger.Transport.ITransport</a>
+, <a class="el" href="class_command_messenger_1_1_transport_1_1_network_1_1_tcp_transport.html#aff3f54fab46aaf7144574c9ce1d82e06">CommandMessenger.Transport.Network.TcpTransport</a>
+, <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_transport.html#a9a8029e463c3b1ff7da7a150a47a62a0">CommandMessenger.Transport.Serial.SerialTransport</a>
+, <a class="el" href="class_command_messenger_1_1_transport_1_1_bluetooth_1_1_bluetooth_transport.html#a38b54794ed199ceebb88da7c50219e91">CommandMessenger.Transport.Bluetooth.BluetoothTransport</a>
 </li>
 <li>ReadBinBoolArg()
 : <a class="el" href="class_command_messenger_1_1_received_command.html#a7740ae412aa7fa19a791884203a31f10">CommandMessenger.ReceivedCommand</a>
@@ -144,30 +144,28 @@
 <li>ReadUInt32Arg()
 : <a class="el" href="class_command_messenger_1_1_received_command.html#aac0cfc378e73c15d93d5ff097998a237">CommandMessenger.ReceivedCommand</a>
 </li>
-<li>ReceiveCommandQueue()
-: <a class="el" href="class_command_messenger_1_1_receive_command_queue.html#af52838a253f4816b9bdd48543d08a9a1">CommandMessenger.ReceiveCommandQueue</a>
-</li>
 <li>ReceivedCommand()
 : <a class="el" href="class_command_messenger_1_1_received_command.html#af331506b24361d397d3a49d3d9368d01">CommandMessenger.ReceivedCommand</a>
-</li>
-<li>Remove()
-: <a class="el" href="class_command_messenger_1_1_escaping.html#af2c39f31108a1d1970cbedbd00f6a5f6">CommandMessenger.Escaping</a>
 </li>
 <li>ReqAc
 : <a class="el" href="class_command_messenger_1_1_send_command.html#a3f3962f4c43f6b524c5ff023c5a206ce">CommandMessenger.SendCommand</a>
 </li>
-<li>ResetCount()
-: <a class="el" href="class_command_messenger_1_1_queue_speed.html#a0b7f06e6ba4418a146e71759fd5e4327">CommandMessenger.QueueSpeed</a>
+<li>Reset()
+: <a class="el" href="class_command_messenger_1_1_event_waiter.html#ac3dd43be48ec5b24ae338ab1c2cc94d9">CommandMessenger.EventWaiter</a>
 </li>
 <li>RetreiveLocalBluetoothAddress()
-: <a class="el" href="class_command_messenger_1_1_bluetooth_1_1_bluetooth_transport.html#a53aaacd17e1f57ab563544635d0f23c1">CommandMessenger.Bluetooth.BluetoothTransport</a>
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_bluetooth_1_1_bluetooth_transport.html#af275fe9a4308db6a1df257305bca52ac">CommandMessenger.Transport.Bluetooth.BluetoothTransport</a>
+</li>
+<li>RetrieveSettings()
+: <a class="el" href="class_command_messenger_1_1_transport_1_1_serial_1_1_serial_connection_storer.html#a3e67d5b10f93d69a11eb377a9e7f6a2e">CommandMessenger.Transport.Serial.SerialConnectionStorer</a>
+, <a class="el" href="class_command_messenger_1_1_transport_1_1_bluetooth_1_1_bluetooth_connection_storer.html#aec695102f437a251ba8a38d3c5692082">CommandMessenger.Transport.Bluetooth.BluetoothConnectionStorer</a>
 </li>
 </ul>
 </div><!-- contents -->
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Sep 4 2014 21:12:56 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Apr 12 2015 22:17:10 for CmdMessenger by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
