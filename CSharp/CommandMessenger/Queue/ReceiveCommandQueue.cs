@@ -17,71 +17,57 @@
 */
 #endregion
 
-namespace CommandMessenger
+using System;
+
+namespace CommandMessenger.Queue
 {
     /// <summary> Queue of received commands.  </summary>
     public class ReceiveCommandQueue : CommandQueue
     {
-        
-        public event NewLineEvent.NewLineHandler NewLineReceived;
-        private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
+        public delegate void HandleReceivedCommandDelegate(ReceivedCommand receivedCommand);
 
-        /// <summary> Receive command queue constructor. </summary>
-        /// <param name="disposeStack"> DisposeStack. </param>
-        /// <param name="cmdMessenger"> The command messenger. </param>
-        public ReceiveCommandQueue(DisposeStack disposeStack, CmdMessenger cmdMessenger )
-            : base(disposeStack, cmdMessenger)
+        public event EventHandler<CommandEventArgs> NewLineReceived;
+
+        private readonly HandleReceivedCommandDelegate _receivedCommandHandler;
+        private readonly ReceivedCommandSignal _receivedCommandSignal = new ReceivedCommandSignal();
+
+        public ReceiveCommandQueue(HandleReceivedCommandDelegate receivedCommandHandler)
         {
-            disposeStack.Push(this);
-            QueueThread.Name = "ReceiveCommandQueue";
-           // _queueSpeed.Name = "ReceiveCommandQueue";
+            _receivedCommandHandler = receivedCommandHandler;
         }
 
         /// <summary> Dequeue the received command. </summary>
         /// <returns> The received command. </returns>
         public ReceivedCommand DequeueCommand()
         {
-            ReceivedCommand receivedCommand = null;
             lock (Queue)
             {
-                if (Queue.Count != 0)
-                {
-                    foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
-                    var commandStrategy = Queue.Dequeue();
-                    receivedCommand = (ReceivedCommand)commandStrategy.Command;                    
-                }
+                return DequeueCommandInternal();
             }        
-            return receivedCommand;
         }
 
-        /// <summary> Process the queue. </summary>
-        protected override void ProcessQueue()
+        protected override bool ProcessQueue()
         {
-            // Endless loop unless aborted
-            while (ThreadRunState != ThreadRunStates.Abort)
-            {               
-                // Calculate sleep time based on incoming command speed
-                //_queueSpeed.SetCount(Queue.Count);
-                //_queueSpeed.CalcSleepTime();
-                EventWaiter.Wait(1000);
+            ReceivedCommand dequeueCommand;
+            bool hasMoreWork;
 
-                // Process queue unless stopped
-                if (ThreadRunState == ThreadRunStates.Start)
-                {
-                    // Only actually sleep if there are no commands in the queue
-                    //if (Queue.Count == 0) _queueSpeed.Sleep();
-
-                    var dequeueCommand = DequeueCommand();
-                    if (dequeueCommand != null)
-                    {
-                        CmdMessenger.HandleMessage(dequeueCommand);
-                    }
-                }
-                //else
-                //{
-                //    _queueSpeed.Sleep();
-                //}
+            lock (Queue)
+            {
+                dequeueCommand = DequeueCommandInternal();
+                hasMoreWork = !IsEmpty;
             }
+
+            if (dequeueCommand != null)
+            {
+                _receivedCommandHandler(dequeueCommand);
+            }
+
+            return hasMoreWork;
+        }
+
+        public ReceivedCommand WaitForCmd(int timeOut, int cmdId, SendQueue sendQueueState)
+        {
+            return _receivedCommandSignal.WaitForCmd(timeOut, cmdId, sendQueueState);
         }
 
         /// <summary> Queue the received command. </summary>
@@ -95,15 +81,39 @@ namespace CommandMessenger
         /// <param name="commandStrategy"> The command strategy. </param>
         public override void QueueCommand(CommandStrategy commandStrategy)
         {
+            if (IsSuspended)
+            {
+                // Directly send this command to waiting thread
+                var addToQueue = _receivedCommandSignal.ProcessCommand((ReceivedCommand)commandStrategy.Command);
+                // check if the item needs to be added to the queue for later processing. If not return directly
+                if (!addToQueue) return;
+            }
+
             lock (Queue)
             {
                 // Process all generic enqueue strategies
                 Queue.Enqueue(commandStrategy);
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
-            // Give a signal to indicate that a new item has been queued
-            EventWaiter.Set();
-            if (NewLineReceived != null) NewLineReceived(this, new NewLineEvent.NewLineArgs(commandStrategy.Command));
+
+            if (!IsSuspended)
+            {
+                // Give a signal to indicate that a new item has been queued
+                SignalWorker();
+                if (NewLineReceived != null) NewLineReceived(this, new CommandEventArgs(commandStrategy.Command));
+            }
+        }
+
+        private ReceivedCommand DequeueCommandInternal()
+        {
+            ReceivedCommand receivedCommand = null;
+            if (!IsEmpty)
+            {
+                foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
+                var commandStrategy = Queue.Dequeue();
+                receivedCommand = (ReceivedCommand)commandStrategy.Command;
+            }
+            return receivedCommand;
         }
     }
 }

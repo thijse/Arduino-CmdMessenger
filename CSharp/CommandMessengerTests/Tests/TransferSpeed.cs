@@ -59,6 +59,9 @@ namespace CommandMessengerTests
 
         public void RunTests()
         {
+            // Wait a bit before starting the test
+            Thread.Sleep(1000);
+
             // Open Connection
             Common.StartTestSet("Benchmarking transfer speeds");
             SetUpConnection();
@@ -90,6 +93,10 @@ namespace CommandMessengerTests
             {
                 _cmdMessenger = Common.Connect(_systemSettings);
                 AttachCommandCallBacks();
+                if (!Common.Connected)
+                {
+                    Common.TestNotOk("Not connected after opening connection");
+                }               
             }
             catch (Exception)
             {
@@ -153,7 +160,7 @@ namespace CommandMessengerTests
             // Now wait until all values have arrived
             while (!_receiveSeriesFinished)
             {
-                Thread.Sleep(10);
+                Thread.Sleep(100);
             }
         }
 
@@ -251,9 +258,9 @@ namespace CommandMessengerTests
                 var sendSeries = new SendCommand(_command["SendSeries"]);
                 sendSeries.AddArgument(sendItemsCount * SeriesBase);
 
+                _cmdMessenger.QueueCommand(sendSeries);
                 _receivedBytesCount += CountBytesInCommand(sendSeries, _cmdMessenger.PrintLfCr);
 
-                _cmdMessenger.QueueCommand(sendSeries);
                 if (sendItemsCount % (SeriesLength / 10) == 0)
                     Common.WriteLine("Send value: " + sendItemsCount * SeriesBase);
             }
@@ -261,7 +268,7 @@ namespace CommandMessengerTests
             // Now wait until receiving party acknowledges that values have arrived
             while (!_sendSeriesFinished)
             {
-                Thread.Sleep(10);
+                Thread.Sleep(100);
             }
         }
 
@@ -308,9 +315,8 @@ namespace CommandMessengerTests
                 var sendSeries = new SendCommand(_command["SendSeries"]);
                 sendSeries.AddArgument(sendItemsCount * SeriesBase);
 
-                _receivedBytesCount += CountBytesInCommand(sendSeries, _cmdMessenger.PrintLfCr);
-
                 _cmdMessenger.SendCommand(sendSeries, SendQueue.Default, ReceiveQueue.Default, UseQueue.BypassQueue);
+                _receivedBytesCount += CountBytesInCommand(sendSeries, _cmdMessenger.PrintLfCr);
      
                 if (sendItemsCount%(SeriesLength/10) == 0)
                 {
@@ -321,7 +327,7 @@ namespace CommandMessengerTests
             // Now wait until receiving party acknowledges that values have arrived
             while (!_sendSeriesFinished)
             {
-                Thread.Sleep(10);
+                Thread.Sleep(100);
             }
         }
 
@@ -329,7 +335,7 @@ namespace CommandMessengerTests
         private static int CountBytesInCommand(Command command, bool printLfCr)
         {
             var bytes = command.CommandString().Length; // Command + command separator
-            if (printLfCr) bytes += Environment.NewLine.Length; // Add  bytes for carriage return ('\r') and /or a newline  ('\n')
+            if (printLfCr) bytes += 2; // Add  bytes for carriage return ('\r') and /or a newline  ('\n')
             return bytes;
         }
 

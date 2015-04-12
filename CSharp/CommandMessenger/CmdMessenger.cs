@@ -19,11 +19,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using CommandMessenger.TransportLayer;
-using ThreadState = System.Diagnostics.ThreadState;
+using CommandMessenger.Queue;
+using CommandMessenger.Transport;
 
 namespace CommandMessenger
 {
@@ -56,205 +55,146 @@ namespace CommandMessenger
     }
 
     /// <summary> Command messenger main class  </summary>
-    public class CmdMessenger : DisposableObject
-    {                      
-        public event NewLineEvent.NewLineHandler NewLineReceived;           // Event handler for new lines received
-        public event NewLineEvent.NewLineHandler NewLineSent;               // Event handler for a new line received
-              
+    public class CmdMessenger : IDisposable
+    {
         private CommunicationManager _communicationManager;                 // The communication manager
-        private Sender _sender;                                             // The command sender
-
-        private char _fieldSeparator;                                       // The field separator
-        private char _commandSeparator;                                     // The command separator
-        private bool _printLfCr;                                            // Add Linefeed + CarriageReturn 
-        private BoardType _boardType;
         private MessengerCallbackFunction _defaultCallback;                 // The default callback
         private Dictionary<int, MessengerCallbackFunction> _callbackList;   // List of callbacks
-
         private SendCommandQueue _sendCommandQueue;                         // The queue of commands to be sent
         private ReceiveCommandQueue _receiveCommandQueue;                   // The queue of commands to be processed
 
-        //private Logger _sendCommandLogger = new Logger(@"d:\sendCommands.txt");
         /// <summary> Definition of the messenger callback function. </summary>
         /// <param name="receivedCommand"> The received command. </param>
         public delegate void MessengerCallbackFunction(ReceivedCommand receivedCommand);
 
-        /// <summary> Embedded Processor type. Needed to translate variables between sides. </summary>
-        /// <value> The current received line. </value>
-        public BoardType BoardType {
-            get { return _boardType;  }
-            set
-            {
-                _boardType = value;
-                Command.BoardType = _boardType;
-            }
-        }
+        /// <summary>
+        /// Event handler for one or more lines received
+        /// </summary>
+        public event EventHandler<CommandEventArgs> NewLineReceived;
+        
+        /// <summary>
+        /// Event handler for a new line sent
+        /// </summary>
+        public event EventHandler<CommandEventArgs> NewLineSent;                            
 
         /// <summary> Gets or sets a whether to print a line feed carriage return after each command. </summary>
         /// <value> true if print line feed carriage return, false if not. </value>
-        public bool PrintLfCr { 
-            get { return _printLfCr; } 
-            set {
-                _printLfCr = value;
-                Command.PrintLfCr = _printLfCr;
-                _sender.PrintLfCr = _printLfCr;
-            } 
+        public bool PrintLfCr
+        {
+            get { return _communicationManager.PrintLfCr; }
+            set { _communicationManager.PrintLfCr = value; }
         }
 
-        /// <summary> Gets or sets the current received command line. </summary>
-        /// <value> The current received line. </value>
-        public String CurrentReceivedLine { get; private set; }
+        /// <summary>
+        /// The control to invoke the callback on
+        /// </summary>
+        public Control ControlToInvokeOn { get; set; }
 
-
-
-        /// <summary> Gets or sets the currently sent line. </summary>
-        /// <value> The currently sent line. </value>
-        //public String CurrentSentLine { get; private set; }
-
-        // Enable logging send commands to file
-        //public bool LogSendCommandsEnabled
-        //{
-        //    get { return _sendCommandLogger.isEnabled; }
-        //    set { 
-        //        _sendCommandLogger.isEnabled = value;
-        //        if  (!_sendCommandLogger.isOpen) {
-        //            _sendCommandLogger.Open();
-        //        }
-        //    }
-        //}
-
-        /// <summary> Gets or sets the log file of send commands. </summary>
-        /// <value> The logfile name for send commands. </value>
-        //public String LogFileSendCommands
-        //{
-        //    get { return _sendCommandLogger.LogFileName; }
-        //    set { _sendCommandLogger.LogFileName = value; }
-        //}
-
-   
-
-        /// <summary> Gets or sets the log file of receive commands. </summary>
-        /// <value> The logfile name for receive commands. </value>
-        //public String LogFileReceiveCommands { get; set; }
-
-        // The control to invoke the callback on
-        private Control _controlToInvokeOn;
-        
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
-        public CmdMessenger(ITransport transport)
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
+        public CmdMessenger(ITransport transport, BoardType boardType = BoardType.Bit16)
         {
-            Init(transport, ',', ';', '/', 60);
+            Init(transport, boardType, ',', ';', '/', 60);
         }
 
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
         /// <param name="sendBufferMaxLength"> The maximum size of the send buffer</param>
-        public CmdMessenger(ITransport transport, int sendBufferMaxLength)
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
+        public CmdMessenger(ITransport transport, int sendBufferMaxLength, BoardType boardType = BoardType.Bit16)
         {
-            Init(transport, ',', ';', '/', sendBufferMaxLength);
+            Init(transport, boardType, ',', ';', '/', sendBufferMaxLength);
         }
 
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
         /// <param name="fieldSeparator"> The field separator. </param>
-        public CmdMessenger(ITransport transport, char fieldSeparator)
+        public CmdMessenger(ITransport transport, BoardType boardType, char fieldSeparator)
         {
-            Init(transport, fieldSeparator, ';', '/', 60);
+            Init(transport, boardType, fieldSeparator, ';', '/', 60);
         }
 
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
         /// <param name="fieldSeparator"> The field separator. </param>
         /// <param name="sendBufferMaxLength"> The maximum size of the send buffer</param>
-        public CmdMessenger(ITransport transport, char fieldSeparator, int sendBufferMaxLength)
+        public CmdMessenger(ITransport transport, BoardType boardType, char fieldSeparator, int sendBufferMaxLength)
         {
-            Init(transport, fieldSeparator, ';', '/', sendBufferMaxLength);
+            Init(transport, boardType, fieldSeparator, ';', '/', sendBufferMaxLength);
         }
 
         /// <summary> Constructor. </summary>
         /// <param name="transport">   The transport layer. </param>
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
-        public CmdMessenger(ITransport transport, char fieldSeparator, char commandSeparator)
+        public CmdMessenger(ITransport transport, BoardType boardType, char fieldSeparator, char commandSeparator)
         {
-            Init(transport, fieldSeparator, commandSeparator, commandSeparator, 60);
+            Init(transport, boardType, fieldSeparator, commandSeparator, commandSeparator, 60);
         }
 
         /// <summary> Constructor. </summary>
         /// <param name="transport">   The transport layer. </param>
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
         /// <param name="escapeCharacter">  The escape character. </param>
         /// <param name="sendBufferMaxLength"> The maximum size of the send buffer</param>
-        public CmdMessenger(ITransport transport, char fieldSeparator, char commandSeparator,
+        public CmdMessenger(ITransport transport, BoardType boardType, char fieldSeparator, char commandSeparator,
                             char escapeCharacter, int sendBufferMaxLength)
         {
-            Init(transport, fieldSeparator, commandSeparator, escapeCharacter, sendBufferMaxLength);
+            Init(transport, boardType, fieldSeparator, commandSeparator, escapeCharacter, sendBufferMaxLength);
         }
 
         /// <summary> Initializes this object. </summary>
         /// <param name="transport">   The transport layer. </param>
+        /// <param name="boardType"> Embedded Processor type. Needed to translate variables between sides. </param>
         /// <param name="fieldSeparator">   The field separator. </param>
         /// <param name="commandSeparator"> The command separator. </param>
         /// <param name="escapeCharacter">  The escape character. </param>
         /// <param name="sendBufferMaxLength"> The maximum size of the send buffer</param>
-        private void Init(ITransport transport, char fieldSeparator, char commandSeparator,
+        private void Init(ITransport transport, BoardType boardType, char fieldSeparator, char commandSeparator,
                           char escapeCharacter, int sendBufferMaxLength)
         {           
-            _controlToInvokeOn = null;
-            
-            _receiveCommandQueue  = new ReceiveCommandQueue(DisposeStack, this);
-            _communicationManager = new CommunicationManager(DisposeStack, transport, _receiveCommandQueue, commandSeparator, fieldSeparator, escapeCharacter);
-            _sender               = new Sender(_communicationManager, _receiveCommandQueue);
-            _sendCommandQueue     = new SendCommandQueue(DisposeStack, this, _sender, sendBufferMaxLength);
-           
+            ControlToInvokeOn = null;
+
+            //Logger.Open(@"sendCommands.txt");
+            Logger.DirectFlush = true;
+
+            _receiveCommandQueue = new ReceiveCommandQueue(HandleMessage);
+            _communicationManager = new CommunicationManager(transport, _receiveCommandQueue, boardType, commandSeparator, fieldSeparator, escapeCharacter);
+            _sendCommandQueue = new SendCommandQueue(_communicationManager, sendBufferMaxLength);
+
+            PrintLfCr = false;
+
             _receiveCommandQueue.NewLineReceived += (o, e) => InvokeNewLineEvent(NewLineReceived, e);
             _sendCommandQueue.NewLineSent        += (o, e) => InvokeNewLineEvent(NewLineSent, e);
 
-            _fieldSeparator = fieldSeparator;
-            _commandSeparator = commandSeparator;
-            PrintLfCr = false;
-
-            Command.FieldSeparator = _fieldSeparator;
-            Command.CommandSeparator = _commandSeparator;
-            Command.PrintLfCr = PrintLfCr;            
-
-            Escaping.EscapeChars(_fieldSeparator, _commandSeparator, escapeCharacter);
+            Escaping.EscapeChars(fieldSeparator, commandSeparator, escapeCharacter);
             _callbackList = new Dictionary<int, MessengerCallbackFunction>();
-            //CurrentSentLine = "";
-            CurrentReceivedLine = "";
+
+            _sendCommandQueue.Start();
+            _receiveCommandQueue.Start();
         }
 
-        //void ReceiveCommandQueueNewLineReceived(object sender, NewLineEvent.NewLineArgs e)
-        //{
-        //    InvokeNewLineEvent(NewLineReceived, e);
-        //}
-
-        public void SetSingleCore()
+        /// <summary>
+        /// Disposal of CmdMessenger
+        /// </summary>
+        public void Dispose()
         {
-            var proc = Process.GetCurrentProcess();
-            foreach (ProcessThread pt in proc.Threads)
-            {
-                if (pt.ThreadState != ThreadState.Terminated)
-                {
-                    try
-                    {
-                        pt.IdealProcessor = 0;
-                        pt.ProcessorAffinity = (IntPtr) 1;
-                    }
-                    catch (Exception)
-                    {
-                    }
-
-                }
-            }
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
+
         /// <summary> Sets a control to invoke on. </summary>
         /// <param name="controlToInvokeOn"> The control to invoke on. </param>
+        [Obsolete("Use ControlToInvokeOn property instead.")]
         public void SetControlToInvokeOn(Control controlToInvokeOn)
         {
-            _controlToInvokeOn = controlToInvokeOn;
+            ControlToInvokeOn = controlToInvokeOn;
         }
 
         /// <summary>  Stop listening and end serial port connection. </summary>
@@ -268,13 +208,7 @@ namespace CommandMessenger
         /// <returns> true if it succeeds, false if it fails. </returns>
         public bool Connect()
         {
-            if (_communicationManager.Connect())
-            {
-                // Timestamp of this command is same as time stamp of serial line
-                //LastReceivedCommandTimeStamp = _communicationManager.LastLineTimeStamp;
-                return true;
-            }
-            return false;
+            return _communicationManager.Connect();
         }
 
         /// <summary> Attaches default callback for unsupported commands. </summary>
@@ -304,13 +238,10 @@ namespace CommandMessenger
 
         /// <summary> Handle message. </summary>
         /// <param name="receivedCommand"> The received command. </param>
-        public void HandleMessage(ReceivedCommand receivedCommand)
+        private void HandleMessage(ReceivedCommand receivedCommand)
         {
-            CurrentReceivedLine = receivedCommand.RawString;
-            // Send message that a new line has been received and is due to be processed
-            //InvokeEvent(NewLineReceived);
-
             MessengerCallbackFunction callback = null;
+
             if (receivedCommand.Ok)
             {
                 if (_callbackList.ContainsKey(receivedCommand.CmdId))
@@ -325,19 +256,10 @@ namespace CommandMessenger
             else
             {
                 // Empty command
-                receivedCommand = new ReceivedCommand();
+                receivedCommand = new ReceivedCommand { CommunicationManager = _communicationManager };
             }
-            InvokeCallBack(callback, receivedCommand);
-        }
 
-        /// <summary> Sends a command. 
-        /// 		  If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue
-        ///  		  If a  command acknowledge is requested, the command will be send synchronously:  the program will block until the acknowledge command 
-        ///  		  has been received or the timeout has expired. </summary>
-        /// <param name="sendCommand"> The command to sent. </param>
-        public ReceivedCommand SendCommand(SendCommand sendCommand)
-        {
-            return SendCommand(sendCommand, SendQueue.InFrontQueue,ReceiveQueue.Default);
+            InvokeCallBack(callback, receivedCommand);
         }
 
         /// <summary> Sends a command. 
@@ -349,7 +271,7 @@ namespace CommandMessenger
         /// <param name="sendQueueState">    Property to optionally clear/wait the send queue</param>
         /// <param name="receiveQueueState"> Property to optionally clear/wait the send queue</param>
         /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
-        public ReceivedCommand SendCommand(SendCommand sendCommand, SendQueue sendQueueState, ReceiveQueue receiveQueueState)
+        public ReceivedCommand SendCommand(SendCommand sendCommand, SendQueue sendQueueState = SendQueue.InFrontQueue, ReceiveQueue receiveQueueState = ReceiveQueue.Default)
         {
             return SendCommand(sendCommand, sendQueueState, receiveQueueState, UseQueue.UseQueue);
         }
@@ -366,9 +288,14 @@ namespace CommandMessenger
         /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
         public ReceivedCommand SendCommand(SendCommand sendCommand, SendQueue sendQueueState, ReceiveQueue receiveQueueState, UseQueue useQueue)
         {
-            //_sendCommandLogger.LogLine(sendCommand.CommandString());
             var synchronizedSend = (sendCommand.ReqAc || useQueue == UseQueue.BypassQueue);
 
+            // When waiting for an acknowledge, it is typically best to wait for the ReceiveQueue to be empty
+            // This is thus the default state
+            if (sendCommand.ReqAc && receiveQueueState == ReceiveQueue.Default)
+            {
+                receiveQueueState = ReceiveQueue.WaitForEmptyQueue;
+            }
 
             if (sendQueueState == SendQueue.ClearQueue )
             {
@@ -387,12 +314,12 @@ namespace CommandMessenger
                 (synchronizedSend && sendQueueState == SendQueue.AtEndQueue)
             )
             {
-                while (_sendCommandQueue.Count > 0) Thread.Sleep(1);
+                SpinWait.SpinUntil(() => _sendCommandQueue.IsEmpty);
             }
             
             if (receiveQueueState == ReceiveQueue.WaitForEmptyQueue)
             {
-                while (_receiveCommandQueue.Count>0) Thread.Sleep(1);
+                SpinWait.SpinUntil(() => _receiveCommandQueue.IsEmpty);
             }
 
             if (synchronizedSend)
@@ -410,7 +337,7 @@ namespace CommandMessenger
                 // Put command at bottom of command queue
                 _sendCommandQueue.QueueCommand(sendCommand);
             }
-            return new ReceivedCommand();
+            return new ReceivedCommand { CommunicationManager = _communicationManager };
         }
 
         /// <summary> Synchronized send a command. </summary>
@@ -420,8 +347,8 @@ namespace CommandMessenger
         public ReceivedCommand SendCommandSync(SendCommand sendCommand, SendQueue sendQueueState)
         {
             // Directly call execute command
-            var resultSendCommand = _sender.ExecuteSendCommand(sendCommand, sendQueueState);
-            InvokeNewLineEvent(NewLineSent, new NewLineEvent.NewLineArgs(sendCommand));
+            var resultSendCommand = _communicationManager.ExecuteSendCommand(sendCommand, sendQueueState);
+            InvokeNewLineEvent(NewLineSent, new CommandEventArgs(sendCommand));
             return resultSendCommand;            
         }
 
@@ -468,24 +395,19 @@ namespace CommandMessenger
         /// <summary> Helper function to Invoke or directly call event. </summary>
         /// <param name="newLineHandler"> The event handler. </param>
         /// <param name="newLineArgs"></param>
-        private void InvokeNewLineEvent(NewLineEvent.NewLineHandler newLineHandler, NewLineEvent.NewLineArgs newLineArgs)
+        private void InvokeNewLineEvent(EventHandler<CommandEventArgs> newLineHandler, CommandEventArgs newLineArgs)
         {
-            try
+            if (newLineHandler == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
+
+            if (ControlToInvokeOn != null )
             {
-                if (newLineHandler == null) return;
-                if (_controlToInvokeOn != null && _controlToInvokeOn.InvokeRequired)
-                {
-                    //Asynchronously call on UI thread
-                    _controlToInvokeOn.Invoke((MethodInvoker)(() => newLineHandler(this, newLineArgs)));
-                }
-                else
-                {
-                    //Directly call
-                    newLineHandler(this, newLineArgs);
-                }
+                //Asynchronously call on UI thread
+                try { ControlToInvokeOn.BeginInvoke((MethodInvoker)(() => newLineHandler(this, newLineArgs))); } catch { }
             }
-            catch (Exception)
+            else
             {
+                //Directly call
+                newLineHandler(this, newLineArgs);
             }
         }
 
@@ -494,48 +416,30 @@ namespace CommandMessenger
         /// <param name="command">                   The command. </param>
         private void InvokeCallBack(MessengerCallbackFunction messengerCallbackFunction, ReceivedCommand command)
         {
-            try
-            {
-                if (messengerCallbackFunction == null) return;
+            if (messengerCallbackFunction == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
 
-                if (_controlToInvokeOn != null && _controlToInvokeOn.InvokeRequired)
-                {
-                    //Asynchronously call on UI thread
-                    _controlToInvokeOn.Invoke(new MessengerCallbackFunction(messengerCallbackFunction), (object)command);
-                }
-                else
-                {
-                    //Directly call
-                    messengerCallbackFunction(command);
-                }
-            }
-            catch (Exception)
+            if (ControlToInvokeOn != null )
             {
+                //Asynchronously call on UI thread
+                try { ControlToInvokeOn.BeginInvoke(new MessengerCallbackFunction(messengerCallbackFunction), (object)command); } catch { }
             }
-
+            else
+            {
+                //Directly call
+                messengerCallbackFunction(command);
+            }
         }
 
-        /// <summary> Finaliser. </summary>
-        ~CmdMessenger()
-        {
-            _controlToInvokeOn = null;
-            _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
-            _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
-        }
-
-
-        /// <summary> Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources. </summary>
-        /// <param name="disposing"> true if resources should be disposed, false if not. </param>
-        protected override void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                _controlToInvokeOn = null;
-                _receiveCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
-                _sendCommandQueue.ThreadRunState = CommandQueue.ThreadRunStates.Abort;
-               // _sendCommandLogger.Close();
+                ControlToInvokeOn = null;
+
+                _communicationManager.Dispose();
+                _sendCommandQueue.Dispose();
+                _receiveCommandQueue.Dispose();
             }
-            base.Dispose(disposing);
         }
     }
 }

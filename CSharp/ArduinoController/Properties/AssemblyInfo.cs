@@ -6,11 +6,10 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("6-ArduinoController")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A messaging library for the Arduino and .NET/Mono platform")]
 [assembly: AssemblyConfiguration("")]
-
-[assembly: AssemblyProduct("6-ArduinoController")]
-[assembly: AssemblyCopyright("Copyright © Thijs Elenbaas 2013,2014")]
+[assembly: AssemblyProduct("CmdMessenger")]
+[assembly: AssemblyCopyright("Copyright © Thijs Elenbaas 2013, 2014, 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

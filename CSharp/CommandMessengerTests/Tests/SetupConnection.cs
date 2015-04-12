@@ -1,6 +1,6 @@
 using System;
+using System.Threading;
 using CommandMessenger;
-using CommandMessenger.TransportLayer;
 
 namespace CommandMessengerTests
 {
@@ -35,6 +35,9 @@ namespace CommandMessengerTests
 
         public void RunTests()
         {
+            // Wait a bit before starting the test
+            Thread.Sleep(1000);
+
             // Test opening and closing connection
             Common.StartTestSet("Opening connections");
             TestOpenConnection();
@@ -50,11 +53,16 @@ namespace CommandMessengerTests
             {
                 _cmdMessenger = Common.Connect(_systemSettings);           
                 AttachCommandCallBacks();
+                if (!Common.Connected)
+                {
+                    Common.TestNotOk("Not connected after opening connection");
+                }                
             }
             catch (Exception)
             {
                 Common.TestNotOk("Exception during opening connection");
                 Common.EndTest();
+                if (_cmdMessenger==null) Common.EndTestSet();
                 return;
             }
 
@@ -105,9 +113,9 @@ namespace CommandMessengerTests
             {
                 _cmdMessenger.SendCommand(new SendCommand(_command["AreYouReady"]));
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Common.TestNotOk("Exception during sending of command");
+                Common.TestNotOk("Exception during sending of command: " + e.Message);
                 Common.EndTest();
                 return;
             }

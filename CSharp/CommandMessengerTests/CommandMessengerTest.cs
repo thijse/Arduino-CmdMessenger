@@ -4,13 +4,14 @@
 // Note that the primary function is not to serve as an example, so the code may be less documented 
 // and clean than the example projects. 
 
-
+//Check bluetooth connection
+//Merge with other tree
 
 using System;
 using System.IO.Ports;
 using CommandMessenger;
-using CommandMessenger.Serialport;
-using CommandMessenger.TransportLayer;
+using CommandMessenger.Transport.Bluetooth;
+using CommandMessenger.Transport.Serial;
 
 namespace CommandMessengerTests
 {
@@ -32,9 +33,9 @@ namespace CommandMessengerTests
                 Description = @"Teensy 3.1",
                 MinReceiveSpeed     = 2000000,         // Bits per second    
                 MinSendSpeed        = 1250000,         // Bits per second                                       
-                MinDirectSendSpeed  = 47500,           // Bits per second                     
-                BoardType           = BoardType.Bit32, // 32 architecture, needed from binary value conversion
-                sendBufferMaxLength = 512,             // Maximum send buffer size
+                MinDirectSendSpeed  = 45000,           // Bits per second                     
+                BoardType           = BoardType.Bit32, // 32-bit architecture, needed from binary value conversion
+                sendBufferMaxLength = 512,             // Maximum send buffer size, optimally buffer size is similar to embedded controller
                 Transport = new SerialTransport
                     {
                         CurrentSerialSettings = new SerialSettings()
@@ -48,23 +49,62 @@ namespace CommandMessengerTests
                             
                     }
             };
+
             var arduinoNano = new systemSettings()
             {
                 Description = @"Arduino Nano /w AT mega328",
-                MinReceiveSpeed     = 84000,              // Bits per second 
-                MinSendSpeed        = 90000,              // Bits per second                                      
+                MinReceiveSpeed     = 82000,              // Bits per second 
+                MinSendSpeed        = 85000,              // Bits per second                                      
                 MinDirectSendSpeed  = 52000,              // Bits per second                
-                BoardType           = BoardType.Bit16,    // 32 architecture, needed from binary value conversion
-                sendBufferMaxLength = 60,                 // Maximum send buffer size
+                BoardType           = BoardType.Bit16,    // 16-bit architecture, needed from binary value conversion
+                sendBufferMaxLength = 60,                 // Maximum send buffer size, optimally buffer size is similar to embedded controller
                 Transport = new SerialTransport
                 {
                     CurrentSerialSettings = new SerialSettings()
                     {
-                        PortName = "COM6",                // Can be different!
-                        BaudRate = 115200,                // Bits per second
-                        DataBits = 8,                     // Data bits
-                        Parity = Parity.None,             // Bit parity
-                        DtrEnable = false,                // Some boards need to send this to enabled                                    
+                        PortName  = "COM16",                  // Can be different!
+                        BaudRate  = 115200,                  // Bits per second
+                        DataBits  = 8,                       // Data bits
+                        Parity    = Parity.None,             // Bit parity
+                        DtrEnable = false,                   // Some boards need to send this to enabled                                    
+                    },
+
+                }
+            };
+
+
+            var arduinoNanoBluetooth = new systemSettings()
+            {
+                Description         = @"Arduino Nano /w AT mega328 - Bluetooth",
+                MinReceiveSpeed     = 6500,                         // Bits per second 
+                MinSendSpeed        = 7400,                         // Bits per second                                      
+                MinDirectSendSpeed  = 8000,                         // Bits per second                
+                BoardType           = BoardType.Bit16,              // 16-bit architecture, needed from binary value conversion
+                sendBufferMaxLength = 60,                           // Maximum send buffer size, optimally buffer size is similar to embedded controller
+                Transport           = new BluetoothTransport()
+                {
+                    CurrentBluetoothDeviceInfo = BluetoothUtils.DeviceByAdress("20:13:07:26:10:08"),
+                    LazyReconnect              = true,              // Only reconnect if really necessary
+                }
+            };
+
+            var arduinoLeonardoOrProMicro = new systemSettings()
+            {
+                Description         = @"Arduino Leonardo or Sparkfun ProMicro /w AT mega32u4",
+                MinReceiveSpeed     = 82000,               // Bits per second 
+                MinSendSpeed        = 90000,               // Bits per second                                      
+                MinDirectSendSpeed  = 52000,               // Bits per second                
+                BoardType           = BoardType.Bit16,     // 16-bit architecture, needed from binary value conversion
+                sendBufferMaxLength = 60,                  // Maximum send buffer size, optimally buffer size is similar to embedded controller
+                Transport           = new SerialTransport
+                {
+                    CurrentSerialSettings = new SerialSettings()
+                    {
+                        PortName  = "COM13",                 // Can be different!
+                        BaudRate  = 115200,                  // Bits per second
+                        DataBits  = 8,                       // Data bits
+                        Parity    = Parity.None,             // Bit parity
+                        DtrEnable = true,                    // Some boards need to send this to enabled                                    
                     },
 
                 }
@@ -73,8 +113,9 @@ namespace CommandMessengerTests
             // Set up Command enumerators
             var command = DefineCommands();
 
-            // Initialize tests
-            InitializeTests(teensy31, command);
+            // Initialize tests, CHANGE "DEVICE" VARIABLE TO YOUR DEVICE!
+            var device = teensy31;
+            InitializeTests(device, command);
 
             // Open log file for testing 
             Common.OpenTestLogFile(@"TestLogFile.txt");
@@ -111,42 +152,45 @@ namespace CommandMessengerTests
 
         private void RunTests()
         {
+
+            //Todo: implement autoconnect tests
+
             // Test opening and closing connection
             _setupConnection.RunTests();
             
             // Test acknowledgment both on PC side and embedded side
             _acknowledge.RunTests();
 
-            // Test all plain text formats
+            //// Test all plain text formats
             _clearTextData.RunTests();
 
-            // Test all binary formats
+            //// Test all binary formats
             _binaryTextData.RunTests();            
             
-            // Test sending multiple arguments
+            //// Test sending multiple arguments
             _multipleArguments.RunTests();
 
-            // Test large series for completeness (2-way)
-            // todo
+            //// Test large series for completeness (2-way)
+            //// todo
             
-            // Test speed
+            //// Test speed
             _transferSpeed.RunTests();
 
-            // Test load
-            // todo
+            //// Test load
+            //// todo
             
-            // Test Strategies
-            // todo
+            //// Test Strategies
+            //// todo
             
             // Summary of tests
             Common.TestSummary();
 
             // Exit application
-            exit();            
+            Exit();            
         }
 
 
-        public void exit()
+        public void Exit()
         {
             Console.WriteLine("Press any key to stop...");
             Console.ReadKey();

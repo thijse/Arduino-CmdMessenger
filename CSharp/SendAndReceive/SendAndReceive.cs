@@ -8,8 +8,7 @@
 using System;
 using System.Threading;
 using CommandMessenger;
-using CommandMessenger.Bluetooth;
-using CommandMessenger.Serialport;
+using CommandMessenger.Transport.Serial;
 
 namespace SendAndReceive
 {
@@ -25,7 +24,6 @@ namespace SendAndReceive
     {
         public bool RunLoop { get; set; }
         private SerialTransport _serialTransport;
-        private BluetoothTransport _bluetoothTransport;
         private CmdMessenger _cmdMessenger;
         private bool _ledState;
         private int _count;
@@ -35,55 +33,29 @@ namespace SendAndReceive
         {
             _ledState = false;
 
-            BluetoothInfo();
-
-            // Create Bluetooth transport object
-            _bluetoothTransport = new BluetoothTransport
-            {
-                //CurrentBluetoothDeviceInfo = BluetoothUtils.DeviceByAdress("98-D3-31-B0-FB-B5")
-                CurrentBluetoothDeviceInfo = BluetoothUtils.DeviceByAdress("20:13:07:26:10:08")
-                
-            };
-
             // Create Serial Port transport object
             // Note that for some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.
             _serialTransport = new SerialTransport
             {
-                CurrentSerialSettings = { PortName = "COM16", BaudRate = 9600, DtrEnable = false } // object initializer
+                CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200, DtrEnable = false } // object initializer
             };
 
             // Initialize the command messenger with the Serial Port transport layer
-            _cmdMessenger = new CmdMessenger(_bluetoothTransport) 
-                {
-                    BoardType = BoardType.Bit16 // Set if it is communicating with a 16- or 32-bit Arduino board
-                };
-
-            // Tell CmdMessenger if it is communicating with a 16 or 32 bit Arduino board
+            // Set if it is communicating with a 16- or 32-bit Arduino board
+            _cmdMessenger = new CmdMessenger(_serialTransport, BoardType.Bit16);
 
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();
             
             // Start listening
-            _cmdMessenger.Connect();                                
+            var status =_cmdMessenger.Connect();
+            if (!status)
+            {
+                Console.WriteLine("No connection could be made");
+                return;
+            }                    
         }
 
-        private static void BluetoothInfo()
-        {
-            // Show  adress of local primary bluetooth device 
-            Console.WriteLine("Adress of local primary bluetooth device:");
-            BluetoothUtils.PrintLocalAddress();
-            Console.WriteLine("");
-
-            //Show all paired bluetooth devices
-            Console.WriteLine("All paired bluetooth devices:");
-            BluetoothUtils.PrintPairedDevices();
-            Console.WriteLine("");
-
-            // Show Virtual serial ports associated with Bluetooth devices
-            Console.WriteLine("Virtual serial ports associated with Bluetooth devices:");
-            BluetoothUtils.PrintSerialPorts();
-            Console.WriteLine("");
-        }
 
         // Loop function
         public void Loop()
@@ -117,8 +89,7 @@ namespace SendAndReceive
            
 
             // Dispose Serial Port object
-            if (_serialTransport != null) _serialTransport.Dispose();
-            if (_bluetoothTransport != null) _bluetoothTransport.Dispose();            
+            if (_serialTransport != null) _serialTransport.Dispose();        
         }
 
         /// Attach command call backs. 

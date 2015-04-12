@@ -1,6 +1,6 @@
 ﻿// *** TemperatureControl ***
 
-// This example expands the previous ArduinoController example. The PC will now send a start command to the Arduino,
+// This example example is where all previously described features come together in one full application
 // and wait for a response from the Arduino. The Arduino will start sending temperature data and the heater steering
 // value data which the PC will plot in a chart. With a slider we can set the goal temperature, which will make the
 // PID software on the controller adjust the setting of the heater.
@@ -9,22 +9,23 @@
 // - Send queued commands
 // - Manipulate the send and receive queue
 // - Add queue strategies
-// - Use bluetooth connection
+// - Use serial or bluetooth connection
 // - Use auto scanning and connecting
-// - Use watchdog 
+// - Use the autoconnect and watchdog 
 
 using System;
 using CommandMessenger;
-using CommandMessenger.Serialport;
-using CommandMessenger.TransportLayer;
+using CommandMessenger.Queue;
+using CommandMessenger.Transport;
+using CommandMessenger.Transport.Bluetooth;
+using CommandMessenger.Transport.Serial;
 using System.Threading;
-using CommandMessenger.Bluetooth;
+
 namespace DataLogging
 {
     enum Command
     {
-        RequestId,          // Command to request application ID
-        SendId,             // Command to send application ID
+        Identify,           // Command to identify device
         Acknowledge,        // Command to acknowledge a received command
         Error,              // Command to message that an error has occurred
         StartLogging,       // Command to turn on data logging
@@ -42,13 +43,14 @@ namespace DataLogging
 
     public class TemperatureControl
     {
+        private const string UniqueDeviceId = "77FAEDD5-FAC8-46BD-875E-5E9B6D44F85C";
+
         // This class (kind of) contains presentation logic, and domain model.
         // ChartForm.cs contains the view components 
         private ITransport            _transport;
         private CmdMessenger          _cmdMessenger;
-        private ConnectionManager    _connectionManager;
+        private ConnectionManager     _connectionManager;
         private ChartForm             _chartForm;
-        //private float                 _startTime;
         private double                _goalTemperature;
         
         // ------------------ MAIN  ----------------------
@@ -83,8 +85,9 @@ namespace DataLogging
             // Choose which transport mode you want to use:
             // 1. Serial port. This can be a real serial port but is usually a virtual serial port over USB. 
             //                 It can also be a virtual serial port over Bluetooth, but the direct bluetooth works better
-            // 2. Bluetooth    This bypasses the Bluetooth virtual serial port, but communicates over the RFCOMM layer                 
+            // 2. Bluetooth    This bypasses the Bluetooth virtual serial port, and instead communicates over the RFCOMM layer                 
             var transportMode = TransportMode.Serial;
+            //var transportMode = TransportMode.Bluetooth;
             
             // getting the chart control on top of the chart form.
             _chartForm = chartForm;
@@ -100,18 +103,21 @@ namespace DataLogging
                 _transport = new BluetoothTransport();
                     // We do not need to set the device: it will be found by the connection manager
             else
-                _transport = new SerialTransport { CurrentSerialSettings = { DtrEnable = false } }; // some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.                        
-                    // We do not need to set serial port and baud rate: it will be found by the connection manager                                                           
+                _transport = new SerialTransport
+                {
+                    CurrentSerialSettings = { DtrEnable = false } // some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.      
+                };                   
+                 // We do not need to set serial port and baud rate: it will be found by the connection manager                                                           
 
-            // Initialize the command messenger with the Serial Port transport layer
-            _cmdMessenger = new CmdMessenger(_transport)
+            // Initialize the command messenger with one of the two transport layers
+            // Set if it is communicating with a 16- or 32-bit Arduino board
+            _cmdMessenger = new CmdMessenger(_transport, BoardType.Bit32)
             {
-                BoardType = BoardType.Bit16, // Set if it is communicating with a 16- or 32-bit Arduino board
                 PrintLfCr = false            // Do not print newLine at end of command, to reduce data being sent
             };
 
             // Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
-            _cmdMessenger.SetControlToInvokeOn(chartForm);
+            _cmdMessenger.ControlToInvokeOn = chartForm;
 
             // Set command strategy to continuously to remove all commands on the receive queue that 
             // are older than 1 sec. This makes sure that if data logging comes in faster that it can 
@@ -127,14 +133,14 @@ namespace DataLogging
             // Attach to NewLineSent for logging purposes
             _cmdMessenger.NewLineSent     += NewLineSent;                       
 
-            // Set up connection manager 
+            // Set up connection manager, corresponding to the transportMode
             if (transportMode == TransportMode.Bluetooth)
-                _connectionManager = new BluetoothConnectionManager((_transport as BluetoothTransport), _cmdMessenger, (int)Command.RequestId, (int)Command.SendId);
+                _connectionManager = new BluetoothConnectionManager((_transport as BluetoothTransport), _cmdMessenger, (int)Command.Identify, UniqueDeviceId);
             else
-                _connectionManager = new SerialConnectionManager   ((_transport as SerialTransport),    _cmdMessenger, (int)Command.RequestId, (int)Command.SendId);                    
-            
-            // Tell the Connection manager to "Invoke" commands on the thread running the WinForms UI
-            _connectionManager.SetControlToInvokeOn(chartForm);
+                _connectionManager = new SerialConnectionManager   ((_transport as SerialTransport),    _cmdMessenger, (int)Command.Identify, UniqueDeviceId);
+
+            // Enable watchdog functionality.
+            _connectionManager.WatchdogEnabled = true;
 
             // Event when the connection manager finds a connection
             _connectionManager.ConnectionFound += ConnectionFound;
@@ -149,7 +155,7 @@ namespace DataLogging
             InitializeTemperatureControl(); 
 
             // Start scanning for ports/devices
-            _connectionManager.StartScan();           
+            _connectionManager.StartConnectionManager();           
         }
 
         private void InitializeTemperatureControl()
@@ -158,7 +164,6 @@ namespace DataLogging
 
             // Set initial goal temperature
             GoalTemperature    = 25;
-           // _startTime         = 0.0f;
             AcquisitionStarted = false;
             AcceptData         = false;
             _chartForm.SetDisConnected();
@@ -201,21 +206,18 @@ namespace DataLogging
         void OnUnknownCommand(ReceivedCommand arguments)
         {
             _chartForm.LogMessage(@"Command without attached callback received");
-            //Console.WriteLine(@"Command without attached callback received");
         }
 
         // Callback function that prints that the Arduino has acknowledged
         void OnAcknowledge(ReceivedCommand arguments)
         {
             _chartForm.LogMessage(@"Arduino acknowledged");
-            //Console.WriteLine(@" Arduino is ready");
         }
 
         // Callback function that prints that the Arduino has experienced an error
         void OnError(ReceivedCommand arguments)
         {
             _chartForm.LogMessage(@"Arduino has experienced an error");
-            //Console.WriteLine(@"Arduino has experienced an error");
         }
 
         // Callback function that plots a data point for the current temperature, the goal temperature,
@@ -233,25 +235,19 @@ namespace DataLogging
             var heaterValue = arguments.ReadBinFloatArg();
             var heaterPwm   = arguments.ReadBinBoolArg();
 
-            // do not log data if times are out of sync
-            //if (time<_startTime) return;
-
             // Update chart with new data point;
             _chartForm.UpdateGraph(time, currTemp, goalTemp, heaterValue, heaterPwm);
-
-            // Update _startTime in case it needs to be resend after disconnection
-            //_startTime = time;
         }
 
         // Log received line to console
-        private void NewLineReceived(object sender, NewLineEvent.NewLineArgs e)
+        private void NewLineReceived(object sender, CommandEventArgs e)
         {
             _chartForm.LogMessage(@"Received > " + e.Command.CommandString());
           //  Console.WriteLine(@"Received > " + e.Command.CommandString());
         }
 
         // Log sent line to console
-        private void NewLineSent(object sender, NewLineEvent.NewLineArgs e)
+        private void NewLineSent(object sender, CommandEventArgs e)
         {
             _chartForm.LogMessage(@"Sent > " + e.Command.CommandString());
            // Console.WriteLine(@"Sent > " + e.Command.CommandString());
@@ -271,8 +267,6 @@ namespace DataLogging
             // Disable UI ..                 
             _chartForm.SetStatus(@"Connection timeout, attempting to reconnect");           
             _chartForm.SetDisConnected();
-            // and start scanning
-            _connectionManager.StartScan();
         }
 
         private void ConnectionFound(object sender, EventArgs e)
@@ -291,8 +285,6 @@ namespace DataLogging
             // Restart acquisition if needed 
             if (AcquisitionStarted) StartAcquisition(); else StopAcquisition();
             AcceptData = true;
-            // Start Watchdog
-            _connectionManager.StartWatchDog();
 
             // Yield time slice in order to get UI updated
             Thread.Yield();
@@ -305,7 +297,9 @@ namespace DataLogging
 
             // Create command to start sending data
              var command = new SendCommand((int)Command.SetGoalTemperature);
-             command.AddBinArgument(_goalTemperature);
+            
+            // Make sure to be explicit if sending float or double
+             command.AddBinArgument((float)_goalTemperature);
 
             // Collapse this command if needed using CollapseCommandStrategy
             // This strategy will avoid duplicates of this command on the queue: if a SetGoalTemperature command is

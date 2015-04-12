@@ -17,7 +17,7 @@
 */
 #endregion
 
-namespace CommandMessenger
+namespace CommandMessenger.Queue
 {
     /// <summary> Stale strategy. Any command older than the time-out is removed from the queue</summary>
     public class StaleGeneralStrategy : GeneralStrategy

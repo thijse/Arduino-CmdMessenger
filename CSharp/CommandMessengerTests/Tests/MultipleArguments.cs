@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using CommandMessenger;
 
 
@@ -37,6 +38,8 @@ namespace CommandMessengerTests
 
         public void RunTests()
         {
+            // Wait a bit before starting the test
+            Thread.Sleep(1000);
 
             Common.StartTestSet("Clear binary data");
             SetUpConnection();
@@ -49,6 +52,10 @@ namespace CommandMessengerTests
         {
             _cmdMessenger = Common.Connect(_systemSettings);
             AttachCommandCallBacks();
+            if (!Common.Connected)
+            {
+                Common.TestNotOk("Not connected after opening connection");
+            }            
         }
 
         public void CloseConnection()

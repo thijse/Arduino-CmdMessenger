@@ -20,60 +20,35 @@
 using System;
 using System.Threading;
 
-namespace CommandMessenger
+namespace CommandMessenger.Queue
 {
     /// <summary> Queue of received commands.  </summary>
-    class SendCommandQueue : CommandQueue
+    public class SendCommandQueue : CommandQueue
     {
-        private readonly Sender _sender;
-        public event NewLineEvent.NewLineHandler NewLineSent;
-        private readonly QueueSpeed _queueSpeed = new QueueSpeed(0.5,5);
-        //private readonly int _sendBufferMaxLength = 512;
+        public event EventHandler<CommandEventArgs> NewLineSent;
+        
+        private readonly CommunicationManager _communicationManager;
         private readonly int _sendBufferMaxLength = 62;
-        string _sendBuffer = "";
-        int _commandCount = 0;
+        private string _sendBuffer = string.Empty;
+        private int _commandCount;
 
         public uint MaxQueueLength { get; set; }
 
-
         /// <summary> send command queue constructor. </summary>
-        /// <param name="disposeStack"> DisposeStack. </param>
-        /// <param name="cmdMessenger"> The command messenger. </param>
-        /// <param name="sender">Object that does the actual sending of the command</param>
+        /// <param name="communicationManager">The communication manager instance</param>
         /// <param name="sendBufferMaxLength">Length of the send buffer</param>
-        public SendCommandQueue(DisposeStack disposeStack, CmdMessenger cmdMessenger, Sender sender, int sendBufferMaxLength)
-            : base(disposeStack, cmdMessenger)
+        public SendCommandQueue(CommunicationManager communicationManager, int sendBufferMaxLength)
         {
             MaxQueueLength = 5000;
-            QueueThread.Name = "SendCommandQueue";
-            _sender = sender;
+
+            _communicationManager = communicationManager;
             _sendBufferMaxLength = sendBufferMaxLength;
-            // _queueSpeed.Name = "SendCommandQueue";            
         }
 
-        /// <summary> Process the queue. </summary>
-        protected override void ProcessQueue()
+        protected override bool ProcessQueue()
         {
-            // Endless loop unless aborted
-            while (ThreadRunState != ThreadRunStates.Abort)
-            {
-                // Calculate sleep time based on incoming command speed
-                //_queueSpeed.SetCount(Queue.Count);
-                //_queueSpeed.CalcSleepTime();
-                EventWaiter.Wait(1000);
-
-                // Process queue unless stopped
-                if (ThreadRunState == ThreadRunStates.Start)
-                {
-                    // Only actually sleep if there are no commands in the queue
-                    SendCommandsFromQueue();
-                  //  _queueSpeed.Sleep();                    
-                }
-                //else
-                //{
-                //    _queueSpeed.Sleep();
-                //}
-            }
+            SendCommandsFromQueue();
+            lock (Queue) return !IsEmpty;
         }
 
         /// <summary> Sends the commands from queue. All commands will be combined until either
@@ -82,14 +57,15 @@ namespace CommandMessenger
         private void SendCommandsFromQueue()
         {
             _commandCount = 0;
-            _sendBuffer = "";
+            _sendBuffer = string.Empty;
             CommandStrategy eventCommandStrategy = null;
 
-            while (_sendBuffer.Length < _sendBufferMaxLength  && Queue.Count != 0)         // while maximum buffer string is not reached, and command in queue, AND    
+            // while maximum buffer string is not reached, and command in queue    
+            while (_sendBuffer.Length < _sendBufferMaxLength && Queue.Count > 0)
             {
                 lock (Queue)
                 {
-                    var commandStrategy = Queue.Count != 0 ? Queue.Peek() : null;
+                    var commandStrategy = !IsEmpty ? Queue.Peek() : null;
                     if (commandStrategy != null)
                     {
                         if (commandStrategy.Command != null)
@@ -107,7 +83,7 @@ namespace CommandMessenger
                             else
                             {                                
                                 eventCommandStrategy = commandStrategy;
-                                AddToCommandsString(commandStrategy);
+                                AddToCommandString(commandStrategy);
                             }
                         }                        
                     }
@@ -115,7 +91,7 @@ namespace CommandMessenger
                 // event callback outside lock for performance
                 if (eventCommandStrategy != null)
                 {
-                    if (NewLineSent != null) NewLineSent(this, new NewLineEvent.NewLineArgs(eventCommandStrategy.Command));
+                    if (NewLineSent != null) NewLineSent(this, new CommandEventArgs(eventCommandStrategy.Command));
                     eventCommandStrategy = null;
                 }
             }
@@ -123,7 +99,7 @@ namespace CommandMessenger
             // Now check if a command string has been filled
             if (_sendBuffer.Length > 0)
             {
-                _sender.ExecuteSendString(_sendBuffer, SendQueue.InFrontQueue);              
+                _communicationManager.ExecuteSendString(_sendBuffer, SendQueue.InFrontQueue);              
             }
         }
 
@@ -139,13 +115,13 @@ namespace CommandMessenger
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
             }
             // Send command
-            if (commandStrategy != null && commandStrategy.Command != null)
-                _sender.ExecuteSendCommand((SendCommand)commandStrategy.Command, SendQueue.InFrontQueue);                     
+            if (commandStrategy.Command != null)
+                _communicationManager.ExecuteSendCommand((SendCommand)commandStrategy.Command, SendQueue.InFrontQueue);                     
         }
 
         /// <summary> Adds a commandStrategy to the commands string.  </summary>
         /// <param name="commandStrategy"> The command strategy to add. </param>
-        private void AddToCommandsString(CommandStrategy commandStrategy)
+        private void AddToCommandString(CommandStrategy commandStrategy)
         {
             // Dequeue
             lock (Queue)
@@ -155,12 +131,12 @@ namespace CommandMessenger
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
             }
             // Add command
-            if (commandStrategy != null && commandStrategy.Command != null) {
-                    _commandCount++;
-                    _sendBuffer += commandStrategy.Command.CommandString();
-                    if (Command.PrintLfCr) { _sendBuffer +=  Environment.NewLine; }
+            if (commandStrategy.Command != null) 
+            {
+                _commandCount++;
+                _sendBuffer += commandStrategy.Command.CommandString();
+                if (_communicationManager.PrintLfCr) { _sendBuffer += "\r\n"; }
             }
-            
         }
 
         /// <summary> Sends a command. Note that the command is put at the front of the queue </summary>
@@ -186,18 +162,21 @@ namespace CommandMessenger
             {
                 Thread.Yield();
             }
+
             lock (Queue)
             {
                 // Process commandStrategy enqueue associated with command
                 commandStrategy.CommandQueue = Queue;
-                commandStrategy.ThreadRunState = ThreadRunState;
+                commandStrategy.Command.CommunicationManager = _communicationManager;
+                ((SendCommand)commandStrategy.Command).InitArguments();
 
                 commandStrategy.Enqueue();
 
                 // Process all generic enqueue strategies
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
-            EventWaiter.Set();
+
+            SignalWorker();
         }
     }
 }

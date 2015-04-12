@@ -24,7 +24,7 @@ namespace CommandMessenger
     /// <summary>Class to get a timestamp </summary>
     public static class TimeUtils
     {
-        static public DateTime Jan1St1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);  // 1 January 1970
+        public static readonly DateTime Jan1St1970 = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);  // 1 January 1970
 
         /// <summary> Gets the milliseconds since 1 Jan 1970. </summary>
         /// <value> The milliseconds since 1 Jan 1970. </value>

@@ -17,7 +17,7 @@
 */
 #endregion
 
-namespace CommandMessenger
+namespace CommandMessenger.Queue
 {
     /// <summary> Collapse command strategy. 
     /// 		  The purpose of the strategy is to avoid duplicates of a certain command on the queue

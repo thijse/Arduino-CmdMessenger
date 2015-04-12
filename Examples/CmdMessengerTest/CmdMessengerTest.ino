@@ -128,7 +128,7 @@ void OnUnknownCommand()
   cmdMessenger.sendCmd(kError,"Unknown command");
   cmdMessenger.sendCmdStart(kYouAreReady);  
   cmdMessenger.sendCmdArg("Command without attached callback");    
-  cmdMessenger.sendCmdArg(cmdMessenger.CommandID());    
+  cmdMessenger.sendCmdArg(cmdMessenger.commandID());    
   cmdMessenger.sendCmdEnd();
 }
 
@@ -315,12 +315,18 @@ void OnSendSeries()
 void setup() 
 {
   // Listen on serial connection for messages from the pc
-  //Serial.begin(57600);  // Arduino Duemilanove, FTDI Serial
-
+  
   // 115200 is the max speed on Arduino Uno, Mega, with AT8u2 USB
   // SERIAL_8N1 is the default config, but we want to make certain
   // that we have 8 bits to our disposal
   Serial.begin(115200); 
+
+  // Maximum speed of some boards: Arduino Duemilanove, FTDI Serial
+  //Serial.begin(57600);  
+
+  // Many bluetooth breakout boards run on 9600 at default speed
+  // The Serial setting below should match this
+   //Serial.begin(9600); 
 
   // Makes output more readable whilst debugging in Arduino Serial Monitor, 
   // but uses more bytes 

@@ -52,6 +52,7 @@ void OnRequestPlainTextFloatSeries()
   // Send back series of floats
   for(int i=0;i< seriesLength;i++) {
      cmdMessenger.sendCmdStart (kReceivePlainTextFloatSeries);
+     cmdMessenger.sendCmdArg<uint16_t>((uint16_t)i);
      cmdMessenger.sendCmdArg<float>(((float)i*(float)seriesBase),6);
      cmdMessenger.sendCmdEnd ();
   }
@@ -69,6 +70,7 @@ void OnRequestBinaryFloatSeries()
   // Send back series of floats
   for(int i=0;i< seriesLength;i++) {
      cmdMessenger.sendCmdStart (kReceiveBinaryFloatSeries);
+     cmdMessenger.sendCmdBinArg<uint16_t>((uint16_t)i);
      cmdMessenger.sendCmdBinArg<float>(((float)i*(float)seriesBase));
      cmdMessenger.sendCmdEnd ();
   }

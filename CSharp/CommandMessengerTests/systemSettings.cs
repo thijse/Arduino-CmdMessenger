@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using CommandMessenger;
-using CommandMessenger.TransportLayer;
+using CommandMessenger.Transport;
 
 namespace CommandMessengerTests
 {

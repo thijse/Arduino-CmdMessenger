@@ -17,7 +17,7 @@
 */
 #endregion
 
-namespace CommandMessenger
+namespace CommandMessenger.Queue
 {
     /// <summary>  Top strategy. The command is added to the front of the queue</summary>
     public class TopCommandStrategy : CommandStrategy

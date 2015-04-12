@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using CommandMessenger;
 
 
@@ -31,6 +32,9 @@ namespace CommandMessengerTests
 
         public void RunTests()
         {
+            // Wait a bit before starting the test
+            Thread.Sleep(1000);
+
             Common.StartTestSet("Clear binary data");
             SetUpConnection();
             TestSendBoolData();
@@ -47,6 +51,11 @@ namespace CommandMessengerTests
         {
             _cmdMessenger = Common.Connect(_systemSettings);
             AttachCommandCallBacks();
+            if (!Common.Connected)
+            {
+                Common.TestNotOk("Not connected after opening connection");
+            }
+           
         }
 
         public void CloseConnection()
@@ -129,7 +138,7 @@ namespace CommandMessengerTests
             // Try a lot of random numbers
             for (int i = 0; i < 1000; i++)
             {
-                ValuePingPongBinFloat(Random.RandomizeFloat(-float.MaxValue, float.MaxValue));
+                ValuePingPongBinFloat(Random.RandomizeFloat(-float.MaxValue / 100.0f, float.MaxValue / 100.0f));
             }
             Common.EndTest();
         }

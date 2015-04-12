@@ -19,7 +19,7 @@ feedinSerialData	KEYWORD2
 next	KEYWORD2
 available	KEYWORD2
 isArgOk	KEYWORD2
-CommandID	KEYWORD2
+commandID	KEYWORD2
 sendCmd	KEYWORD2
 sendBinCmd	KEYWORD2
 sendCmdStart	KEYWORD2

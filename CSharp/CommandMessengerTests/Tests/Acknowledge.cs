@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using CommandMessenger;
 
 namespace CommandMessengerTests
@@ -53,16 +54,20 @@ namespace CommandMessengerTests
 
         public void RunTests()
         {
+            // Wait a bit before starting the test
+            Thread.Sleep(1000);
+
             // Test opening and closing connection
             Common.StartTestSet("Waiting for acknowledgments");
             SetUpConnection();
+            
             // Test acknowledgments
             TestSendCommandWithAcknowledgement();
             TestSendCommandWithAcknowledgementByArduino();
             WaitForAcknowledgementByEmbeddedFinished();
-
             TestSendCommandWithAcknowledgementAfterQueued();
 
+            // Test closing connection
             CloseConnection();
             Common.EndTestSet();
         }
@@ -73,12 +78,19 @@ namespace CommandMessengerTests
             {
                 _cmdMessenger = Common.Connect(_systemSettings);
                 AttachCommandCallBacks();
+                if (!Common.Connected)
+                {
+                    Common.TestNotOk("Not connected after opening connection");
+                }               
             }
             catch (Exception)
             {
+                Common.TestNotOk("CmdMessenger application could not be created");
+                Common.EndTestSet();
             }
             if (!_systemSettings.Transport.IsConnected())
             {
+                Common.TestOk("No issues during opening connection");
             }
         }
 
@@ -96,7 +108,7 @@ namespace CommandMessengerTests
         // Test: Send a test command with acknowledgment needed
         public void TestSendCommandWithAcknowledgement()
         {
-            Common.StartTest("Test sending command and receiving acknowledgment");
+            Common.StartTest("Test sending command and receiving acknowledgment");            
             var receivedCommand = _cmdMessenger.SendCommand(new SendCommand(_command["AreYouReady"], _command["Ack"], 1000)) ;
             if (receivedCommand.Ok)
             {
@@ -121,7 +133,7 @@ namespace CommandMessengerTests
             }
 
             // Now wait for an acknowledge, terminating the command string
-            var receivedCommand = _cmdMessenger.SendCommand(new SendCommand(_command["AreYouReady"], _command["Ack"], 1000)) ;
+            var receivedCommand = _cmdMessenger.SendCommand(new SendCommand(_command["AreYouReady"], _command["Ack"], 1000), SendQueue.Default, ReceiveQueue.WaitForEmptyQueue);
             if (receivedCommand.Ok)
             {
                 Common.TestOk("Acknowledgment for command AreYouReady");                

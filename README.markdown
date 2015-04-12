@@ -48,7 +48,7 @@ Get to know the library, by trying the examples,from simple to complex:
 	  - Set up a serial connection
 	  - Send a command with a parameter to the Arduino
 
-### SentandReceive 
+### SendandReceive 
   This example expands the previous Receive example. The Arduino will now send back a status. 
   On the Arduino side, 
   * it demonstrates how to:
@@ -105,6 +105,19 @@ This example shows how to :
 - use CmdMessenger in combination with ZedGraph
 - Send queued commandssds
 - use the CollapseCommandStrategy
+
+### SimpleWatchdog
+This example shows the usage of the watchdog for communication over virtual serial port:
+- Use auto scanning and connecting
+- Use watchdog 
+
+
+### SimpleBluetooth
+This example shows the usage of the watchdog for communication over Bluetooth, tested with the well known JY-MCU HC-05 and HC-06
+On Arduino side, this uses the  SimpleWatchdog.ino script as the previous example
+- Use bluetooth connection
+- Use auto scanning and connecting
+- Use watchdog 
 
 ### TemperatureControl
 

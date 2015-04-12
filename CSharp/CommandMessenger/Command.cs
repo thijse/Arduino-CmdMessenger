@@ -20,18 +20,16 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 
 namespace CommandMessenger
 {
     /// <summary> A command to be send by CmdMessenger </summary>
     public class Command
     {
-        public static char FieldSeparator { get; set; }
-        public static char CommandSeparator { get; set; }
-        public static bool PrintLfCr { get; set; }
-        public static BoardType BoardType { get; set; }
+        internal CommunicationManager CommunicationManager;
 
-        protected List<String> _arguments; // The argument list of the command, first one is the command ID
+        protected readonly List<string> CmdArgs = new List<string>(); // The argument list of the command, first one is the command ID
 
         /// <summary> Gets or sets the command ID. </summary>
         /// <value> The command ID. </value>
@@ -41,7 +39,7 @@ namespace CommandMessenger
         /// <value> The arguments, first one is the command ID </value>
         public String[] Arguments
         {
-            get { return _arguments.ToArray(); }
+            get { return CmdArgs.ToArray(); }
         }
 
         /// <summary> Gets or sets the time stamp. </summary>
@@ -52,7 +50,7 @@ namespace CommandMessenger
         public Command()
         {
             CmdId = -1;
-            _arguments = new List<string>();
+            CmdArgs = new List<string>();
             TimeStamp = TimeUtils.Millis;
         }
 
@@ -63,16 +61,20 @@ namespace CommandMessenger
             get { return (CmdId >= 0); }
         }
 
-        public string CommandString() {
-            var commandString = CmdId.ToString(CultureInfo.InvariantCulture);
+        public string CommandString() 
+        {
+            if (CommunicationManager == null)
+                throw new InvalidOperationException("CommunicationManager was not set for command.");
+
+            var commandString = new StringBuilder(CmdId.ToString(CultureInfo.InvariantCulture));
 
             foreach (var argument in Arguments)
             {
-                commandString += FieldSeparator + argument;
+                commandString.Append(CommunicationManager.FieldSeparator).Append(argument);
             }
-            commandString += CommandSeparator;
-            return commandString;
-    }
+            commandString.Append(CommunicationManager.CommandSeparator);
 
-}
+            return commandString.ToString();
+        }
+    }
 }

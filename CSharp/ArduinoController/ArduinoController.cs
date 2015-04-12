@@ -12,8 +12,8 @@
 
 using System;
 using CommandMessenger;
-using CommandMessenger.Serialport;
-using CommandMessenger.TransportLayer;
+using CommandMessenger.Queue;
+using CommandMessenger.Transport.Serial;
 
 namespace ArduinoController
 {
@@ -50,13 +50,11 @@ namespace ArduinoController
             };
 
             // Initialize the command messenger with the Serial Port transport layer
-            _cmdMessenger = new CmdMessenger(_serialTransport)
-            {
-                BoardType = BoardType.Bit16 // Set if it is communicating with a 16- or 32-bit Arduino board
-            };
+            // Set if it is communicating with a 16- or 32-bit Arduino board
+            _cmdMessenger = new CmdMessenger(_serialTransport, BoardType.Bit16);
 
             // Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
-            _cmdMessenger.SetControlToInvokeOn(_controllerForm);
+            _cmdMessenger.ControlToInvokeOn = _controllerForm;
 
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();
@@ -117,13 +115,13 @@ namespace ArduinoController
         }
 
         // Log received line to console
-        private void NewLineReceived(object sender, NewLineEvent.NewLineArgs e)
+        private void NewLineReceived(object sender, CommandEventArgs e)
         {
             Console.WriteLine(@"Received > " + e.Command.CommandString());
         }
 
         // Log sent line to console
-        private void NewLineSent(object sender, NewLineEvent.NewLineArgs e)
+        private void NewLineSent(object sender, CommandEventArgs e)
         {
             Console.WriteLine(@"Sent > " + e.Command.CommandString());
         }
