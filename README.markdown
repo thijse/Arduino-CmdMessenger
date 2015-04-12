@@ -4,7 +4,7 @@ A serial messaging library for the Arduino and .NET/Mono platform
 
 ## Introduction
 
-CmdMessenger is a messaging library for the Arduino Platform (and .NET/Mono platform). Ituses the serial port as it's transport layer** 
+CmdMessenger is a messaging library for the Arduino Platform (and .NET/Mono platform). It supports multiple transport layers: serial port (over USB), Bluetooth ** 
 
 The message format is:
 ```
@@ -23,8 +23,6 @@ The library supports any primary data types, and zero to many multiple arguments
 
 With version 3.x also comes a full implementation of the toolkit in C#, which runs both in Mono (http://monodevelop.com/Download) and Visual Studio (http://www.microsoft.com/visualstudio/eng#downloads)
 This allows for full 2-way communication between the arduino controller and the PC.
-
-\** but it could easily be modified to work over Bluetooth or a web interface.
 
 
 ## Requirements
