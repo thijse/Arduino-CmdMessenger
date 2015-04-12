@@ -106,6 +106,19 @@ This example shows how to :
 - Send queued commandssds
 - use the CollapseCommandStrategy
 
+### SimpleWatchdog
+This example shows the usage of the watchdog for communication over virtual serial port:
+- Use auto scanning and connecting
+- Use watchdog 
+
+
+### SimpleBluetooth
+This example shows the usage of the watchdog for communication over Bluetooth, tested with the well known JY-MCU HC-05 and HC-06
+On Arduino side, this uses the  SimpleWatchdog.ino script as the previous example
+- Use bluetooth connection
+- Use auto scanning and connecting
+- Use watchdog 
+
 ### TemperatureControl
 
 This example expands the previous ArduinoController example. The PC will now send a start command to the Arduino, and wait for a response from the Arduino. The Arduino will start sending temperature data and the heater steering value data which the PC will plot in a chart. With a slider we can set the goal temperature, which will make the PID software on the controller adjust the setting of the heater.
