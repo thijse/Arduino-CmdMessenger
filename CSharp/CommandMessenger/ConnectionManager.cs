@@ -116,6 +116,7 @@ namespace CommandMessenger
             DeviceScanEnabled = true;
             
             _worker = new AsyncWorker(DoWork);
+			_worker.Name = "ConnectionManager";
 
             if (!string.IsNullOrEmpty(uniqueDeviceId))
                 _cmdMessenger.Attach(identifyCommandId, OnIdentifyResponse);
@@ -199,14 +200,15 @@ namespace CommandMessenger
             var ctrlToInvoke = _cmdMessenger.ControlToInvokeOn;
 
             if (eventHandler == null || (ctrlToInvoke != null && ctrlToInvoke.IsDisposed)) return;
-            if (ctrlToInvoke != null && ctrlToInvoke.InvokeRequired)
+            if (ctrlToInvoke != null )
             {
-                ctrlToInvoke.Invoke((MethodInvoker)(() => eventHandler(this, eventHandlerArguments)));
+                ctrlToInvoke.BeginInvoke((MethodInvoker)(() => eventHandler(this, eventHandlerArguments)));
             }
             else
-            {
-                //Directly call
-                eventHandler(this, eventHandlerArguments);
+            {   
+				//Invoke here             
+                eventHandler.BeginInvoke(this, eventHandlerArguments, null, null);
+                
             }
         }
 

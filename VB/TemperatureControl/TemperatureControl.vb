@@ -157,7 +157,6 @@ Public Class TemperatureControl
 
         ' Set initial goal temperature
         GoalTemperature = 25
-        ' _startTime         = 0.0f;
         AcquisitionStarted = False
         AcceptData = False
         _chartForm.SetDisConnected()

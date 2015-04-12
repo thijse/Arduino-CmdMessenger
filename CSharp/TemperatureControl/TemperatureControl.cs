@@ -86,8 +86,8 @@ namespace DataLogging
             // 1. Serial port. This can be a real serial port but is usually a virtual serial port over USB. 
             //                 It can also be a virtual serial port over Bluetooth, but the direct bluetooth works better
             // 2. Bluetooth    This bypasses the Bluetooth virtual serial port, and instead communicates over the RFCOMM layer                 
-            //var transportMode = TransportMode.Serial;
-            var transportMode = TransportMode.Bluetooth;
+            var transportMode = TransportMode.Serial;
+            //var transportMode = TransportMode.Bluetooth;
             
             // getting the chart control on top of the chart form.
             _chartForm = chartForm;
@@ -111,7 +111,7 @@ namespace DataLogging
 
             // Initialize the command messenger with one of the two transport layers
             // Set if it is communicating with a 16- or 32-bit Arduino board
-            _cmdMessenger = new CmdMessenger(_transport, BoardType.Bit16)
+            _cmdMessenger = new CmdMessenger(_transport, BoardType.Bit32)
             {
                 PrintLfCr = false            // Do not print newLine at end of command, to reduce data being sent
             };
@@ -164,7 +164,6 @@ namespace DataLogging
 
             // Set initial goal temperature
             GoalTemperature    = 25;
-           // _startTime         = 0.0f;
             AcquisitionStarted = false;
             AcceptData         = false;
             _chartForm.SetDisConnected();
@@ -207,21 +206,18 @@ namespace DataLogging
         void OnUnknownCommand(ReceivedCommand arguments)
         {
             _chartForm.LogMessage(@"Command without attached callback received");
-            //Console.WriteLine(@"Command without attached callback received");
         }
 
         // Callback function that prints that the Arduino has acknowledged
         void OnAcknowledge(ReceivedCommand arguments)
         {
             _chartForm.LogMessage(@"Arduino acknowledged");
-            //Console.WriteLine(@" Arduino is ready");
         }
 
         // Callback function that prints that the Arduino has experienced an error
         void OnError(ReceivedCommand arguments)
         {
             _chartForm.LogMessage(@"Arduino has experienced an error");
-            //Console.WriteLine(@"Arduino has experienced an error");
         }
 
         // Callback function that plots a data point for the current temperature, the goal temperature,
@@ -301,7 +297,9 @@ namespace DataLogging
 
             // Create command to start sending data
              var command = new SendCommand((int)Command.SetGoalTemperature);
-             command.AddBinArgument(_goalTemperature);
+            
+            // Make sure to be explicit if sending float or double
+             command.AddBinArgument((float)_goalTemperature);
 
             // Collapse this command if needed using CollapseCommandStrategy
             // This strategy will avoid duplicates of this command on the queue: if a SetGoalTemperature command is

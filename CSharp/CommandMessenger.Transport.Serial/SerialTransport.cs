@@ -52,6 +52,7 @@ namespace CommandMessenger.Transport.Serial
         public SerialTransport()
         {
             _worker = new AsyncWorker(Poll);
+			_worker.Name = "SerialTransport";
         }
 
         private bool Poll()
@@ -83,7 +84,7 @@ namespace CommandMessenger.Transport.Serial
                 {
                     DtrEnable = _currentSerialSettings.DtrEnable,
                     WriteTimeout = _currentSerialSettings.Timeout,
-                    ReadTimeout  = SerialPort.InfiniteTimeout, // read timeout is used for polling in worker thread
+                    ReadTimeout  = 1000, // read timeout is used for polling in worker thread
                 };
 
             _connected = Open();

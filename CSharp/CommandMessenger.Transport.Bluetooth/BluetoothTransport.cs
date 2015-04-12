@@ -45,39 +45,53 @@ namespace CommandMessenger.Transport.Bluetooth
         private readonly byte[] _readBuffer = new byte[BufferSize];
         private int _bufferFilled;
 		private static BluetoothDeviceInfo _runningBluetoothDeviceInfo;
-        
-
-        // Event queue for all listeners interested in NewLinesReceived events.
-        public event EventHandler DataReceived;
-
-        /// <summary> Gets or sets the current serial port settings. </summary>
-        /// <value> The current serial settings. </value>
-
         private static bool _showAsConnected;
         private static bool _lazyReconnect;
 
 
 
+        // Event queue for all listeners interested in NewLinesReceived events.
+        public event EventHandler DataReceived;
+
+
+
+
+        /// <summary>
+        /// Gets or sets Bluetooth device info
+        /// </summary>
         public BluetoothDeviceInfo CurrentBluetoothDeviceInfo { get; set; }
+
+        /// <summary>
+        /// Get or set Lazy reconnection status. Only reconnect if really necessary
+        /// </summary>
         public bool LazyReconnect
         {
             get { return _lazyReconnect; }
             set { _lazyReconnect = value; }
         }
 
+        /// <summary>
+        /// Return local Bluetooth client
+        /// </summary>
         public BluetoothClient BluetoothClient
         {
             get { return BluetoothUtils.LocalClient; }
         }
 
+        /// <summary>
+        /// Bluetooth transport constructor
+        /// </summary>
         public BluetoothTransport()
         {
             _showAsConnected = false;
             _lazyReconnect = true;
             _worker = new AsyncWorker(Poll);
+			_worker.Name = "Bluetooth Transport";
         }
 
-
+        /// <summary>
+        /// Bluetooth transport destructor
+        /// </summary>
         ~BluetoothTransport()
         {
             Disconnect();
@@ -154,8 +168,7 @@ namespace CommandMessenger.Transport.Bluetooth
             }
         }
 
-        
-
+       
         private bool UpdateConnectOpen()
         {
             BluetoothUtils.UpdateClient();
@@ -184,6 +197,10 @@ namespace CommandMessenger.Transport.Bluetooth
             return true;
         }
 
+        /// <summary>
+        /// Returns connection status
+        /// </summary>
+        /// <returns>true when connected</returns>
         public bool IsConnected()
         {
             // In case of lazy reconnect we will pretend to be disconnected
@@ -192,6 +209,10 @@ namespace CommandMessenger.Transport.Bluetooth
             return (BluetoothClient!=null) && BluetoothClient.Connected;
         }
 
+        /// <summary>
+        /// Returns opened stream status
+        /// </summary>
+        /// <returns>true when open</returns>
         public bool IsOpen()
         {
             // note: this does not always work. Perhaps do a scan

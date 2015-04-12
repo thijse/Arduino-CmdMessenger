@@ -29,6 +29,8 @@ namespace CommandMessenger
 
         private Task _workerTask;
 
+		public string Name { get; set; }
+
         public State WorkerState { get { return _state; } }
 
         public bool IsRunning { get { return _state == State.Running; } }

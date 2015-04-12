@@ -33,7 +33,7 @@ namespace CommandMessengerTests
                 Description = @"Teensy 3.1",
                 MinReceiveSpeed     = 2000000,         // Bits per second    
                 MinSendSpeed        = 1250000,         // Bits per second                                       
-                MinDirectSendSpeed  = 47500,           // Bits per second                     
+                MinDirectSendSpeed  = 45000,           // Bits per second                     
                 BoardType           = BoardType.Bit32, // 32-bit architecture, needed from binary value conversion
                 sendBufferMaxLength = 512,             // Maximum send buffer size, optimally buffer size is similar to embedded controller
                 Transport = new SerialTransport
@@ -114,7 +114,7 @@ namespace CommandMessengerTests
             var command = DefineCommands();
 
             // Initialize tests, CHANGE "DEVICE" VARIABLE TO YOUR DEVICE!
-            var device = arduinoNano;
+            var device = teensy31;
             InitializeTests(device, command);
 
             // Open log file for testing 

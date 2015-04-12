@@ -49,11 +49,6 @@ namespace CommandMessenger.Transport.Bluetooth
     /// </summary>
     public class BluetoothConnectionManager : ConnectionManager
     {
-
-        public Dictionary<string, string> DevicePins { get; set; }
-
-        public List<string> GeneralPins { get; set; }
-
         private static readonly List<string> CommonDevicePins = new List<string>
             {                
                 "0000",                
@@ -62,7 +57,7 @@ namespace CommandMessenger.Transport.Bluetooth
             };
 
         private enum ScanType { None, Quick, Thorough }
-        
+
         private BluetoothConnectionManagerSettings _bluetoothConnectionManagerSettings;
         private readonly IBluetoothConnectionStorer _bluetoothConnectionStorer;
         private readonly BluetoothTransport _bluetoothTransport;
@@ -72,6 +67,16 @@ namespace CommandMessenger.Transport.Bluetooth
         private readonly object _tryConnectionLock = new object();
         private readonly List<BluetoothDeviceInfo> _deviceList;
         private List<BluetoothDeviceInfo> _prevDeviceList;
+
+        /// <summary>
+        /// Lookup dictionary of Pincode per device
+        /// </summary>
+        public Dictionary<string, string> DevicePins { get; set; }
+
+        /// <summary>
+        /// List of Pincodes tried for unknown devices
+        /// </summary>
+        public List<string> GeneralPins { get; set; }
 
         /// <summary>
         /// Connection manager for Bluetooth devices
@@ -152,6 +157,7 @@ namespace CommandMessenger.Transport.Bluetooth
             } 
         }
 
+        // Quick scan of available devices
         private void QuickScanDevices()
         {
             // Fast
@@ -160,6 +166,7 @@ namespace CommandMessenger.Transport.Bluetooth
             _deviceList.AddRange(_bluetoothTransport.BluetoothClient.DiscoverDevices(255, true, true, false, false));
         }
 
+        // Thorough scan of available devices
         private void ThorougScanForDevices()
         {
             // Slow
@@ -167,6 +174,7 @@ namespace CommandMessenger.Transport.Bluetooth
             _deviceList.AddRange(_bluetoothTransport.BluetoothClient.DiscoverDevices(65536, true, true, true, true));
         }
 
+        // Pair a Bluetooth device
         private bool PairDevice(BluetoothDeviceInfo device)
         {
             if (device.Authenticated) return true;
@@ -238,6 +246,7 @@ namespace CommandMessenger.Transport.Bluetooth
             return true;
         }
 
+        // Find the pin code for a Bluetooth adress
         private string FindPin(string adress)
         {
             return (from devicePin in DevicePins where BluetoothUtils.StripBluetoothAdress(devicePin.Key) == adress select devicePin.Value).FirstOrDefault();

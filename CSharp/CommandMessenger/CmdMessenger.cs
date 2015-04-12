@@ -57,19 +57,25 @@ namespace CommandMessenger
     /// <summary> Command messenger main class  </summary>
     public class CmdMessenger : IDisposable
     {
+        private CommunicationManager _communicationManager;                 // The communication manager
+        private MessengerCallbackFunction _defaultCallback;                 // The default callback
+        private Dictionary<int, MessengerCallbackFunction> _callbackList;   // List of callbacks
+        private SendCommandQueue _sendCommandQueue;                         // The queue of commands to be sent
+        private ReceiveCommandQueue _receiveCommandQueue;                   // The queue of commands to be processed
+
         /// <summary> Definition of the messenger callback function. </summary>
         /// <param name="receivedCommand"> The received command. </param>
         public delegate void MessengerCallbackFunction(ReceivedCommand receivedCommand);
 
-        public event EventHandler<CommandEventArgs> NewLineReceived;           // Event handler for new lines received
-        public event EventHandler<CommandEventArgs> NewLineSent;               // Event handler for a new line received
-              
-        private CommunicationManager _communicationManager;                 // The communication manager
-        private MessengerCallbackFunction _defaultCallback;                 // The default callback
-        private Dictionary<int, MessengerCallbackFunction> _callbackList;   // List of callbacks
-
-        private SendCommandQueue _sendCommandQueue;                         // The queue of commands to be sent
-        private ReceiveCommandQueue _receiveCommandQueue;                   // The queue of commands to be processed
+        /// <summary>
+        /// Event handler for one or more lines received
+        /// </summary>
+        public event EventHandler<CommandEventArgs> NewLineReceived;
+        
+        /// <summary>
+        /// Event handler for a new line sent
+        /// </summary>
+        public event EventHandler<CommandEventArgs> NewLineSent;                            
 
         /// <summary> Gets or sets a whether to print a line feed carriage return after each command. </summary>
         /// <value> true if print line feed carriage return, false if not. </value>
@@ -79,7 +85,9 @@ namespace CommandMessenger
             set { _communicationManager.PrintLfCr = value; }
         }
 
+        /// <summary>
         /// The control to invoke the callback on
+        /// </summary>
         public Control ControlToInvokeOn { get; set; }
 
         /// <summary> Constructor. </summary>
@@ -172,6 +180,9 @@ namespace CommandMessenger
             _receiveCommandQueue.Start();
         }
 
+        /// <summary>
+        /// Disposal of CmdMessenger
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -388,10 +399,10 @@ namespace CommandMessenger
         {
             if (newLineHandler == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
 
-            if (ControlToInvokeOn != null && ControlToInvokeOn.InvokeRequired)
+            if (ControlToInvokeOn != null )
             {
                 //Asynchronously call on UI thread
-                ControlToInvokeOn.Invoke((MethodInvoker)(() => newLineHandler(this, newLineArgs)));
+                try { ControlToInvokeOn.BeginInvoke((MethodInvoker)(() => newLineHandler(this, newLineArgs))); } catch { }
             }
             else
             {
@@ -407,10 +418,10 @@ namespace CommandMessenger
         {
             if (messengerCallbackFunction == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
 
-            if (ControlToInvokeOn != null && ControlToInvokeOn.InvokeRequired)
+            if (ControlToInvokeOn != null )
             {
                 //Asynchronously call on UI thread
-                ControlToInvokeOn.Invoke(new MessengerCallbackFunction(messengerCallbackFunction), (object)command);
+                try { ControlToInvokeOn.BeginInvoke(new MessengerCallbackFunction(messengerCallbackFunction), (object)command); } catch { }
             }
             else
             {

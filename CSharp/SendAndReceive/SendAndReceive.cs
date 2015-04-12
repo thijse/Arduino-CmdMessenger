@@ -37,7 +37,7 @@ namespace SendAndReceive
             // Note that for some boards (e.g. Sparkfun Pro Micro) DtrEnable may need to be true.
             _serialTransport = new SerialTransport
             {
-                CurrentSerialSettings = { PortName = "COM16", BaudRate = 9600, DtrEnable = false } // object initializer
+                CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200, DtrEnable = false } // object initializer
             };
 
             // Initialize the command messenger with the Serial Port transport layer

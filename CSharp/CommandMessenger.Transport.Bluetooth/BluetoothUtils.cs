@@ -55,8 +55,6 @@ namespace CommandMessenger.Transport.Bluetooth
             LocalEndpoint = new BluetoothEndPoint(mac, Guid);             
             // client is used to manage connections
             LocalClient = new BluetoothClient(LocalEndpoint);
-            // component is used to manage device discovery
-            //LocalComponent = new BluetoothComponent(LocalClient);
         }
 
         public static BluetoothDeviceInfo DeviceByAdress(string address)
@@ -110,40 +108,6 @@ namespace CommandMessenger.Transport.Bluetooth
             return charsToRemove.Aggregate(bluetoothAdress, (current, c) => current.Replace(c, string.Empty));
         }
 
-        //const int IoctlBthDisconnectDevice = 0x41000c;
-        //[DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        //internal static extern bool DeviceIoControl(
-        //IntPtr hDevice,
-        //uint dwIoControlCode,
-        //ref long inBuffer,
-        //int nInBufferSize,
-        //IntPtr outBuffer,
-        //int nOutBufferSize,
-        //out int pBytesReturned,
-        //IntPtr lpOverlapped);
-        //public static int Disconnect(BluetoothAddress address)
-        //{
-        //    //var primaryRadio = BluetoothRadio.PrimaryRadio;
-        //    var handle = PrimaryRadio.Handle;
-        //    //var btAddr = BluetoothAddress.Parse("00:1b:3d:0d:ac:31").ToInt64();
-        //    var bluetoothAdress = address.ToInt64();
-        //    var bytesReturned = 0;
-        //    var success = DeviceIoControl(
-        //        handle,
-        //        IoctlBthDisconnectDevice,
-        //        ref bluetoothAdress, 8,
-        //        IntPtr.Zero, 
-        //        0, 
-        //        out bytesReturned, 
-        //        IntPtr.Zero);
-
-        //    return !success ? Marshal.GetLastWin32Error() : 0;
-        //}
-
-        //public static int Disconnect(BluetoothDeviceInfo device)
-        //{
-        //    return Disconnect(device.DeviceAddress);
-        //}
 
         public static bool PairDevice(BluetoothDeviceInfo device)
         {
@@ -186,8 +150,7 @@ namespace CommandMessenger.Transport.Bluetooth
         {
             // set pin of device to connect with
             if (devicePin != null) LocalClient.SetPin(devicePin);
-            //device.SetServiceState(BluetoothService.SerialPort, false);
-            //device.SetServiceState(BluetoothService.SerialPort, true);
+
             // check if device is paired
             if (device.Authenticated)
             {
@@ -197,8 +160,7 @@ namespace CommandMessenger.Transport.Bluetooth
                 {
                     _stream = LocalClient.GetStream();
                     _stream.ReadTimeout = 500;
-                }
-                
+                }                
             }            
         }
 

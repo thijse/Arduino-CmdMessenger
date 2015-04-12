@@ -11,6 +11,7 @@
 // - How to calculate milliseconds, similar to Arduino function Millis()
 
 using System;
+using System.Threading;
 using CommandMessenger;
 using CommandMessenger.Transport.Serial;
 
@@ -31,9 +32,8 @@ namespace SendAndReceiveBinaryArguments
         public bool RunLoop { get; set; }
         private SerialTransport _serialTransport;
         private CmdMessenger _cmdMessenger;
-        private int _receivedItemsCount;                    // Counter of number of plain text items received
-        private int _receivedBytesCount;               // Counter of number of plain text bytes received
-        //private int _receivedBinaryCount;                       // Counter of number of binary items received
+        private int _receivedItemsCount;                        // Counter of number of plain text items received
+        private int _receivedBytesCount;                        // Counter of number of plain text bytes received
         long _beginTime;                                        // Start time, 1st item of sequence received 
         long _endTime;                                          // End time, last item of sequence received 
         private bool _receivePlainTextFloatSeriesFinished;      // Indicates if plain text float series has been fully received
@@ -49,7 +49,7 @@ namespace SendAndReceiveBinaryArguments
             // Create Serial Port object
             _serialTransport = new SerialTransport
             {
-                CurrentSerialSettings = { PortName = "COM6", BaudRate = 115200 } // object initializer
+                CurrentSerialSettings = { PortName = "COM15", BaudRate = 115200 } // object initializer
             };
 
             // Initialize the command messenger with the Serial Port transport layer
@@ -64,16 +64,30 @@ namespace SendAndReceiveBinaryArguments
 
             _receivedItemsCount = 0;
             _receivedBytesCount = 0;
-            
+
+            // Clear queues 
+            _cmdMessenger.ClearReceiveQueue();
+            _cmdMessenger.ClearSendQueue();
+
+            Thread.Sleep(100);
+
             // Send command requesting a series of 100 float values send in plain text form
             var commandPlainText = new SendCommand((int)Command.RequestPlainTextFloatSeries);
-            commandPlainText.AddArgument(SeriesLength);
-            commandPlainText.AddArgument(SeriesBase);
+            commandPlainText.AddArgument((UInt16)SeriesLength);
+            commandPlainText.AddArgument((float)SeriesBase);
             // Send command 
             _cmdMessenger.SendCommand(commandPlainText);
 
             // Now wait until all values have arrived
-            while (!_receivePlainTextFloatSeriesFinished) {}
+            while (!_receivePlainTextFloatSeriesFinished)
+            {
+                Thread.Sleep(100);
+            }
+
+
+            // Clear queues 
+            _cmdMessenger.ClearReceiveQueue();
+            _cmdMessenger.ClearSendQueue();
 
             _receivedItemsCount = 0;
             _receivedBytesCount = 0;
@@ -86,7 +100,10 @@ namespace SendAndReceiveBinaryArguments
             _cmdMessenger.SendCommand(commandBinary);
 
             // Now wait until all values have arrived
-            while (!_receiveBinaryFloatSeriesFinished) { }
+            while (!_receiveBinaryFloatSeriesFinished)
+            {
+                Thread.Sleep(100);
+            }
         }
 
         // Loop function
@@ -134,15 +151,22 @@ namespace SendAndReceiveBinaryArguments
         {
             _receivedBytesCount += CountBytesInCommand(arguments, true);
 
+            var count         = arguments.ReadInt16Arg();
+            var receivedValue = arguments.ReadFloatArg();
 
+
+            if (count != _receivedItemsCount)
+            {
+                Console.WriteLine("Values not matching: received {0} expected {1}", count, _receivedItemsCount);
+            }
             if (_receivedItemsCount % (SeriesLength/10) == 0)
-                Console.WriteLine("Received value: {0}",arguments.ReadFloatArg());
+                Console.WriteLine("Received value: {0}", receivedValue);
             if (_receivedItemsCount == 0)
             {
                 // Received first value, start stopwatch
                 _beginTime = Millis;
             }
-            else if (_receivedItemsCount == SeriesLength - 1)
+            else if (count == SeriesLength - 1)
             {
                 // Received all values, stop stopwatch
                 _endTime = Millis;
@@ -176,16 +200,24 @@ namespace SendAndReceiveBinaryArguments
         // Callback function To receive the binary float series from the Arduino
         void OnReceiveBinaryFloatSeries(ReceivedCommand arguments)
         {
+            var count         = arguments.ReadBinUInt16Arg();
+            var receivedValue = arguments.ReadBinFloatArg();
+
             _receivedBytesCount += CountBytesInCommand(arguments, false);
 
+            if (count != _receivedItemsCount)
+            {
+                Console.WriteLine("Values not matching: received {0} expected {1}", count, _receivedItemsCount);
+            }
+
             if (_receivedItemsCount % (SeriesLength / 10) == 0)
-                    Console.WriteLine("Received value: {0}", arguments.ReadBinFloatArg());
+                Console.WriteLine("Received value: {0}", receivedValue);
             if (_receivedItemsCount == 0)
             {
                 // Received first value, start stopwatch
                 _beginTime = Millis;
             }
-            else if (_receivedItemsCount == SeriesLength - 1)
+            else if (count == SeriesLength - 1)
             {
                 // Received all values, stop stopwatch
                 _endTime = Millis;

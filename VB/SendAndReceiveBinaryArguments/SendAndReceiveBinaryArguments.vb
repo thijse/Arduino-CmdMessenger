@@ -11,6 +11,7 @@
 ' - How to calculate milliseconds, similar to Arduino function Millis()
 
 Imports System
+Imports System.Threading
 Imports CommandMessenger
 Imports CommandMessenger.Transport.Serial
 Imports Microsoft.VisualBasic
@@ -33,7 +34,7 @@ Public Class SendAndReceiveBinaryArguments
     Private _endTime As Long ' End time, last item of sequence received
     Private _receivePlainTextFloatSeriesFinished As Boolean ' Indicates if plain text float series has been fully received
     Private _receiveBinaryFloatSeriesFinished As Boolean ' Indicates if binary float series has been fully received
-    Private Const SeriesLength As Integer = 2000 ' Number of items we like to receive from the Arduino
+    Private Const SeriesLength As UInt16 = 2000 ' Number of items we like to receive from the Arduino
     Private Const SeriesBase As Single = 1111111.13F ' Base of values to return: SeriesBase * (0..SeriesLength-1)
 
     ' ------------------ M A I N  ----------------------
@@ -43,13 +44,13 @@ Public Class SendAndReceiveBinaryArguments
         ' Create Serial Port transport object
         _serialTransport = New SerialTransport With {
             .CurrentSerialSettings = New SerialSettings With {
-                .PortName = "COM6",
+                .PortName = "COM15",
                 .BaudRate = 115200,
                 .DtrEnable = False
                 }
             }
         ' Initialize the command messenger with the Serial Port transport layer
-
+     	' Set if it is communicating with a 16- or 32-bit Arduino board
         _cmdMessenger = New CmdMessenger(_serialTransport, BoardType.Bit16)
 
         ' Attach the callbacks to the Command Messenger
@@ -61,6 +62,11 @@ Public Class SendAndReceiveBinaryArguments
         _receivedItemsCount = 0
         _receivedBytesCount = 0
 
+		' Clear queues 
+		_cmdMessenger.ClearReceiveQueue()
+		_cmdMessenger.ClearSendQueue()
+
+			Thread.Sleep(100)
         ' Send command requesting a series of 100 float values send in plain text form
         Dim commandPlainText = New SendCommand(CommandIDs.RequestPlainTextFloatSeries)
         commandPlainText.AddArgument(SeriesLength)
@@ -70,13 +76,17 @@ Public Class SendAndReceiveBinaryArguments
 
         ' Now wait until all values have arrived
         Do While Not _receivePlainTextFloatSeriesFinished
+            Thread.Sleep(100)
         Loop
+        ' Clear queues 
+        _cmdMessenger.ClearReceiveQueue()
+        _cmdMessenger.ClearSendQueue()
 
         _receivedItemsCount = 0
         _receivedBytesCount = 0
         ' Send command requesting a series of 100 float values send in binary form
         Dim commandBinary = New SendCommand(CommandIDs.RequestBinaryFloatSeries)
-        commandBinary.AddBinArgument(CUShort(SeriesLength))
+        commandBinary.AddBinArgument(SeriesLength)
         commandBinary.AddBinArgument(CSng(SeriesBase))
 
         ' Send command 
@@ -84,6 +94,7 @@ Public Class SendAndReceiveBinaryArguments
 
         ' Now wait until all values have arrived
         Do While Not _receiveBinaryFloatSeriesFinished
+			Thread.Sleep(100)
         Loop
     End Sub
 
@@ -127,14 +138,21 @@ Public Class SendAndReceiveBinaryArguments
     Private Sub OnReceivePlainTextFloatSeries(ByVal arguments As ReceivedCommand)
         _receivedBytesCount += CountBytesInCommand(arguments, True)
 
+			Dim count = arguments.ReadInt16Arg()
+			Dim receivedValue = arguments.ReadFloatArg()
 
-        If _receivedItemsCount Mod (SeriesLength \ 10) = 0 Then
-            Console.WriteLine("Received value: {0}", arguments.ReadFloatArg())
+
+			If count <> _receivedItemsCount Then
+				Console.WriteLine("Values not matching: received {0} expected {1}", count, _receivedItemsCount)
+			End If
+
+        If _receivedItemsCount Mod (SeriesLength / 10) = 0 Then
+            Console.WriteLine("Received value: {0}", receivedValue)
         End If
         If _receivedItemsCount = 0 Then
             ' Received first value, start stopwatch
             _beginTime = Millis
-        ElseIf _receivedItemsCount = SeriesLength - 1 Then
+        ElseIf count = SeriesLength - 1 Then
             ' Received all values, stop stopwatch
             _endTime = Millis
             Dim deltaTime = (_endTime - _beginTime)
@@ -155,15 +173,17 @@ Public Class SendAndReceiveBinaryArguments
 
     ' Callback function To receive the binary float series from the Arduino
     Private Sub OnReceiveBinaryFloatSeries(ByVal arguments As ReceivedCommand)
+			Dim count = arguments.ReadBinUInt16Arg()
+			Dim receivedValue = arguments.ReadBinFloatArg()
         _receivedBytesCount += CountBytesInCommand(arguments, False)
 
-        If _receivedItemsCount Mod (SeriesLength \ 10) = 0 Then
-            Console.WriteLine("Received value: {0}", arguments.ReadBinFloatArg())
+        If _receivedItemsCount Mod (SeriesLength / 10) = 0 Then
+            Console.WriteLine("Received value: {0}", receivedValue)
         End If
         If _receivedItemsCount = 0 Then
             ' Received first value, start stopwatch
             _beginTime = Millis
-        ElseIf _receivedItemsCount = SeriesLength - 1 Then
+        ElseIf count = SeriesLength - 1 Then
             ' Received all values, stop stopwatch
             _endTime = Millis
             Dim deltaTime = (_endTime - _beginTime)
