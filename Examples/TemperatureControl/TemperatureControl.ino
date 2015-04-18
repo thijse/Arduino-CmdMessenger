@@ -9,17 +9,18 @@
 // To use this example without having a thermocouple or heating element, it comes with a simulated boiler
 // In order to use the simulator, disable the #define REAL_HEATER
 
+#include <utility\HeaterSim.h>
  
 //#define REAL_HEATER;
 #ifdef REAL_HEATER
 #include <Adafruit_MAX31855.h>
 #else
-#include <HeaterSim.h>
+#include <utility\HeaterSim.h>
 #endif
 
 #include <CmdMessenger.h>  
 #include <PID_v1.h>
-#include <DoEvery.h>   
+#include <utility\\DoEvery.h>   
 
 
 // Attach a new CmdMessenger object to the default Serial port
