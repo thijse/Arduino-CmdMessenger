@@ -1,4 +1,4 @@
-# CmdMessenger v3.7
+# CmdMessenger
 
 A serial messaging library for the Arduino and .NET/Mono platform
 
@@ -180,7 +180,7 @@ Since we have not been able to check it wil Max/MaxMSP, the example was removed.
 
 ## Changelog 
 
-### CmdMessenger v3.7
+### CmdMessenger v4.0.0
 * [Arduino] Additional autoConnect sample
 * [.Net/.Mono] Full Threading redesign.
 * [.Net/.Mono] AutoConnect & watchdog functionality. 

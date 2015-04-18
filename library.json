@@ -2,6 +2,17 @@
   "name": "CmdMessenger",
   "keywords": "protocol, message, communication, serial",
   "description": "A serial messaging library for the Arduino and .NET/Mono platform",
+  "authors":
+  [
+    {
+      "name": "Thijs Elenbaas",
+      "url": "http://thijs.elenbaas.net/about"
+    },
+	{
+      "name": "Valeriy Kucherenko",
+      "url": "https://github.com/valkuc"
+    }
+  ],
   "include": "CmdMessenger",
   "exclude":
   [
