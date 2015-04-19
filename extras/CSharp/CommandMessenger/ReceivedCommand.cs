@@ -155,7 +155,7 @@ namespace CommandMessenger
         public float ReadFloatArg()
         {
             if (Next())
-            {
+            { 
                 float current;
                 if (float.TryParse(CmdArgs[_parameter], NumberStyles.Float, CultureInfo.InvariantCulture, out current))
                 {
