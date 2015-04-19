@@ -18,6 +18,7 @@
 #endregion
 
 using System;
+using System.Globalization;
 
 namespace CommandMessenger
 {
@@ -85,7 +86,7 @@ namespace CommandMessenger
             if (Next())
             {
                 Int16 current;
-                if (Int16.TryParse(CmdArgs[_parameter], out current))
+                if (Int16.TryParse(CmdArgs[_parameter],  NumberStyles.Integer, CultureInfo.InvariantCulture, out current))
                 {
                     _dumped = true;
                     return current;
@@ -101,7 +102,7 @@ namespace CommandMessenger
             if (Next())
             {
                 UInt16 current;
-                if (UInt16.TryParse(CmdArgs[_parameter], out current))
+                if (UInt16.TryParse(CmdArgs[_parameter], NumberStyles.Integer, CultureInfo.InvariantCulture, out current))
                 {
                     _dumped = true;
                     return current;
@@ -124,7 +125,7 @@ namespace CommandMessenger
             if (Next())
             {
                 Int32 current;
-                if (Int32.TryParse(CmdArgs[_parameter], out current))
+                if (Int32.TryParse(CmdArgs[_parameter], NumberStyles.Integer, CultureInfo.InvariantCulture, out current))
                 {
                     _dumped = true;
                     return current;
@@ -140,7 +141,7 @@ namespace CommandMessenger
             if (Next())
             {
                 UInt32 current;
-                if (UInt32.TryParse(CmdArgs[_parameter], out current))
+                if (UInt32.TryParse(CmdArgs[_parameter], NumberStyles.Integer, CultureInfo.InvariantCulture, out current))
                 {
                     _dumped = true;
                     return current;
@@ -156,7 +157,7 @@ namespace CommandMessenger
             if (Next())
             {
                 float current;
-                if (float.TryParse(CmdArgs[_parameter], out current))
+                if (float.TryParse(CmdArgs[_parameter], NumberStyles.Float, CultureInfo.InvariantCulture, out current))
                 {
                     _dumped = true;
                     return current;
@@ -177,7 +178,7 @@ namespace CommandMessenger
                 if (CommunicationManager.BoardType == BoardType.Bit16)
                 {
                     float current;
-                    if (float.TryParse(CmdArgs[_parameter], out current))
+                    if (float.TryParse(CmdArgs[_parameter], NumberStyles.Float, CultureInfo.InvariantCulture, out current))
                     {
                         _dumped = true;
                         return (Double) current;
@@ -186,7 +187,7 @@ namespace CommandMessenger
                 else
                 {
                     Double current;
-                    if (Double.TryParse(CmdArgs[_parameter], out current))
+                    if (Double.TryParse(CmdArgs[_parameter], NumberStyles.Float, CultureInfo.InvariantCulture, out current))
                     {
                         _dumped = true;
                         return current;
