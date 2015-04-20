@@ -1,5 +1,5 @@
-= MIT License
-
+#  MIT License
+--------------
 Copyright (c) 2013, 2014, 2015 
 	Thijs Elenbaas, Valeriy Kucherenko,
 	Dreamcat4, Neil Dudman, Thomas Ouellet Fredericks.
