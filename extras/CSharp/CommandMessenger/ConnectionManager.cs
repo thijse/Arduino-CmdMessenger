@@ -202,12 +202,12 @@ namespace CommandMessenger
             if (eventHandler == null || (ctrlToInvoke != null && ctrlToInvoke.IsDisposed)) return;
             if (ctrlToInvoke != null )
             {
-                ctrlToInvoke.BeginInvoke((MethodInvoker)(() => eventHandler(this, eventHandlerArguments)));
+                try { ctrlToInvoke.BeginInvoke((MethodInvoker)(() => eventHandler(this, eventHandlerArguments))); } catch { }
             }
             else
             {   
 				//Invoke here             
-                eventHandler.BeginInvoke(this, eventHandlerArguments, null, null);
+                try { eventHandler.BeginInvoke(this, eventHandlerArguments, null, null); } catch { }
                 
             }
         }

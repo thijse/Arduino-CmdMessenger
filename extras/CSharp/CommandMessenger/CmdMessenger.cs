@@ -407,7 +407,7 @@ namespace CommandMessenger
             else
             {
                 //Directly call
-                newLineHandler(this, newLineArgs);
+                try { newLineHandler.BeginInvoke(this, newLineArgs, null, null); } catch { }
             }
         }
 
@@ -426,7 +426,7 @@ namespace CommandMessenger
             else
             {
                 //Directly call
-                messengerCallbackFunction(command);
+                try { messengerCallbackFunction.BeginInvoke(command, null, null); } catch { }
             }
         }
 
