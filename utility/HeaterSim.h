@@ -20,7 +20,6 @@
 #ifndef HEATERSIM_h
 #define HEATERSIM_h
 
-#include <HeaterSim.h>
 
 #if ARDUINO >= 100
 #include <Arduino.h> 
