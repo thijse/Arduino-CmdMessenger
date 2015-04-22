@@ -13,17 +13,10 @@
       "url": "https://github.com/valkuc"
     }
   ],
-  "include": "CmdMessenger",
-  "exclude":
-  [
-    "CmdMessenger/CSharp",
-    "CmdMessenger/Documentation",
-    "CmdMessenger/Tools"
-  ],
   "repository":
   {
     "type": "git",
-    "url": "https://github.com/thijse/Arduino-Libraries.git"
+    "url": "https://github.com/thijse/Arduino-CmdMessenger.git"
   },
   "dependencies": 
   [
