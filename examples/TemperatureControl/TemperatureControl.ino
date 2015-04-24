@@ -12,8 +12,8 @@
 // NOTE: If you used a package manager to download CmdMessenger library, 
 // make sure have also fetched these libraries:
 //
-// PID 
-// Adafruit_MAX31855 (not necessary in simulated mode
+// * PID 
+// * Adafruit_MAX31855 (not necessary in simulated mode)
 //
 // A package that includes all referenced libraries can be found at:
 // https://github.com/thijse/Zipballs/blob/master/CmdMessenger/CmdMessenger.zip?raw=true
