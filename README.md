@@ -1,10 +1,10 @@
 # CmdMessenger
 
-A serial messaging library for the Arduino and .NET/Mono platform
+A messaging library for the Arduino and .NET/Mono platform
 
 ## Introduction
 
-CmdMessenger is a messaging library for the Arduino Platform (and .NET/Mono platform). It supports multiple transport layers: serial port (over USB), Bluetooth ** 
+CmdMessenger is a messaging library for the Arduino Platform (and .NET/Mono platform). It supports multiple transport layers: serial port over USB, Bluetooth, TCP/IP (under development) 
 
 The message format is:
 ```
@@ -29,7 +29,28 @@ This allows for full 2-way communication between the arduino controller and the 
 
 * [Arduino IDE Version 1.0.5 or later](http://www.arduino.cc/en/Main/Software)* 
 
-\* Earlier versions of the Arduino IDE may work but have not been tested.
+\* Earlier versions of the Arduino IDE will probably work but have not been tested.
+
+## Downloading
+
+This package can be downloaded in different manners 
+
+
+- The Arduino Library Manager: [see here how to use it](http://www.arduino.cc/en/guide/libraries#toc3).
+- The PlatformIO package manager: [see here how to use it](http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides).
+- By directly loading fetching the Archive from GitHub: 
+ 1. Go to [https://github.com/thijse/Arduino-CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger)
+ 2. Click the DOWNLOAD ZIP button in the panel on the
+ 3. Rename the uncompressed folder **Arduino-CmdMessenger-master** to **CmdMessenger**.
+ 4. You may need to create the libraries subfolder if its your first library.  
+ 5. Place the **CmdMessenger** library folder in your **arduinosketchfolder/libraries/** folder. 
+ 5. Restart the IDE.
+ 6. For more information, [read this extended manual](http://thijs.elenbaas.net/2012/07/installing-an-arduino-library/)
+- If you want to have a package that includes all referenced libraries, use the pre-packaged library
+ 1. Download the package as a zipfile [here](https://github.com/thijse/Zipballs/blob/master/CmdMessenger/CmdMessenger.zip?raw=true) or as a tarball [here ](https://github.com/thijse/Zipballs/blob/master/CmdMessenger/CmdMessenger.tar.gz?raw=true).
+ 2. Copy the folders inside the **libraries** folder  to you your **arduinosketchfolder/libraries/** folder.
+ 3. Restart the IDE.
+ 3. For more information, [read this extended manual](http://thijs.elenbaas.net/2012/07/installing-an-arduino-library/)
 
 ## Getting Started
 
@@ -248,8 +269,14 @@ Since we have not been able to check it wil Max/MaxMSP, the example was removed.
 * CmdMessenger Version 1    - Neil Dudman.
 * CmdMessenger Version 2    - Dreamcat4.
 * CmdMessenger Version 3    - Thijs Elenbaas
+* CmdMessenger Version 4    - Thijs Elenbaas & Valeriy kucherenko
+
+## On using and modifying libraries
+
+- [http://www.arduino.cc/en/Main/Libraries](http://www.arduino.cc/en/Main/Libraries)
+- [http://www.arduino.cc/en/Reference/Libraries](http://www.arduino.cc/en/Reference/Libraries) 
 
 ## Copyright
 
-CmdMessenger is provided Copyright © 2013,2014 under MIT License.
+CmdMessenger is provided Copyright © 2013,2014,2015 under MIT License.
 

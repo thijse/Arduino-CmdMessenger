@@ -9,6 +9,17 @@
 // To use this example without having a thermocouple or heating element, it comes with a simulated boiler
 // In order to use the simulator, disable the #define REAL_HEATER
 
+// NOTE: If you used a package manager to download CmdMessenger library, 
+// make sure have also fetched these libraries:
+//
+// PID 
+// Adafruit_MAX31855 (not necessary in simulated mode
+//
+// A package that includes all referenced libraries can be found at:
+// https://github.com/thijse/Zipballs/blob/master/CmdMessenger/CmdMessenger.zip?raw=true
+
+
+
 #include <utility\HeaterSim.h>
  
 //#define REAL_HEATER;
