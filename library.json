@@ -29,6 +29,7 @@
       "frameworks": "arduino"
     }
   ],
+  "exclude": "extras",
   "frameworks": "arduino"
 }
 
