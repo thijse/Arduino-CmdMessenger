@@ -37,7 +37,7 @@ This package can be downloaded in different manners
 
 
 - The Arduino Library Manager: [see here how to use it](http://www.arduino.cc/en/guide/libraries#toc3).
-- The PlatformIO package manager: [see here how to use it](http://www.ikravets.com/computer-life/platformio/2014/10/07/integration-of-platformio-library-manager-to-arduino-and-energia-ides).
+- The PlatformIO Library Manager: [see here how to use it](http://docs.platformio.org/en/latest/ide/arduino.html).
 - By directly loading fetching the Archive from GitHub: 
  1. Go to [https://github.com/thijse/Arduino-CmdMessenger](https://github.com/thijse/Arduino-CmdMessenger)
  2. Click the DOWNLOAD ZIP button in the panel on the
