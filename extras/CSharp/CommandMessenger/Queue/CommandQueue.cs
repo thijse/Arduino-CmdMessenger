@@ -53,8 +53,7 @@ namespace CommandMessenger.Queue
 
         protected CommandQueue()
         {
-            _worker = new AsyncWorker(ProcessQueue);
-			_worker.Name = "CommandQueue";
+            _worker = new AsyncWorker(ProcessQueue, "CommandQueue");
         }
 
         /// <summary> Adds a general strategy. This strategy is applied to all queued and dequeued commands.  </summary>

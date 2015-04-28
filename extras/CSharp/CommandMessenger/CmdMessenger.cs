@@ -399,15 +399,15 @@ namespace CommandMessenger
         {
             if (newLineHandler == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
 
-            if (ControlToInvokeOn != null )
+            if (ControlToInvokeOn != null)
             {
                 //Asynchronously call on UI thread
-                try { ControlToInvokeOn.BeginInvoke((MethodInvoker)(() => newLineHandler(this, newLineArgs))); } catch { }
+                ControlToInvokeOn.BeginInvoke((MethodInvoker)(() => newLineHandler(this, newLineArgs)));
             }
             else
             {
                 //Directly call
-                try { newLineHandler.BeginInvoke(this, newLineArgs, null, null); } catch { }
+                newLineHandler(this, newLineArgs);
             }
         }
 
@@ -418,15 +418,15 @@ namespace CommandMessenger
         {
             if (messengerCallbackFunction == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
 
-            if (ControlToInvokeOn != null )
+            if (ControlToInvokeOn != null)
             {
                 //Asynchronously call on UI thread
-                try { ControlToInvokeOn.BeginInvoke(new MessengerCallbackFunction(messengerCallbackFunction), (object)command); } catch { }
+                ControlToInvokeOn.BeginInvoke(new MessengerCallbackFunction(messengerCallbackFunction), (object)command);
             }
             else
             {
                 //Directly call
-                try { messengerCallbackFunction.BeginInvoke(command, null, null); } catch { }
+                messengerCallbackFunction(command);
             }
         }
 

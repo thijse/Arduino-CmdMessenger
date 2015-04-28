@@ -114,9 +114,8 @@ namespace CommandMessenger
 
             PersistentSettings = false;
             DeviceScanEnabled = true;
-            
-            _worker = new AsyncWorker(DoWork);
-			_worker.Name = "ConnectionManager";
+
+            _worker = new AsyncWorker(DoWork, "ConnectionManager");
 
             if (!string.IsNullOrEmpty(uniqueDeviceId))
                 _cmdMessenger.Attach(identifyCommandId, OnIdentifyResponse);

@@ -85,8 +85,7 @@ namespace CommandMessenger.Transport.Bluetooth
         {
             _showAsConnected = false;
             _lazyReconnect = true;
-            _worker = new AsyncWorker(Poll);
-			_worker.Name = "Bluetooth Transport";
+            _worker = new AsyncWorker(Poll, "BluetoothTransport");
         }
 
         /// <summary>

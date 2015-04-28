@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace CommandMessenger
 {
     public class AsyncWorker
     {
-        public enum State
+        public enum WorkerState
         {
             Stopped,
             Running,
@@ -19,65 +18,78 @@ namespace CommandMessenger
         /// <returns>true is there is more work to do, otherwise false and worker will wait until signalled with SignalWorker().</returns>
         public delegate bool AsyncWorkerJob();
 
-        private volatile State _state = State.Stopped;
-        private volatile State _requestedState = State.Stopped;
+        private bool _isFaulted;
+
+        private volatile WorkerState _state = WorkerState.Stopped;
+        private volatile WorkerState _requestedState = WorkerState.Stopped;
 
         private readonly object _lock = new object();
         private readonly EventWaiter _eventWaiter = new EventWaiter();
 
         private readonly AsyncWorkerJob _workerJob;
 
-        private Task _workerTask;
+        private Thread _workerTask;
 
-		public string Name { get; set; }
+		public string Name { get; private set; }
 
-        public State WorkerState { get { return _state; } }
+        public WorkerState State { get { return _state; } }
 
-        public bool IsRunning { get { return _state == State.Running; } }
-        public bool IsSuspended { get { return _state == State.Suspended; } }
+        public bool IsRunning { get { return _state == WorkerState.Running; } }
+        public bool IsSuspended { get { return _state == WorkerState.Suspended; } }
 
-        public AsyncWorker(AsyncWorkerJob workerJob)
+        public AsyncWorker(AsyncWorkerJob workerJob, string workerName = null)
         {
             if (workerJob == null) throw new ArgumentNullException("workerJob");
             _workerJob = workerJob;
+            Name = workerName;
         }
 
         public void Start()
         {
             lock (_lock)
             {
-                if (_state == State.Stopped)
+                if (_state == WorkerState.Stopped)
                 {
-                    _requestedState = _state = State.Running;
+                    _requestedState = _state = WorkerState.Running;
                     _eventWaiter.Reset();
 
-                    // http://blogs.msdn.com/b/pfxteam/archive/2010/06/13/10024153.aspx
-                    // prefer using Task.Factory.StartNew for .net 4.0. For .net 4.5 Task.Run is the better option.
-                    _workerTask = Task.Factory.StartNew(x =>
+                    _workerTask = new Thread(() =>
                     {
                         while (true)
                         {
-                            if (_state == State.Stopped) break;
+                            if (_state == WorkerState.Stopped) break;
 
                             bool haveMoreWork = false;
-                            if (_state == State.Running)
+                            if (_state == WorkerState.Running)
                             {
-                                haveMoreWork = _workerJob();
+                                try
+                                {
+                                    haveMoreWork = _workerJob();
+                                }
+                                catch
+                                {
+                                    _requestedState = _state = WorkerState.Stopped;
+                                    _isFaulted = true;
+                                    throw;
+                                }
 
                                 // Check if state has been changed in workerJob thread.
-                                if (_requestedState != _state && _requestedState == State.Stopped)
+                                if (_requestedState != _state && _requestedState == WorkerState.Stopped)
                                 {
                                     _state = _requestedState;
                                     break;
                                 }
                             }
 
-                            if (!haveMoreWork || _state == State.Suspended) _eventWaiter.WaitOne(Timeout.Infinite);
+                            if (!haveMoreWork || _state == WorkerState.Suspended) _eventWaiter.WaitOne(Timeout.Infinite);
                             _state = _requestedState;
                         }
-                    }, CancellationToken.None, TaskCreationOptions.LongRunning);
+                    });
+                    _workerTask.Name = Name;
+                    _workerTask.IsBackground = true;
 
-                    SpinWait.SpinUntil(() => _workerTask.Status == TaskStatus.Running);
+                    _workerTask.Start();
+                    SpinWait.SpinUntil(() => _workerTask.IsAlive);
                 }
                 else
                 {
@@ -90,23 +102,20 @@ namespace CommandMessenger
         {
             lock (_lock)
             {
-                if (_state == State.Running || _state == State.Suspended)
+                if (_state == WorkerState.Running || _state == WorkerState.Suspended)
                 {
-                    _requestedState = State.Stopped;
+                    _requestedState = WorkerState.Stopped;
 
                     // Prevent deadlock by checking is we stopping from worker task or not.
-                    if (Task.CurrentId != _workerTask.Id)
+                    if (Thread.CurrentThread.ManagedThreadId != _workerTask.ManagedThreadId)
                     {
                         _eventWaiter.Set();
-                        _workerTask.Wait();
-
-                        // http://blogs.msdn.com/b/pfxteam/archive/2012/03/25/10287435.aspx
-                        // Actually it's not required to call dispose on task, but we will do this if possible.
-                        _workerTask.Dispose();
+                        _workerTask.Join();
                     }
                 }
-                else
+                else if (!_isFaulted)
                 {
+                    // Probably not needed, added as a precaution.
                     throw new InvalidOperationException("The worker is already stopped.");
                 }
             }
@@ -116,16 +125,16 @@ namespace CommandMessenger
         {
             lock (_lock)
             {
-                if (_state == State.Running)
+                if (_state == WorkerState.Running)
                 {
-                    _requestedState = State.Suspended;
+                    _requestedState = WorkerState.Suspended;
                     _eventWaiter.Set();
                     SpinWait.SpinUntil(() => _requestedState == _state);
                 }
                 else
                 {
-					// Perhaps this this does not require an Exception
-                    //throw new InvalidOperationException("The worker is not running.");
+                    // Probably not needed, added as a precaution.
+                    throw new InvalidOperationException("The worker is not running.");
                 }
             }
         }
@@ -134,16 +143,16 @@ namespace CommandMessenger
         {
             lock (_lock)
             {
-                if (_state == State.Suspended)
+                if (_state == WorkerState.Suspended)
                 {
-                    _requestedState = State.Running;
+                    _requestedState = WorkerState.Running;
                     _eventWaiter.Set();
                     SpinWait.SpinUntil(() => _requestedState == _state);
                 }
                 else
                 {
-					// Perhaps this this does not require an Exception
-                    //throw new InvalidOperationException("The worker is not in suspended state.");
+                    // Probably not needed, added as a precaution.
+                    throw new InvalidOperationException("The worker is not in suspended state.");
                 }
             }
         }
