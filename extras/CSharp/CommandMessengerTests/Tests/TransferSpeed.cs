@@ -249,7 +249,6 @@ namespace CommandMessengerTests
 
             // Prepare
             _receivedBytesCount = 0;
-            _cmdMessenger.PrintLfCr = true;
             _beginTime = Millis;
 
             // Now queue all commands
@@ -306,7 +305,6 @@ namespace CommandMessengerTests
 
             // Prepare
             _receivedBytesCount = 0;
-            _cmdMessenger.PrintLfCr = true;
             _beginTime = Millis;
             
             // Now send all commands individually and bypass the queue

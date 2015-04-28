@@ -63,6 +63,7 @@ namespace CommandMessengerTests
             {
                 CmdMessenger = new CmdMessenger(systemSettings.Transport, systemSettings.sendBufferMaxLength,
                     systemSettings.BoardType);
+                CmdMessenger.PrintLfCr = true;
             }
 
             // Attach to NewLineReceived and NewLineSent for logging purposes
