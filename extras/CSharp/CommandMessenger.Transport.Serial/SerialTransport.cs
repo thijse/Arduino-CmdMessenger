@@ -237,7 +237,7 @@ namespace CommandMessenger.Transport.Serial
             if (disposing)
             {
                 Disconnect();
-                _serialPort.Dispose();
+                if (_serialPort != null) _serialPort.Dispose();
             }
         }
     }
