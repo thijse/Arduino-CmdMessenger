@@ -45,11 +45,9 @@ namespace CommandMessenger.Transport.Serial
         private SerialConnectionManagerSettings _serialConnectionManagerSettings;
         private readonly ISerialConnectionStorer _serialConnectionStorer;
         private readonly SerialTransport _serialTransport;
+        private readonly object _tryConnectionLock = new object();
 
         private ScanType _scanType = ScanType.None;
-
-        // The control to invoke the callback on
-        private readonly object _tryConnectionLock = new object();
 
         /// <summary>
         /// Available serial port names in system.

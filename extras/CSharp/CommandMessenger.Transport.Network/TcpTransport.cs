@@ -15,32 +15,45 @@ namespace CommandMessenger.Transport.Network
         private readonly object _readLock = new object();
         private readonly byte[] _readBuffer = new byte[BufferSize];
         private int _bufferFilled;
+        private int _timeout;
 
-        private readonly string _host;
-        private readonly int _port;
-
-        private readonly TcpClient _tcpClient = new TcpClient();
+        private TcpClient _tcpClient;
         public event EventHandler DataReceived;
+
+        public string Host { get; private set; }
+        public int Port { get; private set; }
 
         public int Timeout
         {
-            get { return _tcpClient.ReceiveTimeout; }
-            set { _tcpClient.ReceiveTimeout = _tcpClient.SendTimeout = value; }
+            get { return _timeout; }
+            set
+            {
+                _timeout = value;
+                if (_tcpClient != null)
+                {
+                    _tcpClient.ReceiveTimeout = _tcpClient.SendTimeout = _timeout;
+                }
+            }
         }
 
         public TcpTransport(string host, int port)
         {
             Timeout = 1000;
 
-            _host = host;
-            _port = port;
+            Host = host;
+            Port = port;
         }
 
         public bool Connect()
         {
+            if (IsConnected())
+                throw new InvalidOperationException("Already connected.");
+
             try
             {
-                _tcpClient.Connect(_host, _port);
+                _tcpClient = new TcpClient();
+                _tcpClient.ReceiveTimeout = _tcpClient.SendTimeout = _timeout;
+                _tcpClient.Connect(Host, Port);
             }
             catch (SocketException)
             {
@@ -54,12 +67,17 @@ namespace CommandMessenger.Transport.Network
 
         public bool IsConnected()
         {
-            return _tcpClient.Client != null && _tcpClient.Connected;
+            return _tcpClient != null && _tcpClient.Client != null && _tcpClient.Connected;
         }
 
         public bool Disconnect()
         {
-            _tcpClient.Close();
+            if (_tcpClient != null)
+            {
+                _tcpClient.Close();
+                _tcpClient = null;
+            }
+
             return true;
         }
 
