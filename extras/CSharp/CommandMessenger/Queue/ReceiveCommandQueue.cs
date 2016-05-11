@@ -65,9 +65,14 @@ namespace CommandMessenger.Queue
             return hasMoreWork;
         }
 
-        public ReceivedCommand WaitForCmd(int timeOut, int cmdId, SendQueue sendQueueState)
+        public void PrepareForCmd(int cmdId, SendQueue sendQueueState)
         {
-            return _receivedCommandSignal.WaitForCmd(timeOut, cmdId, sendQueueState);
+            _receivedCommandSignal.PrepareForWait(cmdId, sendQueueState);
+        }
+
+        public ReceivedCommand WaitForCmd(int timeOut)
+        {
+            return _receivedCommandSignal.WaitForCmd(timeOut);
         }
 
         /// <summary> Queue the received command. </summary>
