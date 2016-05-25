@@ -32,13 +32,11 @@ namespace CommandMessenger
         private readonly EventWaiter _waiter = new EventWaiter();
 
         /// <summary>
-        /// Wait function. 
+        /// Prepares for the WaitForCmd to be used.
         /// </summary>
-        /// <param name="timeOut">time-out in ms</param>
         /// <param name="cmdId"></param>
         /// <param name="sendQueueState"></param>
-        /// <returns></returns>
-        public ReceivedCommand WaitForCmd(int timeOut, int cmdId, SendQueue sendQueueState)
+        public void PrepareForWait(int cmdId, SendQueue sendQueueState)
         {
             lock (_lock)
             {
@@ -46,15 +44,17 @@ namespace CommandMessenger
                 _cmdIdToMatch = cmdId;
                 _sendQueueState = sendQueueState;
             }
-
-            if (_waiter.WaitOne(timeOut) == EventWaiter.WaitState.TimeOut)
-            {
-                return null;
-            }
-
-            return _receivedCommand;
         }
 
+        /// <summary>
+        /// Wait function. PrepareForWait must be called before to prepare!
+        /// </summary>
+        /// <param name="timeOut">time-out in ms</param>
+        /// <returns></returns>
+        public ReceivedCommand WaitForCmd(int timeOut)
+        {
+            return _waiter.WaitOne(timeOut) == EventWaiter.WaitState.TimeOut ? null : _receivedCommand;
+        }
 
         /// <summary>
         /// Process command. See if it needs to be send to the main thread (false) or be used in queue (true)

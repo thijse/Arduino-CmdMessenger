@@ -157,12 +157,22 @@ namespace CommandMessenger
                     _receiveCommandQueue.Suspend();
                 }
 
-                if (PrintLfCr)
-                    WriteLine(sendCommand.CommandString());
-                else
-                    Write(sendCommand.CommandString());
+                if (sendCommand.ReqAc)
+                {
+                    _receiveCommandQueue.PrepareForCmd(sendCommand.AckCmdId, sendQueueState);
 
-                ackCommand = sendCommand.ReqAc ? BlockedTillReply(sendCommand.AckCmdId, sendCommand.Timeout, sendQueueState) : new ReceivedCommand();
+                    WriteCommand(sendCommand);
+
+                    var rc = BlockedTillReply(sendCommand.Timeout);
+
+                    ackCommand = rc ?? new ReceivedCommand();
+                }
+                else
+                {
+                    WriteCommand(sendCommand);
+                    ackCommand = new ReceivedCommand();
+                }
+
                 ackCommand.CommunicationManager = this;
             }
 
@@ -196,14 +206,12 @@ namespace CommandMessenger
         }
 
         /// <summary> Blocks until acknowledgement reply has been received. </summary>
-        /// <param name="ackCmdId"> acknowledgement command ID </param>
         /// <param name="timeout">  Timeout on acknowledge command. </param>
-        /// <param name="sendQueueState"></param>
         /// <returns> A received command. </returns>
-        private ReceivedCommand BlockedTillReply(int ackCmdId, int timeout, SendQueue sendQueueState)
+        private ReceivedCommand BlockedTillReply(int timeout)
         {
             // Wait for matching command
-            return _receiveCommandQueue.WaitForCmd(timeout, ackCmdId, sendQueueState) ?? new ReceivedCommand();
+            return _receiveCommandQueue.WaitForCmd(timeout) ?? new ReceivedCommand();
         }
 
         private void ParseLines()
@@ -289,6 +297,18 @@ namespace CommandMessenger
                 pos++;
             }
             return pos;
+        }
+
+        /// <summary>
+        /// Sends a command to the transport layer with or without a LFCR depending on the state of PrintLfCr
+        /// </summary>
+        /// <param name="sendCommand"></param>
+        private void WriteCommand(SendCommand sendCommand)
+        {
+            if (PrintLfCr)
+                WriteLine(sendCommand.CommandString());
+            else
+                Write(sendCommand.CommandString());
         }
 
         protected virtual void Dispose(bool disposing)
