@@ -24,6 +24,7 @@ The library supports any primary data types, and zero to many multiple arguments
 With version 3.x also comes a full implementation of the toolkit in C#, which runs both in Mono (http://monodevelop.com/Download) and Visual Studio (http://www.microsoft.com/visualstudio/eng#downloads)
 This allows for full 2-way communication between the arduino controller and the PC.
 
+If you are looking for a Python client to communicate with, please have a look at [PyCmdMessenger](https://github.com/harmsm/PyCmdMessenger)
 
 ## Requirements
 
