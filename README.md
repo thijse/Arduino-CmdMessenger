@@ -279,5 +279,5 @@ Since we have not been able to check it wil Max/MaxMSP, the example was removed.
 
 ## Copyright
 
-CmdMessenger is provided Copyright © 2013,2014,2015 under MIT License.
+CmdMessenger is provided Copyright © 2013,2014,2015,2016 under MIT License.
 
