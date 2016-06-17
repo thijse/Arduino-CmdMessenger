@@ -14,6 +14,11 @@ script:
   - arduino --verify --board arduino:avr:uno $PWD/examples/CmdMessengerTest/CmdMessengerTest.ino
   - arduino --verify --board arduino:avr:uno $PWD/examples/ConsoleShell/ConsoleShell.ino
   - arduino --verify --board arduino:avr:uno $PWD/examples/DataLogging/DataLogging.ino
+  - arduino --verify --board arduino:avr:uno $PWD/examples/Receive/Receive.ino
+  - arduino --verify --board arduino:avr:uno $PWD/examples/SendAndReceive/SendAndReceive.ino
+  - arduino --verify --board arduino:avr:uno $PWD/examples/SendAndReceiveArguments/SendAndReceiveArguments.ino
+  - arduino --verify --board arduino:avr:uno $PWD/examples/SendAndReceiveBinaryArguments/SendAndReceiveBinaryArguments.ino
+  - arduino --verify --board arduino:avr:uno $PWD/examples/TemperatureControl/TemperatureControl.ino
 notifications:
   email:
     on_success: change
