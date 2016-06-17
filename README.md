@@ -2,6 +2,8 @@
 
 A messaging library for the Arduino and .NET/Mono platform
 
+[![C# Build status](https://ci.appveyor.com/api/projects/status/07nelgrs4wu8nh5r?svg=true)](https://ci.appveyor.com/project/ThijsElenbaas/arduino-cmdmessenger)
+
 ## Introduction
 
 CmdMessenger is a messaging library for the Arduino Platform (and .NET/Mono platform). It supports multiple transport layers: serial port over USB, Bluetooth, TCP/IP (under development) 
