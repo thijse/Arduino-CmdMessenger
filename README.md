@@ -3,8 +3,10 @@
 A messaging library for the Arduino and .NET/Mono platform
 
 C# Build status: [![C# Build status](https://ci.appveyor.com/api/projects/status/07nelgrs4wu8nh5r?svg=true)](https://ci.appveyor.com/project/ThijsElenbaas/arduino-cmdmessenger)
+
 VB# Build status: [![VB Build status](https://ci.appveyor.com/api/projects/status/3qhrsm2nw7cqc4st?svg=true)](https://ci.appveyor.com/project/ThijsElenbaas/arduino-cmdmessenger-yaykh)
-Arduino Build status:[![Arduino Build Status](https://travis-ci.org/thijse/Arduino-CmdMessenger.svg?branch=master)](https://travis-ci.org/thijse/Arduino-CmdMessenger)
+
+Arduino Build status: [![Build Status](https://travis-ci.org/thijse/Arduino-CmdMessenger.svg?branch=master)](https://travis-ci.org/thijse/Arduino-CmdMessenger)
 
 
 ## Introduction
