@@ -18,7 +18,6 @@ script:
   - arduino --verify --board arduino:avr:uno $PWD/examples/SendAndReceive/SendAndReceive.ino
   - arduino --verify --board arduino:avr:uno $PWD/examples/SendAndReceiveArguments/SendAndReceiveArguments.ino
   - arduino --verify --board arduino:avr:uno $PWD/examples/SendAndReceiveBinaryArguments/SendAndReceiveBinaryArguments.ino
-  - arduino --verify --board arduino:avr:uno $PWD/examples/TemperatureControl/TemperatureControl.ino
 notifications:
   email:
     on_success: change
