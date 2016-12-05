@@ -25,7 +25,7 @@
       "frameworks": "arduino"
     },
     {
-      "name": "Adafruit-MAX31885",
+      "name": "Adafruit-MAX31855",
       "frameworks": "arduino"
     }
   ],
