@@ -27,9 +27,9 @@
 
 #include <inttypes.h>
 #if ARDUINO >= 100
-#include <Arduino.h> 
+#include <Arduino.h>
 #else
-#include <WProgram.h> 
+#include <WProgram.h>
 #endif
 
 //#include "Stream.h"
@@ -40,7 +40,6 @@ extern "C"
 	typedef void(*messengerCallbackFunction) (void);
 }
 
-#define MAXCALLBACKS        50   // The maximum number of commands   (default: 50)
 #define MESSENGERBUFFERSIZE 64   // The length of the commandbuffer  (default: 64)
 #define MAXSTREAMBUFFERSIZE 512  // The length of the streambuffer   (default: 64)
 #define DEFAULT_TIMEOUT     5000 // Time out on unanswered messages. (default: 5s)
@@ -84,8 +83,7 @@ private:
 	char field_separator;				// Character indicating end of argument (default: ',')
 	char escape_character;		    // Character indicating escaping of special chars
 
-	messengerCallbackFunction default_callback;            // default callback function  
-	messengerCallbackFunction callbackList[MAXCALLBACKS];  // list of attached callback functions 
+	messengerCallbackFunction default_callback;            // default callback function
 
 
 	// **** Initialize ****
@@ -170,7 +168,6 @@ public:
 
 	void printLfCr(bool addNewLine = true);
 	void attach(messengerCallbackFunction newFunction);
-	void attach(byte msgId, messengerCallbackFunction newFunction);
 
 	// **** Command processing ****
 

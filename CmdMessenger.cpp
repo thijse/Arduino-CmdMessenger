@@ -76,8 +76,6 @@ void CmdMessenger::init(Stream &ccomms, const char fld_separator, const char cmd
 	reset();
 
 	default_callback = NULL;
-	for (int i = 0; i < MAXCALLBACKS; i++)
-		callbackList[i] = NULL;
 
 	pauseProcessing = false;
 }
@@ -107,15 +105,6 @@ void CmdMessenger::printLfCr(bool addNewLine)
 void CmdMessenger::attach(messengerCallbackFunction newFunction)
 {
 	default_callback = newFunction;
-}
-
-/**
- * Attaches a function to a command ID
- */
-void CmdMessenger::attach(byte msgId, messengerCallbackFunction newFunction)
-{
-	if (msgId >= 0 && msgId < MAXCALLBACKS)
-		callbackList[msgId] = newFunction;
 }
 
 // **** Command processing ****
@@ -178,11 +167,8 @@ uint8_t CmdMessenger::processLine(char serialChar)
 void CmdMessenger::handleMessage()
 {
 	lastCommandId = readInt16Arg();
-	// if command attached, we will call it
-	if (lastCommandId >= 0 && lastCommandId < MAXCALLBACKS && ArgOk && callbackList[lastCommandId] != NULL)
-		(*callbackList[lastCommandId])();
-	else // If command not attached, call default callback (if attached)
-		if (default_callback != NULL) (*default_callback)();
+	if (default_callback != NULL)
+	 	(*default_callback)();
 }
 
 /**
