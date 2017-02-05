@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Windows.Forms;
 using CommandMessenger.Queue;
 using CommandMessenger.Transport;
 
@@ -84,11 +83,6 @@ namespace CommandMessenger
             get { return _communicationManager.PrintLfCr; }
             set { _communicationManager.PrintLfCr = value; }
         }
-
-        /// <summary>
-        /// The control to invoke the callback on
-        /// </summary>
-        public Control ControlToInvokeOn { get; set; }
 
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
@@ -159,8 +153,6 @@ namespace CommandMessenger
         private void Init(ITransport transport, BoardType boardType, char fieldSeparator, char commandSeparator,
                           char escapeCharacter, int sendBufferMaxLength)
         {           
-            ControlToInvokeOn = null;
-
             //Logger.Open(@"sendCommands.txt");
             Logger.DirectFlush = true;
 
@@ -187,14 +179,6 @@ namespace CommandMessenger
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        /// <summary> Sets a control to invoke on. </summary>
-        /// <param name="controlToInvokeOn"> The control to invoke on. </param>
-        [Obsolete("Use ControlToInvokeOn property instead.")]
-        public void SetControlToInvokeOn(Control controlToInvokeOn)
-        {
-            ControlToInvokeOn = controlToInvokeOn;
         }
 
         /// <summary>  Stop listening and end serial port connection. </summary>
@@ -297,13 +281,13 @@ namespace CommandMessenger
                 receiveQueueState = ReceiveQueue.WaitForEmptyQueue;
             }
 
-            if (sendQueueState == SendQueue.ClearQueue )
+            if (sendQueueState == SendQueue.ClearQueue)
             {
                 // Clear receive queue
                 _receiveCommandQueue.Clear(); 
             }
 
-            if (receiveQueueState == ReceiveQueue.ClearQueue )
+            if (receiveQueueState == ReceiveQueue.ClearQueue)
             {
                 // Clear send queue
                 _sendCommandQueue.Clear();
@@ -397,18 +381,8 @@ namespace CommandMessenger
         /// <param name="newLineArgs"></param>
         private void InvokeNewLineEvent(EventHandler<CommandEventArgs> newLineHandler, CommandEventArgs newLineArgs)
         {
-            if (newLineHandler == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
-
-            if (ControlToInvokeOn != null)
-            {
-                //Asynchronously call on UI thread
-                ControlToInvokeOn.BeginInvoke((MethodInvoker)(() => newLineHandler(this, newLineArgs)));
-            }
-            else
-            {
-                //Directly call
+            if (newLineHandler != null)
                 newLineHandler(this, newLineArgs);
-            }
         }
 
         /// <summary> Helper function to Invoke or directly call callback function. </summary>
@@ -416,26 +390,14 @@ namespace CommandMessenger
         /// <param name="command">                   The command. </param>
         private void InvokeCallBack(MessengerCallbackFunction messengerCallbackFunction, ReceivedCommand command)
         {
-            if (messengerCallbackFunction == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
-
-            if (ControlToInvokeOn != null)
-            {
-                //Asynchronously call on UI thread
-                ControlToInvokeOn.BeginInvoke(new MessengerCallbackFunction(messengerCallbackFunction), (object)command);
-            }
-            else
-            {
-                //Directly call
+            if (messengerCallbackFunction != null)
                 messengerCallbackFunction(command);
-            }
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                ControlToInvokeOn = null;
-
                 _communicationManager.Dispose();
                 _sendCommandQueue.Dispose();
                 _receiveCommandQueue.Dispose();
