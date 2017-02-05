@@ -20,6 +20,8 @@ using CommandMessenger.Transport;
 using CommandMessenger.Transport.Bluetooth;
 using CommandMessenger.Transport.Serial;
 using System.Threading;
+using System.Windows.Forms;
+using CommandMessenger.Utils;
 
 namespace DataLogging
 {
@@ -116,9 +118,6 @@ namespace DataLogging
                 PrintLfCr = false            // Do not print newLine at end of command, to reduce data being sent
             };
 
-            // Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
-            _cmdMessenger.ControlToInvokeOn = chartForm;
-
             // Set command strategy to continuously to remove all commands on the receive queue that 
             // are older than 1 sec. This makes sure that if data logging comes in faster that it can 
             // be plotted, the graph will not start lagging
@@ -205,25 +204,40 @@ namespace DataLogging
         // In a WinForm application, console output gets routed to the output panel of your IDE
         void OnUnknownCommand(ReceivedCommand arguments)
         {
-            _chartForm.LogMessage(@"Command without attached callback received");
+            _chartForm.InvokeIfRequired(
+                new MethodInvoker(() =>
+                {
+                    _chartForm.LogMessage(@"Command without attached callback received");
+                })
+            );
         }
 
         // Callback function that prints that the Arduino has acknowledged
         void OnAcknowledge(ReceivedCommand arguments)
         {
-            _chartForm.LogMessage(@"Arduino acknowledged");
+            _chartForm.InvokeIfRequired(
+                new MethodInvoker(() =>
+                {
+                    _chartForm.LogMessage(@"Arduino acknowledged");
+                })
+            );
         }
 
         // Callback function that prints that the Arduino has experienced an error
         void OnError(ReceivedCommand arguments)
         {
-            _chartForm.LogMessage(@"Arduino has experienced an error");
+            _chartForm.InvokeIfRequired(
+                new MethodInvoker(() =>
+                {
+                    _chartForm.LogMessage(@"Arduino has experienced an error");
+                })
+            );
         }
 
         // Callback function that plots a data point for the current temperature, the goal temperature,
         // the heater steer value and the Pulse Width Modulated (PWM) value.
         private void OnPlotDataPoint(ReceivedCommand arguments)
-        {   
+        {
             // Plot data if we are accepting data
             if (!AcceptData) return;
 
@@ -236,58 +250,87 @@ namespace DataLogging
             var heaterPwm   = arguments.ReadBinBoolArg();
 
             // Update chart with new data point;
-            _chartForm.UpdateGraph(time, currTemp, goalTemp, heaterValue, heaterPwm);
+            _chartForm.InvokeIfRequired(
+                new MethodInvoker(() => 
+                {
+                    _chartForm.UpdateGraph(time, currTemp, goalTemp, heaterValue, heaterPwm);
+                })
+            );
         }
 
         // Log received line to console
         private void NewLineReceived(object sender, CommandEventArgs e)
         {
-            _chartForm.LogMessage(@"Received > " + e.Command.CommandString());
-          //  Console.WriteLine(@"Received > " + e.Command.CommandString());
+            _chartForm.InvokeIfRequired(
+                new MethodInvoker(() =>
+                {
+                    _chartForm.LogMessage(@"Received > " + e.Command.CommandString());
+                    // Console.WriteLine(@"Received > " + e.Command.CommandString());
+                })
+            );
         }
 
         // Log sent line to console
         private void NewLineSent(object sender, CommandEventArgs e)
         {
-            _chartForm.LogMessage(@"Sent > " + e.Command.CommandString());
-           // Console.WriteLine(@"Sent > " + e.Command.CommandString());
+            _chartForm.InvokeIfRequired(
+                new MethodInvoker(() =>
+                {
+                    _chartForm.LogMessage(@"Sent > " + e.Command.CommandString());
+                    // Console.WriteLine(@"Sent > " + e.Command.CommandString());
+                })
+            );
         }
 
         // Log connection manager progress to status bar
         void LogProgress(object sender, ConnectionManagerProgressEventArgs e)
         {
-            if (e.Level <= 2) { _chartForm.SetStatus(e.Description); }
-            _chartForm.LogMessage(e.Description);
-           // Console.WriteLine(e.Level + @" :" + e.Description);
+            _chartForm.InvokeIfRequired(
+                new MethodInvoker(() =>
+                {
+                    if (e.Level <= 2) { _chartForm.SetStatus(e.Description); }
+                    _chartForm.LogMessage(e.Description);
+                    // Console.WriteLine(e.Level + @" :" + e.Description);
+                })
+            );
         }
 
         private void ConnectionTimeout(object sender, EventArgs e)
-        {           
-            // Connection time-out!
-            // Disable UI ..                 
-            _chartForm.SetStatus(@"Connection timeout, attempting to reconnect");           
-            _chartForm.SetDisConnected();
+        {
+            _chartForm.InvokeIfRequired(
+                new MethodInvoker(() =>
+                {
+                    // Connection time-out!
+                    // Disable UI ..
+                    _chartForm.SetStatus(@"Connection timeout, attempting to reconnect");
+                    _chartForm.SetDisConnected();
+                })
+            );
         }
 
         private void ConnectionFound(object sender, EventArgs e)
         {
             //We have been connected! 
+            _chartForm.InvokeIfRequired(
+                new MethodInvoker(() =>
+                {
+                    // Make sure we do not receive data until we are ready
+                    AcceptData = false;
 
-            // Make sure we do not receive data until we are ready
-            AcceptData = false;
-            
-            // Enable UI
-            _chartForm.SetConnected();
-            
-            // Send command to set goal Temperature
-            SetGoalTemperature(_goalTemperature);
+                    // Enable UI
+                    _chartForm.SetConnected();
 
-            // Restart acquisition if needed 
-            if (AcquisitionStarted) StartAcquisition(); else StopAcquisition();
-            AcceptData = true;
+                    // Send command to set goal Temperature
+                    SetGoalTemperature(_goalTemperature);
 
-            // Yield time slice in order to get UI updated
-            Thread.Yield();
+                    // Restart acquisition if needed 
+                    if (AcquisitionStarted) StartAcquisition(); else StopAcquisition();
+                    AcceptData = true;
+
+                    // Yield time slice in order to get UI updated
+                    Thread.Yield();
+                })
+            );
         }
 
         // Set the goal temperature on the embedded controller
