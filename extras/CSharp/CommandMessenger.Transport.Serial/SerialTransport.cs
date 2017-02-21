@@ -27,6 +27,8 @@ namespace CommandMessenger.Transport.Serial
     /// </summary>
     public class SerialTransport : ITransport
     {
+        private bool disposed = false;
+
         private const int BufferSize = 4096;
 
         private volatile bool _connected;
@@ -154,12 +156,6 @@ namespace CommandMessenger.Transport.Serial
             return new byte[0];
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         /// <summary> Opens the serial port. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
         private bool Open()
@@ -232,13 +228,30 @@ namespace CommandMessenger.Transport.Serial
             return 0;
         }
 
+
+        public bool IsDisposed
+        {
+            get { return disposed; }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
+            if (disposed)
+                return;
+
             if (disposing)
             {
                 Disconnect();
                 if (_serialPort != null) _serialPort.Dispose();
             }
+
+            disposed = true;
         }
     }
 }

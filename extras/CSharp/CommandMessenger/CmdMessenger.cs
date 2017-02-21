@@ -57,6 +57,8 @@ namespace CommandMessenger
     /// <summary> Command messenger main class  </summary>
     public class CmdMessenger : IDisposable
     {
+        private bool disposed = false;
+
         private CommunicationManager _communicationManager;                 // The communication manager
         private MessengerCallbackFunction _defaultCallback;                 // The default callback
         private Dictionary<int, MessengerCallbackFunction> _callbackList;   // List of callbacks
@@ -178,15 +180,6 @@ namespace CommandMessenger
 
             _sendCommandQueue.Start();
             _receiveCommandQueue.Start();
-        }
-
-        /// <summary>
-        /// Disposal of CmdMessenger
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary> Sets a control to invoke on. </summary>
@@ -430,8 +423,25 @@ namespace CommandMessenger
             }
         }
 
+        public bool IsDisposed
+        {
+            get { return disposed; }
+        }
+
+        /// <summary>
+        /// Disposal of CmdMessenger
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
+            if (disposed)
+                return;
+
             if (disposing)
             {
                 ControlToInvokeOn = null;
@@ -440,6 +450,8 @@ namespace CommandMessenger
                 _sendCommandQueue.Dispose();
                 _receiveCommandQueue.Dispose();
             }
+
+            disposed = true;
         }
     }
 }
