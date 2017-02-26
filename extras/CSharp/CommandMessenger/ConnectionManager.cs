@@ -1,4 +1,4 @@
-﻿#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
+#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
@@ -44,7 +44,7 @@ namespace CommandMessenger
         IdentityMismatch
     }
 
-    public abstract class ConnectionManager : IDisposable 
+    public abstract class ConnectionManager : IDisposable
     {
         public event EventHandler<EventArgs> ConnectionTimeout;
         public event EventHandler<EventArgs> ConnectionFound;
@@ -96,7 +96,7 @@ namespace CommandMessenger
         /// <summary>
         /// Enables or disables storing of last connection configuration in persistent file.
         /// </summary>
-        public bool PersistentSettings { get;  set; }
+        public bool PersistentSettings { get; set; }
 
         protected ConnectionManager(CmdMessenger cmdMessenger, int identifyCommandId = 0, string uniqueDeviceId = null)
         {
@@ -108,7 +108,7 @@ namespace CommandMessenger
             _uniqueDeviceId = uniqueDeviceId;
 
             WatchdogTimeout = 3000;
-            WatchdogRetryTimeout = 1500;        
+            WatchdogRetryTimeout = 1500;
             WatchdogTries = 3;
             WatchdogEnabled = false;
 
@@ -181,7 +181,7 @@ namespace CommandMessenger
 
         protected virtual void Log(int level, string logMessage)
         {
-            var args = new ConnectionManagerProgressEventArgs {Level = level, Description = logMessage};
+            var args = new ConnectionManagerProgressEventArgs { Level = level, Description = logMessage };
             InvokeEvent(Progress, args);
         }
 
@@ -199,15 +199,15 @@ namespace CommandMessenger
             var ctrlToInvoke = _cmdMessenger.ControlToInvokeOn;
 
             if (eventHandler == null || (ctrlToInvoke != null && ctrlToInvoke.IsDisposed)) return;
-            if (ctrlToInvoke != null )
+            if (ctrlToInvoke != null)
             {
                 try { ctrlToInvoke.BeginInvoke((MethodInvoker)(() => eventHandler(this, eventHandlerArguments))); } catch { }
             }
             else
-            {   
-				//Invoke here             
+            {
+                //Invoke here             
                 try { eventHandler.BeginInvoke(this, eventHandlerArguments, null, null); } catch { }
-                
+
             }
         }
 
@@ -262,7 +262,7 @@ namespace CommandMessenger
                 Log(3, "Polling Arduino, try # " + i);
 
                 DeviceStatus status = ArduinoAvailable(timeOut);
-                if (status == DeviceStatus.Available 
+                if (status == DeviceStatus.Available
                     || status == DeviceStatus.IdentityMismatch) return status;
             }
             return DeviceStatus.NotAvailable;
@@ -321,8 +321,8 @@ namespace CommandMessenger
 
             _lastCheckTime = currentTimeStamp;
             _nextTimeOutCheck = _lastCheckTime + WatchdogRetryTimeout;
-            Log(3, _watchdogTries == 1 ? 
-                "Watchdog detected no communication for " + WatchdogTimeout/1000.0 + "s, asking for response" 
+            Log(3, _watchdogTries == 1 ?
+                "Watchdog detected no communication for " + WatchdogTimeout / 1000.0 + "s, asking for response"
                 : "Watchdog received no response, performing try #" + _watchdogTries);
         }
 
@@ -339,12 +339,6 @@ namespace CommandMessenger
             }
 
             return true;
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -427,8 +421,14 @@ namespace CommandMessenger
 
         protected virtual void ReadSettings() { }
 
-        protected virtual void Dispose(bool disposing)
+        public void Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        { 
             if (disposing)
             {
                 StopConnectionManager();

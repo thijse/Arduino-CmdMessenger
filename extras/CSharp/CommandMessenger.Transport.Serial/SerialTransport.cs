@@ -1,4 +1,4 @@
-﻿#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
+#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
@@ -27,8 +27,6 @@ namespace CommandMessenger.Transport.Serial
     /// </summary>
     public class SerialTransport : ITransport
     {
-        private bool disposed = false;
-
         private const int BufferSize = 4096;
 
         private volatile bool _connected;
@@ -42,6 +40,8 @@ namespace CommandMessenger.Transport.Serial
         private SerialPort _serialPort;                                         // The serial port
         private SerialSettings _currentSerialSettings = new SerialSettings();   // The current serial settings
         public event EventHandler DataReceived;                                 // Event queue for all listeners interested in NewLinesReceived events.
+
+        private bool disposed = false;
 
         /// <summary> Gets or sets the current serial port settings. </summary>
         /// <value> The current serial settings. </value>
@@ -228,16 +228,15 @@ namespace CommandMessenger.Transport.Serial
             return 0;
         }
 
-
-        public bool IsDisposed
-        {
-            get { return disposed; }
-        }
-
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public bool IsDisposed
+        {
+            get { return disposed; }
         }
 
         protected virtual void Dispose(bool disposing)

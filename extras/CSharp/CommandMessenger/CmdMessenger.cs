@@ -1,4 +1,4 @@
-﻿#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
+#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
@@ -56,14 +56,14 @@ namespace CommandMessenger
 
     /// <summary> Command messenger main class  </summary>
     public class CmdMessenger : IDisposable
-    {
-        private bool disposed = false;
-
+    {      
         private CommunicationManager _communicationManager;                 // The communication manager
         private MessengerCallbackFunction _defaultCallback;                 // The default callback
         private Dictionary<int, MessengerCallbackFunction> _callbackList;   // List of callbacks
         private SendCommandQueue _sendCommandQueue;                         // The queue of commands to be sent
         private ReceiveCommandQueue _receiveCommandQueue;                   // The queue of commands to be processed
+
+        private bool disposed = false;
 
         /// <summary> Definition of the messenger callback function. </summary>
         /// <param name="receivedCommand"> The received command. </param>
@@ -423,11 +423,6 @@ namespace CommandMessenger
             }
         }
 
-        public bool IsDisposed
-        {
-            get { return disposed; }
-        }
-
         /// <summary>
         /// Disposal of CmdMessenger
         /// </summary>
@@ -435,6 +430,11 @@ namespace CommandMessenger
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public bool IsDisposed
+        {
+            get { return disposed; }
         }
 
         protected virtual void Dispose(bool disposing)
