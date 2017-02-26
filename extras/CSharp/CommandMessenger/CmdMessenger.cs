@@ -1,4 +1,4 @@
-﻿#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
+#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
@@ -56,12 +56,14 @@ namespace CommandMessenger
 
     /// <summary> Command messenger main class  </summary>
     public class CmdMessenger : IDisposable
-    {
+    {      
         private CommunicationManager _communicationManager;                 // The communication manager
         private MessengerCallbackFunction _defaultCallback;                 // The default callback
         private Dictionary<int, MessengerCallbackFunction> _callbackList;   // List of callbacks
         private SendCommandQueue _sendCommandQueue;                         // The queue of commands to be sent
         private ReceiveCommandQueue _receiveCommandQueue;                   // The queue of commands to be processed
+
+        private bool disposed = false;
 
         /// <summary> Definition of the messenger callback function. </summary>
         /// <param name="receivedCommand"> The received command. </param>
@@ -178,15 +180,6 @@ namespace CommandMessenger
 
             _sendCommandQueue.Start();
             _receiveCommandQueue.Start();
-        }
-
-        /// <summary>
-        /// Disposal of CmdMessenger
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         /// <summary> Sets a control to invoke on. </summary>
@@ -430,8 +423,25 @@ namespace CommandMessenger
             }
         }
 
+        /// <summary>
+        /// Disposal of CmdMessenger
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public bool IsDisposed
+        {
+            get { return disposed; }
+        }
+
         protected virtual void Dispose(bool disposing)
         {
+            if (disposed)
+                return;
+
             if (disposing)
             {
                 ControlToInvokeOn = null;
@@ -440,6 +450,8 @@ namespace CommandMessenger
                 _sendCommandQueue.Dispose();
                 _receiveCommandQueue.Dispose();
             }
+
+            disposed = true;
         }
     }
 }
