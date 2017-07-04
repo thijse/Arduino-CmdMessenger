@@ -1,7 +1,8 @@
 {
   "name": "CmdMessenger",
   "keywords": "protocol, message, communication, serial",
-  "description": "A serial messaging library for the Arduino and .NET/Mono platform",
+  "description": "A serial messaging library for the Arduino and .NET/Mono platform. ",
+  "version", "4.1.0",
   "authors":
   [
     {

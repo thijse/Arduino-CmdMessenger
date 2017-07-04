@@ -53,9 +53,9 @@ namespace SimpleBluetooth
             _transport = new BluetoothTransport()
             {
                 // If you know your bluetooth device and you have already paired
-                // you can directly connect to you Bluetooth Device by adress adress.
-                // Under windows you can find the adresss at:
+                // you can directly connect to you Bluetooth Device by address.
                 //    Control Panel >> All Control Panel Items >> Devices and Printers
+                // Under windows you can find the address at:
                 //    Right-click on device >> properties >> Unique id
                 CurrentBluetoothDeviceInfo = BluetoothUtils.DeviceByAdress("20:13:07:26:10:08")
             };
