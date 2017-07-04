@@ -1,6 +1,7 @@
 # CmdMessenger
+[![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 
-A messaging library for the Arduino and .NET/Mono platform
+A messaging library for the Arduino and .NET/Mono platform 
 
 C# Build status: [![C# Build status](https://ci.appveyor.com/api/projects/status/07nelgrs4wu8nh5r?svg=true)](https://ci.appveyor.com/project/ThijsElenbaas/arduino-cmdmessenger)
 
