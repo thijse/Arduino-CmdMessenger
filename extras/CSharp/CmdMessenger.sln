@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger", "CommandMessenger\CommandMessenger.csproj", "{3CF8F8FC-6F5C-46F8-94DC-C2E4C505ECA4}"
 EndProject
@@ -34,6 +34,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.Bluetooth", "CommandMessenger.Transport.Bluetooth\CommandMessenger.Transport.Bluetooth.csproj", "{68BE9E17-9B05-4B66-BDE6-F2A4C50858EA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.IPC", "CommandMessenger.Transport.IPC\CommandMessenger.Transport.IPC.csproj", "{27DF28C4-F702-4AF5-8104-133833253AA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Utils", "CommandMessenger.Utils\CommandMessenger.Utils.csproj", "{C9EEDB7F-C2C8-4F79-8FD6-FABDE2B1EE06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -163,6 +165,14 @@ Global
 		{27DF28C4-F702-4AF5-8104-133833253AA6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{27DF28C4-F702-4AF5-8104-133833253AA6}.Release|x86.ActiveCfg = Release|x86
 		{27DF28C4-F702-4AF5-8104-133833253AA6}.Release|x86.Build.0 = Release|x86
+		{C9EEDB7F-C2C8-4F79-8FD6-FABDE2B1EE06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9EEDB7F-C2C8-4F79-8FD6-FABDE2B1EE06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9EEDB7F-C2C8-4F79-8FD6-FABDE2B1EE06}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C9EEDB7F-C2C8-4F79-8FD6-FABDE2B1EE06}.Debug|x86.Build.0 = Debug|Any CPU
+		{C9EEDB7F-C2C8-4F79-8FD6-FABDE2B1EE06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9EEDB7F-C2C8-4F79-8FD6-FABDE2B1EE06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9EEDB7F-C2C8-4F79-8FD6-FABDE2B1EE06}.Release|x86.ActiveCfg = Release|Any CPU
+		{C9EEDB7F-C2C8-4F79-8FD6-FABDE2B1EE06}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

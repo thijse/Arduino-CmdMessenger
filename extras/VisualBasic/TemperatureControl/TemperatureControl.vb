@@ -20,6 +20,8 @@ Imports CommandMessenger.Queue
 Imports CommandMessenger.Transport
 Imports CommandMessenger.Transport.Serial
 Imports CommandMessenger.Transport.Bluetooth
+Imports CommandMessenger.Utils
+Imports System.Windows.Forms
 
 Friend Enum CommandIds
     Identify           ' Command to identify device
@@ -80,7 +82,7 @@ Public Class TemperatureControl
         ' 2. Bluetooth    This bypasses the Bluetooth virtual serial port, and instead communicates over the RFCOMM layer       
 
         Dim transportMode As TransportMode
-        transportMode = transportMode.Serial
+        transportMode = TransportMode.Serial
         'transportMode = transportMode.Bluetooth
 
         ' getting the chart control on top of the chart form.
@@ -93,7 +95,7 @@ Public Class TemperatureControl
         AddHandler GoalTemperatureChanged, Sub() _chartForm.GoalTemperatureTrackBarScroll(Nothing, Nothing)
 
         ' Set up transport 
-        If transportMode = transportMode.Bluetooth Then
+        If transportMode = TransportMode.Bluetooth Then
             _transport = New BluetoothTransport()
             ' We do not need to set the device: it will be found by the connection manager
         Else
@@ -108,9 +110,6 @@ Public Class TemperatureControl
 
         ' Initialize the command messenger with one of the two transport layers
         _cmdMessenger = New CmdMessenger(_transport, BoardType.Bit16) With {.PrintLfCr = False}
-
-        ' Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
-        _cmdMessenger.ControlToInvokeOn = chartForm
 
         ' Set command strategy to continuously to remove all commands on the receive queue that 
         ' are older than 1 sec. This makes sure that if data logging comes in faster that it can 
@@ -127,7 +126,7 @@ Public Class TemperatureControl
         AddHandler _cmdMessenger.NewLineSent, AddressOf NewLineSent
 
         ' Set up connection manager, corresponding to the transportMode
-        If transportMode = transportMode.Bluetooth Then
+        If transportMode = TransportMode.Bluetooth Then
             _connectionManager = New BluetoothConnectionManager((TryCast(_transport, BluetoothTransport)), _cmdMessenger, CommandIds.Identify, UniqueDeviceId)
         Else
             _connectionManager = New SerialConnectionManager((TryCast(_transport, SerialTransport)), _cmdMessenger, CommandIds.Identify, UniqueDeviceId)
@@ -195,17 +194,32 @@ Public Class TemperatureControl
     ' Called when a received command has no attached function.
     ' In a WinForm application, console output gets routed to the output panel of your IDE
     Private Sub OnUnknownCommand(ByVal arguments As ReceivedCommand)
-        _chartForm.LogMessage("Command without attached callback received")
+        _chartForm.InvokeIfRequired(
+            New MethodInvoker(
+            Sub()
+                _chartForm.LogMessage("Command without attached callback received")
+            End Sub)
+        )
     End Sub
 
     ' Callback function that prints that the Arduino has acknowledged
     Private Sub OnAcknowledge(ByVal arguments As ReceivedCommand)
-        _chartForm.LogMessage("Arduino acknowledged")
+        _chartForm.InvokeIfRequired(
+            New MethodInvoker(
+            Sub()
+                _chartForm.LogMessage("Arduino acknowledged")
+            End Sub)
+        )
     End Sub
 
     ' Callback function that prints that the Arduino has experienced an error
     Private Sub OnError(ByVal arguments As ReceivedCommand)
-        _chartForm.LogMessage("Arduino has experienced an error")
+        _chartForm.InvokeIfRequired(
+            New MethodInvoker(
+            Sub()
+                _chartForm.LogMessage("Arduino has experienced an error")
+            End Sub)
+        )
     End Sub
 
     ' Callback function that plots a data point for the current temperature, the goal temperature,
@@ -225,56 +239,85 @@ Public Class TemperatureControl
         Dim heaterPwm = arguments.ReadBinBoolArg()
 
         ' Update chart with new data point;
-        _chartForm.UpdateGraph(time, currTemp, goalTemp, heaterValue, heaterPwm)
+        _chartForm.InvokeIfRequired(
+            New MethodInvoker(
+            Sub()
+                _chartForm.UpdateGraph(time, currTemp, goalTemp, heaterValue, heaterPwm)
+            End Sub)
+        )
     End Sub
 
     ' Log received line to console
     Private Sub NewLineReceived(ByVal sender As Object, ByVal e As CommandEventArgs)
-        _chartForm.LogMessage("Received > " & e.Command.CommandString())
+        _chartForm.InvokeIfRequired(
+            New MethodInvoker(
+            Sub()
+                _chartForm.LogMessage("Received > " & e.Command.CommandString())
+            End Sub)
+        )
     End Sub
 
     ' Log sent line to console
     Private Sub NewLineSent(ByVal sender As Object, ByVal e As CommandEventArgs)
-        _chartForm.LogMessage("Sent > " & e.Command.CommandString())
+        _chartForm.InvokeIfRequired(
+            New MethodInvoker(
+            Sub()
+                _chartForm.LogMessage("Sent > " & e.Command.CommandString())
+            End Sub)
+        )
     End Sub
 
     ' Log connection manager progress to status bar
     Private Sub LogProgress(ByVal sender As Object, ByVal e As ConnectionManagerProgressEventArgs)
-        If e.Level <= 2 Then
-            _chartForm.SetStatus(e.Description)
-        End If
-        _chartForm.LogMessage(e.Description)
+        _chartForm.InvokeIfRequired(
+            New MethodInvoker(
+            Sub()
+                If e.Level <= 2 Then
+                    _chartForm.SetStatus(e.Description)
+                End If
+                _chartForm.LogMessage(e.Description)
+            End Sub)
+        )
     End Sub
 
     Private Sub ConnectionTimeout(ByVal sender As Object, ByVal e As EventArgs)
-        ' Connection time-out!
-        ' Disable UI ..                 
-        _chartForm.SetStatus("Connection timeout, attempting to reconnect")
-        _chartForm.SetDisConnected()
+        _chartForm.InvokeIfRequired(
+            New MethodInvoker(
+            Sub()
+                ' Connection time-out!
+                ' Disable UI ..                 
+                _chartForm.SetStatus("Connection timeout, attempting to reconnect")
+                _chartForm.SetDisConnected()
+            End Sub)
+        )
     End Sub
 
     Private Sub ConnectionFound(ByVal sender As Object, ByVal e As EventArgs)
         'We have been connected! 
+        _chartForm.InvokeIfRequired(
+            New MethodInvoker(
+            Sub()
+                ' Make sure we do not receive data until we are ready
+                AcceptData = False
 
-        ' Make sure we do not receive data until we are ready
-        AcceptData = False
+                ' Enable UI
+                _chartForm.SetConnected()
 
-        ' Enable UI
-        _chartForm.SetConnected()
+                ' Send command to set goal Temperature
+                SetGoalTemperature(_goalTemperature)
 
-        ' Send command to set goal Temperature
-        SetGoalTemperature(_goalTemperature)
+                ' Restart acquisition if needed 
+                If AcquisitionStarted Then
+                    StartAcquisition()
+                Else
+                    StopAcquisition()
+                End If
+                AcceptData = True
 
-        ' Restart acquisition if needed 
-        If AcquisitionStarted Then
-            StartAcquisition()
-        Else
-            StopAcquisition()
-        End If
-        AcceptData = True
-
-        ' Yield time slice in order to get UI updated
-        Thread.Yield()
+                ' Yield time slice in order to get UI updated
+                Thread.Yield()
+            End Sub)
+        )
     End Sub
 
     ' Set the goal temperature on the embedded controller

@@ -56,15 +56,10 @@
       <HintPath>..\Bluetooth\InTheHand.Net.Personal.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
     <Reference Include="ZedGraph">
       <HintPath>..\ZedGraph\ZedGraph.dll</HintPath>
     </Reference>
@@ -117,6 +112,10 @@
     <ProjectReference Include="..\CommandMessenger.Transport.Serial\CommandMessenger.Transport.Serial.csproj">
       <Project>{00D85F0B-00A5-41FA-8A99-428C0199C663}</Project>
       <Name>CommandMessenger.Transport.Serial</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CommandMessenger.Utils\CommandMessenger.Utils.csproj">
+      <Project>{C9EEDB7F-C2C8-4F79-8FD6-FABDE2B1EE06}</Project>
+      <Name>CommandMessenger.Utils</Name>
     </ProjectReference>
     <ProjectReference Include="..\CommandMessenger\CommandMessenger.csproj">
       <Project>{3CF8F8FC-6F5C-46F8-94DC-C2E4C505ECA4}</Project>
