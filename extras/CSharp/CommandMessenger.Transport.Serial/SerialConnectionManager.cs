@@ -331,7 +331,7 @@ namespace CommandMessenger.Transport.Serial
 
             //TODO: 4s - practical delay for Leonardo board, probably for other boards will be different. Need to investigate more on this.
             const int waitTime = 4000;
-            Log(1, "New port(s) " + string.Join(",", newPorts) + " detected, wait for " + (waitTime / 1000.0) + "s before attempt to connect.");
+            Log(1, "New port(s) " + string.Join(",", newPorts.ToArray()) + " detected, wait for " + (waitTime / 1000.0) + "s before attempt to connect.");
 
             // Wait a bit before new port will be available then try to connect
             Thread.Sleep(waitTime);

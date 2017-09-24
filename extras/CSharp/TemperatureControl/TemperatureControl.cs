@@ -20,6 +20,7 @@ using CommandMessenger.Transport;
 using CommandMessenger.Transport.Bluetooth;
 using CommandMessenger.Transport.Serial;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace DataLogging
 {
@@ -116,9 +117,6 @@ namespace DataLogging
                 PrintLfCr = false            // Do not print newLine at end of command, to reduce data being sent
             };
 
-            // Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
-            _cmdMessenger.ControlToInvokeOn = chartForm;
-
             // Set command strategy to continuously to remove all commands on the receive queue that 
             // are older than 1 sec. This makes sure that if data logging comes in faster that it can 
             // be plotted, the graph will not start lagging
@@ -205,19 +203,28 @@ namespace DataLogging
         // In a WinForm application, console output gets routed to the output panel of your IDE
         void OnUnknownCommand(ReceivedCommand arguments)
         {
-            _chartForm.LogMessage(@"Command without attached callback received");
+            if (_chartForm.InvokeRequired)
+                _chartForm.Invoke(new MethodInvoker(() => { _chartForm.LogMessage(@"Command without attached callback received"); }));
+            else
+                _chartForm.LogMessage(@"Command without attached callback received");
         }
 
         // Callback function that prints that the Arduino has acknowledged
         void OnAcknowledge(ReceivedCommand arguments)
         {
-            _chartForm.LogMessage(@"Arduino acknowledged");
+            if (_chartForm.InvokeRequired)
+                _chartForm.Invoke(new MethodInvoker(() => { _chartForm.LogMessage(@"Arduino acknowledged"); }));
+            else
+                _chartForm.LogMessage(@"Arduino acknowledged");
         }
 
         // Callback function that prints that the Arduino has experienced an error
         void OnError(ReceivedCommand arguments)
         {
-            _chartForm.LogMessage(@"Arduino has experienced an error");
+            if (_chartForm.InvokeRequired)
+                _chartForm.Invoke(new MethodInvoker(() => { _chartForm.LogMessage(@"Arduino has experienced an error"); }));
+            else
+                _chartForm.LogMessage(@"Arduino has experienced an error");
         }
 
         // Callback function that plots a data point for the current temperature, the goal temperature,
@@ -242,15 +249,22 @@ namespace DataLogging
         // Log received line to console
         private void NewLineReceived(object sender, CommandEventArgs e)
         {
-            _chartForm.LogMessage(@"Received > " + e.Command.CommandString());
-          //  Console.WriteLine(@"Received > " + e.Command.CommandString());
+            if (_chartForm.InvokeRequired)
+                _chartForm.Invoke(new MethodInvoker(() => { _chartForm.LogMessage(@"Received > " + e.Command.CommandString()); }));
+            else
+                _chartForm.LogMessage(@"Received > " + e.Command.CommandString());
+            
+            // Console.WriteLine(@"Received > " + e.Command.CommandString());
         }
 
         // Log sent line to console
         private void NewLineSent(object sender, CommandEventArgs e)
         {
-            _chartForm.LogMessage(@"Sent > " + e.Command.CommandString());
-           // Console.WriteLine(@"Sent > " + e.Command.CommandString());
+            if (_chartForm.InvokeRequired)
+                _chartForm.Invoke(new MethodInvoker(() => { _chartForm.LogMessage(@"Sent > " + e.Command.CommandString()); }));
+            else
+                _chartForm.LogMessage(@"Sent > " + e.Command.CommandString());
+            // Console.WriteLine(@"Sent > " + e.Command.CommandString());
         }
 
         // Log connection manager progress to status bar

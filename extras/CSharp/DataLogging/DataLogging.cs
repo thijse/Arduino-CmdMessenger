@@ -53,9 +53,6 @@ namespace DataLogging
             // Set if it is communicating with a 16- or 32-bit Arduino board
             _cmdMessenger = new CmdMessenger(_serialTransport, BoardType.Bit16);
 
-            // Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
-            _cmdMessenger.ControlToInvokeOn = chartForm;
-
             // Set Received command strategy that removes commands that are older than 1 sec
             _cmdMessenger.AddReceiveCommandStrategy(new StaleGeneralStrategy(1000));
 
@@ -142,9 +139,5 @@ namespace DataLogging
         {
             Console.WriteLine(@"Sent > " + e.Command.CommandString());
         }
-
-
-
-
     }
 }
