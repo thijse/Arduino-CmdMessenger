@@ -71,12 +71,12 @@ void CmdMessenger::init(Stream &ccomms, const char fld_separator, const char cmd
 	field_separator = fld_separator;
 	command_separator = cmd_separator;
 	escape_character = esc_character;
-	bufferLength = MESSENGERBUFFERSIZE;
-	bufferLastIndex = MESSENGERBUFFERSIZE - 1;
+	bufferLength = CMDMESSENGER_MESSENGERBUFFERSIZE;
+	bufferLastIndex = CMDMESSENGER_MESSENGERBUFFERSIZE - 1;
 	reset();
 
 	default_callback = NULL;
-	for (int i = 0; i < MAXCALLBACKS; i++)
+	for (int i = 0; i < CMDMESSENGER_MAXCALLBACKS; i++)
 		callbackList[i] = NULL;
 
 	pauseProcessing = false;
@@ -114,7 +114,7 @@ void CmdMessenger::attach(messengerCallbackFunction newFunction)
  */
 void CmdMessenger::attach(byte msgId, messengerCallbackFunction newFunction)
 {
-	if (msgId >= 0 && msgId < MAXCALLBACKS)
+	if (msgId >= 0 && msgId < CMDMESSENGER_MAXCALLBACKS)
 		callbackList[msgId] = newFunction;
 }
 
@@ -130,7 +130,7 @@ void CmdMessenger::feedinSerialData()
 		// The Stream class has a readBytes() function that reads many bytes at once. On Teensy 2.0 and 3.0, readBytes() is optimized. 
 		// Benchmarks about the incredible difference it makes: http://www.pjrc.com/teensy/benchmark_usb_serial_receive.html
 
-		size_t bytesAvailable = min(comms->available(), MAXSTREAMBUFFERSIZE);
+		size_t bytesAvailable = min(comms->available(), CMDMESSENGER_MAXSTREAMBUFFERSIZE);
 		comms->readBytes(streamBuffer, bytesAvailable);
 
 		// Process the bytes in the stream buffer, and handles dispatches callbacks, if commands are received
@@ -179,7 +179,7 @@ void CmdMessenger::handleMessage()
 {
 	lastCommandId = readInt16Arg();
 	// if command attached, we will call it
-	if (lastCommandId >= 0 && lastCommandId < MAXCALLBACKS && ArgOk && callbackList[lastCommandId] != NULL)
+	if (lastCommandId >= 0 && lastCommandId < CMDMESSENGER_MAXCALLBACKS && ArgOk && callbackList[lastCommandId] != NULL)
 		(*callbackList[lastCommandId])();
 	else // If command not attached, call default callback (if attached)
 		if (default_callback != NULL) (*default_callback)();
@@ -353,7 +353,7 @@ bool CmdMessenger::sendCmd(byte cmdId, bool reqAc, byte ackCmdId)
 {
 	if (!startCommand) {
 		sendCmdStart(cmdId);
-		return sendCmdEnd(reqAc, ackCmdId, DEFAULT_TIMEOUT);
+		return sendCmdEnd(reqAc, ackCmdId, CMDMESSENGER_DEFAULT_TIMEOUT);
 	}
 	return false;
 }
@@ -365,7 +365,7 @@ bool CmdMessenger::sendCmd(byte cmdId)
 {
 	if (!startCommand) {
 		sendCmdStart(cmdId);
-		return sendCmdEnd(false, 1, DEFAULT_TIMEOUT);
+		return sendCmdEnd(false, 1, CMDMESSENGER_DEFAULT_TIMEOUT);
 	}
 	return false;
 }

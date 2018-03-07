@@ -40,10 +40,10 @@ extern "C"
 	typedef void(*messengerCallbackFunction) (void);
 }
 
-#define MAXCALLBACKS        50   // The maximum number of commands   (default: 50)
-#define MESSENGERBUFFERSIZE 64   // The length of the commandbuffer  (default: 64)
-#define MAXSTREAMBUFFERSIZE 512  // The length of the streambuffer   (default: 64)
-#define DEFAULT_TIMEOUT     5000 // Time out on unanswered messages. (default: 5s)
+#define CMDMESSENGER_MAXCALLBACKS        50   // The maximum number of commands   (default: 50)
+#define CMDMESSENGER_MESSENGERBUFFERSIZE 64   // The length of the commandbuffer  (default: 64)
+#define CMDMESSENGER_MAXSTREAMBUFFERSIZE 512  // The length of the streambuffer   (default: 64)
+#define CMDMESSENGER_DEFAULT_TIMEOUT     5000 // Time out on unanswered messages. (default: 5s)
 
 // Message States
 enum
@@ -64,14 +64,14 @@ private:
 	bool    startCommand;            // Indicates if sending of a command is underway
 	uint8_t lastCommandId;		    // ID of last received command 
 	uint8_t bufferIndex;              // Index where to write data in buffer
-	uint8_t bufferLength;             // Is set to MESSENGERBUFFERSIZE
+	uint8_t bufferLength;             // Is set to CMDMESSENGER_MESSENGERBUFFERSIZE
 	uint8_t bufferLastIndex;          // The last index of the buffer
 	char ArglastChar;                 // Bookkeeping of argument escape char 
 	char CmdlastChar;                 // Bookkeeping of command escape char 
 	bool pauseProcessing;             // pauses processing of new commands, during sending
 	bool print_newlines;              // Indicates if \r\n should be added after send command
-	char commandBuffer[MESSENGERBUFFERSIZE]; // Buffer that holds the data
-	char streamBuffer[MAXSTREAMBUFFERSIZE]; // Buffer that holds the data
+	char commandBuffer[CMDMESSENGER_MESSENGERBUFFERSIZE]; // Buffer that holds the data
+	char streamBuffer[CMDMESSENGER_MAXSTREAMBUFFERSIZE]; // Buffer that holds the data
 	uint8_t messageState;             // Current state of message processing
 	bool dumped;                      // Indicates if last argument has been externally read 
 	bool ArgOk;						// Indicated if last fetched argument could be read
@@ -85,7 +85,7 @@ private:
 	char escape_character;		    // Character indicating escaping of special chars
 
 	messengerCallbackFunction default_callback;            // default callback function  
-	messengerCallbackFunction callbackList[MAXCALLBACKS];  // list of attached callback functions 
+	messengerCallbackFunction callbackList[CMDMESSENGER_MAXCALLBACKS];  // list of attached callback functions
 
 
 	// **** Initialize ****
@@ -97,7 +97,7 @@ private:
 
 	inline uint8_t processLine(char serialChar) __attribute__((always_inline));
 	inline void handleMessage() __attribute__((always_inline));
-	inline bool blockedTillReply(unsigned int timeout = DEFAULT_TIMEOUT, byte ackCmdId = 1) __attribute__((always_inline));
+	inline bool blockedTillReply(unsigned int timeout = CMDMESSENGER_DEFAULT_TIMEOUT, byte ackCmdId = 1) __attribute__((always_inline));
 	inline bool checkForAck(byte AckCommand) __attribute__((always_inline));
 
 	// **** Command sending ****
@@ -188,7 +188,7 @@ public:
 	 */
 	template < class T >
 	bool sendCmd(byte cmdId, T arg, bool reqAc = false, byte ackCmdId = 1,
-		unsigned int timeout = DEFAULT_TIMEOUT)
+		unsigned int timeout = CMDMESSENGER_DEFAULT_TIMEOUT)
 	{
 		if (!startCommand) {
 			sendCmdStart(cmdId);
@@ -204,7 +204,7 @@ public:
 	 */
 	template < class T >
 	bool sendBinCmd(byte cmdId, T arg, bool reqAc = false, byte ackCmdId = 1,
-		unsigned int timeout = DEFAULT_TIMEOUT)
+		unsigned int timeout = CMDMESSENGER_DEFAULT_TIMEOUT)
 	{
 		if (!startCommand) {
 			sendCmdStart(cmdId);
@@ -221,7 +221,7 @@ public:
 	void sendCmdStart(byte cmdId);
 	void sendCmdEscArg(char *arg);
 	void sendCmdfArg(char *fmt, ...);
-	bool sendCmdEnd(bool reqAc = false, byte ackCmdId = 1, unsigned int timeout = DEFAULT_TIMEOUT);
+	bool sendCmdEnd(bool reqAc = false, byte ackCmdId = 1, unsigned int timeout = CMDMESSENGER_DEFAULT_TIMEOUT);
 
 	/**
 	 * Send a single argument as string
