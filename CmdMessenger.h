@@ -220,7 +220,7 @@ public:
 
 	void sendCmdStart(byte cmdId);
 	void sendCmdEscArg(char *arg);
-	void sendCmdfArg(char *fmt, ...);
+	void sendCmdfArg(const char * const fmt, ...);
 	bool sendCmdEnd(bool reqAc = false, byte ackCmdId = 1, unsigned int timeout = DEFAULT_TIMEOUT);
 
 	/**

@@ -299,7 +299,7 @@ void CmdMessenger::sendCmdEscArg(char* arg)
  * Send formatted argument.
  *  Note that floating points are not supported and resulting string is limited to 128 chars
  */
-void CmdMessenger::sendCmdfArg(char *fmt, ...)
+void CmdMessenger::sendCmdfArg(const char * const fmt, ...)
 {
 	const int maxMessageSize = 128;
 	if (startCommand) {
