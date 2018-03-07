@@ -40,10 +40,18 @@ extern "C"
 	typedef void(*messengerCallbackFunction) (void);
 }
 
+#ifndef CMDMESSENGER_MAXCALLBACKS
 #define CMDMESSENGER_MAXCALLBACKS        50   // The maximum number of commands   (default: 50)
+#endif
+#ifndef CMDMESSENGER_MESSENGERBUFFERSIZE
 #define CMDMESSENGER_MESSENGERBUFFERSIZE 64   // The length of the commandbuffer  (default: 64)
+#endif
+#ifndef CMDMESSENGER_MAXSTREAMBUFFERSIZE
 #define CMDMESSENGER_MAXSTREAMBUFFERSIZE 512  // The length of the streambuffer   (default: 64)
+#endif
+#ifndef CMDMESSENGER_DEFAULT_TIMEOUT
 #define CMDMESSENGER_DEFAULT_TIMEOUT     5000 // Time out on unanswered messages. (default: 5s)
+#endif
 
 // Message States
 enum
