@@ -76,8 +76,10 @@ void CmdMessenger::init(Stream &ccomms, const char fld_separator, const char cmd
 	reset();
 
 	default_callback = NULL;
+#if CMDMESSENGER_MAXCALLBACKS != 0
 	for (int i = 0; i < CMDMESSENGER_MAXCALLBACKS; i++)
 		callbackList[i] = NULL;
+#endif
 
 	pauseProcessing = false;
 }
@@ -114,8 +116,10 @@ void CmdMessenger::attach(messengerCallbackFunction newFunction)
  */
 void CmdMessenger::attach(byte msgId, messengerCallbackFunction newFunction)
 {
+#if CMDMESSENGER_MAXCALLBACKS != 0
 	if (msgId >= 0 && msgId < CMDMESSENGER_MAXCALLBACKS)
 		callbackList[msgId] = newFunction;
+#endif
 }
 
 // **** Command processing ****
@@ -179,9 +183,11 @@ void CmdMessenger::handleMessage()
 {
 	lastCommandId = readInt16Arg();
 	// if command attached, we will call it
+#if CMDMESSENGER_MAXCALLBACKS != 0
 	if (lastCommandId >= 0 && lastCommandId < CMDMESSENGER_MAXCALLBACKS && ArgOk && callbackList[lastCommandId] != NULL)
 		(*callbackList[lastCommandId])();
 	else // If command not attached, call default callback (if attached)
+#endif
 		if (default_callback != NULL) (*default_callback)();
 }
 

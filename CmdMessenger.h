@@ -93,7 +93,9 @@ private:
 	char escape_character;		    // Character indicating escaping of special chars
 
 	messengerCallbackFunction default_callback;            // default callback function  
+#if CMDMESSENGER_MAXCALLBACKS != 0
 	messengerCallbackFunction callbackList[CMDMESSENGER_MAXCALLBACKS];  // list of attached callback functions
+#endif
 
 
 	// **** Initialize ****
