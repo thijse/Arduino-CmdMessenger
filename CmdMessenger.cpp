@@ -628,20 +628,20 @@ void CmdMessenger::printSci(double f, unsigned int digits)
 	// handle sign
 	if (f < 0.0)
 	{
-		Serial.print('-');
+		comms->print('-');
 		f = -f;
 	}
 
 	// handle infinite values
 	if (isinf(f))
 	{
-		Serial.print("INF");
+		comms->print("INF");
 		return;
 	}
 	// handle Not a Number
 	if (isnan(f))
 	{
-		Serial.print("NaN");
+		comms->print("NaN");
 		return;
 	}
 
