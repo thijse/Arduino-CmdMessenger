@@ -66,6 +66,7 @@ private:
 	uint8_t bufferIndex;              // Index where to write data in buffer
 	uint8_t bufferLength;             // Is set to MESSENGERBUFFERSIZE
 	uint8_t bufferLastIndex;          // The last index of the buffer
+	uint8_t LastArgLength;             //The length if the last received argument
 	char ArglastChar;                 // Bookkeeping of argument escape char 
 	char CmdlastChar;                 // Bookkeeping of command escape char 
 	bool pauseProcessing;             // pauses processing of new commands, during sending
@@ -131,7 +132,9 @@ private:
 		byte *bytePointer = (byte *)(const void *)&value;
 		for (unsigned int i = 0; i < sizeof(value); i++)
 		{
-			*bytePointer = str[i];
+			*bytePointer = 0;
+			if( i < LastArgLength )
+				*bytePointer = str[i];
 			bytePointer++;
 		}
 		return value;
