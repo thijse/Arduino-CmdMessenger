@@ -65,6 +65,7 @@ CmdMessenger::CmdMessenger(Stream &ccomms, const char fld_separator, const char 
  */
 void CmdMessenger::init(Stream &ccomms, const char fld_separator, const char cmd_separator, const char esc_character)
 {
+	startCommand = false;
 	default_callback = NULL;
 	comms = &ccomms;
 	print_newlines = false;
