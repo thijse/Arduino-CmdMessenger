@@ -486,6 +486,7 @@ char* CmdMessenger::readStringArg()
 	if (next()) {
 		dumped = true;
 		ArgOk = true;
+		unescape(current);
 		return current;
 	}
 	ArgOk = false;
@@ -501,6 +502,7 @@ void CmdMessenger::copyStringArg(char *string, uint8_t size)
 	if (next()) {
 		dumped = true;
 		ArgOk = true;
+		unescape(current);
 		strlcpy(string, current, size);
 	}
 	else {
@@ -515,6 +517,7 @@ void CmdMessenger::copyStringArg(char *string, uint8_t size)
 uint8_t CmdMessenger::compareStringArg(char *string)
 {
 	if (next()) {
+		unescape(current);
 		if (strcmp(string, current) == 0) {
 			dumped = true;
 			ArgOk = true;
