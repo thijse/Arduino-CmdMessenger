@@ -137,6 +137,10 @@ private:
 				*bytePointer = str[i];
 			bytePointer++;
 		}
+		if( LastArgLength > 0 )
+			ArgOk = true;
+		else
+			ArgOk = false;
 		return value;
 	}
 
