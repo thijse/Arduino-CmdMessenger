@@ -572,7 +572,8 @@ char* CmdMessenger::split_r(char *str, const char delim, char **nextp)
 	// Set start of return pointer to this position
 	ret = str;
 	// Find next delimiter
-	str += findNext(str, delim);
+	LastArgLength = findNext(str, delim);
+	str += LastArgLength;
 	// and exchange this for a a \0 char. This will terminate the char
 	if (*str) {
 		*str++ = '\0';
