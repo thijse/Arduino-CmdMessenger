@@ -58,8 +58,8 @@ enum
 
 class CmdMessenger
 {
-private:
-	// **** Private variables *** 
+protected:
+	// **** Protected variables *** 
 
 	bool    startCommand;            // Indicates if sending of a command is underway
 	uint8_t lastCommandId;		    // ID of last received command 
