@@ -70,7 +70,7 @@ void HeaterSim::CalcTemperature()
 {
 	float rate                  = LN2/_halfTimeCooling;	 
 	unsigned long currentTime   = millis();
-	if (currentTime >= _lastTime) _deltams = max(currentTime - _lastTime,1);
+	if (currentTime >= _lastTime) _deltams = max(currentTime - _lastTime,1ul);
 	_deltaTime                  = _deltams/ 1000.0f;
 	float deltaTemp             = _boilerTemp - _ambientTemp;
 	float deltaTempAfterCooling = deltaTemp*exp(-rate*_deltaTime);
