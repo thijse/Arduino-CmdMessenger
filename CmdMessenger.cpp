@@ -50,12 +50,26 @@ extern "C" {
 
 #define _CMDMESSENGER_VERSION 3_6 // software version of this library
 
-// **** Initialization **** 
+#if defined(__MBED__) ||  defined(MBED_STREAM_H)
+#define BYTEAVAILLABLE(comms) comms->readable()
+#define READONECHAR(comms) comms->getc()
+#define PRINTONECHAR(comms,c) comms->putc(c)
+#define PRINTSTRING(comms,s) comms->puts(s)
+#define millis() (us_ticker_read()/1000)
+#endif
+#if defined(ARDUINO) && !defined(MBED_STREAM_H)
+#define BYTEAVAILLABLE(comms) comms->available()
+#define READONECHAR(comms) comms->read()
+#define PRINTONECHAR(comms,c) comms->print(c)
+#define PRINTSTRING(comms,s) comms->print(s)
+#endif
+
+// **** Initialization ****
 
 /**
  * CmdMessenger constructor
  */
-CmdMessenger::CmdMessenger(Stream &ccomms, const char fld_separator, const char cmd_separator, const char esc_character)
+CmdMessenger::CmdMessenger(__DEVICESTREAMTYPE &ccomms, const char fld_separator, const char cmd_separator, const char esc_character)
 {
 	init(ccomms, fld_separator, cmd_separator, esc_character);
 }
@@ -63,7 +77,7 @@ CmdMessenger::CmdMessenger(Stream &ccomms, const char fld_separator, const char 
 /**
  * Enables printing newline after a sent command
  */
-void CmdMessenger::init(Stream &ccomms, const char fld_separator, const char cmd_separator, const char esc_character)
+void CmdMessenger::init(__DEVICESTREAMTYPE &ccomms, const char fld_separator, const char cmd_separator, const char esc_character)
 {
 	default_callback = NULL;
 	comms = &ccomms;
@@ -112,7 +126,7 @@ void CmdMessenger::attach(messengerCallbackFunction newFunction)
 /**
  * Attaches a function to a command ID
  */
-void CmdMessenger::attach(byte msgId, messengerCallbackFunction newFunction)
+void CmdMessenger::attach(CmdMsgByte msgId, messengerCallbackFunction newFunction)
 {
 	if (msgId >= 0 && msgId < MAXCALLBACKS)
 		callbackList[msgId] = newFunction;
@@ -127,7 +141,7 @@ void CmdMessenger::feedinSerialData()
 {
 	while (!pauseProcessing && comms->available())
 	{
-		// The Stream class has a readBytes() function that reads many bytes at once. On Teensy 2.0 and 3.0, readBytes() is optimized. 
+		// The Stream class has a readBytes() function that reads many bytes at once. On Teensy 2.0 and 3.0, readBytes() is optimized.
 		// Benchmarks about the incredible difference it makes: http://www.pjrc.com/teensy/benchmark_usb_serial_receive.html
 
 		size_t bytesAvailable = min(comms->available(), MAXSTREAMBUFFERSIZE);
@@ -188,7 +202,7 @@ void CmdMessenger::handleMessage()
 /**
  * Waits for reply from sender or timeout before continuing
  */
-bool CmdMessenger::blockedTillReply(unsigned int timeout, byte ackCmdId)
+bool CmdMessenger::blockedTillReply(unsigned int timeout, CmdMsgByte ackCmdId)
 {
 	unsigned long time = millis();
 	unsigned long start = time;
@@ -203,10 +217,10 @@ bool CmdMessenger::blockedTillReply(unsigned int timeout, byte ackCmdId)
 /**
  *   Loops as long data is available to determine if acknowledge has come in
  */
-bool CmdMessenger::checkForAck(byte ackCommand)
+bool CmdMessenger::checkForAck(CmdMsgByte ackCommand)
 {
 	while (comms->available()) {
-		//Processes a byte and determines if an acknowlegde has come in
+		//Processes a CmdMsgByte and determines if an acknowlegde has come in
 		int messageState = processLine(comms->read());
 		if (messageState == kEndOfMessage) {
 			int id = readInt16Arg();
@@ -275,7 +289,7 @@ uint8_t CmdMessenger::commandID()
 /**
  * Send start of command. This makes it easy to send multiple arguments per command
  */
-void CmdMessenger::sendCmdStart(byte cmdId)
+void CmdMessenger::sendCmdStart(CmdMsgByte cmdId)
 {
 	if (!startCommand) {
 		startCommand = true;
@@ -330,7 +344,7 @@ void CmdMessenger::sendCmdSciArg(double arg, unsigned int n)
 /**
  * Send end of command
  */
-bool CmdMessenger::sendCmdEnd(bool reqAc, byte ackCmdId, unsigned int timeout)
+bool CmdMessenger::sendCmdEnd(bool reqAc, CmdMsgByte ackCmdId, unsigned int timeout)
 {
 	bool ackReply = false;
 	if (startCommand) {
@@ -349,7 +363,7 @@ bool CmdMessenger::sendCmdEnd(bool reqAc, byte ackCmdId, unsigned int timeout)
 /**
  * Send a command without arguments, with acknowledge
  */
-bool CmdMessenger::sendCmd(byte cmdId, bool reqAc, byte ackCmdId)
+bool CmdMessenger::sendCmd(CmdMsgByte cmdId, bool reqAc, CmdMsgByte ackCmdId)
 {
 	if (!startCommand) {
 		sendCmdStart(cmdId);
@@ -361,7 +375,7 @@ bool CmdMessenger::sendCmd(byte cmdId, bool reqAc, byte ackCmdId)
 /**
  * Send a command without arguments, without acknowledge
  */
-bool CmdMessenger::sendCmd(byte cmdId)
+bool CmdMessenger::sendCmd(CmdMsgByte cmdId)
 {
 	if (!startCommand) {
 		sendCmdStart(cmdId);

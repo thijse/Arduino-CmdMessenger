@@ -32,6 +32,22 @@
 #include <WProgram.h> 
 #endif
 
+#if defined(__MBED__)
+#include <mbed.h>
+#endif
+
+#if defined(MBED_STREAM_H) 
+/** Mbed platform compatibility and mbed like Stream**/
+/** #include <Serial.h> */
+
+#define __DEVICESTREAMTYPE UARTClass
+#define CmdMsgByte uint8_t
+#endif
+#if defined(ARDUINO) && !defined(MBED_STREAM_H)
+#define __DEVICESTREAMTYPE Stream
+#define CmdMsgByte byte
+#endif
+
 //#include "Stream.h"
 
 extern "C"
@@ -78,7 +94,7 @@ protected:
 	char *current;                    // Pointer to current buffer position
 	char *last;                       // Pointer to previous buffer position
 	char prevChar;                    // Previous char (needed for unescaping)
-	Stream *comms;                    // Serial data stream
+	__DEVICESTREAMTYPE *comms;                    // Serial data stream
 
 	char command_separator;           // Character indicating end of command (default: ';')
 	char field_separator;				// Character indicating end of argument (default: ',')
@@ -90,15 +106,15 @@ protected:
 
 	// **** Initialize ****
 
-	void init(Stream & comms, const char fld_separator, const char cmd_separator, const char esc_character);
+	void init(__DEVICESTREAMTYPE & comms, const char fld_separator, const char cmd_separator, const char esc_character);
 	void reset();
 
 	// **** Command processing ****
 
 	inline uint8_t processLine(char serialChar) __attribute__((always_inline));
 	inline void handleMessage() __attribute__((always_inline));
-	inline bool blockedTillReply(unsigned int timeout = DEFAULT_TIMEOUT, byte ackCmdId = 1) __attribute__((always_inline));
-	inline bool checkForAck(byte AckCommand) __attribute__((always_inline));
+	inline bool blockedTillReply(unsigned int timeout = DEFAULT_TIMEOUT, CmdMsgByte ackCmdId = 1) __attribute__((always_inline));
+	inline bool checkForAck(CmdMsgByte AckCommand) __attribute__((always_inline));
 
 	// **** Command sending ****
 
@@ -108,7 +124,7 @@ protected:
 	template < class T >
 	void writeBin(const T & value)
 	{
-		const byte *bytePointer = (const byte *)(const void *)&value;
+		const CmdMsgByte *bytePointer = (const CmdMsgByte *)(const void *)&value;
 		for (unsigned int i = 0; i < sizeof(value); i++)
 		{
 			printEsc(*bytePointer);
@@ -128,7 +144,7 @@ protected:
 	{
 		T value;
 		unescape(str);
-		byte *bytePointer = (byte *)(const void *)&value;
+		CmdMsgByte *bytePointer = (CmdMsgByte *)(const void *)&value;
 		for (unsigned int i = 0; i < sizeof(value); i++)
 		{
 			*bytePointer = str[i];
@@ -141,7 +157,7 @@ protected:
 	T empty()
 	{
 		T value;
-		byte *bytePointer = (byte *)(const void *)&value;
+		CmdMsgByte *bytePointer = (CmdMsgByte *)(const void *)&value;
 		for (unsigned int i = 0; i < sizeof(value); i++)
 		{
 			*bytePointer = '\0';
@@ -164,13 +180,13 @@ public:
 
 	// **** Initialization ****
 
-	CmdMessenger(Stream & comms, const char fld_separator = ',',
+	CmdMessenger(__DEVICESTREAMTYPE & comms, const char fld_separator = ',',
 		const char cmd_separator = ';',
 		const char esc_character = '/');
 
 	void printLfCr(bool addNewLine = true);
 	void attach(messengerCallbackFunction newFunction);
-	void attach(byte msgId, messengerCallbackFunction newFunction);
+	void attach(CmdMsgByte msgId, messengerCallbackFunction newFunction);
 
 	// **** Command processing ****
 
@@ -187,7 +203,7 @@ public:
 	 * Note that the argument is sent as string
 	 */
 	template < class T >
-	bool sendCmd(byte cmdId, T arg, bool reqAc = false, byte ackCmdId = 1,
+	bool sendCmd(CmdMsgByte cmdId, T arg, bool reqAc = false, CmdMsgByte ackCmdId = 1,
 		unsigned int timeout = DEFAULT_TIMEOUT)
 	{
 		if (!startCommand) {
@@ -203,7 +219,7 @@ public:
 	 * Note that the argument is sent in binary format
 	 */
 	template < class T >
-	bool sendBinCmd(byte cmdId, T arg, bool reqAc = false, byte ackCmdId = 1,
+	bool sendBinCmd(CmdMsgByte cmdId, T arg, bool reqAc = false, CmdMsgByte ackCmdId = 1,
 		unsigned int timeout = DEFAULT_TIMEOUT)
 	{
 		if (!startCommand) {
@@ -214,14 +230,14 @@ public:
 		return false;
 	}
 
-	bool sendCmd(byte cmdId);
-	bool sendCmd(byte cmdId, bool reqAc, byte ackCmdId);
+	bool sendCmd(CmdMsgByte cmdId);
+	bool sendCmd(CmdMsgByte cmdId, bool reqAc, CmdMsgByte ackCmdId);
 	// **** Command sending with multiple arguments ****
 
-	void sendCmdStart(byte cmdId);
+	void sendCmdStart(CmdMsgByte cmdId);
 	void sendCmdEscArg(char *arg);
 	void sendCmdfArg(char *fmt, ...);
-	bool sendCmdEnd(bool reqAc = false, byte ackCmdId = 1, unsigned int timeout = DEFAULT_TIMEOUT);
+	bool sendCmdEnd(bool reqAc = false, CmdMsgByte ackCmdId = 1, unsigned int timeout = DEFAULT_TIMEOUT);
 
 	/**
 	 * Send a single argument as string
@@ -229,12 +245,38 @@ public:
 	 */
 	template < class T > void sendCmdArg(T arg)
 	{
-		if (startCommand) {
-			comms->print(field_separator);
-			comms->print(arg);
+        if (startCommand) {
+#if !defined(MBED) // Arduino and ReadBear OK
+            comms->print(field_separator);
+            comms->print(arg);
+#else
+            comms->putc(field_separator);
+            comms->puts(arg);
+#endif
 		}
+
 	}
 
+#if defined(MBED)
+    void sendCmdArg(bool arg) {
+            comms->putc(field_separator);
+            comms->printf("%i", arg);
+    }
+    void sendCmdArg(float arg) {
+            comms->putc(field_separator);
+            comms->printf("%f", arg);
+    }
+    void sendCmdArg(long arg) {
+            comms->putc(field_separator);
+            comms->printf("%i", arg);
+    }
+    void sendCmdArg(int arg) {
+            comms->putc(field_separator);
+            comms->printf("%i", arg);
+    }
+#endif
+
+#if !defined(MBED_STREAM_H)
 	/**
 	 * Send a single argument as string with custom accuracy
 	 *  Note that this will only succeed if a sendCmdStart has been issued first
@@ -246,6 +288,7 @@ public:
 			comms->print(arg, n);
 		}
 	}
+#endif
 
 	/**
 	 * Send double argument in scientific format.
@@ -253,7 +296,7 @@ public:
 	 */
 	void sendCmdSciArg(double arg, unsigned int n = 6);
 
-
+#if !defined(MBED_STREAM_H)
 	/**
 	 * Send a single argument in binary format
 	 *  Note that this will only succeed if a sendCmdStart has been issued first
@@ -265,6 +308,7 @@ public:
 			writeBin(arg);
 		}
 	}
+#endif	
 
 	// **** Command receiving ****
 	bool readBoolArg();
