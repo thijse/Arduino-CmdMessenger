@@ -482,7 +482,7 @@ double CmdMessenger::readDoubleArg()
  * Read next argument as string.
  * Note that the String is valid until the current command is replaced
  */
-char* CmdMessenger::readStringArg()
+const char* CmdMessenger::readStringArg()
 {
 	if (next()) {
 		dumped = true;
@@ -491,7 +491,7 @@ char* CmdMessenger::readStringArg()
 		return current;
 	}
 	ArgOk = false;
-	return '\0';
+	return "\0";
 }
 
 /**
