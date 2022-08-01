@@ -276,7 +276,7 @@ public:
 	char readCharArg();
 	float readFloatArg();
 	double readDoubleArg();
-	char *readStringArg();
+	const char *readStringArg();
 	void copyStringArg(char *string, uint8_t size);
 	uint8_t compareStringArg(char *string);
 
