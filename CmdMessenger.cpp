@@ -65,6 +65,7 @@ CmdMessenger::CmdMessenger(Stream &ccomms, const char fld_separator, const char 
  */
 void CmdMessenger::init(Stream &ccomms, const char fld_separator, const char cmd_separator, const char esc_character)
 {
+	startCommand = false;
 	default_callback = NULL;
 	comms = &ccomms;
 	print_newlines = false;
@@ -481,15 +482,16 @@ double CmdMessenger::readDoubleArg()
  * Read next argument as string.
  * Note that the String is valid until the current command is replaced
  */
-char* CmdMessenger::readStringArg()
+const char* CmdMessenger::readStringArg()
 {
 	if (next()) {
 		dumped = true;
 		ArgOk = true;
+		unescape(current);
 		return current;
 	}
 	ArgOk = false;
-	return '\0';
+	return "\0";
 }
 
 /**
@@ -501,6 +503,7 @@ void CmdMessenger::copyStringArg(char *string, uint8_t size)
 	if (next()) {
 		dumped = true;
 		ArgOk = true;
+		unescape(current);
 		strlcpy(string, current, size);
 	}
 	else {
@@ -515,6 +518,7 @@ void CmdMessenger::copyStringArg(char *string, uint8_t size)
 uint8_t CmdMessenger::compareStringArg(char *string)
 {
 	if (next()) {
+		unescape(current);
 		if (strcmp(string, current) == 0) {
 			dumped = true;
 			ArgOk = true;
@@ -572,7 +576,8 @@ char* CmdMessenger::split_r(char *str, const char delim, char **nextp)
 	// Set start of return pointer to this position
 	ret = str;
 	// Find next delimiter
-	str += findNext(str, delim);
+	LastArgLength = findNext(str, delim);
+	str += LastArgLength;
 	// and exchange this for a a \0 char. This will terminate the char
 	if (*str) {
 		*str++ = '\0';
@@ -628,20 +633,20 @@ void CmdMessenger::printSci(double f, unsigned int digits)
 	// handle sign
 	if (f < 0.0)
 	{
-		Serial.print('-');
+		comms->print('-');
 		f = -f;
 	}
 
 	// handle infinite values
 	if (isinf(f))
 	{
-		Serial.print("INF");
+		comms->print("INF");
 		return;
 	}
 	// handle Not a Number
 	if (isnan(f))
 	{
-		Serial.print("NaN");
+		comms->print("NaN");
 		return;
 	}
 
