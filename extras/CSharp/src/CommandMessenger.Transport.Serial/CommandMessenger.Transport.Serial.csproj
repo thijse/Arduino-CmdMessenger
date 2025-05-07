@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>AnyCPU</Platforms>
+    <LangVersion>11</LangVersion>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Title>CmdMessenger.Transport.Serial</Title>
+    <Authors>Demant A/S, Thomas Ouellet Fredericks, Neil Dudman, Dreamcat4, Thijs Elenbaas, Valeriy Kucherenko.</Authors>
+    <Description>CmdMessenger USB transport layer.</Description>
+    <PackageProjectUrl>https://github.com/thijse/Arduino-CmdMessenger</PackageProjectUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <Optimize>false</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1701;1702;IL2121;</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1701;1702;IL2121;SYSLIB0011</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CommandMessenger\CommandMessenger.csproj" />
+  </ItemGroup>
+</Project>

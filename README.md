@@ -1,14 +1,9 @@
+Fork from: https://github.com/thijse/Arduino-CmdMessenger
+
 # CmdMessenger
 [![License](http://img.shields.io/:license-mit-blue.svg)](http://doge.mit-license.org)
 
 A messaging library for the Arduino and .NET/Mono platform 
-
-C# Build status: [![C# Build status](https://ci.appveyor.com/api/projects/status/07nelgrs4wu8nh5r?svg=true)](https://ci.appveyor.com/project/ThijsElenbaas/arduino-cmdmessenger)
-
-VB# Build status: [![VB Build status](https://ci.appveyor.com/api/projects/status/3qhrsm2nw7cqc4st?svg=true)](https://ci.appveyor.com/project/ThijsElenbaas/arduino-cmdmessenger-yaykh)
-
-Arduino Build status: [![Build Status](https://api.travis-ci.org/thijse/Arduino-CmdMessenger.svg?branch=master&dfff)](https://travis-ci.org/thijse/Arduino-CmdMessenger) 
-
 
 ## Introduction
 
@@ -210,6 +205,9 @@ Since we have not been able to check it wil Max/MaxMSP, the example was removed.
 
 ## Changelog 
 
+### CmdMessenger v5.0.0
+* [.Net] Migration of the C#/.NET extra to .NET 8.
+
 ### CmdMessenger v4.0.0
 * [Arduino] Additional autoConnect sample
 * [.Net/.Mono] Full Threading redesign.
@@ -279,6 +277,7 @@ Since we have not been able to check it wil Max/MaxMSP, the example was removed.
 * CmdMessenger Version 2    - Dreamcat4.
 * CmdMessenger Version 3    - Thijs Elenbaas
 * CmdMessenger Version 4    - Thijs Elenbaas & Valeriy kucherenko
+* CmdMessenger Version 5    - Paweł Jakubik
 
 ## On using and modifying libraries
 

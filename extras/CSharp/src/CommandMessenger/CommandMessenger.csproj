@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>AnyCPU</Platforms>
+    <LangVersion>11</LangVersion>
+    <Version>5.0.0</Version>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Title>CmdMessenger</Title>
+    <Authors>Thomas Ouellet Fredericks, Neil Dudman, Dreamcat4, Thijs Elenbaas, Valeriy Kucherenko, Paweł Jakubik</Authors>
+    <Description>CmdMessenger is a messaging library for the Arduino Platform, and .NET/Mono platform, that supports USB transport layers.</Description>
+    <PackageProjectUrl>https://github.com/thijse/Arduino-CmdMessenger https://github.com/kryzalid87/Arduino-CmdMessenger</PackageProjectUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <Optimize>false</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1701;1702;IL2121;</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>1701;1702;IL2121;CS0579</NoWarn>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,38 @@
+trigger: 
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+- name: patchRelease
+  value: $[counter(format('{0}.{1}',variables['Major'],variables['Minor']), 0)]
+
+name: $(Major).$(Minor).$(patchRelease)
+
+jobs:
+- job: UploadNuget
+  displayName: Create and pack CmdMessanger project
+  steps:
+  - checkout: self
+
+  - task: NuGetToolInstaller@1
+    displayName: 'Install NuGet 6.3.1'
+    inputs:
+      versionSpec: 6.3.1
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore NuGet
+    inputs:
+      command: restore
+      feedsToUse: 'config'
+      nugetConfigPath: '$(Build.SourcesDirectory)\src\NuGet.config'
+      projects: 'src\CmdMessanger.sln'
+
+  - task: DotNetCoreCLI@2
+    displayName: Pack CmdMessanger project as NuGet
+    inputs:
+      command: 'pack'
+      packagesToPack: 'src\CmdMessanger.sln'
+      configuration: 'release'
+      versioningScheme: 'byBuildNumber'
