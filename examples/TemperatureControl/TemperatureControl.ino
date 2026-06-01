@@ -20,6 +20,7 @@
 
 
 
+#include <CmdMessenger.h>
 #include <utility/HeaterSim.h>
  
 //#define REAL_HEATER;
@@ -29,7 +30,6 @@
 #include <utility/HeaterSim.h>
 #endif
 
-#include <CmdMessenger.h>  
 #include <PID_v1.h>
 #include <utility/DoEvery.h>   
 

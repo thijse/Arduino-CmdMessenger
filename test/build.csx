@@ -69,7 +69,7 @@ string GetScriptPath()
 string repoRoot = Path.GetFullPath(Path.Combine(ScriptDir(), ".."));
 // If invoked from the repo root, ScriptDir() points elsewhere; prefer cwd if it
 // looks like the repo root.
-if (File.Exists(Path.Combine(Environment.CurrentDirectory, "CmdMessenger.h")))
+if (File.Exists(Path.Combine(Environment.CurrentDirectory, "library.properties")))
     repoRoot = Environment.CurrentDirectory;
 
 Console.WriteLine($"Repo root: {repoRoot}");
@@ -112,14 +112,6 @@ string? ResolveTool(string exe, string versionArg, params string[] extraSearchPa
 var extraLibs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
 {
     ["TemperatureControl"] = new[] { "PID" },
-};
-
-// Sketches that cannot be built with arduino-cli. Reason is shown in the
-// summary. arduino-cli follows the modern Arduino library spec strictly and
-// does not add the legacy `utility/` directory to the sketch include path.
-var arduinoCliSkip = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-{
-    ["TemperatureControl"] = "uses <utility/HeaterSim.h>; needs library restructure to src/utility/",
 };
 
 int Run(string exe, string args, string? cwd = null, bool quiet = false)
@@ -209,11 +201,6 @@ if (!skipArduinoCli && sketches.Count > 0)
         foreach (var sketch in sketches)
         {
             var name = Path.GetFileName(sketch);
-            if (arduinoCliSkip.TryGetValue(name, out var skipReason))
-            {
-                results.Add(new StepResult($"arduino-cli: {name}", true, $"skipped — {skipReason}"));
-                continue;
-            }
             var libArgs = $"--library \"{repoRoot}\"";
             if (extraLibs.TryGetValue(name, out var deps))
             {
@@ -244,6 +231,14 @@ if (!skipPio && sketches.Count > 0)
         Directory.CreateDirectory(libStage);
         try
         {
+            void CopyDirRecursive(string srcDir, string dstDir)
+            {
+                Directory.CreateDirectory(dstDir);
+                foreach (var f in Directory.GetFiles(srcDir))
+                    File.Copy(f, Path.Combine(dstDir, Path.GetFileName(f)), true);
+                foreach (var d in Directory.GetDirectories(srcDir))
+                    CopyDirRecursive(d, Path.Combine(dstDir, Path.GetFileName(d)));
+            }
             void Copy(string rel)
             {
                 var src = Path.Combine(repoRoot, rel);
@@ -251,19 +246,12 @@ if (!skipPio && sketches.Count > 0)
                 var dst = Path.Combine(libStage, rel);
                 Directory.CreateDirectory(Path.GetDirectoryName(dst)!);
                 if (File.Exists(src)) File.Copy(src, dst, true);
-                else
-                {
-                    Directory.CreateDirectory(dst);
-                    foreach (var f in Directory.GetFiles(src))
-                        File.Copy(f, Path.Combine(dst, Path.GetFileName(f)), true);
-                }
+                else CopyDirRecursive(src, dst);
             }
-            Copy("CmdMessenger.h");
-            Copy("CmdMessenger.cpp");
             Copy("library.properties");
             Copy("library.json");
             Copy("keywords.txt");
-            Copy("utility");
+            Copy("src");
 
             foreach (var sketch in sketches)
             {
