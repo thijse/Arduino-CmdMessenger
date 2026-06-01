@@ -20,18 +20,18 @@
 
 
 
-#include <utility\HeaterSim.h>
+#include <utility/HeaterSim.h>
  
 //#define REAL_HEATER;
 #ifdef REAL_HEATER
 #include <Adafruit_MAX31855.h>
 #else
-#include <utility\HeaterSim.h>
+#include <utility/HeaterSim.h>
 #endif
 
 #include <CmdMessenger.h>  
 #include <PID_v1.h>
-#include <utility\\DoEvery.h>   
+#include <utility/DoEvery.h>   
 
 
 // Attach a new CmdMessenger object to the default Serial port

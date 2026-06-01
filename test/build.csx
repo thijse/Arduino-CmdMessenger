@@ -79,11 +79,11 @@ Console.WriteLine();
 record StepResult(string Name, bool Ok, string Detail);
 var results = new List<StepResult>();
 
-bool ToolExists(string exe)
+bool ToolExists(string exe, string versionArg = "--version")
 {
     try
     {
-        var psi = new ProcessStartInfo(exe, "--version")
+        var psi = new ProcessStartInfo(exe, versionArg)
         {
             RedirectStandardOutput = true,
             RedirectStandardError  = true,
@@ -95,6 +95,32 @@ bool ToolExists(string exe)
     }
     catch { return false; }
 }
+
+// Resolve a tool name to a usable path: tries PATH first, then common install
+// locations on Windows. Returns null when the tool cannot be found.
+string? ResolveTool(string exe, string versionArg, params string[] extraSearchPaths)
+{
+    if (ToolExists(exe, versionArg)) return exe;
+    foreach (var c in extraSearchPaths)
+        if (File.Exists(c) && ToolExists(c, versionArg)) return c;
+    return null;
+}
+
+// Per-sketch extra Arduino library dependencies. Each entry is a library name
+// understood by both `arduino-cli lib install` and `pio pkg install --library`.
+// Sketches not listed here have no extra deps.
+var extraLibs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
+{
+    ["TemperatureControl"] = new[] { "PID" },
+};
+
+// Sketches that cannot be built with arduino-cli. Reason is shown in the
+// summary. arduino-cli follows the modern Arduino library spec strictly and
+// does not add the legacy `utility/` directory to the sketch include path.
+var arduinoCliSkip = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+{
+    ["TemperatureControl"] = "uses <utility/HeaterSim.h>; needs library restructure to src/utility/",
+};
 
 int Run(string exe, string args, string? cwd = null, bool quiet = false)
 {
@@ -172,16 +198,31 @@ if (sketches.Count == 0)
 // 3a. arduino-cli
 if (!skipArduinoCli && sketches.Count > 0)
 {
-    if (!ToolExists("arduino-cli"))
+    var cli = ResolveTool("arduino-cli", "version",
+        @"C:\Program Files\Arduino CLI\arduino-cli.exe",
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                     @"Programs\Arduino CLI\arduino-cli.exe"));
+    if (cli == null)
         results.Add(new StepResult("arduino-cli", false, "not installed (skip with --skip-arduino-cli)"));
     else
     {
         foreach (var sketch in sketches)
         {
             var name = Path.GetFileName(sketch);
+            if (arduinoCliSkip.TryGetValue(name, out var skipReason))
+            {
+                results.Add(new StepResult($"arduino-cli: {name}", true, $"skipped — {skipReason}"));
+                continue;
+            }
+            var libArgs = $"--library \"{repoRoot}\"";
+            if (extraLibs.TryGetValue(name, out var deps))
+            {
+                foreach (var dep in deps)
+                    Run(cli, $"lib install \"{dep}\"", quiet: true); // idempotent
+            }
             Step($"arduino-cli: {name} ({fqbn})",
-                 () => Run("arduino-cli",
-                           $"compile --fqbn {fqbn} --library \"{repoRoot}\" \"{sketch}\"",
+                 () => Run(cli,
+                           $"compile --fqbn {fqbn} {libArgs} \"{sketch}\"",
                            quiet: true));
         }
     }
@@ -195,13 +236,52 @@ if (!skipPio && sketches.Count > 0)
     else
     {
         var pio = ToolExists("pio") ? "pio" : "platformio";
-        foreach (var sketch in sketches)
+
+        // pio ci --lib=<dir> copies the *whole* dir; pointing it at the repo
+        // root pulls in docs/, extras/, build outputs, etc. and trips
+        // shutil.copytree. Stage a minimal lib folder instead.
+        var libStage = Path.Combine(Path.GetTempPath(), "cmdmsg-piolib-" + Guid.NewGuid().ToString("N").Substring(0, 8));
+        Directory.CreateDirectory(libStage);
+        try
         {
-            var name = Path.GetFileName(sketch);
-            Step($"pio ci: {name} ({pioBoard})",
-                 () => Run(pio,
-                           $"ci --board={pioBoard} --lib=\"{repoRoot}\" \"{sketch}\"",
-                           quiet: true));
+            void Copy(string rel)
+            {
+                var src = Path.Combine(repoRoot, rel);
+                if (!File.Exists(src) && !Directory.Exists(src)) return;
+                var dst = Path.Combine(libStage, rel);
+                Directory.CreateDirectory(Path.GetDirectoryName(dst)!);
+                if (File.Exists(src)) File.Copy(src, dst, true);
+                else
+                {
+                    Directory.CreateDirectory(dst);
+                    foreach (var f in Directory.GetFiles(src))
+                        File.Copy(f, Path.Combine(dst, Path.GetFileName(f)), true);
+                }
+            }
+            Copy("CmdMessenger.h");
+            Copy("CmdMessenger.cpp");
+            Copy("library.properties");
+            Copy("library.json");
+            Copy("keywords.txt");
+            Copy("utility");
+
+            foreach (var sketch in sketches)
+            {
+                var name = Path.GetFileName(sketch);
+                if (extraLibs.TryGetValue(name, out var deps))
+                {
+                    foreach (var dep in deps)
+                        Run(pio, $"pkg install -g --library \"{dep}\"", quiet: true); // idempotent
+                }
+                Step($"pio ci: {name} ({pioBoard})",
+                     () => Run(pio,
+                               $"ci --board={pioBoard} --lib=\"{libStage}\" \"{sketch}\"",
+                               quiet: true));
+            }
+        }
+        finally
+        {
+            try { Directory.Delete(libStage, recursive: true); } catch { /* best effort */ }
         }
     }
 }
