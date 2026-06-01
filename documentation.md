@@ -4,12 +4,12 @@ This page collects the conceptual / example‑level documentation for CmdMesseng
 
 ## API reference
 
-The full class‑level reference is generated with Doxygen and lives in this folder:
+The full class‑level reference is generated with Doxygen and published via GitHub Pages:
 
-- [Arduino library reference](Arduino/html/class_cmd_messenger.html) — the `CmdMessenger` C++ class
-- [C# / .NET reference](PC/html/namespaces.html) — `CommandMessenger` namespaces and types
+- [Arduino library reference](https://thijse.github.io/Arduino-CmdMessenger/Arduino/html/class_cmd_messenger.html) — the `CmdMessenger` C++ class
+- [C# / .NET reference](https://thijse.github.io/Arduino-CmdMessenger/PC/html/namespaces.html) — `CommandMessenger` namespaces and types
 
-> Tip: when this repository is published with GitHub Pages, these links open directly in the browser. Locally you can also open them straight from disk.
+Local copies live under [`docs/Arduino/html/`](docs/Arduino/html/) and [`docs/PC/html/`](docs/PC/html/).
 
 ## Message format
 

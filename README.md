@@ -9,7 +9,7 @@
 
 A command-based messaging library for Arduino that enables structured communication between microcontrollers and PC applications over serial, Bluetooth, or TCP/IP.
 
-**[Documentation](docs/documentation.md)** · **[Examples](examples/)** · **[C# Client](extras/CSharp/)** · **[PyCmdMessenger (Python)](https://github.com/harmsm/PyCmdMessenger)**
+**[Documentation](documentation.md)** · **[Examples](examples/)** · **[C# Client](extras/CSharp/)** · **[PyCmdMessenger (Python)](https://github.com/harmsm/PyCmdMessenger)**
 
 ## Install
 
