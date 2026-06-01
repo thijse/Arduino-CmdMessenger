@@ -10,3 +10,7 @@
 # Build outputs
 bin/
 obj/
+
+# Local environment files
+.env
+**/.env
