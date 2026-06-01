@@ -14,6 +14,7 @@
 // Optional args:
 //     --skip-csharp        skip the C# solution
 //     --skip-vb            skip the VB solution
+//     --skip-tests         skip xUnit tests (test/CSharp/CommandMessenger.Tests)
 //     --skip-arduino-cli   skip arduino-cli sketch builds
 //     --skip-pio           skip PlatformIO sketch builds
 //     --fqbn <fqbn>        override the arduino-cli FQBN (default: arduino:avr:nano)
@@ -35,6 +36,7 @@ bool skipCSharp     = argList.Remove("--skip-csharp");
 bool skipVb         = argList.Remove("--skip-vb");
 bool skipArduinoCli = argList.Remove("--skip-arduino-cli");
 bool skipPio        = argList.Remove("--skip-pio");
+bool skipTests      = argList.Remove("--skip-tests");
 
 string TakeValue(string flag, string defaultValue)
 {
@@ -172,6 +174,18 @@ if (!skipVb)
         results.Add(new StepResult("VB solution", false, "dotnet not installed"));
     else
         Step("VB solution", () => Run("dotnet", $"build \"{sln}\" -nologo -v quiet"));
+}
+
+// ─── 2b. xUnit tests ─────────────────────────────────────────────────────────
+if (!skipTests)
+{
+    var testProj = Path.Combine(repoRoot, "test", "CSharp", "CommandMessenger.Tests", "CommandMessenger.Tests.csproj");
+    if (!File.Exists(testProj))
+        results.Add(new StepResult("xUnit tests", false, "test project not found"));
+    else if (!ToolExists("dotnet"))
+        results.Add(new StepResult("xUnit tests", false, "dotnet not installed"));
+    else
+        Step("xUnit tests", () => Run("dotnet", $"test \"{testProj}\" --no-restore -v quiet"));
 }
 
 // ─── 3. Arduino sketches ─────────────────────────────────────────────────────
