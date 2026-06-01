@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Control</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, sans-serif; background: #1a1a2e; color: #eee; padding: 1.5rem; }
+        h1 { margin-bottom: 0.5rem; color: #0af; }
+        #status { margin-bottom: 1rem; padding: 0.4rem 0.8rem; border-radius: 4px;
+                  background: #333; font-size: 0.85rem; display: inline-block; }
+        #status.connected { background: #0a4; }
+        #status.disconnected { background: #a33; }
+        .controls { display: flex; gap: 2rem; align-items: center; margin-bottom: 1rem; }
+        .control-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        label { font-size: 0.85rem; color: #aaa; }
+        input[type=range] { width: 300px; }
+        button { padding: 0.5rem 1.5rem; border: none; border-radius: 4px; font-size: 0.9rem;
+                 cursor: pointer; background: #0af; color: #000; }
+        button:hover { background: #08d; }
+        #goal-value { font-size: 1.1rem; font-weight: bold; color: #f80; }
+        #chart { width: 100%; height: 400px; margin-bottom: 1rem; }
+        #log { background: #111; border-radius: 4px; padding: 1rem; height: 200px;
+                overflow-y: auto; font-family: monospace; font-size: 0.75rem; color: #8f8; }
+        #log p { margin: 0.1rem 0; }
+    </style>
+</head>
+<body>
+    <h1>Temperature Control</h1>
+    <div id="status" class="disconnected">Disconnected</div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Goal Temperature (°C)</label>
+            <input type="range" id="goal-slider" min="10" max="50" step="0.5" value="25">
+            <span id="goal-value">25.0 °C</span>
+        </div>
+        <div class="control-group" style="flex-direction:row; gap:0.5rem;">
+            <button id="start-btn">Start</button>
+            <button id="stop-btn">Stop</button>
+        </div>
+    </div>
+
+    <div id="chart"></div>
+    <h2 style="margin-bottom:0.4rem; font-size:0.9rem; color:#aaa;">Log</h2>
+    <div id="log"></div>
+
+    <script>
+        // --- Chart setup ---
+        const MAX_POINTS = 300;
+        const chartData = {
+            time: [],
+            current_temperature: [],
+            goal_temperature: [],
+            heater_value: [],
+        };
+
+        Plotly.newPlot('chart', [
+            { y: [], name: 'Current Temp (°C)', mode: 'lines', line: { color: '#0af' } },
+            { y: [], name: 'Goal Temp (°C)', mode: 'lines', line: { color: '#f80', dash: 'dash' } },
+            { y: [], name: 'Heater (%)', mode: 'lines', yaxis: 'y2', line: { color: '#f44' } },
+        ], {
+            paper_bgcolor: '#1a1a2e',
+            plot_bgcolor: '#111',
+            font: { color: '#eee' },
+            margin: { t: 30, r: 60, b: 40, l: 60 },
+            xaxis: { title: 'Time (s)', color: '#888' },
+            yaxis: { title: 'Temperature (°C)', color: '#888', range: [0, 60] },
+            yaxis2: { title: 'Heater (%)', overlaying: 'y', side: 'right', color: '#888', range: [0, 100] },
+            legend: { x: 0, y: 1.15, orientation: 'h' },
+        }, { responsive: true });
+
+        // --- WebSocket ---
+        const ws = new WebSocket(`ws://${location.host}/ws`);
+        const logEl = document.getElementById('log');
+        const statusEl = document.getElementById('status');
+        const slider = document.getElementById('goal-slider');
+        const goalVal = document.getElementById('goal-value');
+
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+            switch (msg.type) {
+                case 'chart': addDataPoint(msg.data); break;
+                case 'log': appendLog(msg.message); break;
+                case 'status': statusEl.textContent = msg.message; break;
+                case 'state':
+                    statusEl.className = msg.connected ? 'connected' : 'disconnected';
+                    statusEl.textContent = msg.connected ? 'Connected' : 'Disconnected';
+                    if (msg.goal_temperature !== undefined) {
+                        slider.value = msg.goal_temperature;
+                        goalVal.textContent = msg.goal_temperature.toFixed(1) + ' °C';
+                    }
+                    break;
+            }
+        };
+
+        function addDataPoint(d) {
+            Plotly.extendTraces('chart', {
+                y: [[d.current_temperature], [d.goal_temperature], [d.heater_value * 100]]
+            }, [0, 1, 2]);
+
+            // Rolling window.
+            const traces = document.getElementById('chart').data;
+            if (traces[0].y.length > MAX_POINTS) {
+                Plotly.relayout('chart', { 'xaxis.range': [traces[0].y.length - MAX_POINTS, traces[0].y.length] });
+            }
+        }
+
+        function appendLog(text) {
+            const p = document.createElement('p');
+            p.textContent = text;
+            logEl.appendChild(p);
+            if (logEl.children.length > 500) logEl.removeChild(logEl.firstChild);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        // --- Controls ---
+        slider.addEventListener('input', () => {
+            const v = parseFloat(slider.value);
+            goalVal.textContent = v.toFixed(1) + ' °C';
+            ws.send(JSON.stringify({ command: 'set_goal_temperature', value: v }));
+        });
+
+        document.getElementById('start-btn').addEventListener('click', () => {
+            ws.send(JSON.stringify({ command: 'start_acquisition', value: true }));
+        });
+
+        document.getElementById('stop-btn').addEventListener('click', () => {
+            ws.send(JSON.stringify({ command: 'stop_acquisition', value: true }));
+        });
+    </script>
+</body>
+</html>

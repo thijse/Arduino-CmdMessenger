@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Logging</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, sans-serif; background: #1a1a2e; color: #eee; padding: 1.5rem; }
+        h1 { margin-bottom: 1rem; color: #0af; }
+        #chart { width: 100%; height: 400px; margin-bottom: 1rem; }
+        #log { background: #111; border-radius: 4px; padding: 1rem; height: 200px;
+                overflow-y: auto; font-family: monospace; font-size: 0.75rem; color: #8f8; }
+        #log p { margin: 0.1rem 0; }
+    </style>
+</head>
+<body>
+    <h1>Data Logging</h1>
+    <div id="chart"></div>
+    <h2 style="margin-bottom:0.4rem; font-size:0.9rem; color:#aaa;">Log</h2>
+    <div id="log"></div>
+
+    <script>
+        const MAX_POINTS = 500;
+
+        Plotly.newPlot('chart', [
+            { x: [], y: [], name: 'Value', mode: 'lines', line: { color: '#0af' } },
+        ], {
+            paper_bgcolor: '#1a1a2e',
+            plot_bgcolor: '#111',
+            font: { color: '#eee' },
+            margin: { t: 30, r: 30, b: 40, l: 60 },
+            xaxis: { title: 'Time (s)', color: '#888' },
+            yaxis: { title: 'Value', color: '#888' },
+        }, { responsive: true });
+
+        const ws = new WebSocket(`ws://${location.host}/ws`);
+        const logEl = document.getElementById('log');
+
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+            switch (msg.type) {
+                case 'chart':
+                    Plotly.extendTraces('chart', {
+                        x: [[msg.data.time]],
+                        y: [[msg.data.value]],
+                    }, [0]);
+                    // Rolling window trim.
+                    const trace = document.getElementById('chart').data[0];
+                    if (trace.x.length > MAX_POINTS) {
+                        Plotly.relayout('chart', {
+                            'xaxis.range': [trace.x[trace.x.length - MAX_POINTS], trace.x[trace.x.length - 1]]
+                        });
+                    }
+                    break;
+                case 'log':
+                    const p = document.createElement('p');
+                    p.textContent = msg.message;
+                    logEl.appendChild(p);
+                    if (logEl.children.length > 500) logEl.removeChild(logEl.firstChild);
+                    logEl.scrollTop = logEl.scrollHeight;
+                    break;
+            }
+        };
+    </script>
+</body>
+</html>

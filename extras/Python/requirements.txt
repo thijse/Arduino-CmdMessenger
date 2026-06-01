@@ -1,0 +1,11 @@
+# Py-CmdMessenger - Dependencies
+#
+# Runtime (used by the library itself):
+pyserial>=3.5
+
+# Web-UI samples (extras/Python/5_data_logging/, 6_..., 9_...):
+fastapi>=0.100
+uvicorn[standard]>=0.20
+
+# Build / packaging (editable install of this project):
+hatchling>=1.18

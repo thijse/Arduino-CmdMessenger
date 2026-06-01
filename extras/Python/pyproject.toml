@@ -1,0 +1,50 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "py-cmdmessenger"
+version = "0.1.0"
+description = "Pythonic port of the C#/VB CommandMessenger library for Arduino serial communication"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "Thijs Elenbaas" },
+]
+keywords = ["arduino", "serial", "cmdmessenger", "embedded", "iot"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Communications",
+    "Topic :: Software Development :: Embedded Systems",
+    "Topic :: System :: Hardware",
+]
+dependencies = [
+    "pyserial>=3.5",
+]
+
+[project.optional-dependencies]
+web = [
+    "fastapi>=0.100",
+    "uvicorn[standard]>=0.20",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-timeout>=2.1",
+]
+
+[project.urls]
+Homepage = "https://github.com/thijse/Arduino-CmdMessenger"
+Repository = "https://github.com/thijse/Arduino-CmdMessenger"
+Issues = "https://github.com/thijse/Arduino-CmdMessenger/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["cmd_messenger"]

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arduino Controller</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: system-ui, sans-serif; background: #1a1a2e; color: #eee; padding: 2rem; }
+        h1 { margin-bottom: 1rem; color: #0af; }
+        .controls { display: flex; gap: 2rem; align-items: center; margin-bottom: 2rem; }
+        .control-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        label { font-size: 0.85rem; color: #aaa; }
+        input[type=range] { width: 300px; }
+        button { padding: 0.5rem 1.5rem; border: none; border-radius: 4px; font-size: 1rem;
+                 cursor: pointer; transition: background 0.2s; }
+        button.on { background: #0c6; color: #000; }
+        button.off { background: #555; color: #ccc; }
+        #freq-value { font-size: 1.2rem; font-weight: bold; color: #0af; }
+        #log { background: #111; border-radius: 4px; padding: 1rem; height: 300px;
+                overflow-y: auto; font-family: monospace; font-size: 0.8rem; color: #8f8; }
+        #log p { margin: 0.1rem 0; }
+    </style>
+</head>
+<body>
+    <h1>Arduino Controller</h1>
+    <div class="controls">
+        <div class="control-group">
+            <label>LED Blink Frequency (Hz)</label>
+            <input type="range" id="freq-slider" min="0.5" max="50" step="0.5" value="2">
+            <span id="freq-value">2.0 Hz</span>
+        </div>
+        <div class="control-group">
+            <label>LED On/Off</label>
+            <button id="led-btn" class="on">ON</button>
+        </div>
+    </div>
+    <h2 style="margin-bottom:0.5rem; font-size:1rem; color:#aaa;">Log</h2>
+    <div id="log"></div>
+
+    <script>
+        const ws = new WebSocket(`ws://${location.host}/ws`);
+        const logEl = document.getElementById('log');
+        const slider = document.getElementById('freq-slider');
+        const freqVal = document.getElementById('freq-value');
+        const ledBtn = document.getElementById('led-btn');
+        let ledState = true;
+
+        ws.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+            if (msg.type === 'log') {
+                const p = document.createElement('p');
+                p.textContent = msg.message;
+                logEl.appendChild(p);
+                logEl.scrollTop = logEl.scrollHeight;
+            }
+        };
+
+        slider.addEventListener('input', () => {
+            const v = parseFloat(slider.value);
+            freqVal.textContent = v.toFixed(1) + ' Hz';
+            ws.send(JSON.stringify({ command: 'set_frequency', value: v }));
+        });
+
+        ledBtn.addEventListener('click', () => {
+            ledState = !ledState;
+            ledBtn.textContent = ledState ? 'ON' : 'OFF';
+            ledBtn.className = ledState ? 'on' : 'off';
+            ws.send(JSON.stringify({ command: 'set_led', value: ledState }));
+        });
+    </script>
+</body>
+</html>
