@@ -2,6 +2,20 @@ using Xunit;
 
 namespace CommandMessenger.Tests
 {
+    /// <summary>
+    /// Tests for the Command data structures (SendCommand, ReceivedCommand).
+    ///
+    /// SendCommand: builds outgoing commands with typed arguments.
+    ///   - Verifies CmdId assignment, Ok flag, and argument serialisation for
+    ///     string, float, Int16, UInt16, Int32, bool types.
+    ///   - Verifies ACK properties (ReqAc, AckCmdId, Timeout).
+    ///
+    /// ReceivedCommand: parses incoming raw argument arrays.
+    ///   - Verifies CmdId extraction from first element.
+    ///   - Verifies sequential ReadXxxArg() calls consume arguments in order.
+    ///   - Verifies boundary cases: null input, empty array, invalid CmdId,
+    ///     reading past available arguments.
+    /// </summary>
     public class CommandTests
     {
         [Fact]
@@ -204,6 +218,111 @@ namespace CommandMessenger.Tests
         {
             var cmd = new ReceivedCommand(new[] { "abc" });
             Assert.False(cmd.Ok);
+        }
+
+        // --- Numeric boundary edge cases ---
+
+        [Theory]
+        [InlineData("2147483647", 2147483647)]   // Int32.MaxValue
+        [InlineData("-2147483648", -2147483648)] // Int32.MinValue
+        [InlineData("0", 0)]
+        public void ReceivedCommand_ReadInt32Arg_Boundaries(string raw, int expected)
+        {
+            var cmd = new ReceivedCommand(new[] { "1", raw });
+            Assert.Equal(expected, cmd.ReadInt32Arg());
+        }
+
+        [Fact]
+        public void ReceivedCommand_ReadInt32Arg_Overflow_ReturnsZero()
+        {
+            // Value exceeds Int32 range
+            var cmd = new ReceivedCommand(new[] { "1", "9999999999999" });
+            Assert.Equal(0, cmd.ReadInt32Arg());
+        }
+
+        [Fact]
+        public void ReceivedCommand_ReadInt32Arg_EmptyString_ReturnsZero()
+        {
+            var cmd = new ReceivedCommand(new[] { "1", "" });
+            Assert.Equal(0, cmd.ReadInt32Arg());
+        }
+
+        [Theory]
+        [InlineData("65535", (ushort)65535)] // UInt16.MaxValue
+        [InlineData("0", (ushort)0)]         // UInt16.MinValue
+        public void ReceivedCommand_ReadUInt16Arg_Boundaries(string raw, ushort expected)
+        {
+            var cmd = new ReceivedCommand(new[] { "1", raw });
+            Assert.Equal(expected, cmd.ReadUInt16Arg());
+        }
+
+        [Fact]
+        public void ReceivedCommand_ReadFloatArg_NaN()
+        {
+            var cmd = new ReceivedCommand(new[] { "1", "NaN" });
+            Assert.True(float.IsNaN(cmd.ReadFloatArg()));
+        }
+
+        [Fact]
+        public void ReceivedCommand_ReadFloatArg_Infinity()
+        {
+            var cmd = new ReceivedCommand(new[] { "1", "Infinity" });
+            Assert.True(float.IsPositiveInfinity(cmd.ReadFloatArg()));
+        }
+
+        [Fact]
+        public void ReceivedCommand_ReadFloatArg_NegativeInfinity()
+        {
+            var cmd = new ReceivedCommand(new[] { "1", "-Infinity" });
+            Assert.True(float.IsNegativeInfinity(cmd.ReadFloatArg()));
+        }
+
+        [Fact]
+        public void ReceivedCommand_ReadFloatArg_EmptyString_ReturnsZero()
+        {
+            var cmd = new ReceivedCommand(new[] { "1", "" });
+            Assert.Equal(0f, cmd.ReadFloatArg());
+        }
+
+        // --- String edge cases ---
+
+        [Fact]
+        public void ReceivedCommand_ReadStringArg_EmptyString()
+        {
+            var cmd = new ReceivedCommand(new[] { "1", "" });
+            Assert.Equal("", cmd.ReadStringArg());
+        }
+
+        [Fact]
+        public void ReceivedCommand_ReadStringArg_WhitespaceOnly()
+        {
+            var cmd = new ReceivedCommand(new[] { "1", "   " });
+            Assert.Equal("   ", cmd.ReadStringArg());
+        }
+
+        [Fact]
+        public void SendCommand_EmptyStringArg()
+        {
+            var cmd = new SendCommand(1, "");
+            cmd.InitArguments();
+            Assert.Single(cmd.Arguments);
+            Assert.Equal("", cmd.Arguments[0]);
+        }
+
+        [Fact]
+        public void SendCommand_WhitespaceArg()
+        {
+            var cmd = new SendCommand(1, "  \t  ");
+            cmd.InitArguments();
+            Assert.Equal("  \t  ", cmd.Arguments[0]);
+        }
+
+        [Fact]
+        public void SendCommand_Latin1StringArg()
+        {
+            var cmd = new SendCommand(1, "café");
+            cmd.InitArguments();
+            Assert.Equal("café", cmd.Arguments[0]);
         }
     }
 }

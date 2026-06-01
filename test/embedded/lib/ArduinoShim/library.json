@@ -1,0 +1,5 @@
+{
+    "name": "ArduinoShim",
+    "version": "1.0.0",
+    "description": "Minimal Arduino API shim for native host builds"
+}

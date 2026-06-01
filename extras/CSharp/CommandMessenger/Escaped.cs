@@ -164,6 +164,7 @@ namespace CommandMessenger
                 if (input[fromChar] == _escapeCharacter)
                 {
                     fromChar++;
+                    if (fromChar >= input.Length) break;
                 }
                 output += input[fromChar];
             }

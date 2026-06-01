@@ -5,6 +5,21 @@ using Xunit;
 
 namespace CommandMessenger.Tests
 {
+    /// <summary>
+    /// Integration-level tests for the CmdMessenger host library using an
+    /// in-memory LoopbackTransport (no serial port needed).
+    ///
+    /// Tests verify the full receive pipeline:
+    ///   Transport.DataReceived → CommunicationManager.ParseLines → ReceiveCommandQueue → Callback
+    ///
+    /// Coverage:
+    ///   - Callback dispatch: default handler, per-command-ID handler, priority
+    ///   - Multiple commands arriving in a single buffer
+    ///   - Partial data buffering across multiple receives
+    ///   - Escaped characters surviving the parse pipeline
+    ///   - SendCommand formatting (bypass-queue mode)
+    ///   - NewLineReceived event propagation
+    /// </summary>
     public class CmdMessengerTests : IDisposable
     {
         private readonly LoopbackTransport _transport;
@@ -159,6 +174,73 @@ namespace CommandMessenger.Tests
             SimulateIncoming("1;");
 
             Assert.True(fired);
+        }
+
+        // --- Edge cases through full pipeline ---
+
+        [Fact]
+        public void EmptyArgument_ThroughPipeline()
+        {
+            ReceivedCommand received = null;
+            _messenger.Attach(1, cmd => received = cmd);
+
+            // "1,,;" = cmd 1 with two empty arguments
+            SimulateIncoming("1,,;");
+
+            Assert.NotNull(received);
+            Assert.Equal("", received.ReadStringArg());
+            Assert.Equal("", received.ReadStringArg());
+        }
+
+        [Fact]
+        public void Latin1Characters_ThroughPipeline()
+        {
+            ReceivedCommand received = null;
+            _messenger.Attach(1, cmd => received = cmd);
+
+            SimulateIncoming("1,caf\u00E9;");
+
+            Assert.NotNull(received);
+            Assert.Equal("caf\u00E9", received.ReadStringArg());
+        }
+
+        [Fact]
+        public void WhitespaceArgument_ThroughPipeline()
+        {
+            ReceivedCommand received = null;
+            _messenger.Attach(1, cmd => received = cmd);
+
+            SimulateIncoming("1,   ;");
+
+            Assert.NotNull(received);
+            Assert.Equal("   ", received.ReadStringArg());
+        }
+
+        [Fact]
+        public void LargePayload_ThroughPipeline()
+        {
+            ReceivedCommand received = null;
+            _messenger.Attach(1, cmd => received = cmd);
+
+            var largeArg = new string('A', 5000);
+            SimulateIncoming($"1,{largeArg};");
+
+            Assert.NotNull(received);
+            Assert.Equal(largeArg, received.ReadStringArg());
+        }
+
+        [Fact]
+        public void EmptyCommand_NoArgs_Dispatched()
+        {
+            ReceivedCommand received = null;
+            _messenger.Attach(1, cmd => received = cmd);
+
+            // Just command ID, no arguments
+            SimulateIncoming("1;");
+
+            Assert.NotNull(received);
+            Assert.Equal(1, received.CmdId);
+            Assert.False(received.Available());
         }
     }
 }

@@ -3,6 +3,22 @@ using Xunit;
 
 namespace CommandMessenger.Tests
 {
+    /// <summary>
+    /// Tests for the Escaping utility class which handles encoding/decoding of
+    /// special characters in the CmdMessenger wire protocol.
+    ///
+    /// The protocol uses three special characters:
+    ///   - Field separator  (default ',') — separates arguments within a command
+    ///   - Command separator (default ';') — marks end of a command
+    ///   - Escape character  (default '/') — prefixes a literal special char
+    ///
+    /// These tests verify that:
+    ///   1. Each special character is properly escaped on encode
+    ///   2. Escape → Unescape is lossless (round-trip identity)
+    ///   3. Split respects escaped separators
+    ///   4. Remove skips escaped characters
+    ///   5. Custom separator sets work identically
+    /// </summary>
     public class EscapingTests
     {
         public EscapingTests()
@@ -147,6 +163,89 @@ namespace CommandMessenger.Tests
             {
                 Escaping.EscapeChars(',', ';', '/');
             }
+        }
+
+        // --- Edge cases ---
+
+        [Fact]
+        public void Escape_NullInput_Throws()
+        {
+            Assert.ThrowsAny<Exception>(() => Escaping.Escape(null));
+        }
+
+        [Fact]
+        public void Unescape_NullInput_Throws()
+        {
+            Assert.ThrowsAny<Exception>(() => Escaping.Unescape(null));
+        }
+
+        [Theory]
+        [InlineData("café")]
+        [InlineData("ñoño")]
+        [InlineData("über")]
+        [InlineData("\u00FF")] // ÿ — max Latin-1 char
+        public void Escape_Latin1Chars_RoundTrip(string input)
+        {
+            // Characters within ISO-8859-1 range should survive
+            var escaped = Escaping.Escape(input);
+            var unescaped = Escaping.Unescape(escaped);
+            Assert.Equal(input, unescaped);
+        }
+
+        [Theory]
+        [InlineData(" ")]
+        [InlineData("   ")]
+        [InlineData("\t")]
+        [InlineData("\r\n")]
+        public void Escape_WhitespaceOnly_RoundTrip(string input)
+        {
+            var escaped = Escaping.Escape(input);
+            var unescaped = Escaping.Unescape(escaped);
+            Assert.Equal(input, unescaped);
+        }
+
+        [Fact]
+        public void Escape_LongString_RoundTrip()
+        {
+            var input = new string('x', 10000) + "," + new string('y', 10000);
+            var escaped = Escaping.Escape(input);
+            var unescaped = Escaping.Unescape(escaped);
+            Assert.Equal(input, unescaped);
+        }
+
+        [Fact]
+        public void Split_EmptyString_ReturnsSingleEmpty()
+        {
+            var parts = Escaping.Split("", ',', '/', StringSplitOptions.None);
+            Assert.Single(parts);
+            Assert.Equal("", parts[0]);
+        }
+
+        [Fact]
+        public void Split_OnlySeparators_ReturnsEmptyFields()
+        {
+            var parts = Escaping.Split(",,", ',', '/', StringSplitOptions.None);
+            Assert.Equal(3, parts.Length);
+            Assert.All(parts, p => Assert.Equal("", p));
+        }
+
+        [Fact]
+        public void Escape_AllSpecialCharsConsecutive_RoundTrip()
+        {
+            // Pathological: every character is special
+            var input = ",;/\0,;/\0";
+            var escaped = Escaping.Escape(input);
+            var unescaped = Escaping.Unescape(escaped);
+            Assert.Equal(input, unescaped);
+        }
+
+        [Fact]
+        public void Unescape_TrailingEscapeChar_Handled()
+        {
+            // Malformed input: escape char at end with nothing following
+            // Should not throw — trailing escape is silently dropped
+            var result = Escaping.Unescape("hello/");
+            Assert.Equal("hello", result);
         }
     }
 }

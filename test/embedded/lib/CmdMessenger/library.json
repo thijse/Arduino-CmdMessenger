@@ -1,0 +1,8 @@
+{
+    "name": "CmdMessenger",
+    "version": "4.1.0",
+    "description": "Local copy of CmdMessenger source for native testing",
+    "dependencies": {
+        "ArduinoShim": "*"
+    }
+}

@@ -11,6 +11,11 @@
 bin/
 obj/
 
+# PlatformIO build outputs
+.pio/
+.pioenvs/
+.piolibdeps/
+
 # Local environment files
 .env
 **/.env

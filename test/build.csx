@@ -15,6 +15,10 @@
 //     --skip-csharp        skip the C# solution
 //     --skip-vb            skip the VB solution
 //     --skip-tests         skip xUnit tests (test/CSharp/CommandMessenger.Tests)
+//     --skip-firmware      skip PlatformIO native firmware tests (test/embedded)
+//     --skip-integration   skip cross-stack integration tests (test/integration + test/CSharp/CommandMessenger.IntegrationTests)
+//     --skip-hardware      skip hardware-in-the-loop tests (Layer 3b, requires Nano on serial port). OFF by default.
+//     --run-hardware       opt-in: run hardware-in-the-loop tests against the Nano. Honours $env:CMDMSG_HW_PORT.
 //     --skip-arduino-cli   skip arduino-cli sketch builds
 //     --skip-pio           skip PlatformIO sketch builds
 //     --fqbn <fqbn>        override the arduino-cli FQBN (default: arduino:avr:nano)
@@ -36,7 +40,11 @@ bool skipCSharp     = argList.Remove("--skip-csharp");
 bool skipVb         = argList.Remove("--skip-vb");
 bool skipArduinoCli = argList.Remove("--skip-arduino-cli");
 bool skipPio        = argList.Remove("--skip-pio");
-bool skipTests      = argList.Remove("--skip-tests");
+bool skipTests       = argList.Remove("--skip-tests");
+bool skipFirmware    = argList.Remove("--skip-firmware");
+bool skipIntegration = argList.Remove("--skip-integration");
+bool runHardware     = argList.Remove("--run-hardware");
+bool skipHardware    = argList.Remove("--skip-hardware") || !runHardware;
 
 string TakeValue(string flag, string defaultValue)
 {
@@ -186,6 +194,57 @@ if (!skipTests)
         results.Add(new StepResult("xUnit tests", false, "dotnet not installed"));
     else
         Step("xUnit tests", () => Run("dotnet", $"test \"{testProj}\" --no-restore -v quiet"));
+}
+
+// ─── 2c. PlatformIO native firmware tests (Layer 2) ──────────────────────────
+if (!skipFirmware)
+{
+    var embeddedDir = Path.Combine(repoRoot, "test", "embedded");
+    if (!File.Exists(Path.Combine(embeddedDir, "platformio.ini")))
+        results.Add(new StepResult("native firmware tests", false, "test/embedded/platformio.ini not found"));
+    else if (!ToolExists("pio") && !ToolExists("platformio"))
+        results.Add(new StepResult("native firmware tests", false, "pio not installed (skip with --skip-firmware)"));
+    else
+    {
+        var pio = ToolExists("pio") ? "pio" : "platformio";
+        Step("native firmware tests", () => Run(pio, "test -e native", cwd: embeddedDir));
+    }
+}
+
+// ─── 2d. Cross-stack integration tests (Layer 3a) ────────────────────────────
+if (!skipIntegration)
+{
+    var fwDir = Path.Combine(repoRoot, "test", "integration", "firmware");
+    var itProj = Path.Combine(repoRoot, "test", "CSharp", "CommandMessenger.IntegrationTests", "CommandMessenger.IntegrationTests.csproj");
+    if (!File.Exists(Path.Combine(fwDir, "platformio.ini")))
+        results.Add(new StepResult("integration tests", false, "loopback firmware platformio.ini not found"));
+    else if (!File.Exists(itProj))
+        results.Add(new StepResult("integration tests", false, "integration test project not found"));
+    else if (!ToolExists("pio") && !ToolExists("platformio"))
+        results.Add(new StepResult("integration tests", false, "pio not installed (skip with --skip-integration)"));
+    else if (!ToolExists("dotnet"))
+        results.Add(new StepResult("integration tests", false, "dotnet not installed"));
+    else
+    {
+        var pio = ToolExists("pio") ? "pio" : "platformio";
+        Step("integration firmware build", () => Run(pio, "run -e native", cwd: fwDir));
+        Step("integration tests",          () => Run("dotnet", $"test \"{itProj}\" --filter \"Category!=Hardware\" -v quiet"));
+    }
+}
+
+// ─── 2e. Hardware-in-the-loop tests (Layer 3b) ───────────────────────────────
+// Opt-in via --run-hardware. Requires an Arduino Nano with the
+// LoopbackTestRunner sketch already flashed. Port is taken from
+// $env:CMDMSG_HW_PORT or the first SerialPort.GetPortNames() entry.
+if (!skipHardware)
+{
+    var itProj = Path.Combine(repoRoot, "test", "CSharp", "CommandMessenger.IntegrationTests", "CommandMessenger.IntegrationTests.csproj");
+    if (!File.Exists(itProj))
+        results.Add(new StepResult("hardware tests", false, "integration test project not found"));
+    else if (!ToolExists("dotnet"))
+        results.Add(new StepResult("hardware tests", false, "dotnet not installed"));
+    else
+        Step("hardware tests", () => Run("dotnet", $"test \"{itProj}\" --filter \"Category=Hardware\" -v quiet"));
 }
 
 // ─── 3. Arduino sketches ─────────────────────────────────────────────────────
