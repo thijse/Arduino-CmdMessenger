@@ -40,10 +40,24 @@ extern "C"
 	typedef void(*messengerCallbackFunction) (void);
 }
 
-#define MAXCALLBACKS        50   // The maximum number of commands   (default: 50)
-#define MESSENGERBUFFERSIZE 64   // The length of the commandbuffer  (default: 64)
-#define MAXSTREAMBUFFERSIZE 512  // The length of the streambuffer   (default: 64)
-#define DEFAULT_TIMEOUT     5000 // Time out on unanswered messages. (default: 5s)
+#ifndef CMDMESSENGER_MAXCALLBACKS
+#define CMDMESSENGER_MAXCALLBACKS        50   // The maximum number of commands   (default: 50)
+#endif
+#ifndef CMDMESSENGER_MESSENGERBUFFERSIZE
+#define CMDMESSENGER_MESSENGERBUFFERSIZE 64   // The length of the commandbuffer  (default: 64)
+#endif
+#ifndef CMDMESSENGER_MAXSTREAMBUFFERSIZE
+#define CMDMESSENGER_MAXSTREAMBUFFERSIZE 512  // The length of the streambuffer   (default: 64)
+#endif
+#ifndef CMDMESSENGER_DEFAULT_TIMEOUT
+#define CMDMESSENGER_DEFAULT_TIMEOUT     5000 // Time out on unanswered messages. (default: 5s)
+#endif
+
+// Backward-compatible aliases
+#define MAXCALLBACKS        CMDMESSENGER_MAXCALLBACKS
+#define MESSENGERBUFFERSIZE CMDMESSENGER_MESSENGERBUFFERSIZE
+#define MAXSTREAMBUFFERSIZE CMDMESSENGER_MAXSTREAMBUFFERSIZE
+#define DEFAULT_TIMEOUT     CMDMESSENGER_DEFAULT_TIMEOUT
 
 // Message States
 enum
@@ -66,6 +80,7 @@ private:
 	uint8_t bufferIndex;              // Index where to write data in buffer
 	uint8_t bufferLength;             // Is set to MESSENGERBUFFERSIZE
 	uint8_t bufferLastIndex;          // The last index of the buffer
+	uint8_t LastArgLength;            // The length of the last received argument
 	char ArglastChar;                 // Bookkeeping of argument escape char 
 	char CmdlastChar;                 // Bookkeeping of command escape char 
 	bool pauseProcessing;             // pauses processing of new commands, during sending
@@ -85,7 +100,9 @@ private:
 	char escape_character;		    // Character indicating escaping of special chars
 
 	messengerCallbackFunction default_callback;            // default callback function  
+#if CMDMESSENGER_MAXCALLBACKS != 0
 	messengerCallbackFunction callbackList[MAXCALLBACKS];  // list of attached callback functions 
+#endif
 
 
 	// **** Initialize ****
@@ -131,7 +148,9 @@ private:
 		byte *bytePointer = (byte *)(const void *)&value;
 		for (unsigned int i = 0; i < sizeof(value); i++)
 		{
-			*bytePointer = str[i];
+			*bytePointer = 0;
+			if (i < LastArgLength)
+				*bytePointer = str[i];
 			bytePointer++;
 		}
 		return value;
@@ -220,7 +239,7 @@ public:
 
 	void sendCmdStart(byte cmdId);
 	void sendCmdEscArg(char *arg);
-	void sendCmdfArg(char *fmt, ...);
+	void sendCmdfArg(const char * const fmt, ...);
 	bool sendCmdEnd(bool reqAc = false, byte ackCmdId = 1, unsigned int timeout = DEFAULT_TIMEOUT);
 
 	/**
@@ -266,6 +285,45 @@ public:
 		}
 	}
 
+	/**
+	 * Send a single argument as string without field separator
+	 *  Note that this will only succeed if a sendCmdStart has been issued first
+	 */
+	template < class T > void sendArg(T arg)
+	{
+		if (startCommand) {
+			comms->print(arg);
+		}
+	}
+
+	/**
+	 * Send a single argument as string with custom accuracy, without field separator
+	 *  Note that this will only succeed if a sendCmdStart has been issued first
+	 */
+	template < class T > void sendArg(T arg, unsigned int n)
+	{
+		if (startCommand) {
+			comms->print(arg, n);
+		}
+	}
+
+	/**
+	 * Send double argument in scientific format without field separator
+	 *  This will overcome the boundary of normal d sending which is limited to abs(f) <= MAXLONG
+	 */
+	void sendSciArg(double arg, unsigned int n = 6);
+
+	/**
+	 * Send a single argument in binary format without field separator
+	 *  Note that this will only succeed if a sendCmdStart has been issued first
+	 */
+	template < class T > void sendBinArg(T arg)
+	{
+		if (startCommand) {
+			writeBin(arg);
+		}
+	}
+
 	// **** Command receiving ****
 	bool readBoolArg();
 	int16_t readInt16Arg();
@@ -284,9 +342,11 @@ public:
 	{
 		if (next()) {
 			dumped = true;
+			ArgOk = true;
 			return readBin < T >(current);
 		}
 		else {
+			ArgOk = false;
 			return empty < T >();
 		}
 	}

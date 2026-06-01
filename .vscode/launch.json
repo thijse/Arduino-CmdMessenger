@@ -1,0 +1,84 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "C#: Receive",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "C#: Build Solution",
+            "program": "${workspaceFolder}/extras/CSharp/Receive/bin/Debug/Receive.exe",
+            "cwd": "${workspaceFolder}/extras/CSharp/Receive"
+        },
+        {
+            "name": "C#: SendAndReceive",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "C#: Build Solution",
+            "program": "${workspaceFolder}/extras/CSharp/SendAndReceive/bin/Debug/SendAndReceive.exe",
+            "cwd": "${workspaceFolder}/extras/CSharp/SendAndReceive"
+        },
+        {
+            "name": "C#: SendAndReceiveArguments",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "C#: Build Solution",
+            "program": "${workspaceFolder}/extras/CSharp/SendAndReceiveArguments/bin/Debug/SendAndReceiveArguments.exe",
+            "cwd": "${workspaceFolder}/extras/CSharp/SendAndReceiveArguments"
+        },
+        {
+            "name": "C#: SendAndReceiveBinaryArguments",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "C#: Build Solution",
+            "program": "${workspaceFolder}/extras/CSharp/SendAndReceiveBinaryArguments/bin/Debug/SendAndReceiveBinaryArguments.exe",
+            "cwd": "${workspaceFolder}/extras/CSharp/SendAndReceiveBinaryArguments"
+        },
+        {
+            "name": "C#: DataLogging",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "C#: Build Solution",
+            "program": "${workspaceFolder}/extras/CSharp/DataLogging/bin/Debug/DataLogging.exe",
+            "cwd": "${workspaceFolder}/extras/CSharp/DataLogging"
+        },
+        {
+            "name": "C#: ArduinoController",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "C#: Build Solution",
+            "program": "${workspaceFolder}/extras/CSharp/ArduinoController/bin/Debug/ArduinoController.exe",
+            "cwd": "${workspaceFolder}/extras/CSharp/ArduinoController"
+        },
+        {
+            "name": "C#: SimpleWatchdog",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "C#: Build Solution",
+            "program": "${workspaceFolder}/extras/CSharp/SimpleWatchdog/bin/Debug/SimpleWatchdog.exe",
+            "cwd": "${workspaceFolder}/extras/CSharp/SimpleWatchdog"
+        },
+        {
+            "name": "C#: SimpleBluetooth",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "C#: Build Solution",
+            "program": "${workspaceFolder}/extras/CSharp/SimpleBluetooth/bin/Debug/SimpleBluetooth.exe",
+            "cwd": "${workspaceFolder}/extras/CSharp/SimpleBluetooth"
+        },
+        {
+            "name": "C#: TemperatureControl",
+            "type": "clr",
+            "request": "launch",
+            "preLaunchTask": "C#: Build Solution",
+            "program": "${workspaceFolder}/extras/CSharp/TemperatureControl/bin/Debug/DataLogging.exe",
+            "cwd": "${workspaceFolder}/extras/CSharp/TemperatureControl"
+        },
+        {
+            "name": "Arduino: PlatformIO Debug",
+            "type": "platformio-debug",
+            "request": "launch",
+            "executable": ".pio/build/uno/firmware.elf",
+            "toolchainBinDir": ""
+        }
+    ]
+}

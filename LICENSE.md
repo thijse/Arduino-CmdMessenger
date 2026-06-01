@@ -1,8 +1,6 @@
-#  MIT License
---------------
-Copyright (c) 2013, 2014, 2015, 2016, 2017 
-	Thijs Elenbaas, Valeriy Kucherenko,
-	Dreamcat4, Neil Dudman, Thomas Ouellet Fredericks.
+MIT License
+
+Copyright (c) 2013, 2014, 2015, 2016, 2017 Thijs Elenbaas, Valeriy Kucherenko, Dreamcat4, Neil Dudman, Thomas Ouellet Fredericks.
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

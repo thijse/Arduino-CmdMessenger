@@ -1,0 +1,75 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "C#: Build Solution",
+            "type": "process",
+            "command": "dotnet",
+            "args": ["build", "extras/CSharp/CmdMessenger.sln"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "C#: Build Solution (Release)",
+            "type": "process",
+            "command": "dotnet",
+            "args": ["build", "extras/CSharp/CmdMessenger.sln", "-c", "Release"],
+            "group": "build",
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Arduino: Build (Uno)",
+            "type": "process",
+            "command": "pio",
+            "args": ["ci", "--lib=.", "--board=uno", "${file}"],
+            "group": "build",
+            "problemMatcher": {
+                "owner": "platformio",
+                "pattern": {
+                    "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "Arduino: Build SendAndReceive",
+            "type": "process",
+            "command": "pio",
+            "args": ["ci", "--lib=.", "--board=uno", "examples/SendAndReceive/SendAndReceive.ino"],
+            "group": "build",
+            "problemMatcher": {
+                "owner": "platformio",
+                "pattern": {
+                    "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "label": "Arduino: Upload (Uno)",
+            "type": "shell",
+            "command": "pio",
+            "args": ["ci", "--lib=.", "--board=uno", "--keep-build-dir", "${file}"],
+            "problemMatcher": []
+        },
+        {
+            "label": "Arduino: Serial Monitor",
+            "type": "shell",
+            "command": "pio",
+            "args": ["device", "monitor", "--baud", "115200"],
+            "problemMatcher": [],
+            "isBackground": true
+        }
+    ]
+}

@@ -65,6 +65,7 @@ CmdMessenger::CmdMessenger(Stream &ccomms, const char fld_separator, const char 
  */
 void CmdMessenger::init(Stream &ccomms, const char fld_separator, const char cmd_separator, const char esc_character)
 {
+	startCommand = false;
 	default_callback = NULL;
 	comms = &ccomms;
 	print_newlines = false;
@@ -76,8 +77,10 @@ void CmdMessenger::init(Stream &ccomms, const char fld_separator, const char cmd
 	reset();
 
 	default_callback = NULL;
+#if CMDMESSENGER_MAXCALLBACKS != 0
 	for (int i = 0; i < MAXCALLBACKS; i++)
 		callbackList[i] = NULL;
+#endif
 
 	pauseProcessing = false;
 }
@@ -114,8 +117,10 @@ void CmdMessenger::attach(messengerCallbackFunction newFunction)
  */
 void CmdMessenger::attach(byte msgId, messengerCallbackFunction newFunction)
 {
+#if CMDMESSENGER_MAXCALLBACKS != 0
 	if (msgId >= 0 && msgId < MAXCALLBACKS)
 		callbackList[msgId] = newFunction;
+#endif
 }
 
 // **** Command processing ****
@@ -179,9 +184,11 @@ void CmdMessenger::handleMessage()
 {
 	lastCommandId = readInt16Arg();
 	// if command attached, we will call it
+#if CMDMESSENGER_MAXCALLBACKS != 0
 	if (lastCommandId >= 0 && lastCommandId < MAXCALLBACKS && ArgOk && callbackList[lastCommandId] != NULL)
 		(*callbackList[lastCommandId])();
 	else // If command not attached, call default callback (if attached)
+#endif
 		if (default_callback != NULL) (*default_callback)();
 }
 
@@ -299,7 +306,7 @@ void CmdMessenger::sendCmdEscArg(char* arg)
  * Send formatted argument.
  *  Note that floating points are not supported and resulting string is limited to 128 chars
  */
-void CmdMessenger::sendCmdfArg(char *fmt, ...)
+void CmdMessenger::sendCmdfArg(const char * const fmt, ...)
 {
 	const int maxMessageSize = 128;
 	if (startCommand) {
@@ -323,6 +330,18 @@ void CmdMessenger::sendCmdSciArg(double arg, unsigned int n)
 	if (startCommand)
 	{
 		comms->print(field_separator);
+		printSci(arg, n);
+	}
+}
+
+/**
+ * Send double argument in scientific format without field separator.
+ *  This will overcome the boundary of normal float sending which is limited to abs(f) <= MAXLONG
+ */
+void CmdMessenger::sendSciArg(double arg, unsigned int n)
+{
+	if (startCommand)
+	{
 		printSci(arg, n);
 	}
 }
@@ -486,10 +505,11 @@ char* CmdMessenger::readStringArg()
 	if (next()) {
 		dumped = true;
 		ArgOk = true;
+		unescape(current);
 		return current;
 	}
 	ArgOk = false;
-	return '\0';
+	return NULL;
 }
 
 /**
@@ -501,6 +521,7 @@ void CmdMessenger::copyStringArg(char *string, uint8_t size)
 	if (next()) {
 		dumped = true;
 		ArgOk = true;
+		unescape(current);
 		strlcpy(string, current, size);
 	}
 	else {
@@ -515,6 +536,7 @@ void CmdMessenger::copyStringArg(char *string, uint8_t size)
 uint8_t CmdMessenger::compareStringArg(char *string)
 {
 	if (next()) {
+		unescape(current);
 		if (strcmp(string, current) == 0) {
 			dumped = true;
 			ArgOk = true;
@@ -572,7 +594,8 @@ char* CmdMessenger::split_r(char *str, const char delim, char **nextp)
 	// Set start of return pointer to this position
 	ret = str;
 	// Find next delimiter
-	str += findNext(str, delim);
+	LastArgLength = findNext(str, delim);
+	str += LastArgLength;
 	// and exchange this for a a \0 char. This will terminate the char
 	if (*str) {
 		*str++ = '\0';
@@ -628,20 +651,20 @@ void CmdMessenger::printSci(double f, unsigned int digits)
 	// handle sign
 	if (f < 0.0)
 	{
-		Serial.print('-');
+		comms->print('-');
 		f = -f;
 	}
 
 	// handle infinite values
 	if (isinf(f))
 	{
-		Serial.print("INF");
+		comms->print("INF");
 		return;
 	}
 	// handle Not a Number
 	if (isnan(f))
 	{
-		Serial.print("NaN");
+		comms->print("NaN");
 		return;
 	}
 

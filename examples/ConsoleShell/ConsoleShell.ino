@@ -140,7 +140,7 @@ void SetLedState()
 void SetBrightness() 
 {
   // clamp value intervalOn on 0 and PWMinterval
-  intervalOn  =  max(min(ledBrightness,PWMinterval),0);
+  intervalOn  =  max(min((unsigned long)ledBrightness,PWMinterval),0ul);
 }
 
 // Pulse Width Modulation to vary Led intensity

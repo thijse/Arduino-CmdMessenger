@@ -29,6 +29,9 @@ sendCmdEnd	KEYWORD2
 sendCmdArg	KEYWORD2
 sendCmdSciArg	KEYWORD2
 sendCmdBinArg	KEYWORD2
+sendArg	KEYWORD2
+sendSciArg	KEYWORD2
+sendBinArg	KEYWORD2
 readBoolArg	KEYWORD2
 readInt16Arg	KEYWORD2
 readInt32Arg	KEYWORD2
