@@ -5,37 +5,45 @@ VisualStudioVersion = 17.13.35919.96 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger", "CommandMessenger\CommandMessenger.csproj", "{3CF8F8FC-6F5C-46F8-94DC-C2E4C505ECA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "1-Receive", "Receive\1-Receive.csproj", "{C5545DBA-7364-4FD1-B061-9C5FA5C06141}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "1-Receive", "Samples\Receive\1-Receive.csproj", "{C5545DBA-7364-4FD1-B061-9C5FA5C06141}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2-SendAndReceive", "SendAndReceive\2-SendAndReceive.csproj", "{37286642-47EE-44D8-87D9-3CFAFC8D68BD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "2-SendAndReceive", "Samples\SendAndReceive\2-SendAndReceive.csproj", "{37286642-47EE-44D8-87D9-3CFAFC8D68BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3-SendAndReceiveArguments", "SendAndReceiveArguments\3-SendAndReceiveArguments.csproj", "{A1DBBE25-AD1A-4AA0-9CB4-5BD47B495178}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "3-SendAndReceiveArguments", "Samples\SendAndReceiveArguments\3-SendAndReceiveArguments.csproj", "{A1DBBE25-AD1A-4AA0-9CB4-5BD47B495178}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4-SendAndReceiveBinaryArguments", "SendAndReceiveBinaryArguments\4-SendAndReceiveBinaryArguments.csproj", "{E8A22A1D-5EA8-4FF1-808A-503225720837}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4-SendAndReceiveBinaryArguments", "Samples\SendAndReceiveBinaryArguments\4-SendAndReceiveBinaryArguments.csproj", "{E8A22A1D-5EA8-4FF1-808A-503225720837}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "5-DataLogging", "DataLogging\5-DataLogging.csproj", "{8CBED77C-78BF-453F-8733-97798A95916F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "5-DataLogging", "Samples\DataLogging\5-DataLogging.csproj", "{8CBED77C-78BF-453F-8733-97798A95916F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "6-ArduinoController", "ArduinoController\6-ArduinoController.csproj", "{F994C186-EB6F-4E71-B274-DBF46F3534BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "6-ArduinoController", "Samples\ArduinoController\6-ArduinoController.csproj", "{F994C186-EB6F-4E71-B274-DBF46F3534BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "9-TemperatureControl", "TemperatureControl\9-TemperatureControl.csproj", "{78810760-E45A-4ACB-8D94-0E359E2F73FB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "9-TemperatureControl", "Samples\TemperatureControl\9-TemperatureControl.csproj", "{78810760-E45A-4ACB-8D94-0E359E2F73FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessengerTests", "CommandMessengerTests\CommandMessengerTests.csproj", "{B869057C-DAB3-4C19-958C-C89D3B1521EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessengerTests", "Tests\CommandMessengerTests\CommandMessengerTests.csproj", "{B869057C-DAB3-4C19-958C-C89D3B1521EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7-SimpleWatchdog", "SimpleWatchdog\7-SimpleWatchdog.csproj", "{0D783DF1-9DEB-406D-8410-33A789B1FFD4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "7-SimpleWatchdog", "Samples\SimpleWatchdog\7-SimpleWatchdog.csproj", "{0D783DF1-9DEB-406D-8410-33A789B1FFD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "8-SimpleBluetooth", "SimpleBluetooth\8-SimpleBluetooth.csproj", "{D1494302-6BD6-415F-A43A-4C3CD3EB7FD9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "8-SimpleBluetooth", "Samples\SimpleBluetooth\8-SimpleBluetooth.csproj", "{D1494302-6BD6-415F-A43A-4C3CD3EB7FD9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CommandMessenger.Transport", "CommandMessenger.Transport", "{36B3296D-342F-4F63-8BC3-ADA3DB458A88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.Serial", "CommandMessenger.Transport.Serial\CommandMessenger.Transport.Serial.csproj", "{00D85F0B-00A5-41FA-8A99-428C0199C663}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.Serial", "Transport\CommandMessenger.Transport.Serial\CommandMessenger.Transport.Serial.csproj", "{00D85F0B-00A5-41FA-8A99-428C0199C663}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.Network", "CommandMessenger.Transport.Network\CommandMessenger.Transport.Network.csproj", "{1C05AD41-693D-440B-A787-AF196B0F9576}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.Network", "Transport\CommandMessenger.Transport.Network\CommandMessenger.Transport.Network.csproj", "{1C05AD41-693D-440B-A787-AF196B0F9576}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.Bluetooth", "CommandMessenger.Transport.Bluetooth\CommandMessenger.Transport.Bluetooth.csproj", "{68BE9E17-9B05-4B66-BDE6-F2A4C50858EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.Bluetooth", "Transport\CommandMessenger.Transport.Bluetooth\CommandMessenger.Transport.Bluetooth.csproj", "{68BE9E17-9B05-4B66-BDE6-F2A4C50858EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.IPC", "CommandMessenger.Transport.IPC\CommandMessenger.Transport.IPC.csproj", "{27DF28C4-F702-4AF5-8104-133833253AA6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.IPC", "Transport\CommandMessenger.Transport.IPC\CommandMessenger.Transport.IPC.csproj", "{27DF28C4-F702-4AF5-8104-133833253AA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "10-ArduinoJoystick", "ArduinoJoystick\10-ArduinoJoystick.csproj", "{EE7A357C-DC1D-4617-8787-64798B990C4E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "10-ArduinoJoystick", "Samples\ArduinoJoystick\10-ArduinoJoystick.csproj", "{EE7A357C-DC1D-4617-8787-64798B990C4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Tests", "Tests\CommandMessenger.Tests\CommandMessenger.Tests.csproj", "{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.IntegrationTests", "Tests\CommandMessenger.IntegrationTests\CommandMessenger.IntegrationTests.csproj", "{B2C3D4E5-F6A7-8901-BCDE-F12345678901}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{11111111-1111-1111-1111-111111111111}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{22222222-2222-2222-2222-222222222222}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -173,6 +181,22 @@ Global
 		{EE7A357C-DC1D-4617-8787-64798B990C4E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EE7A357C-DC1D-4617-8787-64798B990C4E}.Release|x86.ActiveCfg = Release|x86
 		{EE7A357C-DC1D-4617-8787-64798B990C4E}.Release|x86.Build.0 = Release|x86
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Debug|x86.Build.0 = Debug|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|x86.ActiveCfg = Release|Any CPU
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}.Release|x86.Build.0 = Release|Any CPU
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901}.Debug|x86.Build.0 = Debug|Any CPU
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901}.Release|x86.ActiveCfg = Release|Any CPU
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -182,6 +206,19 @@ Global
 		{1C05AD41-693D-440B-A787-AF196B0F9576} = {36B3296D-342F-4F63-8BC3-ADA3DB458A88}
 		{68BE9E17-9B05-4B66-BDE6-F2A4C50858EA} = {36B3296D-342F-4F63-8BC3-ADA3DB458A88}
 		{27DF28C4-F702-4AF5-8104-133833253AA6} = {36B3296D-342F-4F63-8BC3-ADA3DB458A88}
+		{C5545DBA-7364-4FD1-B061-9C5FA5C06141} = {11111111-1111-1111-1111-111111111111}
+		{37286642-47EE-44D8-87D9-3CFAFC8D68BD} = {11111111-1111-1111-1111-111111111111}
+		{A1DBBE25-AD1A-4AA0-9CB4-5BD47B495178} = {11111111-1111-1111-1111-111111111111}
+		{E8A22A1D-5EA8-4FF1-808A-503225720837} = {11111111-1111-1111-1111-111111111111}
+		{8CBED77C-78BF-453F-8733-97798A95916F} = {11111111-1111-1111-1111-111111111111}
+		{F994C186-EB6F-4E71-B274-DBF46F3534BB} = {11111111-1111-1111-1111-111111111111}
+		{78810760-E45A-4ACB-8D94-0E359E2F73FB} = {11111111-1111-1111-1111-111111111111}
+		{0D783DF1-9DEB-406D-8410-33A789B1FFD4} = {11111111-1111-1111-1111-111111111111}
+		{D1494302-6BD6-415F-A43A-4C3CD3EB7FD9} = {11111111-1111-1111-1111-111111111111}
+		{EE7A357C-DC1D-4617-8787-64798B990C4E} = {11111111-1111-1111-1111-111111111111}
+		{B869057C-DAB3-4C19-958C-C89D3B1521EC} = {22222222-2222-2222-2222-222222222222}
+		{A1B2C3D4-E5F6-7890-ABCD-EF1234567890} = {22222222-2222-2222-2222-222222222222}
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901} = {22222222-2222-2222-2222-222222222222}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B2BE7B1-A38B-4F02-9B0E-317E6D669899}

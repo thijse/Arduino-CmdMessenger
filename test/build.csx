@@ -14,9 +14,9 @@
 // Optional args:
 //     --skip-csharp        skip the C# solution
 //     --skip-vb            skip the VB solution
-//     --skip-tests         skip xUnit tests (test/CSharp/CommandMessenger.Tests)
+//     --skip-tests         skip xUnit tests (extras/CSharp/Tests/CommandMessenger.Tests)
 //     --skip-firmware      skip PlatformIO native firmware tests (test/embedded)
-//     --skip-integration   skip cross-stack integration tests (test/integration + test/CSharp/CommandMessenger.IntegrationTests)
+//     --skip-integration   skip cross-stack integration tests (test/integration + extras/CSharp/Tests/CommandMessenger.IntegrationTests)
 //     --skip-hardware      skip hardware-in-the-loop tests (Layer 3b, requires Nano on serial port). OFF by default.
 //     --run-hardware       opt-in: run hardware-in-the-loop tests against the Nano. Honours $env:CMDMSG_HW_PORT.
 //     --skip-arduino-cli   skip arduino-cli sketch builds
@@ -187,7 +187,7 @@ if (!skipVb)
 // ─── 2b. xUnit tests ─────────────────────────────────────────────────────────
 if (!skipTests)
 {
-    var testProj = Path.Combine(repoRoot, "test", "CSharp", "CommandMessenger.Tests", "CommandMessenger.Tests.csproj");
+    var testProj = Path.Combine(repoRoot, "extras", "CSharp", "Tests", "CommandMessenger.Tests", "CommandMessenger.Tests.csproj");
     if (!File.Exists(testProj))
         results.Add(new StepResult("xUnit tests", false, "test project not found"));
     else if (!ToolExists("dotnet"))
@@ -215,7 +215,7 @@ if (!skipFirmware)
 if (!skipIntegration)
 {
     var fwDir = Path.Combine(repoRoot, "test", "integration", "firmware");
-    var itProj = Path.Combine(repoRoot, "test", "CSharp", "CommandMessenger.IntegrationTests", "CommandMessenger.IntegrationTests.csproj");
+    var itProj = Path.Combine(repoRoot, "extras", "CSharp", "Tests", "CommandMessenger.IntegrationTests", "CommandMessenger.IntegrationTests.csproj");
     if (!File.Exists(Path.Combine(fwDir, "platformio.ini")))
         results.Add(new StepResult("integration tests", false, "loopback firmware platformio.ini not found"));
     else if (!File.Exists(itProj))
@@ -238,7 +238,7 @@ if (!skipIntegration)
 // $env:CMDMSG_HW_PORT or the first SerialPort.GetPortNames() entry.
 if (!skipHardware)
 {
-    var itProj = Path.Combine(repoRoot, "test", "CSharp", "CommandMessenger.IntegrationTests", "CommandMessenger.IntegrationTests.csproj");
+    var itProj = Path.Combine(repoRoot, "extras", "CSharp", "Tests", "CommandMessenger.IntegrationTests", "CommandMessenger.IntegrationTests.csproj");
     if (!File.Exists(itProj))
         results.Add(new StepResult("hardware tests", false, "integration test project not found"));
     else if (!ToolExists("dotnet"))

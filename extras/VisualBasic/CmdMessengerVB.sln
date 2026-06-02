@@ -3,31 +3,31 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "1-Receive", "Receive\1-Receive.vbproj", "{C5545DBA-7364-4FD1-B061-9C5FA5C06141}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "1-Receive", "Samples\Receive\1-Receive.vbproj", "{C5545DBA-7364-4FD1-B061-9C5FA5C06141}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "2-SendAndReceive", "SendAndReceive\2-SendAndReceive.vbproj", "{37286642-47EE-44D8-87D9-3CFAFC8D68BD}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "2-SendAndReceive", "Samples\SendAndReceive\2-SendAndReceive.vbproj", "{37286642-47EE-44D8-87D9-3CFAFC8D68BD}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "3-SendAndReceiveArguments", "SendAndReceiveArguments\3-SendAndReceiveArguments.vbproj", "{A1DBBE25-AD1A-4AA0-9CB4-5BD47B495178}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "3-SendAndReceiveArguments", "Samples\SendAndReceiveArguments\3-SendAndReceiveArguments.vbproj", "{A1DBBE25-AD1A-4AA0-9CB4-5BD47B495178}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "4-SendAndReceiveBinaryArguments", "SendAndReceiveBinaryArguments\4-SendAndReceiveBinaryArguments.vbproj", "{E8A22A1D-5EA8-4FF1-808A-503225720837}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "4-SendAndReceiveBinaryArguments", "Samples\SendAndReceiveBinaryArguments\4-SendAndReceiveBinaryArguments.vbproj", "{E8A22A1D-5EA8-4FF1-808A-503225720837}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "5-DataLogging", "DataLogging\5-DataLogging.vbproj", "{8CBED77C-78BF-453F-8733-97798A95916F}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "5-DataLogging", "Samples\DataLogging\5-DataLogging.vbproj", "{8CBED77C-78BF-453F-8733-97798A95916F}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "6-ArduinoController", "ArduinoController\6-ArduinoController.vbproj", "{F994C186-EB6F-4E71-B274-DBF46F3534BB}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "6-ArduinoController", "Samples\ArduinoController\6-ArduinoController.vbproj", "{F994C186-EB6F-4E71-B274-DBF46F3534BB}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "9-TemperatureControl", "TemperatureControl\9-TemperatureControl.vbproj", "{78810760-E45A-4ACB-8D94-0E359E2F73FB}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "9-TemperatureControl", "Samples\TemperatureControl\9-TemperatureControl.vbproj", "{78810760-E45A-4ACB-8D94-0E359E2F73FB}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "7-SimpleWatchdog", "SimpleWatchdog\7-SimpleWatchdog.vbproj", "{0D783DF1-9DEB-406D-8410-33A789B1FFD4}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "7-SimpleWatchdog", "Samples\SimpleWatchdog\7-SimpleWatchdog.vbproj", "{0D783DF1-9DEB-406D-8410-33A789B1FFD4}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "8-SimpleBluetooth", "SimpleBluetooth\8-SimpleBluetooth.vbproj", "{D1494302-6BD6-415F-A43A-4C3CD3EB7FD9}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "8-SimpleBluetooth", "Samples\SimpleBluetooth\8-SimpleBluetooth.vbproj", "{D1494302-6BD6-415F-A43A-4C3CD3EB7FD9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger", "..\CSharp\CommandMessenger\CommandMessenger.csproj", "{3CF8F8FC-6F5C-46F8-94DC-C2E4C505ECA4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CommandMessenger.Transport", "CommandMessenger.Transport", "{6D07D2A6-2286-410B-A11C-84080E5FE405}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.Serial", "..\CSharp\CommandMessenger.Transport.Serial\CommandMessenger.Transport.Serial.csproj", "{00D85F0B-00A5-41FA-8A99-428C0199C663}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.Serial", "..\CSharp\Transport\CommandMessenger.Transport.Serial\CommandMessenger.Transport.Serial.csproj", "{00D85F0B-00A5-41FA-8A99-428C0199C663}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.Bluetooth", "..\CSharp\CommandMessenger.Transport.Bluetooth\CommandMessenger.Transport.Bluetooth.csproj", "{68BE9E17-9B05-4B66-BDE6-F2A4C50858EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommandMessenger.Transport.Bluetooth", "..\CSharp\Transport\CommandMessenger.Transport.Bluetooth\CommandMessenger.Transport.Bluetooth.csproj", "{68BE9E17-9B05-4B66-BDE6-F2A4C50858EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
