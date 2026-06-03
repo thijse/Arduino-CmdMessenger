@@ -6,12 +6,14 @@ These samples mirror the C# examples under
 
 | Python sample | Arduino sketch | Notes |
 |---|---|---|
-| [receive.py](receive.py) | `examples/Receive/` | Send only — toggles an LED |
-| [send_and_receive.py](send_and_receive.py) | `examples/SendAndReceive/` | Send `SetLed`, receive `Status` |
-| [send_and_receive_arguments.py](send_and_receive_arguments.py) | `examples/SendAndReceiveArguments/` | Multi-arg ack request/reply |
-| [send_and_receive_binary_arguments.py](send_and_receive_binary_arguments.py) | `examples/SendAndReceiveBinaryArguments/` | Binary encoded floats |
-| [simple_watchdog.py](simple_watchdog.py) | `examples/SimpleWatchdog/` | `SerialConnectionManager` + watchdog |
-| [data_logging.py](data_logging.py) | `examples/DataLogging/` | Stream data to disk via `cmd_messenger.logger` |
+| [receive/](receive/) | `examples/Receive/` | Send only — toggles an LED |
+| [send_and_receive/](send_and_receive/) | `examples/SendAndReceive/` | Send `SetLed`, receive `Status` |
+| [send_and_receive_arguments/](send_and_receive_arguments/) | `examples/SendAndReceiveArguments/` | Multi-arg ack request/reply |
+| [send_and_receive_binary_arguments/](send_and_receive_binary_arguments/) | `examples/SendAndReceiveBinaryArguments/` | Binary encoded floats |
+| [data_logging/](data_logging/) | `examples/DataLogging/` | Real-time chart via web UI + console variant |
+| [arduino_controller/](arduino_controller/) | `examples/ArduinoController/` | Slider + toggle via web UI |
+| [simple_watchdog/](simple_watchdog/) | `examples/SimpleWatchdog/` | `SerialConnectionManager` + watchdog |
+| [temperature_control/](temperature_control/) | `examples/TemperatureControl/` | Full: chart + slider + ConnectionManager |
 
 ## Running
 
@@ -21,9 +23,9 @@ device (e.g. `COM6` on Windows, `/dev/ttyUSB0` on Linux,
 
 ```powershell
 cd extras\Python
-.\.venv\Scripts\python.exe samples\send_and_receive.py
+.\.venv\Scripts\python.exe samples\send_and_receive\send_and_receive.py
 ```
 
 The samples use `cmd_messenger.SerialTransport` directly. If you'd rather let
 the library auto-detect the port (and verify the device responds), use
-`SerialConnectionManager` — see `simple_watchdog.py`.
+`SerialConnectionManager` — see `simple_watchdog/simple_watchdog.py`.

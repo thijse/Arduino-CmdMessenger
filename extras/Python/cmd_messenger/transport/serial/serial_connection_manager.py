@@ -8,6 +8,7 @@ from typing import Callable, List, Optional
 
 from ...cmd_messenger import CmdMessenger
 from ...connection_manager import ConnectionManager, DeviceStatus, Mode
+from ...connection_storer import ConnectionStorer
 from . import serial_utils
 from .serial_transport import SerialTransport
 
@@ -37,6 +38,7 @@ class SerialConnectionManager(ConnectionManager):
         unique_device_id: Optional[str] = None,
         settings_store: Optional[Callable[[SerialConnectionManagerSettings], None]] = None,
         settings_load: Optional[Callable[[], SerialConnectionManagerSettings]] = None,
+        connection_storer: Optional[ConnectionStorer] = None,
     ) -> None:
         super().__init__(cmd_messenger, watchdog_command_id, unique_device_id)
         if serial_transport is None:
@@ -45,7 +47,11 @@ class SerialConnectionManager(ConnectionManager):
         self._serial_transport = serial_transport
         self._settings_store = settings_store
         self._settings_load = settings_load
-        self.persistent_settings = settings_store is not None and settings_load is not None
+        self._connection_storer = connection_storer
+        self.persistent_settings = (
+            connection_storer is not None
+            or (settings_store is not None and settings_load is not None)
+        )
         #: Try alternative baud rates during scan.
         self.device_scan_baud_rate_selection: bool = True
 
@@ -238,16 +244,28 @@ class SerialConnectionManager(ConnectionManager):
     # Persistence
     # ------------------------------------------------------------------
     def _store_settings(self) -> None:
-        if not self.persistent_settings or self._settings_store is None:
+        if not self.persistent_settings:
             return
         s = self._serial_transport.current_serial_settings
         self._stored_settings.port = s.port_name
         self._stored_settings.baud_rate = s.baud_rate
-        self._settings_store(self._stored_settings)
+        if self._connection_storer:
+            self._connection_storer.save({
+                "port_name": s.port_name,
+                "baud_rate": s.baud_rate,
+            })
+        elif self._settings_store:
+            self._settings_store(self._stored_settings)
 
     def _read_settings(self) -> None:
-        if not self.persistent_settings or self._settings_load is None:
+        if not self.persistent_settings:
             return
-        loaded = self._settings_load()
-        if loaded is not None:
-            self._stored_settings = loaded
+        if self._connection_storer:
+            data = self._connection_storer.load()
+            if data:
+                self._stored_settings.port = data.get("port_name", "")
+                self._stored_settings.baud_rate = data.get("baud_rate", 0)
+        elif self._settings_load:
+            loaded = self._settings_load()
+            if loaded is not None:
+                self._stored_settings = loaded

@@ -36,8 +36,9 @@ build.bat
 | `cmd_messenger/` | The library — import as `import cmd_messenger` |
 | `pyproject.toml` | Package metadata (hatchling build backend) |
 | `requirements.txt` | Dev environment dependencies |
-| `1_receive/` … `9_temperature_control/` | Sample applications (see architecture doc) |
-| `shared/` | Sample helpers — `console_utils.py`, `web_form.py` |
+| `samples/` | Sample applications (see [samples/README.md](samples/README.md)) |
+| `samples/shared/` | Sample helpers — `console_utils.py`, `web_form.py` |
+| `tests/` | pytest suite |
 
 ## Quick example
 
