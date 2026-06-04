@@ -34,7 +34,7 @@ class StopBits(float, Enum):
 class SerialSettings:
     """Serial port configuration (port of C# ``SerialSettings``).
 
-    Defaults match C#: 9600/8/N/1, DTR off, 500 ms timeout, empty port name.
+    Defaults match C#: 9600/8/N/1, DTR off, RTS off, 500 ms timeout, empty port name.
     """
 
     port_name: str = ""
@@ -43,6 +43,7 @@ class SerialSettings:
     data_bits: int = 8
     stop_bits: StopBits = StopBits.ONE
     dtr_enable: bool = False
+    rts_enable: bool = False
     timeout: int = 500  # milliseconds (mirrors C# value); converted to float seconds for pyserial
 
     def is_valid(self) -> bool:

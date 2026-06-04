@@ -932,3 +932,117 @@ Console-only samples need only `pyserial`. Web UI samples add `fastapi` + `uvico
 | 6 | ArduinoController | `6_arduino_controller/` | Web | Slider, CollapseCommandStrategy |
 | 7 | SimpleWatchdog | `7_simple_watchdog/` | Console | SerialConnectionManager, auto-reconnect |
 | 9 | TemperatureControl | `9_temperature_control/` | Web | Full: chart + slider + ConnectionManager + watchdog |
+
+---
+
+## 12. Future Transport: Bluetooth
+
+The C# library includes `CommandMessenger.Transport.Bluetooth` for Bluetooth SPP
+connections. A Python equivalent (`transport/bluetooth/`) **may be added in the
+future** using [PyBluez](https://github.com/pybluez/pybluez) or the built-in
+`bluetooth` module on Linux.
+
+This is not currently implemented because:
+- PyBluez has limited Windows/macOS support and maintenance activity.
+- Bluetooth SPP is less common in modern Arduino projects (BLE is preferred).
+- The `Transport` ABC makes it trivial to add later without breaking changes.
+
+When implemented, the expected structure would be:
+```
+transport/
+└── bluetooth/
+    ├── __init__.py
+    ├── bluetooth_transport.py       # BluetoothTransport(Transport)
+    ├── bluetooth_settings.py        # BluetoothSettings (dataclass)
+    └── bluetooth_connection_manager.py  # BluetoothConnectionManager(ConnectionManager)
+```
+
+---
+
+## 13. Connection Settings Storer
+
+The C# library persists connection settings (last-used port, baud rate) so the
+user doesn't need to re-select them on every run. The Python port should provide
+the same convenience via a `ConnectionStorer` abstraction.
+
+### 13.1 Design
+
+```python
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+import json
+
+
+class ConnectionStorer(ABC):
+    """Persists transport connection settings between sessions.
+
+    Mirrors the intent of C#'s settings-persistence pattern. Supports
+    serial today, extensible to network/Bluetooth/Wi-Fi in the future.
+    """
+
+    @abstractmethod
+    def load(self) -> dict[str, Any] | None:
+        """Load stored settings. Returns None if nothing stored."""
+
+    @abstractmethod
+    def save(self, settings: dict[str, Any]) -> None:
+        """Persist settings."""
+
+    @abstractmethod
+    def clear(self) -> None:
+        """Remove stored settings."""
+
+
+class JsonConnectionStorer(ConnectionStorer):
+    """Stores connection settings as a JSON file on disk.
+
+    Default location: ``~/.cmdmessenger/connection.json``
+    """
+
+    def __init__(self, path: Path | None = None):
+        self._path = path or Path.home() / ".cmdmessenger" / "connection.json"
+
+    def load(self) -> dict[str, Any] | None:
+        if not self._path.exists():
+            return None
+        return json.loads(self._path.read_text(encoding="utf-8"))
+
+    def save(self, settings: dict[str, Any]) -> None:
+        self._path.parent.mkdir(parents=True, exist_ok=True)
+        self._path.write_text(json.dumps(settings, indent=2), encoding="utf-8")
+
+    def clear(self) -> None:
+        if self._path.exists():
+            self._path.unlink()
+```
+
+### 13.2 Integration with ConnectionManager
+
+```python
+class ConnectionManager(ABC):
+    def __init__(self, cmd_messenger, ..., storer: ConnectionStorer | None = None):
+        self._storer = storer
+
+    def start_connection_manager(self) -> None:
+        if self._storer:
+            stored = self._storer.load()
+            if stored:
+                self._apply_stored_settings(stored)
+        ...
+
+    def _on_connection_found(self) -> None:
+        if self._storer:
+            self._storer.save(self._get_current_settings())
+        ...
+```
+
+### 13.3 Transport-specific settings format
+
+| Transport | Stored keys |
+|-----------|-------------|
+| Serial | `port_name`, `baud_rate`, `dtr_enable` |
+| TCP/Network | `host`, `port` |
+| Bluetooth (future) | `address`, `channel` |
+| Wi-Fi (future) | `ssid`, `host`, `port` |

@@ -3,9 +3,13 @@
 Hardware-dependent tests (host-to-embedded) are marked with ``@pytest.mark.hardware``
 and are SKIPPED by default. To run them, pass ``--hardware`` on the CLI:
 
-    pytest --hardware -k hardware
+    pytest --hardware -m hardware
 
-Environment variables for hardware tests:
+Board auto-discovery mirrors C# ``BoardDiscovery.cs``:
+  - Phase 1: USB VID:PID matching (Teensy, ESP32-S3)
+  - Phase 2: Serial kWhoAmI query for CH340 boards (Nano, ESP8266)
+
+Legacy override (single board):
     CMDMESSENGER_PORT   - serial port (e.g. COM3, /dev/ttyACM0)
     CMDMSG_HW_PORT      - C#-compatible serial port alias
     CMDMESSENGER_BAUD   - baud rate (default 115200)
@@ -95,11 +99,41 @@ def firmware_exe(request):
 
 @pytest.fixture
 def serial_port(request):
-    """Fixture that provides the serial port for hardware tests."""
+    """Fixture that provides the serial port for hardware tests.
+
+    Resolution order (mirrors C# HardwareTestBase.ResolvePort):
+      1. CMDMESSENGER_PORT / CMDMSG_HW_PORT env var (legacy single-board override)
+      2. Auto-discovery via board_discovery.discover()
+    """
+    from .board_discovery import discover
+
+    # Legacy: single-port override via env var
     port = os.environ.get("CMDMESSENGER_PORT") or os.environ.get("CMDMSG_HW_PORT")
-    if not port:
-        pytest.skip("CMDMESSENGER_PORT or CMDMSG_HW_PORT not set")
-    return port
+    if port:
+        return port
+
+    # Auto-discover: return first available board
+    boards = discover()
+    if boards:
+        return next(iter(boards.values()))
+
+    pytest.skip("No boards found (set CMDMESSENGER_PORT or connect a provisioned board)")
+
+
+@pytest.fixture(params=["NANO", "ESP32S3", "ESP8266", "TEENSY"])
+def hardware_board(request):
+    """Parametrised fixture that yields (model, port) for each connected board.
+
+    Mirrors C# per-board test classes (NanoHardwareTests, Esp32S3HardwareTests, etc.).
+    Skips boards that are not connected.
+    """
+    from .board_discovery import find_port
+
+    model = request.param
+    port = find_port(model)
+    if port is None:
+        pytest.skip(f"Board '{model}' not connected")
+    return (model, port)
 
 
 @pytest.fixture

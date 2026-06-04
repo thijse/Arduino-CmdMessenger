@@ -4,7 +4,8 @@
 // Builds (in order):
 //   1. C#   solution  : extras/CSharp/CmdMessenger.sln
 //   2. VB   solution  : extras/VisualBasic/CmdMessengerVB.sln
-//   3. Arduino sketches under examples/ for the Arduino Nano, using both
+//   3. TypeScript package : extras/TypeScript
+//   4. Arduino sketches under examples/ for the Arduino Nano, using both
 //      arduino-cli and PlatformIO (whichever is installed; both if both).
 //
 // Run from the repository root:
@@ -14,11 +15,12 @@
 // Optional args:
 //     --skip-csharp        skip the C# solution
 //     --skip-vb            skip the VB solution
+//     --skip-typescript    skip TypeScript npm install/build/tests
 //     --skip-tests         skip xUnit tests (extras/CSharp/Tests/CommandMessenger.Tests)
 //     --skip-firmware      skip PlatformIO native firmware tests (test/embedded)
 //     --skip-integration   skip cross-stack integration tests (test/integration + extras/CSharp/Tests/CommandMessenger.IntegrationTests)
-//     --skip-hardware      skip hardware-in-the-loop tests (Layer 3b, requires Nano on serial port). OFF by default.
-//     --run-hardware       opt-in: run hardware-in-the-loop tests against the Nano. Honours $env:CMDMSG_HW_PORT.
+//     --skip-hardware      skip hardware-in-the-loop tests (Layer 3b, requires boards on serial ports). OFF by default.
+//     --run-hardware       opt-in: run hardware-in-the-loop tests. Honours $env:CMDMSG_HW_PORT.
 //     --skip-arduino-cli   skip arduino-cli sketch builds
 //     --skip-pio           skip PlatformIO sketch builds
 //     --fqbn <fqbn>        override the arduino-cli FQBN (default: arduino:avr:nano)
@@ -38,6 +40,7 @@ using System.Linq;
 var argList = Args.ToList();
 bool skipCSharp     = argList.Remove("--skip-csharp");
 bool skipVb         = argList.Remove("--skip-vb");
+bool skipTypeScript = argList.Remove("--skip-typescript");
 bool skipArduinoCli = argList.Remove("--skip-arduino-cli");
 bool skipPio        = argList.Remove("--skip-pio");
 bool skipTests       = argList.Remove("--skip-tests");
@@ -194,6 +197,27 @@ if (!skipTests)
         results.Add(new StepResult("xUnit tests", false, "dotnet not installed"));
     else
         Step("xUnit tests", () => Run("dotnet", $"test \"{testProj}\" --no-restore -v quiet"));
+}
+
+// ─── 2bb. TypeScript package ────────────────────────────────────────────────
+if (!skipTypeScript)
+{
+    var tsDir = Path.Combine(repoRoot, "extras", "TypeScript");
+    var npm = ResolveTool("npm", "--version")
+              ?? ResolveTool("npm.cmd", "--version",
+                  Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "nodejs", "npm.cmd"));
+    if (!File.Exists(Path.Combine(tsDir, "package.json")))
+        results.Add(new StepResult("TypeScript package", false, "extras/TypeScript/package.json not found"));
+    else if (npm == null)
+        results.Add(new StepResult("TypeScript package", false, "npm not installed"));
+    else
+    {
+        Step("TypeScript npm ci",     () => Run(npm, "ci", cwd: tsDir, quiet: true));
+        Step("TypeScript build",      () => Run(npm, "run build", cwd: tsDir));
+        Step("TypeScript test",       () => Run(npm, "test", cwd: tsDir));
+        if (!skipHardware)
+            Step("TypeScript hardware test", () => Run(npm, "run test:hardware", cwd: tsDir));
+    }
 }
 
 // ─── 2c. PlatformIO native firmware tests (Layer 2) ──────────────────────────

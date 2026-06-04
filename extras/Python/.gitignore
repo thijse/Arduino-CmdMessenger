@@ -72,6 +72,10 @@ dmypy.json
 .idea/
 .vscode/
 
+# Test output logs
+hw-test-out*.txt
+pytest-out*.txt
+
 # OS
 .DS_Store
 Thumbs.db

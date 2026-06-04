@@ -1,8 +1,19 @@
 """Hardware-in-the-loop host-to-embedded tests.
 
 These tests require a board running ``test/integration/sketch/src/LoopbackTestRunner.ino``.
-They are skipped unless pytest is run with ``--hardware`` and a serial port is
-provided via ``CMDMESSENGER_PORT`` or ``CMDMSG_HW_PORT``.
+They are skipped unless pytest is run with ``--hardware``.
+
+Board discovery mirrors C# ``BoardDiscovery.cs``:
+  - Phase 1: USB VID:PID matching (Teensy, ESP32-S3)
+  - Phase 2: Serial kWhoAmI query for CH340 boards (Nano, ESP8266)
+
+Legacy mode: provide ``CMDMESSENGER_PORT`` or ``CMDMSG_HW_PORT`` env var.
+
+Run all hardware tests:
+    pytest --hardware -m hardware
+
+Run tests for a single board:
+    pytest --hardware -k "NANO"
 """
 from __future__ import annotations
 
@@ -22,8 +33,20 @@ pytestmark = pytest.mark.hardware
 
 
 @pytest.fixture
-def hardware_messenger(serial_port, serial_baud):
-    settings = SerialSettings(port_name=serial_port, baud_rate=serial_baud, timeout=3000)
+def hardware_messenger(hardware_board, serial_baud):
+    """Create a messenger for a discovered board.
+
+    Mirrors C# HardwareTestBase: higher timeouts, boot-ack with ping fallback
+    for boards that don't DTR-reset (e.g. Teensy).
+    """
+    model, port = hardware_board
+    settings = SerialSettings(
+        port_name=port,
+        baud_rate=serial_baud,
+        timeout=3000,
+        dtr_enable=True,
+        rts_enable=True,
+    )
     transport = SerialTransport(settings)
     messenger = CmdMessenger(transport, board_type=BoardType.BIT_16)
     messenger.print_lf_cr = True
@@ -32,11 +55,17 @@ def hardware_messenger(serial_port, serial_baud):
     messenger.attach(LoopbackCommand.ACKNOWLEDGE, lambda _cmd: ready.set())
 
     assert messenger.connect()
+
+    # Boards that reset on DTR (AVR, ESP) send boot ack on serial open.
+    # Boards that don't (Teensy) need a ping/pong fallback.
     if not ready.wait(8.0):
         reply = messenger.send_command(
             SendCommand(LoopbackCommand.PING, ack_cmd_id=LoopbackCommand.PONG, timeout=3000)
         )
-        assert reply.ok, "Board did not send boot ack and did not respond to ping"
+        assert reply.ok, (
+            f"Board '{model}' on {port} did not send boot ack and did not respond to ping. "
+            "Is the firmware running?"
+        )
 
     try:
         yield messenger

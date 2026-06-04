@@ -86,6 +86,11 @@ class SerialTransport(Transport):
             except Exception:
                 # Some pyserial URL adapters (e.g. loop://) don't support DTR.
                 pass
+            try:
+                self._serial.rts = s.rts_enable
+            except Exception:
+                # Some pyserial URL adapters (e.g. loop://) don't support RTS.
+                pass
             # Flush any stale data.
             try:
                 self._serial.reset_input_buffer()

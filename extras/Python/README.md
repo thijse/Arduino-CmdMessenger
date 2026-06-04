@@ -3,7 +3,7 @@
 Pythonic port of the C#/VB [CommandMessenger](https://github.com/thijse/Arduino-CmdMessenger)
 library for Arduino serial communication.
 
-> Architecture: see [../../plans/Python/architecture.md](../../plans/Python/architecture.md)
+> Architecture: see [../../plans/architecture-python.md](../../plans/architecture-python.md)
 > Inspired by [PyCmdMessenger](https://github.com/harmsm/PyCmdMessenger) (harmsm).
 
 ## Status
@@ -34,11 +34,13 @@ build.bat
 | Path | Purpose |
 |------|---------|
 | `cmd_messenger/` | The library — import as `import cmd_messenger` |
+| `cmd_messenger/transport/` | Pluggable transports (serial, network, etc.) |
 | `pyproject.toml` | Package metadata (hatchling build backend) |
 | `requirements.txt` | Dev environment dependencies |
 | `samples/` | Sample applications (see [samples/README.md](samples/README.md)) |
 | `samples/shared/` | Sample helpers — `console_utils.py`, `web_form.py` |
-| `tests/` | pytest suite |
+| `tests/` | pytest suite (unit + hardware-in-the-loop) |
+| `tests/board_discovery.py` | Auto-discovers connected boards (mirrors C# `BoardDiscovery.cs`) |
 
 ## Quick example
 
@@ -46,12 +48,42 @@ build.bat
 from cmd_messenger import CmdMessenger, SendCommand, BoardType
 from cmd_messenger.transport.serial import SerialTransport, SerialSettings
 
-transport = SerialTransport()
-transport.current_serial_settings = SerialSettings(port_name="COM6", baud_rate=115200)
+settings = SerialSettings(port_name="COM6", baud_rate=115200)
+transport = SerialTransport(settings)
 
 with CmdMessenger(transport, board_type=BoardType.BIT_16) as messenger:
     messenger.connect()
     messenger.send_command(SendCommand(0, "Hello Arduino"))
+```
+
+## Testing
+
+### Unit tests (no hardware needed)
+
+```bash
+pytest tests/ -m "not hardware"
+```
+
+### Hardware-in-the-loop tests
+
+Requires a board running `test/integration/sketch/src/LoopbackTestRunner.ino`.
+
+Board auto-discovery mirrors C# `BoardDiscovery.cs`:
+- **Phase 1:** USB VID:PID matching (Teensy, ESP32-S3)
+- **Phase 2:** Serial kWhoAmI query for CH340 boards (Nano, ESP8266)
+
+```bash
+# Run all hardware tests (auto-discovers connected boards)
+pytest --hardware -m hardware
+
+# Run tests for a specific board
+pytest --hardware -k "NANO"
+```
+
+Legacy single-board override (skips auto-discovery):
+```bash
+set CMDMESSENGER_PORT=COM3
+pytest --hardware -m hardware
 ```
 
 ## License
