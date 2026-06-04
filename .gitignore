@@ -20,5 +20,11 @@ obj/
 .env
 **/.env
 
+# Node / TypeScript
+**/node_modules/
+extras/TypeScript/dist/
+extras/TypeScript/dist-test/
+coverage/
+
 # GitHub Copilot / local agent config
 .github/

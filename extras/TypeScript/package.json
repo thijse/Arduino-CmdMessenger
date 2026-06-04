@@ -1,0 +1,54 @@
+{
+  "name": "cmd-messenger",
+  "version": "0.1.0",
+  "description": "TypeScript host-side CmdMessenger library for Arduino command messaging",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./transport": {
+      "types": "./dist/transport/index.d.ts",
+      "import": "./dist/transport/index.js"
+    },
+    "./transport/loopback": {
+      "types": "./dist/transport/loopbackTransport.d.ts",
+      "import": "./dist/transport/loopbackTransport.js"
+    },
+    "./transport/network": {
+      "types": "./dist/transport/network/index.d.ts",
+      "import": "./dist/transport/network/index.js"
+    },
+    "./transport/serial": {
+      "types": "./dist/transport/serial/index.d.ts",
+      "import": "./dist/transport/serial/index.js"
+    }
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:hardware": "vitest run --config vitest.hardware.config.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "peerDependencies": {
+    "serialport": ">=12.0.0"
+  },
+  "peerDependenciesMeta": {
+    "serialport": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.30",
+    "serialport": "^13.0.0",
+    "typescript": "^5.8.3",
+    "vitest": "^4.1.8"
+  }
+}
