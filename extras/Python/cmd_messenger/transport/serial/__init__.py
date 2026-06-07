@@ -8,6 +8,7 @@ from .serial_connection_manager import (
 )
 from .serial_settings import Parity, SerialSettings, StopBits
 from .serial_transport import SerialTransport
+from ...connection_storer import JsonSerialConnectionStorer, SerialConnectionStorer
 
 __all__ = [
     "SerialSettings",
@@ -16,5 +17,7 @@ __all__ = [
     "StopBits",
     "SerialConnectionManager",
     "SerialConnectionManagerSettings",
+    "SerialConnectionStorer",
+    "JsonSerialConnectionStorer",
     "serial_utils",
 ]

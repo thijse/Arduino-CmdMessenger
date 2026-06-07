@@ -82,6 +82,7 @@ namespace CommandMessenger.Transport.Serial
                 _currentSerialSettings.StopBits)
                 {
                     DtrEnable = _currentSerialSettings.DtrEnable,
+                    RtsEnable = _currentSerialSettings.RtsEnable,
                     WriteTimeout = _currentSerialSettings.Timeout,
                     ReadTimeout  = 1000, // read timeout is used for polling in worker thread
                 };

@@ -8,7 +8,7 @@ from typing import Callable, List, Optional
 
 from ...cmd_messenger import CmdMessenger
 from ...connection_manager import ConnectionManager, DeviceStatus, Mode
-from ...connection_storer import ConnectionStorer
+from ...connection_storer import SerialConnectionStorer, JsonSerialConnectionStorer
 from . import serial_utils
 from .serial_transport import SerialTransport
 
@@ -38,20 +38,23 @@ class SerialConnectionManager(ConnectionManager):
         unique_device_id: Optional[str] = None,
         settings_store: Optional[Callable[[SerialConnectionManagerSettings], None]] = None,
         settings_load: Optional[Callable[[], SerialConnectionManagerSettings]] = None,
-        connection_storer: Optional[ConnectionStorer] = None,
+        connection_storer: Optional[SerialConnectionStorer] = None,
     ) -> None:
         super().__init__(cmd_messenger, watchdog_command_id, unique_device_id)
         if serial_transport is None:
             raise ValueError("Transport is null.")
 
         self._serial_transport = serial_transport
-        self._settings_store = settings_store
-        self._settings_load = settings_load
-        self._connection_storer = connection_storer
-        self.persistent_settings = (
-            connection_storer is not None
-            or (settings_store is not None and settings_load is not None)
-        )
+
+        # A SerialConnectionStorer instance takes precedence over raw callbacks.
+        if isinstance(connection_storer, SerialConnectionStorer):
+            self._settings_store: Optional[Callable[[SerialConnectionManagerSettings], None]] = connection_storer.save
+            self._settings_load: Optional[Callable[[], SerialConnectionManagerSettings]] = connection_storer.load
+        else:
+            self._settings_store = settings_store
+            self._settings_load = settings_load
+
+        self.persistent_settings = self._settings_store is not None and self._settings_load is not None
         #: Try alternative baud rates during scan.
         self.device_scan_baud_rate_selection: bool = True
 
@@ -244,28 +247,16 @@ class SerialConnectionManager(ConnectionManager):
     # Persistence
     # ------------------------------------------------------------------
     def _store_settings(self) -> None:
-        if not self.persistent_settings:
+        if not self.persistent_settings or self._settings_store is None:
             return
         s = self._serial_transport.current_serial_settings
         self._stored_settings.port = s.port_name
         self._stored_settings.baud_rate = s.baud_rate
-        if self._connection_storer:
-            self._connection_storer.save({
-                "port_name": s.port_name,
-                "baud_rate": s.baud_rate,
-            })
-        elif self._settings_store:
-            self._settings_store(self._stored_settings)
+        self._settings_store(self._stored_settings)
 
     def _read_settings(self) -> None:
-        if not self.persistent_settings:
+        if not self.persistent_settings or self._settings_load is None:
             return
-        if self._connection_storer:
-            data = self._connection_storer.load()
-            if data:
-                self._stored_settings.port = data.get("port_name", "")
-                self._stored_settings.baud_rate = data.get("baud_rate", 0)
-        elif self._settings_load:
-            loaded = self._settings_load()
-            if loaded is not None:
-                self._stored_settings = loaded
+        loaded = self._settings_load()
+        if loaded is not None:
+            self._stored_settings = loaded

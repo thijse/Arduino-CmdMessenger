@@ -18,12 +18,14 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace CommandMessenger
 {
     /// <summary> A command received from CmdMessenger </summary>
-    public class ReceivedCommand : Command
+    public class ReceivedCommand : Command, IEnumerable<string>
     {
         private int _parameter = -1;    // The parameter
         private bool _dumped = true;  // true if parameter has been dumped
@@ -212,6 +214,68 @@ namespace CommandMessenger
             return string.Empty;
         }
 
+        /// <summary> Reads the current argument as a char value. </summary>
+        /// <returns> The char value, or '\0' if the argument is empty. </returns>
+        public char ReadCharArg()
+        {
+            var s = ReadStringArg();
+            return s.Length > 0 ? s[0] : '\0';
+        }
+
+        /// <summary>
+        /// Reads multiple arguments according to a format string.
+        /// Format codes: i=Int32, I=UInt32, h=Int16, H=UInt16, B=byte, f=float, d=double, s=string, ?=bool, c=char.
+        /// A '*' prefix selects the binary variant of the next code (e.g. "*i" = ReadBinInt32Arg).
+        /// </summary>
+        /// <param name="format"> The format string. </param>
+        /// <returns> An array of read values. </returns>
+        public object[] Read(string format)
+        {
+            if (format == null) throw new ArgumentNullException(nameof(format));
+            var results = new List<object>();
+            bool binary = false;
+            foreach (char code in format)
+            {
+                if (code == '*') { binary = true; continue; }
+                if (binary)
+                {
+                    switch (code)
+                    {
+                        case 'i': results.Add(ReadBinInt32Arg()); break;
+                        case 'I': results.Add(ReadBinUInt32Arg()); break;
+                        case 'h': results.Add(ReadBinInt16Arg()); break;
+                        case 'H': results.Add(ReadBinUInt16Arg()); break;
+                        case 'B': results.Add(ReadBinByteArg()); break;
+                        case 'f': results.Add(ReadBinFloatArg()); break;
+                        case 'd': results.Add(ReadBinDoubleArg()); break;
+                        case 's': results.Add(ReadBinStringArg()); break;
+                        case '?': results.Add(ReadBinBoolArg()); break;
+                        case 'c': { var s = ReadBinStringArg(); results.Add(s.Length > 0 ? s[0] : '\0'); break; }
+                        default: throw new ArgumentException($"Unknown binary format code '{code}'", nameof(format));
+                    }
+                    binary = false;
+                }
+                else
+                {
+                    switch (code)
+                    {
+                        case 'i': results.Add(ReadInt32Arg()); break;
+                        case 'I': results.Add(ReadUInt32Arg()); break;
+                        case 'h': results.Add(ReadInt16Arg()); break;
+                        case 'H': results.Add(ReadUInt16Arg()); break;
+                        case 'B': results.Add(ReadBinByteArg()); break;
+                        case 'f': results.Add(ReadFloatArg()); break;
+                        case 'd': results.Add(ReadDoubleArg()); break;
+                        case 's': results.Add(ReadStringArg()); break;
+                        case '?': results.Add(ReadBoolArg()); break;
+                        case 'c': results.Add(ReadCharArg()); break;
+                        default: throw new ArgumentException($"Unknown format code '{code}'", nameof(format));
+                    }
+                }
+            }
+            return results.ToArray();
+        }
+
         // ***** Binary **** /
 
         /// <summary> Reads the current binary argument as a float value. </summary>
@@ -371,5 +435,15 @@ namespace CommandMessenger
 			}
 			return 0;
 		}
-	}
+
+        public IEnumerator<string> GetEnumerator()
+        {
+            return ((IEnumerable<string>)CmdArgs).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
 }

@@ -8,6 +8,10 @@ export function millis(): number {
   return Date.now() - start;
 }
 
+export function seconds(): number {
+  return Math.floor(millis() / 1000);
+}
+
 export function hasExpired(startMs: number, timeoutMs: number): boolean {
   return timeoutMs >= 0 && millis() - startMs >= timeoutMs;
 }

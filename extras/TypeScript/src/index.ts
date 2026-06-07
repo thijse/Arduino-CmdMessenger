@@ -7,6 +7,7 @@ export * from './encoding.js';
 export * from './enums.js';
 export * from './escaping.js';
 export * from './eventWaiter.js';
+export * from './logger.js';
 export * from './queue/index.js';
 export * from './receivedCommand.js';
 export * from './receivedCommandSignal.js';

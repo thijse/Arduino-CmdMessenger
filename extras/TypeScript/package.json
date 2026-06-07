@@ -17,10 +17,6 @@
       "types": "./dist/transport/index.d.ts",
       "import": "./dist/transport/index.js"
     },
-    "./transport/loopback": {
-      "types": "./dist/transport/loopbackTransport.d.ts",
-      "import": "./dist/transport/loopbackTransport.js"
-    },
     "./transport/network": {
       "types": "./dist/transport/network/index.d.ts",
       "import": "./dist/transport/network/index.js"

@@ -2,6 +2,7 @@ import { CmdMessenger } from '../../cmdMessenger.js';
 import { ConnectionManager, ConnectionManagerMode, DeviceStatus } from '../../connectionManager.js';
 import { getPortNames, getSupportedBaudRates, commonBaudRates } from './serialUtils.js';
 import { SerialTransport } from './serialTransport.js';
+import { ISerialConnectionStorer } from './serialConnectionStorer.js';
 
 enum ScanType {
   None = 0,
@@ -13,14 +14,17 @@ export class SerialConnectionManager extends ConnectionManager {
   availableSerialPorts: string[] = [];
   deviceScanBaudRateSelection = true;
   private scanType = ScanType.None;
+  private readonly _connectionStorer: ISerialConnectionStorer | undefined;
 
   constructor(
     private readonly serialTransport: SerialTransport,
     cmdMessenger: CmdMessenger,
     watchdogCommandId = 0,
-    uniqueDeviceId?: string
+    uniqueDeviceId?: string,
+    connectionStorer?: ISerialConnectionStorer
   ) {
     super(cmdMessenger, watchdogCommandId, uniqueDeviceId);
+    this._connectionStorer = connectionStorer;
   }
 
   protected override startScan(): void {
@@ -34,6 +38,12 @@ export class SerialConnectionManager extends ConnectionManager {
   protected override async doWorkConnect(): Promise<void> {
     const activeConnection = (await this.tryConnection()) === DeviceStatus.Available;
     if (activeConnection) {
+      if (this._connectionStorer) {
+        this._connectionStorer.storeSettings({
+          port: this.serialTransport.currentSerialSettings.portName,
+          baudRate: this.serialTransport.currentSerialSettings.baudRate,
+        });
+      }
       this.connectionFoundEvent();
     }
   }
@@ -42,6 +52,14 @@ export class SerialConnectionManager extends ConnectionManager {
     let activeConnection = false;
 
     if (this.scanType === ScanType.None) {
+      if (this._connectionStorer) {
+        const stored = this._connectionStorer.retrieveSettings();
+        if (stored?.port) {
+          this.serialTransport.currentSerialSettings.portName = stored.port;
+          this.serialTransport.currentSerialSettings.baudRate = stored.baudRate;
+          // attempt connect first before full scan
+        }
+      }
       activeConnection = (await this.tryConnection()) === DeviceStatus.Available;
       this.scanType = ScanType.Quick;
     } else if (this.scanType === ScanType.Quick) {
@@ -53,6 +71,12 @@ export class SerialConnectionManager extends ConnectionManager {
     }
 
     if (activeConnection) {
+      if (this._connectionStorer) {
+        this._connectionStorer.storeSettings({
+          port: this.serialTransport.currentSerialSettings.portName,
+          baudRate: this.serialTransport.currentSerialSettings.baudRate,
+        });
+      }
       this.connectionFoundEvent();
     }
   }

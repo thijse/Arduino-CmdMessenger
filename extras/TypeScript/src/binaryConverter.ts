@@ -1,6 +1,16 @@
 import { latin1Decode, latin1Encode } from './encoding.js';
 import { escape, ProtocolChars, unescape } from './escaping.js';
 
+let _stringEncoding: 'latin1' = 'latin1'; // extend union if more are supported later
+
+export function setStringEncoding(encoding: 'latin1'): void {
+  _stringEncoding = encoding;
+}
+
+export function getStringEncoding(): 'latin1' {
+  return _stringEncoding;
+}
+
 function bytesToEscapedString(bytes: Uint8Array, chars?: ProtocolChars): string {
   return escape(latin1Decode(bytes), chars);
 }

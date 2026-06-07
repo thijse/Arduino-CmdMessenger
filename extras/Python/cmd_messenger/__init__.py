@@ -52,7 +52,7 @@ from .connection_manager import (
     DeviceStatus,
     Mode,
 )
-from .connection_storer import ConnectionStorer, JsonConnectionStorer
+from .connection_storer import JsonSerialConnectionStorer, SerialConnectionStorer
 from .transport.serial import (
     SerialConnectionManager,
     SerialConnectionManagerSettings,
@@ -103,8 +103,8 @@ __all__ = [
     "Mode",
     "SerialConnectionManager",
     "SerialConnectionManagerSettings",
-    "ConnectionStorer",
-    "JsonConnectionStorer",
+    "SerialConnectionStorer",
+    "JsonSerialConnectionStorer",
     "TcpTransport",
     "TcpConnectionManager",
 ]

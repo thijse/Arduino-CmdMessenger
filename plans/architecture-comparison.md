@@ -389,7 +389,7 @@ They are not permission for a port to diverge silently.
 |------|---------------------|------------|
 | `ConnectionManager` identify ACK | `ArduinoAvailable()` sends `identifyCommandId` and waits for the same command ID as ACK. | Keep ports compatible with this for now. If request/response pairs are desired, add an explicit C# API such as separate `identifyRequestCommandId` / `identifyResponseCommandId`, then port that shape. |
 | Hardware board discovery | `BoardDiscovery` uses VID/PID shortcuts, then serial-probes remaining ports. | Avoid probing non-USB/Bluetooth COM ports where possible and keep discovery bounded by explicit timeouts so unavailable ports cannot stall a hardware run. |
-| Serial line controls | Product `SerialSettings` exposes `DtrEnable`; the C# hardware-only test transport also sets `RtsEnable = true`. | If RTS is needed beyond test fixtures, add `RtsEnable` to C# `SerialSettings` and `SerialTransport`; otherwise avoid exposing it as a first-class port API. |
+| Serial line controls | Product `SerialSettings` exposes `DtrEnable`; the C# hardware-only test transport also sets `RtsEnable = true`. | If RTS is needed beyond test fixtures, add `RtsEnable` to C# `SerialSettings` and `SerialTransport`; otherwise avoid exposin it as a first-class port API. |
 | Serial open robustness | `SerialTransport.Open()` calls `SerialPort.Open()` directly after `PortExists()`. | Consider a bounded/open-cancellation strategy or stricter discovery filters for platforms where opening stale virtual ports can hang or block for a long time. |
 
 ---

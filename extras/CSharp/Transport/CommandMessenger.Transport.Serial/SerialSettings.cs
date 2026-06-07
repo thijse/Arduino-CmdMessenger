@@ -59,6 +59,11 @@ namespace CommandMessenger.Transport.Serial
         public bool DtrEnable { get; set; }
 
         /// <summary>
+        /// Set Request To Send.
+        /// </summary>
+        public bool RtsEnable { get; set; }
+
+        /// <summary>
         /// Timeout for read and write operations to serial port.
         /// </summary>
         public int Timeout { get; set; }

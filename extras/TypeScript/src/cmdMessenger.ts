@@ -135,10 +135,6 @@ export class CmdMessenger {
     return result;
   }
 
-  sendCommandDirect(sendCommand: SendCommand, sendQueueState = SendQueue.InFrontQueue): Promise<ReceivedCommand> {
-    return this.sendCommandSync(sendCommand, sendQueueState);
-  }
-
   queueCommand(command: SendCommand | CommandStrategy<SendCommand>): void {
     if (command instanceof CommandStrategy) {
       this.sendCommandQueue.queueCommand(command);
