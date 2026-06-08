@@ -2,8 +2,9 @@
 
 Node-first TypeScript port of the CmdMessenger host-side library.
 
-Status: initial core implementation. The protocol core, command model, queues,
-ACK flow, loopback transport, and Node serial/TCP transports are implemented.
+Status: 🚧 initial — protocol core, command model, all queue strategies, ACK flow,
+loopback transport, Node serial/TCP transports, connection manager, and
+`JsonSerialConnectionStorer` are all implemented. 81 tests passing.
 
 ```ts
 import { BoardType, CmdMessenger, SendCommand } from 'cmd-messenger';

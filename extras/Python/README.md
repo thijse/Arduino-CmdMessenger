@@ -3,12 +3,12 @@
 Pythonic port of the C#/VB [CommandMessenger](https://github.com/thijse/Arduino-CmdMessenger)
 library for Arduino serial communication.
 
-> Architecture: see [../../plans/architecture-python.md](../../plans/architecture-python.md)
+> Architecture: see [../../plans/architecture-comparison.md](../../plans/architecture-comparison.md)
 > Inspired by [PyCmdMessenger](https://github.com/harmsm/PyCmdMessenger) (harmsm).
 
 ## Status
 
-🚧 **Alpha** — under active development.
+🚧 **Alpha** — feature-complete, actively tested.
 
 ## Setup
 
