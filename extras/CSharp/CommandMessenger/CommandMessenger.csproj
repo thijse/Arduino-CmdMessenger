@@ -9,7 +9,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <!-- Nullable warnings deferred to Phase 2 async rewrite -->
     <Nullable>annotations</Nullable>
-    <NoWarn>$(NoWarn);CS8618;CS8625;CS8600;CS8601;CS8602;CS8603;CS8604</NoWarn>
+    <NoWarn>$(NoWarn);CS8618;CS8625;CS8600;CS8601;CS8602;CS8603;CS8604;CA1416</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

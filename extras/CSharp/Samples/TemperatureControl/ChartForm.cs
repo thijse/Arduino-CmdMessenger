@@ -40,8 +40,8 @@ namespace DataLogging
             tp.Title("Temperature controller");
             tp.XLabel("Time (s)");
             tp.YLabel("Temperature (C)");
-            tp.Add.ScatterLine(_times, _currTemp, ScottPlot.Color.FromColor(Color.Red)).Label   = "Current temperature";
-            tp.Add.ScatterLine(_times, _goalTemp, ScottPlot.Color.FromColor(Color.Blue)).Label  = "Goal temperature";
+            tp.Add.ScatterLine(_times, _currTemp, ScottPlot.Color.FromColor(Color.Red)).LegendText = "Current temperature";
+            tp.Add.ScatterLine(_times, _goalTemp, ScottPlot.Color.FromColor(Color.Blue)).LegendText = "Goal temperature";
             tp.ShowLegend();
 
             var hp = heaterPlot.Plot;

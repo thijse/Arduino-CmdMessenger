@@ -10,6 +10,11 @@
     <NoWarn>$(NoWarn);CS8618;CS8625;CS8600;CS8601;CS8602;CS8603;CS8604</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="InTheHand.Net.Personal">
+      <HintPath>..\..\Bluetooth\InTheHand.Net.Personal.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Transport\CommandMessenger.Transport.Bluetooth\CommandMessenger.Transport.Bluetooth.csproj" />
     <ProjectReference Include="..\..\CommandMessenger\CommandMessenger.csproj" />
   </ItemGroup>
