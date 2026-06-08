@@ -11,8 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Management" Version="8.*" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="InTheHand.Net.Personal">
-      <HintPath>..\Bluetooth\InTheHand.Net.Personal.dll</HintPath>
+      <HintPath>..\..\Bluetooth\InTheHand.Net.Personal.dll</HintPath>
     </Reference>
   </ItemGroup>
 

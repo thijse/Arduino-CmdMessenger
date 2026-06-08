@@ -54,7 +54,7 @@ namespace DataLogging
             _cmdMessenger = new CmdMessenger(_serialTransport, BoardType.Bit16);
 
             // Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
-            _cmdMessenger.ControlToInvokeOn = chartForm;
+            _cmdMessenger.SynchronizationContext = System.Threading.SynchronizationContext.Current;
 
             // Set Received command strategy that removes commands that are older than 1 sec
             _cmdMessenger.AddReceiveCommandStrategy(new StaleGeneralStrategy(1000));

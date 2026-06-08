@@ -10,7 +10,9 @@
     <Nullable>annotations</Nullable>
     <NoWarn>$(NoWarn);CS8618;CS8625;CS8600;CS8601;CS8602;CS8603;CS8604</NoWarn>
   </PropertyGroup>
-  <!-- ZedGraph: original project used ZedGraph.dll; replace with ScottPlot or similar for full .NET 8 support -->
+  <ItemGroup>
+    <PackageReference Include="ScottPlot.WinForms" Version="5.*" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Transport\CommandMessenger.Transport.Serial\CommandMessenger.Transport.Serial.csproj" />
     <ProjectReference Include="..\..\CommandMessenger\CommandMessenger.csproj" />

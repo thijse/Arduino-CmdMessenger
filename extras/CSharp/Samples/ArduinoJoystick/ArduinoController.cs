@@ -54,7 +54,7 @@ namespace ArduinoController
             _cmdMessenger = new CmdMessenger(_serialTransport, BoardType.Bit16);
 
             // Tell CmdMessenger to "Invoke" commands on the thread running the WinForms UI
-            _cmdMessenger.ControlToInvokeOn = _controllerForm;
+            _cmdMessenger.SynchronizationContext = System.Threading.SynchronizationContext.Current;
 
             // Attach the callbacks to the Command Messenger
             AttachCommandCallBacks();
