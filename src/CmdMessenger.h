@@ -102,7 +102,7 @@ private:
 
 	messengerCallbackFunction default_callback;            // default callback function  
 #if CMDMESSENGER_MAXCALLBACKS != 0
-	messengerCallbackFunction callbackList[MAXCALLBACKS];  // list of attached callback functions 
+	messengerCallbackFunction callbackList[CMDMESSENGER_MAXCALLBACKS];  // list of attached callback functions 
 #endif
 
 
