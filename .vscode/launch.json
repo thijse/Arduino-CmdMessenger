@@ -2,76 +2,104 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "C#: Receive",
-            "type": "clr",
+            "name": "C#: 1-Receive",
+            "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "C#: Build Solution",
-            "program": "${workspaceFolder}/extras/CSharp/Receive/bin/Debug/Receive.exe",
-            "cwd": "${workspaceFolder}/extras/CSharp/Receive"
+            "program": "${workspaceFolder}/extras/CSharp/Samples/Receive/bin/Debug/net8.0/Receive.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/extras/CSharp/Samples/Receive",
+            "console": "internalConsole"
         },
         {
-            "name": "C#: SendAndReceive",
-            "type": "clr",
+            "name": "C#: 2-SendAndReceive",
+            "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "C#: Build Solution",
-            "program": "${workspaceFolder}/extras/CSharp/SendAndReceive/bin/Debug/SendAndReceive.exe",
-            "cwd": "${workspaceFolder}/extras/CSharp/SendAndReceive"
+            "program": "${workspaceFolder}/extras/CSharp/Samples/SendAndReceive/bin/Debug/net8.0/SendAndReceive.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/extras/CSharp/Samples/SendAndReceive",
+            "console": "internalConsole"
         },
         {
-            "name": "C#: SendAndReceiveArguments",
-            "type": "clr",
+            "name": "C#: 3-SendAndReceiveArguments",
+            "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "C#: Build Solution",
-            "program": "${workspaceFolder}/extras/CSharp/SendAndReceiveArguments/bin/Debug/SendAndReceiveArguments.exe",
-            "cwd": "${workspaceFolder}/extras/CSharp/SendAndReceiveArguments"
+            "program": "${workspaceFolder}/extras/CSharp/Samples/SendAndReceiveArguments/bin/Debug/net8.0/SendAndReceiveArguments.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/extras/CSharp/Samples/SendAndReceiveArguments",
+            "console": "internalConsole"
         },
         {
-            "name": "C#: SendAndReceiveBinaryArguments",
-            "type": "clr",
+            "name": "C#: 4-SendAndReceiveBinaryArguments",
+            "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "C#: Build Solution",
-            "program": "${workspaceFolder}/extras/CSharp/SendAndReceiveBinaryArguments/bin/Debug/SendAndReceiveBinaryArguments.exe",
-            "cwd": "${workspaceFolder}/extras/CSharp/SendAndReceiveBinaryArguments"
+            "program": "${workspaceFolder}/extras/CSharp/Samples/SendAndReceiveBinaryArguments/bin/Debug/net8.0/SendAndReceiveBinaryArguments.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/extras/CSharp/Samples/SendAndReceiveBinaryArguments",
+            "console": "internalConsole"
         },
         {
-            "name": "C#: DataLogging",
-            "type": "clr",
+            "name": "C#: 5-DataLogging",
+            "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "C#: Build Solution",
-            "program": "${workspaceFolder}/extras/CSharp/DataLogging/bin/Debug/DataLogging.exe",
-            "cwd": "${workspaceFolder}/extras/CSharp/DataLogging"
+            "program": "${workspaceFolder}/extras/CSharp/Samples/DataLogging/bin/Debug/net8.0-windows/DataLogging.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/extras/CSharp/Samples/DataLogging",
+            "console": "internalConsole"
         },
         {
-            "name": "C#: ArduinoController",
-            "type": "clr",
+            "name": "C#: 6-ArduinoController",
+            "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "C#: Build Solution",
-            "program": "${workspaceFolder}/extras/CSharp/ArduinoController/bin/Debug/ArduinoController.exe",
-            "cwd": "${workspaceFolder}/extras/CSharp/ArduinoController"
+            "program": "${workspaceFolder}/extras/CSharp/Samples/ArduinoController/bin/Debug/net8.0-windows/ArduinoController.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/extras/CSharp/Samples/ArduinoController",
+            "console": "internalConsole"
         },
         {
-            "name": "C#: SimpleWatchdog",
-            "type": "clr",
+            "name": "C#: 7-SimpleWatchdog",
+            "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "C#: Build Solution",
-            "program": "${workspaceFolder}/extras/CSharp/SimpleWatchdog/bin/Debug/SimpleWatchdog.exe",
-            "cwd": "${workspaceFolder}/extras/CSharp/SimpleWatchdog"
+            "program": "${workspaceFolder}/extras/CSharp/Samples/SimpleWatchdog/bin/Debug/net8.0/SimpleWatchdog.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/extras/CSharp/Samples/SimpleWatchdog",
+            "console": "internalConsole"
         },
         {
-            "name": "C#: SimpleBluetooth",
-            "type": "clr",
+            "name": "C#: 8-SimpleBluetooth",
+            "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "C#: Build Solution",
-            "program": "${workspaceFolder}/extras/CSharp/SimpleBluetooth/bin/Debug/SimpleBluetooth.exe",
-            "cwd": "${workspaceFolder}/extras/CSharp/SimpleBluetooth"
+            "program": "${workspaceFolder}/extras/CSharp/Samples/SimpleBluetooth/bin/Debug/net8.0-windows/SimpleBluetooth.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/extras/CSharp/Samples/SimpleBluetooth",
+            "console": "internalConsole"
         },
         {
-            "name": "C#: TemperatureControl",
-            "type": "clr",
+            "name": "C#: 9-TemperatureControl",
+            "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "C#: Build Solution",
-            "program": "${workspaceFolder}/extras/CSharp/TemperatureControl/bin/Debug/DataLogging.exe",
-            "cwd": "${workspaceFolder}/extras/CSharp/TemperatureControl"
+            "program": "${workspaceFolder}/extras/CSharp/Samples/TemperatureControl/bin/Debug/net8.0-windows/DataLogging.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/extras/CSharp/Samples/TemperatureControl",
+            "console": "internalConsole"
+        },
+        {
+            "name": "C#: 10-ArduinoJoystick",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "C#: Build Solution",
+            "program": "${workspaceFolder}/extras/CSharp/Samples/ArduinoJoystick/bin/Debug/net8.0-windows/ArduinoJoystick.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/extras/CSharp/Samples/ArduinoJoystick",
+            "console": "internalConsole"
         },
         {
             "name": "Arduino: PlatformIO Debug",

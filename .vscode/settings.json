@@ -1,0 +1,3 @@
+{
+    "dotnet.defaultSolution": "extras/CSharp/CmdMessenger.sln"
+}
