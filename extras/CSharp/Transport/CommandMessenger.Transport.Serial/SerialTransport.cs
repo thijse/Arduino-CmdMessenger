@@ -19,6 +19,7 @@
 
 using System;
 using System.IO.Ports;
+using System.Threading.Tasks;
 
 namespace CommandMessenger.Transport.Serial
 {
@@ -54,13 +55,13 @@ namespace CommandMessenger.Transport.Serial
             _worker = new AsyncWorker(Poll, "SerialTransport");
         }
 
-        private bool Poll()
+        private Task<bool> Poll()
         {
             var bytes = UpdateBuffer();
             if (bytes > 0 && DataReceived != null) DataReceived(this, EventArgs.Empty);
 
             // Return true as we always have work to do here. The delay is achieved by SerialPort.Read timeout.
-            return true;
+            return Task.FromResult(true);
         }        
 
         /// <summary> Connects to a serial port defined through the current settings. </summary>

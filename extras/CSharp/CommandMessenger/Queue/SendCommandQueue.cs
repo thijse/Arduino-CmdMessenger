@@ -1,4 +1,4 @@
-﻿#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
+#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
@@ -19,6 +19,7 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CommandMessenger.Queue
 {
@@ -26,7 +27,7 @@ namespace CommandMessenger.Queue
     public class SendCommandQueue : CommandQueue
     {
         public event EventHandler<CommandEventArgs> NewLineSent;
-        
+
         private readonly CommunicationManager _communicationManager;
         private readonly int _sendBufferMaxLength = 62;
         private string _sendBuffer = string.Empty;
@@ -45,22 +46,22 @@ namespace CommandMessenger.Queue
             _sendBufferMaxLength = sendBufferMaxLength;
         }
 
-        protected override bool ProcessQueue()
+        protected override async Task<bool> ProcessQueue()
         {
-            SendCommandsFromQueue();
+            await SendCommandsFromQueue().ConfigureAwait(false);
             lock (Queue) return !IsEmpty;
         }
 
         /// <summary> Sends the commands from queue. All commands will be combined until either
         /// 		   the SendBufferMaxLength  has been reached or if a command requires an acknowledge
         /// 		   </summary>
-        private void SendCommandsFromQueue()
+        private async Task SendCommandsFromQueue()
         {
             _commandCount = 0;
             _sendBuffer = string.Empty;
             CommandStrategy eventCommandStrategy = null;
 
-            // while maximum buffer string is not reached, and command in queue    
+            // while maximum buffer string is not reached, and command in queue
             while (_sendBuffer.Length < _sendBufferMaxLength && Queue.Count > 0)
             {
                 lock (Queue)
@@ -81,11 +82,11 @@ namespace CommandMessenger.Queue
                                 SendSingleCommandFromQueue(commandStrategy);
                             }
                             else
-                            {                                
+                            {
                                 eventCommandStrategy = commandStrategy;
                                 AddToCommandString(commandStrategy);
                             }
-                        }                        
+                        }
                     }
                 }
                 // event callback outside lock for performance
@@ -99,7 +100,7 @@ namespace CommandMessenger.Queue
             // Now check if a command string has been filled
             if (_sendBuffer.Length > 0)
             {
-                _communicationManager.ExecuteSendString(_sendBuffer, SendQueue.InFrontQueue);              
+                await _communicationManager.ExecuteSendStringAsync(_sendBuffer, SendQueue.InFrontQueue).ConfigureAwait(false);
             }
         }
 
@@ -116,7 +117,7 @@ namespace CommandMessenger.Queue
             }
             // Send command
             if (commandStrategy.Command != null)
-                _communicationManager.ExecuteSendCommand((SendCommand)commandStrategy.Command, SendQueue.InFrontQueue);                     
+                _communicationManager.ExecuteSendCommand((SendCommand)commandStrategy.Command, SendQueue.InFrontQueue);
         }
 
         /// <summary> Adds a commandStrategy to the commands string.  </summary>
@@ -131,7 +132,7 @@ namespace CommandMessenger.Queue
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnDequeue(); }
             }
             // Add command
-            if (commandStrategy.Command != null) 
+            if (commandStrategy.Command != null)
             {
                 _commandCount++;
                 _sendBuffer += commandStrategy.Command.CommandString();
@@ -150,7 +151,7 @@ namespace CommandMessenger.Queue
         /// <summary> Queue the send command. </summary>
         /// <param name="sendCommand"> The command to sent. </param>
         public void QueueCommand(SendCommand sendCommand)
-        {            
+        {
             QueueCommand(new CommandStrategy(sendCommand));
         }
 

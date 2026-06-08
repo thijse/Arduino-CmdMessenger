@@ -1,4 +1,4 @@
-﻿#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
+#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
@@ -18,6 +18,7 @@
 #endregion
 
 using System;
+using System.Threading.Tasks;
 
 namespace CommandMessenger.Queue
 {
@@ -29,7 +30,6 @@ namespace CommandMessenger.Queue
         public event EventHandler<CommandEventArgs> NewLineReceived;
 
         private readonly HandleReceivedCommandDelegate _receivedCommandHandler;
-        private readonly ReceivedCommandSignal _receivedCommandSignal = new ReceivedCommandSignal();
 
         public ReceiveCommandQueue(HandleReceivedCommandDelegate receivedCommandHandler)
         {
@@ -43,10 +43,10 @@ namespace CommandMessenger.Queue
             lock (Queue)
             {
                 return DequeueCommandInternal();
-            }        
+            }
         }
 
-        protected override bool ProcessQueue()
+        protected override Task<bool> ProcessQueue()
         {
             ReceivedCommand dequeueCommand;
             bool hasMoreWork;
@@ -62,17 +62,20 @@ namespace CommandMessenger.Queue
                 _receivedCommandHandler(dequeueCommand);
             }
 
-            return hasMoreWork;
+            return Task.FromResult(hasMoreWork);
         }
 
+        /// <summary> Noop — ACK waiting is now handled in CommunicationManager via TaskCompletionSource. </summary>
         public void PrepareForCmd(int cmdId, SendQueue sendQueueState)
         {
-            _receivedCommandSignal.PrepareForWait(cmdId, sendQueueState);
+            // Noop — kept for API compatibility.
         }
 
+        /// <summary> Noop — ACK waiting is now handled in CommunicationManager via TaskCompletionSource. </summary>
         public ReceivedCommand WaitForCmd(int timeOut)
         {
-            return _receivedCommandSignal.WaitForCmd(timeOut);
+            // Noop — kept for API compatibility.
+            return new ReceivedCommand();
         }
 
         /// <summary> Queue the received command. </summary>
@@ -86,16 +89,6 @@ namespace CommandMessenger.Queue
         /// <param name="commandStrategy"> The command strategy. </param>
         public override void QueueCommand(CommandStrategy commandStrategy)
         {
-            if (IsSuspended)
-            {
-                // Route command to the waiting ACK thread; if it's consumed (matched the ACK or dropped
-                // because ClearQueue was active) don't add it to the queue.
-                var addToQueue = _receivedCommandSignal.ProcessCommand((ReceivedCommand)commandStrategy.Command);
-                if (!addToQueue) return;
-                // Command was not consumed by the ACK waiter — fall through and queue it normally.
-                // SignalWorker is intentionally skipped here; Resume() will wake the worker.
-            }
-
             lock (Queue)
             {
                 // Process all generic enqueue strategies
@@ -103,12 +96,9 @@ namespace CommandMessenger.Queue
                 foreach (var generalStrategy in GeneralStrategies) { generalStrategy.OnEnqueue(); }
             }
 
-            if (!IsSuspended)
-            {
-                // Give a signal to indicate that a new item has been queued
-                SignalWorker();
-                if (NewLineReceived != null) NewLineReceived(this, new CommandEventArgs(commandStrategy.Command));
-            }
+            // Give a signal to indicate that a new item has been queued
+            SignalWorker();
+            if (NewLineReceived != null) NewLineReceived(this, new CommandEventArgs(commandStrategy.Command));
         }
 
         private ReceivedCommand DequeueCommandInternal()

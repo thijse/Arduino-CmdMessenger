@@ -19,6 +19,7 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace CommandMessenger
 {
@@ -203,9 +204,9 @@ namespace CommandMessenger
                 eventHandler(this, eventHandlerArguments);
         }
 
-        private bool DoWork()
+        private async Task<bool> DoWork()
         {
-            // Switch between waiting, device scanning and watchdog 
+            // Switch between waiting, device scanning and watchdog
             switch (ConnectionManagerMode)
             {
                 case Mode.Scan:
@@ -219,7 +220,7 @@ namespace CommandMessenger
                     break;
             }
 
-            Thread.Sleep(100);
+            await Task.Delay(100).ConfigureAwait(false);
             return true;
         }
 

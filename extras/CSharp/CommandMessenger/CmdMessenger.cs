@@ -1,4 +1,4 @@
-﻿#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
+#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using CommandMessenger.Queue;
 using CommandMessenger.Transport;
 
@@ -30,7 +31,7 @@ namespace CommandMessenger
         Default,
         InFrontQueue,
         AtEndQueue,
-        WaitForEmptyQueue,        
+        WaitForEmptyQueue,
         ClearQueue,
     }
 
@@ -70,11 +71,11 @@ namespace CommandMessenger
         /// Event handler for one or more lines received
         /// </summary>
         public event EventHandler<CommandEventArgs> NewLineReceived;
-        
+
         /// <summary>
         /// Event handler for a new line sent
         /// </summary>
-        public event EventHandler<CommandEventArgs> NewLineSent;                            
+        public event EventHandler<CommandEventArgs> NewLineSent;
 
         /// <summary> Gets or sets a whether to print a line feed carriage return after each command. </summary>
         /// <value> true if print line feed carriage return, false if not. </value>
@@ -163,7 +164,7 @@ namespace CommandMessenger
         /// <param name="sendBufferMaxLength"> The maximum size of the send buffer</param>
         private void Init(ITransport transport, BoardType boardType, char fieldSeparator, char commandSeparator,
                           char escapeCharacter, int sendBufferMaxLength)
-        {           
+        {
             SynchronizationContext = null;
 
             //Logger.Open(@"sendCommands.txt");
@@ -260,31 +261,22 @@ namespace CommandMessenger
             InvokeCallBack(callback, receivedCommand);
         }
 
-        /// <summary> Sends a command. 
+        /// <summary> Sends a command asynchronously.
         /// 		  If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue
-        ///  		  If a  command acknowledge is requested, the command will be send synchronously:  the program will block until the acknowledge command 
-        ///  		  has been received or the timeout has expired.
-        ///  		  Based on ClearQueueState, the send- and receive-queues are left intact or are cleared</summary>
-        /// <param name="sendCommand">       The command to sent. </param>
-        /// <param name="sendQueueState">    Property to optionally clear/wait the send queue</param>
-        /// <param name="receiveQueueState"> Property to optionally clear/wait the send queue</param>
-        /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
-        public ReceivedCommand SendCommand(SendCommand sendCommand, SendQueue sendQueueState = SendQueue.InFrontQueue, ReceiveQueue receiveQueueState = ReceiveQueue.Default)
-        {
-            return SendCommand(sendCommand, sendQueueState, receiveQueueState, UseQueue.UseQueue);
-        }
-
-        /// <summary> Sends a command. 
-        /// 		  If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue
-        ///  		  If a  command acknowledge is requested, the command will be send synchronously:  the program will block until the acknowledge command 
+        ///  		  If a  command acknowledge is requested, the command will be send synchronously:  the program will block until the acknowledge command
         ///  		  has been received or the timeout has expired.
         ///  		  Based on ClearQueueState, the send- and receive-queues are left intact or are cleared</summary>
         /// <param name="sendCommand">       The command to sent. </param>
         /// <param name="sendQueueState">    Property to optionally clear/wait the send queue</param>
         /// <param name="receiveQueueState"> Property to optionally clear/wait the send queue</param>
         /// <param name="useQueue">          Property to optionally bypass the queue</param>
+        /// <param name="cancellationToken"> Optional cancellation token.</param>
         /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
-        public ReceivedCommand SendCommand(SendCommand sendCommand, SendQueue sendQueueState, ReceiveQueue receiveQueueState, UseQueue useQueue)
+        public async Task<ReceivedCommand> SendCommandAsync(SendCommand sendCommand,
+            SendQueue sendQueueState = SendQueue.InFrontQueue,
+            ReceiveQueue receiveQueueState = ReceiveQueue.Default,
+            UseQueue useQueue = UseQueue.UseQueue,
+            CancellationToken cancellationToken = default)
         {
             var synchronizedSend = (sendCommand.ReqAc || useQueue == UseQueue.BypassQueue);
 
@@ -295,13 +287,13 @@ namespace CommandMessenger
                 receiveQueueState = ReceiveQueue.WaitForEmptyQueue;
             }
 
-            if (sendQueueState == SendQueue.ClearQueue )
+            if (sendQueueState == SendQueue.ClearQueue)
             {
                 // Clear receive queue
-                _receiveCommandQueue.Clear(); 
+                _receiveCommandQueue.Clear();
             }
 
-            if (receiveQueueState == ReceiveQueue.ClearQueue )
+            if (receiveQueueState == ReceiveQueue.ClearQueue)
             {
                 // Clear send queue
                 _sendCommandQueue.Clear();
@@ -314,7 +306,7 @@ namespace CommandMessenger
             {
                 SpinWait.SpinUntil(() => _sendCommandQueue.IsEmpty);
             }
-            
+
             if (receiveQueueState == ReceiveQueue.WaitForEmptyQueue)
             {
                 SpinWait.SpinUntil(() => _receiveCommandQueue.IsEmpty);
@@ -322,9 +314,9 @@ namespace CommandMessenger
 
             if (synchronizedSend)
             {
-                return SendCommandSync(sendCommand, sendQueueState);
+                return await SendCommandSyncAsync(sendCommand, sendQueueState, cancellationToken).ConfigureAwait(false);
             }
-            
+
             if (sendQueueState != SendQueue.AtEndQueue)
             {
                 // Put command at top of command queue
@@ -338,16 +330,55 @@ namespace CommandMessenger
             return new ReceivedCommand { CommunicationManager = _communicationManager };
         }
 
-        /// <summary> Synchronized send a command. </summary>
+        /// <summary> Sends a command (sync wrapper for backwards compatibility).
+        /// 		  If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue
+        ///  		  If a  command acknowledge is requested, the command will be send synchronously:  the program will block until the acknowledge command
+        ///  		  has been received or the timeout has expired.
+        ///  		  Based on ClearQueueState, the send- and receive-queues are left intact or are cleared</summary>
+        /// <param name="sendCommand">       The command to sent. </param>
+        /// <param name="sendQueueState">    Property to optionally clear/wait the send queue</param>
+        /// <param name="receiveQueueState"> Property to optionally clear/wait the send queue</param>
+        /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
+        public ReceivedCommand SendCommand(SendCommand sendCommand, SendQueue sendQueueState = SendQueue.InFrontQueue, ReceiveQueue receiveQueueState = ReceiveQueue.Default)
+        {
+            return SendCommand(sendCommand, sendQueueState, receiveQueueState, UseQueue.UseQueue);
+        }
+
+        /// <summary> Sends a command (sync wrapper for backwards compatibility).
+        /// 		  If no command acknowledge is requested, the command will be send asynchronously: it will be put on the top of the send queue
+        ///  		  If a  command acknowledge is requested, the command will be send synchronously:  the program will block until the acknowledge command
+        ///  		  has been received or the timeout has expired.
+        ///  		  Based on ClearQueueState, the send- and receive-queues are left intact or are cleared</summary>
+        /// <param name="sendCommand">       The command to sent. </param>
+        /// <param name="sendQueueState">    Property to optionally clear/wait the send queue</param>
+        /// <param name="receiveQueueState"> Property to optionally clear/wait the send queue</param>
+        /// <param name="useQueue">          Property to optionally bypass the queue</param>
+        /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
+        public ReceivedCommand SendCommand(SendCommand sendCommand, SendQueue sendQueueState, ReceiveQueue receiveQueueState, UseQueue useQueue)
+        {
+            return SendCommandAsync(sendCommand, sendQueueState, receiveQueueState, useQueue).GetAwaiter().GetResult();
+        }
+
+        /// <summary> Synchronized send a command (async). </summary>
+        /// <param name="sendCommand">    The command to sent. </param>
+        /// <param name="sendQueueState"> Property to optionally clear/wait the send queue. </param>
+        /// <param name="cancellationToken"> Optional cancellation token. </param>
+        /// <returns> The received command (ACK or empty). </returns>
+        public async Task<ReceivedCommand> SendCommandSyncAsync(SendCommand sendCommand, SendQueue sendQueueState, CancellationToken cancellationToken = default)
+        {
+            // Directly call execute command
+            var resultSendCommand = await _communicationManager.ExecuteSendCommandAsync(sendCommand, sendQueueState, cancellationToken).ConfigureAwait(false);
+            InvokeNewLineEvent(NewLineSent, new CommandEventArgs(sendCommand));
+            return resultSendCommand;
+        }
+
+        /// <summary> Synchronized send a command (sync wrapper). </summary>
         /// <param name="sendCommand">    The command to sent. </param>
         /// <param name="sendQueueState"> Property to optionally clear/wait the send queue. </param>
         /// <returns> . </returns>
         public ReceivedCommand SendCommandSync(SendCommand sendCommand, SendQueue sendQueueState)
         {
-            // Directly call execute command
-            var resultSendCommand = _communicationManager.ExecuteSendCommand(sendCommand, sendQueueState);
-            InvokeNewLineEvent(NewLineSent, new CommandEventArgs(sendCommand));
-            return resultSendCommand;            
+            return SendCommandSyncAsync(sendCommand, sendQueueState).GetAwaiter().GetResult();
         }
 
         /// <summary> Put the command at the back of the sent queue.</summary>
@@ -366,7 +397,7 @@ namespace CommandMessenger
 
         /// <summary> Adds a general command strategy to the receive queue. This will be executed on every enqueued and dequeued command.  </summary>
         /// <param name="generalStrategy"> The general strategy for the receive queue. </param>
-        public void AddReceiveCommandStrategy(GeneralStrategy generalStrategy) 
+        public void AddReceiveCommandStrategy(GeneralStrategy generalStrategy)
         {
             _receiveCommandQueue.AddGeneralStrategy(generalStrategy);
         }

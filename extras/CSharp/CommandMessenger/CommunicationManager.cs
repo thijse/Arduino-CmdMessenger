@@ -1,4 +1,4 @@
-﻿#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
+#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
@@ -18,14 +18,17 @@
 #endregion
 
 using System;
+using System.Collections.Concurrent;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using CommandMessenger.Queue;
 using CommandMessenger.Transport;
 
 namespace CommandMessenger
 {
     /// <summary>
-    /// Manager for data over transport layer. 
+    /// Manager for data over transport layer.
     /// </summary>
     public class CommunicationManager : IDisposable
     {
@@ -38,6 +41,9 @@ namespace CommandMessenger
         private readonly IsEscaped _isEscaped;                                       // The is escaped
 
         private string _buffer = string.Empty;
+
+        private readonly ConcurrentDictionary<int, TaskCompletionSource<ReceivedCommand>> _pendingAcks
+            = new ConcurrentDictionary<int, TaskCompletionSource<ReceivedCommand>>();
 
         /// <summary> The field separator </summary>
         public char FieldSeparator { get; private set; }
@@ -65,8 +71,8 @@ namespace CommandMessenger
         /// <param name="fieldSeparator"></param>
         /// <param name="escapeCharacter"> The escape character. </param>
         /// <param name="transport"> The Transport Layer</param>
-        public CommunicationManager(ITransport transport, ReceiveCommandQueue receiveCommandQueue, 
-            BoardType boardType, char commandSeparator,  char fieldSeparator, char escapeCharacter)
+        public CommunicationManager(ITransport transport, ReceiveCommandQueue receiveCommandQueue,
+            BoardType boardType, char commandSeparator, char fieldSeparator, char escapeCharacter)
         {
             _transport = transport;
             _transport.DataReceived += NewDataReceived;
@@ -137,59 +143,64 @@ namespace CommandMessenger
             _transport.Write(writeBytes);
         }
 
-        /// <summary> Directly executes the send command operation. </summary>
+        /// <summary> Directly executes the send command operation (async). </summary>
+        /// <param name="sendCommand">    The command to sent. </param>
+        /// <param name="sendQueueState"> Property to optionally clear the send and receive queues. </param>
+        /// <param name="cancellationToken"> Optional cancellation token. </param>
+        /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
+        public async Task<ReceivedCommand> ExecuteSendCommandAsync(
+            SendCommand sendCommand, SendQueue sendQueueState, CancellationToken cancellationToken = default)
+        {
+            sendCommand.CommunicationManager = this;
+            sendCommand.InitArguments();
+
+            if (sendCommand.ReqAc)
+            {
+                var tcs = new TaskCompletionSource<ReceivedCommand>(TaskCreationOptions.RunContinuationsAsynchronously);
+                _pendingAcks[sendCommand.AckCmdId] = tcs;
+
+                lock (_sendCommandDataLock) { WriteCommand(sendCommand); }
+
+                using (var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken))
+                {
+                    timeoutCts.CancelAfter(sendCommand.Timeout);
+
+                    ReceivedCommand ack;
+                    try
+                    {
+                        ack = await WithCancellation(tcs.Task, timeoutCts.Token).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        _pendingAcks.TryRemove(sendCommand.AckCmdId, out _);
+                        ack = new ReceivedCommand();
+                    }
+
+                    ack.CommunicationManager = this;
+                    return ack;
+                }
+            }
+            else
+            {
+                lock (_sendCommandDataLock) { WriteCommand(sendCommand); }
+                return new ReceivedCommand { CommunicationManager = this };
+            }
+        }
+
+        /// <summary> Directly executes the send command operation (sync wrapper). </summary>
         /// <param name="sendCommand">    The command to sent. </param>
         /// <param name="sendQueueState"> Property to optionally clear the send and receive queues. </param>
         /// <returns> A received command. The received command will only be valid if the ReqAc of the command is true. </returns>
         public ReceivedCommand ExecuteSendCommand(SendCommand sendCommand, SendQueue sendQueueState)
-        {
-            // Disable listening, all callbacks are disabled until after command was sent
+            => ExecuteSendCommandAsync(sendCommand, sendQueueState).GetAwaiter().GetResult();
 
-            ReceivedCommand ackCommand;
-            lock (_sendCommandDataLock)
-            {
-                sendCommand.CommunicationManager = this;
-                sendCommand.InitArguments();
-
-                if (sendCommand.ReqAc)
-                {
-                    // Stop processing receive queue before sending. Wait until receive queue is actualy done
-                    _receiveCommandQueue.Suspend();
-                }
-
-                if (sendCommand.ReqAc)
-                {
-                    _receiveCommandQueue.PrepareForCmd(sendCommand.AckCmdId, sendQueueState);
-
-                    WriteCommand(sendCommand);
-
-                    var rc = BlockedTillReply(sendCommand.Timeout);
-
-                    ackCommand = rc ?? new ReceivedCommand();
-                }
-                else
-                {
-                    WriteCommand(sendCommand);
-                    ackCommand = new ReceivedCommand();
-                }
-
-                ackCommand.CommunicationManager = this;
-            }
-
-            if (sendCommand.ReqAc)
-            {
-                // Stop processing receive queue before sending
-                _receiveCommandQueue.Resume();
-            }
-
-            return ackCommand;
-        }
-
-        /// <summary> Directly executes the send string operation. </summary>
+        /// <summary> Directly executes the send string operation (async). </summary>
         /// <param name="commandString"> The string to sent. </param>
         /// <param name="sendQueueState"> Property to optionally clear the send and receive queues. </param>
+        /// <param name="cancellationToken"> Optional cancellation token. </param>
         /// <returns> The received command is added for compatibility. It will not yield a response. </returns>
-        public ReceivedCommand ExecuteSendString(String commandString, SendQueue sendQueueState)
+        public Task<ReceivedCommand> ExecuteSendStringAsync(
+            string commandString, SendQueue sendQueueState, CancellationToken cancellationToken = default)
         {
             lock (_sendCommandDataLock)
             {
@@ -202,21 +213,19 @@ namespace CommandMessenger
                     Write(commandString);
                 }
             }
-            return new ReceivedCommand { CommunicationManager = this };
+            return Task.FromResult(new ReceivedCommand { CommunicationManager = this });
         }
 
-        /// <summary> Blocks until acknowledgement reply has been received. </summary>
-        /// <param name="timeout">  Timeout on acknowledge command. </param>
-        /// <returns> A received command. </returns>
-        private ReceivedCommand BlockedTillReply(int timeout)
-        {
-            // Wait for matching command
-            return _receiveCommandQueue.WaitForCmd(timeout) ?? new ReceivedCommand();
-        }
+        /// <summary> Directly executes the send string operation (sync wrapper). </summary>
+        /// <param name="commandString"> The string to sent. </param>
+        /// <param name="sendQueueState"> Property to optionally clear the send and receive queues. </param>
+        /// <returns> The received command is added for compatibility. It will not yield a response. </returns>
+        public ReceivedCommand ExecuteSendString(string commandString, SendQueue sendQueueState)
+            => ExecuteSendStringAsync(commandString, sendQueueState).GetAwaiter().GetResult();
 
         private void ParseLines()
         {
-            lock(_parseLinesLock) 
+            lock (_parseLinesLock)
             {
                 var data = _transport.Read();
                 _buffer += _stringEncoder.GetString(data);
@@ -228,19 +237,27 @@ namespace CommandMessenger
 
                     LastLineTimeStamp = TimeUtils.Millis;
                     ProcessLine(currentLine);
-                } 
+                }
                 while (true);
             }
         }
 
         /// <summary> Processes the byte message and add to queue. </summary>
         private void ProcessLine(string line)
-        {            
+        {
             // Read line from raw buffer and make command
             var currentReceivedCommand = ParseMessage(line);
             currentReceivedCommand.RawString = line;
             // Set time stamp
             currentReceivedCommand.TimeStamp = LastLineTimeStamp;
+
+            // Check if a pending ACK waiter wants this command
+            if (_pendingAcks.TryRemove(currentReceivedCommand.CmdId, out var tcs))
+            {
+                tcs.TrySetResult(currentReceivedCommand);
+                return; // consumed by ACK waiter — don't enqueue
+            }
+
             // And put on queue
             _receiveCommandQueue.QueueCommand(currentReceivedCommand);
         }
@@ -265,7 +282,6 @@ namespace CommandMessenger
             if (!string.IsNullOrEmpty(_buffer))
             {
                 // Check if an End-Of-Line is present in the string, and split on first
-                //var i = _buffer.IndexOf(CommandSeparator);
                 var i = FindNextEol();
                 if (i >= 0 && i < _buffer.Length)
                 {
@@ -311,10 +327,24 @@ namespace CommandMessenger
                 Write(sendCommand.CommandString());
         }
 
+        /// <summary>
+        /// Helper to await a task with cancellation support (netstandard2.0 compatible).
+        /// </summary>
+        private static async Task<T> WithCancellation<T>(Task<T> task, CancellationToken ct)
+        {
+            var tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+            using (ct.Register(s => ((TaskCompletionSource<bool>)s).TrySetResult(true), tcs))
+            {
+                if (task != await Task.WhenAny(task, tcs.Task).ConfigureAwait(false))
+                    throw new OperationCanceledException(ct);
+            }
+            return await task.ConfigureAwait(false);
+        }
+
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-            {                
+            {
                 // Stop polling
                 _transport.DataReceived -= NewDataReceived;
             }

@@ -1,4 +1,4 @@
-﻿#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
+#region CmdMessenger - MIT - (c) 2013 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
@@ -19,10 +19,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace CommandMessenger.Queue
 {
-    // Command queue base object. 
+    // Command queue base object.
     public abstract class CommandQueue : IDisposable
     {
         private readonly AsyncWorker _worker;
@@ -66,8 +67,8 @@ namespace CommandMessenger.Queue
             GeneralStrategies.Add(generalStrategy);
         }
 
-        /// <summary> 
-        /// Queue the command wrapped in a command strategy. 
+        /// <summary>
+        /// Queue the command wrapped in a command strategy.
         /// Call SignalWaiter method to continue processing of queue.
         /// </summary>
         /// <param name="commandStrategy"> The command strategy. </param>
@@ -114,6 +115,6 @@ namespace CommandMessenger.Queue
         }
 
         /// <summary> Process the queue. </summary>
-        protected abstract bool ProcessQueue();
+        protected abstract Task<bool> ProcessQueue();
     }
 }
