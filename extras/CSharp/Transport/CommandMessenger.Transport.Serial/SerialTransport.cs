@@ -97,7 +97,9 @@ namespace CommandMessenger.Transport.Serial
         /// <returns> true if open, false if not. </returns>
         public bool IsConnected()
         {
-            return _connected && _serialPort.IsOpen;
+            // Guard against _serialPort being null or disposed after Disconnect/Dispose.
+            try { return _connected && _serialPort != null && _serialPort.IsOpen; }
+            catch { return false; }
         }
 
         /// <summary> Stops listening to the serial port. </summary>
@@ -237,8 +239,17 @@ namespace CommandMessenger.Transport.Serial
         {
             if (disposing)
             {
+                // Set _connected false before stopping the worker so that any in-flight
+                // Poll/UpdateBuffer calls see the port as disconnected and don't try to
+                // access _serialPort after it is disposed (fixes ObjectDisposedException
+                // on sleep/wake or hot-unplug).
+                _connected = false;
                 Disconnect();
-                if (_serialPort != null) _serialPort.Dispose();
+                if (_serialPort != null)
+                {
+                    _serialPort.Dispose();
+                    _serialPort = null;
+                }
             }
         }
     }

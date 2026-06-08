@@ -88,10 +88,12 @@ namespace CommandMessenger.Queue
         {
             if (IsSuspended)
             {
-                // Directly send this command to waiting thread
+                // Route command to the waiting ACK thread; if it's consumed (matched the ACK or dropped
+                // because ClearQueue was active) don't add it to the queue.
                 var addToQueue = _receivedCommandSignal.ProcessCommand((ReceivedCommand)commandStrategy.Command);
-                // check if the item needs to be added to the queue for later processing. If not return directly
                 if (!addToQueue) return;
+                // Command was not consumed by the ACK waiter — fall through and queue it normally.
+                // SignalWorker is intentionally skipped here; Resume() will wake the worker.
             }
 
             lock (Queue)

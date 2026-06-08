@@ -57,7 +57,10 @@ namespace CommandMessenger
         }
 
         /// <summary>
-        /// Process command. See if it needs to be send to the main thread (false) or be used in queue (true)
+        /// Process command. Returns false if the command was consumed by the ACK waiter (and should
+        /// NOT be added to the receive queue), true if it should be queued for normal dispatch.
+        /// Non-matching commands are always preserved — ClearQueue only clears the send queue,
+        /// not incoming commands from the device.
         /// </summary>
         public bool ProcessCommand(ReceivedCommand receivedCommand)
         {
@@ -67,10 +70,10 @@ namespace CommandMessenger
                 {
                     _receivedCommand = receivedCommand;
                     _waiter.Set();
-                    return false;
+                    return false;   // consumed — do not add to receive queue
                 }
 
-                return (_sendQueueState != SendQueue.ClearQueue);
+                return true;        // not the awaited ACK — always queue for normal dispatch
             }
         }
     }

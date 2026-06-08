@@ -163,6 +163,33 @@ namespace CommandMessenger.Tests
             Assert.Equal("sensor_value", boardCmd.ReadStringArg());
         }
 
+        // ------------------------------------------------------------------ unrelated command preserved during ACK wait (regression: issue #22)
+
+        [Fact]
+        public async Task UnrelatedCommandDuringAckWait_IsNotDropped_CallbackFiresAfterAck()
+        {
+            // Regression test for #22: before the fix, a command arriving while the receive queue
+            // was suspended waiting for an ACK could be silently dropped when SendQueue.ClearQueue
+            // was active, so callbacks only fired on the second transmission.
+
+            int unrelatedFired = 0;
+            _messenger.Attach(CmdUnrelated, _ => Interlocked.Increment(ref unrelatedFired));
+
+            var send = new SendCommand(CmdRequest, CmdAck, 1000);
+            var sendTask = SendAsync(send);
+
+            await Task.Delay(30);
+            // Inject an unrelated command THEN the ACK — both should be honoured.
+            SimulateIncoming($"{CmdUnrelated},hello;{CmdAck};");
+
+            var ack = await sendTask;
+            // Give the queue time to drain the unrelated command after ACK.
+            await Task.Delay(50);
+
+            Assert.True(ack.Ok);
+            Assert.Equal(1, unrelatedFired);
+        }
+
         // ------------------------------------------------------------------ burst then ACK
 
         [Fact]

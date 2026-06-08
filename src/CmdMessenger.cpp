@@ -300,7 +300,7 @@ void CmdMessenger::sendCmdStart(byte cmdId)
 	if (!startCommand) {
 		startCommand = true;
 		pauseProcessing = true;
-		comms->print(cmdId);
+		comms->print(cmdId, DEC);
 	}
 }
 
