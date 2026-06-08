@@ -1,21 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net40;net8.0-windows</TargetFrameworks>
+    <!-- netstandard2.0 covers .NET Framework 4.6.1+, .NET Core 2+, .NET 5-11, Mono, Unity -->
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>CommandMessenger</RootNamespace>
     <AssemblyName>CommandMessenger</AssemblyName>
     <LangVersion>latest</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms Condition="'$(TargetFramework)' == 'net8.0-windows'">true</UseWindowsForms>
+    <!-- Nullable warnings deferred to Phase 2 async rewrite -->
+    <Nullable>annotations</Nullable>
+    <NoWarn>$(NoWarn);CS8618;CS8625;CS8600;CS8601;CS8602;CS8603;CS8604</NoWarn>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
-    <Reference Include="System.Management" />
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
-    <PackageReference Include="System.Management" Version="8.*" />
-  </ItemGroup>
 
 </Project>

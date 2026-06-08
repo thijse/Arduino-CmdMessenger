@@ -693,4 +693,51 @@ without opening the port. C# can use:
 - Cross-platform: `System.IO.Ports.SerialPort.GetPortNames()` + registry lookup
 
 This reduces scan time from O(all_ports × timeout) to O(matching_ports × timeout)
+
+---
+
+## 16. Implemented Decisions Log
+
+Decisions that have been made and implemented, recorded here so future sessions
+have context for why things are the way they are.
+
+| Date | Decision | Rationale |
+|------|----------|-----------|
+| 2026-06-08 | `RtsEnable` added to C# `SerialSettings` and `SerialTransport` | ESP32/ESP8266 auto-reset requires both DTR and RTS; Python and TypeScript already had it |
+| 2026-06-08 | `ReadCharArg()` added to C# `ReceivedCommand` | Python and TypeScript both had it; C# was the odd one out |
+| 2026-06-08 | `Read(string format)` format-string reader added to C# `ReceivedCommand` | Python-originated API now consistent across all three ports |
+| 2026-06-08 | `IEnumerable<string>` added to C# `ReceivedCommand` | Python has `__iter__`, TypeScript has `[Symbol.iterator]`; C# now has `foreach` |
+| 2026-06-08 | `System.Windows.Forms` removed from core C# library | Replaced `ControlToInvokeOn` (WinForms `Control`) with `SynchronizationContext`; works with any UI framework and on Linux/macOS |
+| 2026-06-08 | C# `BinaryFormatter` in storers replaced with JSON | `BinaryFormatter` is obsolete/removed in .NET 9; JSON is cross-platform and human-readable |
+| 2026-06-08 | `SerialConnectionStorer` → `JsonSerialConnectionStorer` in Python | Align naming with C# pattern (transport-specific storer) |
+| 2026-06-08 | Callback exception isolation added to C# `CmdMessenger` | Unhandled callback exceptions previously crashed the receive pump; now caught and surfaced via `CallbackException` event |
+| 2026-06-08 | `ReceivedCommandSignal.ProcessCommand` fixed: non-matching commands no longer dropped | With `SendQueue.ClearQueue` active, commands arriving during ACK wait were silently discarded; fixed to always queue non-ACK commands |
+
+### Phase 1 project structure (2026-06-08)
+
+| Project | Before | After |
+|---------|--------|-------|
+| `CommandMessenger` (core) | `net40;net8.0-windows` | `netstandard2.0` |
+| `Transport.Serial` | `net40;net8.0-windows` | `netstandard2.0` + `System.IO.Ports` NuGet |
+| `Transport.Network` | Old MSBuild, `net40` | SDK-style, `netstandard2.0` |
+| `Transport.Bluetooth` | Old MSBuild, `net40` | SDK-style, `net8.0-windows` (InTheHand is Windows-only) |
+| Console samples (1–4, 7) | Old MSBuild, `net40` | SDK-style, `net8.0` |
+| WinForms samples (5, 6, 9, 10) | Old MSBuild, `net40` | SDK-style, `net8.0-windows` |
+| Bluetooth sample (8) | Old MSBuild, `net40` | SDK-style, `net8.0-windows` |
+| `CommandMessenger.Tests` | `net8.0-windows` | `net8.0` (no WinForms dep needed) |
+
+**`netstandard2.0` runtime coverage**: .NET Framework 4.6.1+, .NET Core 2.0+, .NET 5–11, Mono, Unity.
+Includes Linux and macOS via .NET Core/.NET 5+ runtimes.
+
+### Phase 2 plan (async core rewrite — not yet implemented)
+
+Agreed design:
+- Replace `AsyncWorker` (Thread-based) with `async Task` drain loops
+- Replace `EventWaiter` (Monitor-based) with `SemaphoreSlim.WaitAsync()` (netstandard2.0 compatible)
+- Replace suspend/resume + `ReceivedCommandSignal` ACK wait with per-ACK `TaskCompletionSource<ReceivedCommand>` (Option B — no queue suspension needed)
+- `CommunicationManager.ExecuteSendCommand` becomes `async Task<ReceivedCommand>`
+- `CmdMessenger.SendCommand` becomes `async Task<ReceivedCommand>`; old sync overload removed (breaking, accepted)
+- Add `System.Threading.Channels` NuGet for `Channel<CommandStrategy>` as the queue backing
+- `CancellationToken` support on all async send paths
+- Nullable reference types cleaned up throughout
 and eliminates interference with unrelated serial devices.

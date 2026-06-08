@@ -1,28 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net40;net8.0-windows</TargetFrameworks>
+    <!-- netstandard2.0 + System.IO.Ports NuGet covers .NET Framework 4.6.1+ and all modern runtimes -->
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>CommandMessenger.Transport.Serial</RootNamespace>
     <AssemblyName>CommandMessenger.Transport.Serial</AssemblyName>
     <LangVersion>latest</LangVersion>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <UseWindowsForms Condition="'$(TargetFramework)' == 'net8.0-windows'">true</UseWindowsForms>
+    <Nullable>annotations</Nullable>
+    <NoWarn>$(NoWarn);CS8618;CS8625;CS8600;CS8601;CS8602;CS8603;CS8604</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CommandMessenger\CommandMessenger.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net40'">
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0-windows'">
     <PackageReference Include="System.IO.Ports" Version="8.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CommandMessenger\CommandMessenger.csproj" />
   </ItemGroup>
 
 </Project>

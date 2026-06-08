@@ -411,9 +411,31 @@ namespace CommandMessenger
             if (messengerCallbackFunction == null) return;
             var ctx = SynchronizationContext;
             if (ctx != null)
-                ctx.Post(_ => messengerCallbackFunction(command), null);
+            {
+                ctx.Post(_ =>
+                {
+                    try { messengerCallbackFunction(command); }
+                    catch (Exception ex) { OnCallbackException(ex); }
+                }, null);
+            }
             else
-                messengerCallbackFunction(command);
+            {
+                try { messengerCallbackFunction(command); }
+                catch (Exception ex) { OnCallbackException(ex); }
+            }
+        }
+
+        /// <summary>
+        /// Raised when a user callback throws an unhandled exception.
+        /// If not handled, the exception is swallowed to protect the receive pump.
+        /// </summary>
+        public event EventHandler<UnhandledExceptionEventArgs> CallbackException;
+
+        private void OnCallbackException(Exception ex)
+        {
+            var handler = CallbackException;
+            if (handler != null)
+                try { handler(this, new UnhandledExceptionEventArgs(ex, false)); } catch { }
         }
 
         protected virtual void Dispose(bool disposing)
