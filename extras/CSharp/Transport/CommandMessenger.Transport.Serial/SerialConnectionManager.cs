@@ -26,7 +26,7 @@ namespace CommandMessenger.Transport.Serial
 {
 
     /// <summary>
-    /// Class for storing last succesfull connection
+    /// Class for storing last successful connection
     /// </summary>
     [Serializable]
     public class SerialConnectionManagerSettings 
@@ -149,7 +149,7 @@ namespace CommandMessenger.Transport.Serial
             }
         }
 
-        //Try to connect using current connections settings and trigger event if succesful
+        //Try to connect using current connections settings and trigger event if successful
         protected override void DoWorkConnect()
         {
             var activeConnection = false;

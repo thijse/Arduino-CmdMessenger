@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Windows.Forms;
 using CommandMessenger.Queue;
 using CommandMessenger.Transport;
 
@@ -86,9 +85,15 @@ namespace CommandMessenger
         }
 
         /// <summary>
-        /// The control to invoke the callback on
+        /// Optional synchronization context for marshalling callbacks to a specific thread (e.g. UI thread).
+        /// Set to SynchronizationContext.Current in your UI thread to have callbacks invoked there.
+        /// If null, callbacks are invoked directly on the receive thread.
         /// </summary>
-        public Control ControlToInvokeOn { get; set; }
+        public SynchronizationContext SynchronizationContext { get; set; }
+
+        /// <summary> Obsolete. Use SynchronizationContext instead. </summary>
+        [Obsolete("Use SynchronizationContext = SynchronizationContext.Current instead.")]
+        public void SetControlToInvokeOn(object control) { }
 
         /// <summary> Constructor. </summary>
         /// <param name="transport"> The transport layer. </param>
@@ -159,7 +164,7 @@ namespace CommandMessenger
         private void Init(ITransport transport, BoardType boardType, char fieldSeparator, char commandSeparator,
                           char escapeCharacter, int sendBufferMaxLength)
         {           
-            ControlToInvokeOn = null;
+            SynchronizationContext = null;
 
             //Logger.Open(@"sendCommands.txt");
             Logger.DirectFlush = true;
@@ -189,13 +194,6 @@ namespace CommandMessenger
             GC.SuppressFinalize(this);
         }
 
-        /// <summary> Sets a control to invoke on. </summary>
-        /// <param name="controlToInvokeOn"> The control to invoke on. </param>
-        [Obsolete("Use ControlToInvokeOn property instead.")]
-        public void SetControlToInvokeOn(Control controlToInvokeOn)
-        {
-            ControlToInvokeOn = controlToInvokeOn;
-        }
 
         /// <summary>  Stop listening and end serial port connection. </summary>
         /// <returns> true if it succeeds, false if it fails. </returns>
@@ -397,18 +395,12 @@ namespace CommandMessenger
         /// <param name="newLineArgs"></param>
         private void InvokeNewLineEvent(EventHandler<CommandEventArgs> newLineHandler, CommandEventArgs newLineArgs)
         {
-            if (newLineHandler == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
-
-            if (ControlToInvokeOn != null)
-            {
-                //Asynchronously call on UI thread
-                ControlToInvokeOn.BeginInvoke((MethodInvoker)(() => newLineHandler(this, newLineArgs)));
-            }
+            if (newLineHandler == null) return;
+            var ctx = SynchronizationContext;
+            if (ctx != null)
+                ctx.Post(_ => newLineHandler(this, newLineArgs), null);
             else
-            {
-                //Directly call
                 newLineHandler(this, newLineArgs);
-            }
         }
 
         /// <summary> Helper function to Invoke or directly call callback function. </summary>
@@ -416,25 +408,19 @@ namespace CommandMessenger
         /// <param name="command">                   The command. </param>
         private void InvokeCallBack(MessengerCallbackFunction messengerCallbackFunction, ReceivedCommand command)
         {
-            if (messengerCallbackFunction == null || (ControlToInvokeOn != null && ControlToInvokeOn.IsDisposed)) return;
-
-            if (ControlToInvokeOn != null)
-            {
-                //Asynchronously call on UI thread
-                ControlToInvokeOn.BeginInvoke(new MessengerCallbackFunction(messengerCallbackFunction), (object)command);
-            }
+            if (messengerCallbackFunction == null) return;
+            var ctx = SynchronizationContext;
+            if (ctx != null)
+                ctx.Post(_ => messengerCallbackFunction(command), null);
             else
-            {
-                //Directly call
                 messengerCallbackFunction(command);
-            }
         }
 
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
-                ControlToInvokeOn = null;
+                SynchronizationContext = null;
 
                 _communicationManager.Dispose();
                 _sendCommandQueue.Dispose();
