@@ -96,12 +96,12 @@ namespace CommandMessenger.Transport.Bluetooth
             Disconnect();
         }
 
-        private bool Poll()
+        private System.Threading.Tasks.Task<bool> Poll()
         {
             var bytes = UpdateBuffer();
             if (bytes > 0 && DataReceived != null) DataReceived(this, EventArgs.Empty);
 
-            return true;
+            return System.Threading.Tasks.Task.FromResult(true);
         }        
 
         /// <summary> Connects to a serial port defined through the current settings. </summary>
