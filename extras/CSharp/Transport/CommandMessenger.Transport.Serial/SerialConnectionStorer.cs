@@ -1,4 +1,4 @@
-﻿#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
+#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
@@ -17,60 +17,98 @@
 */
 #endregion
 
+using System;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 
 namespace CommandMessenger.Transport.Serial
 {
+    /// <summary>
+    /// JSON-file backed implementation of <see cref="ISerialConnectionStorer"/>.
+    /// Replaces the legacy BinaryFormatter implementation.
+    /// Default file: SerialConnectionManagerSettings.json in the current directory.
+    /// </summary>
     public class SerialConnectionStorer : ISerialConnectionStorer
     {
         private readonly string _settingsFileName;
-        /// <summary>
-        /// Contructor of Store/Retreive object for SerialConnectionManagerSettings
-        /// The file is serialized as a simple binary file
-        /// </summary>
+
         public SerialConnectionStorer()
         {
-            _settingsFileName = @"SerialConnectionManagerSettings.cfg";
+            _settingsFileName = "SerialConnectionManagerSettings.json";
         }
 
-        /// <summary>
-        /// Contructor of Store/Retreive object for SerialConnectionManagerSettings
-        /// The file is serialized as a simple binary file
-        /// </summary>
-        /// <param name="settingsFileName">Filename of the settings file</param>
         public SerialConnectionStorer(string settingsFileName)
         {
             _settingsFileName = settingsFileName;
         }
 
-        /// <summary>
-        /// Store SerialConnectionManagerSettings
-        /// </summary>
-        /// <param name="serialConnectionManagerSettings">SerialConnectionManagerSettings</param>
-        public void StoreSettings(SerialConnectionManagerSettings serialConnectionManagerSettings)
+        public void StoreSettings(SerialConnectionManagerSettings settings)
         {
-            var fileStream = File.Create(_settingsFileName);
-            var serializer = new BinaryFormatter();
-            serializer.Serialize(fileStream, serialConnectionManagerSettings);
-            fileStream.Close();
+            if (settings == null) throw new ArgumentNullException("settings");
+            var dir = Path.GetDirectoryName(Path.GetFullPath(_settingsFileName));
+            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            var json = new StringBuilder();
+            json.AppendLine("{");
+            json.AppendLine("  \"Port\": " + JsonString(settings.Port) + ",");
+            json.AppendLine("  \"BaudRate\": " + settings.BaudRate);
+            json.AppendLine("}");
+            File.WriteAllText(_settingsFileName, json.ToString(), Encoding.UTF8);
         }
 
-        /// <summary>
-        /// Retreive SerialConnectionManagerSettings
-        /// </summary>
-        /// <returns>SerialConnectionManagerSettings</returns>
         public SerialConnectionManagerSettings RetrieveSettings()
         {
-            var serialConnectionManagerSettings = new SerialConnectionManagerSettings();
-            if (File.Exists(_settingsFileName))
+            var result = new SerialConnectionManagerSettings();
+            if (!File.Exists(_settingsFileName)) return result;
+            try
             {
-                var fileStream = File.OpenRead(_settingsFileName);
-                var deserializer = new BinaryFormatter();
-                serialConnectionManagerSettings = (SerialConnectionManagerSettings)deserializer.Deserialize(fileStream);
-                fileStream.Close();
+                var text = File.ReadAllText(_settingsFileName, Encoding.UTF8);
+                result.Port = ReadJsonString(text, "Port");
+                var baudStr = ReadJsonNumber(text, "BaudRate");
+                int baud;
+                if (int.TryParse(baudStr, out baud)) result.BaudRate = baud;
             }
-            return serialConnectionManagerSettings;
+            catch { }
+            return result;
+        }
+
+        // Minimal JSON helpers — avoids any external dependency on net4.0.
+
+        private static string JsonString(string value)
+        {
+            if (value == null) return "null";
+            return "\"" + value.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+        }
+
+        private static string ReadJsonString(string json, string key)
+        {
+            var search = "\"" + key + "\"";
+            var idx = json.IndexOf(search, StringComparison.Ordinal);
+            if (idx < 0) return null;
+            idx = json.IndexOf(':', idx + search.Length);
+            if (idx < 0) return null;
+            idx = json.IndexOf('"', idx + 1);
+            if (idx < 0) return null;
+            var end = json.IndexOf('"', idx + 1);
+            if (end < 0) return null;
+            return json.Substring(idx + 1, end - idx - 1)
+                       .Replace("\\\"", "\"")
+                       .Replace("\\\\", "\\");
+        }
+
+        private static string ReadJsonNumber(string json, string key)
+        {
+            var search = "\"" + key + "\"";
+            var idx = json.IndexOf(search, StringComparison.Ordinal);
+            if (idx < 0) return null;
+            idx = json.IndexOf(':', idx + search.Length);
+            if (idx < 0) return null;
+            idx++;
+            while (idx < json.Length && (json[idx] == ' ' || json[idx] == '\t' || json[idx] == '\r' || json[idx] == '\n')) idx++;
+            var end = idx;
+            while (end < json.Length && (char.IsDigit(json[end]) || json[end] == '-')) end++;
+            return json.Substring(idx, end - idx);
         }
     }
 }

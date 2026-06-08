@@ -1,4 +1,4 @@
-﻿#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
+#region CmdMessenger - MIT - (c) 2014 Thijs Elenbaas.
 /*
   CmdMessenger - library that provides command based messaging
 
@@ -17,60 +17,129 @@
 */
 #endregion
 
+using System;
+using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
+using InTheHand.Net;
 
 namespace CommandMessenger.Transport.Bluetooth
 {
+    /// <summary>
+    /// JSON-file backed implementation of <see cref="IBluetoothConnectionStorer"/>.
+    /// Replaces the legacy BinaryFormatter implementation.
+    /// Default file: BluetoothConnectionManagerSettings.json in the current directory.
+    /// </summary>
     public class BluetoothConnectionStorer : IBluetoothConnectionStorer
     {
         private readonly string _settingsFileName;
-        /// <summary>
-        /// Contructor of Store/Retreive object for SerialConnectionManagerSettings
-        /// The file is serialized as a simple binary file
-        /// </summary>
+
         public BluetoothConnectionStorer()
         {
-            _settingsFileName = @"BluetoothConnectionManagerSettings.cfg";
+            _settingsFileName = "BluetoothConnectionManagerSettings.json";
         }
 
-        /// <summary>
-        /// Contructor of Store/Retreive object for SerialConnectionManagerSettings
-        /// The file is serialized as a simple binary file
-        /// </summary>
-        /// <param name="settingsFileName">Filename of the settings file</param>
         public BluetoothConnectionStorer(string settingsFileName)
         {
             _settingsFileName = settingsFileName;
         }
 
-        /// <summary>
-        /// Store SerialConnectionManagerSettings
-        /// </summary>
-        /// <param name="bluetoothConnectionManagerSettings">BluetoothConnectionManagerSettings</param>
-        public void StoreSettings(BluetoothConnectionManagerSettings bluetoothConnectionManagerSettings)
+        public void StoreSettings(BluetoothConnectionManagerSettings settings)
         {
-            var fileStream = File.Create(_settingsFileName);
-            var serializer = new BinaryFormatter();
-            serializer.Serialize(fileStream, bluetoothConnectionManagerSettings);
-            fileStream.Close();
+            if (settings == null) throw new ArgumentNullException("settings");
+            var dir = Path.GetDirectoryName(Path.GetFullPath(_settingsFileName));
+            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+                Directory.CreateDirectory(dir);
+
+            var json = new StringBuilder();
+            json.AppendLine("{");
+            var addr = settings.BluetoothAddress != null ? settings.BluetoothAddress.ToString() : "";
+            json.AppendLine("  \"BluetoothAddress\": " + JsonString(addr) + ",");
+            json.AppendLine("  \"StoredDevicePins\": {");
+            if (settings.StoredDevicePins != null)
+            {
+                var pins = new List<string>();
+                foreach (var kv in settings.StoredDevicePins)
+                    pins.Add("    " + JsonString(kv.Key.ToString()) + ": " + JsonString(kv.Value));
+                json.AppendLine(string.Join("," + Environment.NewLine, pins));
+            }
+            json.AppendLine("  }");
+            json.AppendLine("}");
+            File.WriteAllText(_settingsFileName, json.ToString(), Encoding.UTF8);
         }
 
-        /// <summary>
-        /// Retreive SerialConnectionManagerSettings
-        /// </summary>
-        /// <returns>SerialConnectionManagerSettings</returns>
         public BluetoothConnectionManagerSettings RetrieveSettings()
         {
-            var bluetoothConnectionManagerSettings = new BluetoothConnectionManagerSettings();
-            if (File.Exists(_settingsFileName))
+            var result = new BluetoothConnectionManagerSettings();
+            if (!File.Exists(_settingsFileName)) return result;
+            try
             {
-                var fileStream = File.OpenRead(_settingsFileName);
-                var deserializer = new BinaryFormatter();
-                bluetoothConnectionManagerSettings = (BluetoothConnectionManagerSettings)deserializer.Deserialize(fileStream);
-                fileStream.Close();
+                var text = File.ReadAllText(_settingsFileName, Encoding.UTF8);
+
+                var addrStr = ReadJsonString(text, "BluetoothAddress");
+                if (!string.IsNullOrEmpty(addrStr))
+                {
+                    BluetoothAddress addr;
+                    if (BluetoothAddress.TryParse(addrStr, out addr))
+                        result.BluetoothAddress = addr;
+                }
+
+                // Parse StoredDevicePins object
+                var pinsStart = text.IndexOf("\"StoredDevicePins\"", StringComparison.Ordinal);
+                if (pinsStart >= 0)
+                {
+                    var braceOpen = text.IndexOf('{', pinsStart);
+                    var braceClose = text.IndexOf('}', braceOpen + 1);
+                    if (braceOpen >= 0 && braceClose > braceOpen)
+                    {
+                        var pinsBlock = text.Substring(braceOpen + 1, braceClose - braceOpen - 1);
+                        var pos = 0;
+                        while (pos < pinsBlock.Length)
+                        {
+                            var keyStart = pinsBlock.IndexOf('"', pos);
+                            if (keyStart < 0) break;
+                            var keyEnd = pinsBlock.IndexOf('"', keyStart + 1);
+                            if (keyEnd < 0) break;
+                            var key = pinsBlock.Substring(keyStart + 1, keyEnd - keyStart - 1);
+                            var colon = pinsBlock.IndexOf(':', keyEnd + 1);
+                            if (colon < 0) break;
+                            var valStart = pinsBlock.IndexOf('"', colon + 1);
+                            if (valStart < 0) break;
+                            var valEnd = pinsBlock.IndexOf('"', valStart + 1);
+                            if (valEnd < 0) break;
+                            var val = pinsBlock.Substring(valStart + 1, valEnd - valStart - 1);
+                            BluetoothAddress pinAddr;
+                            if (BluetoothAddress.TryParse(key, out pinAddr))
+                                result.StoredDevicePins[pinAddr] = val;
+                            pos = valEnd + 1;
+                        }
+                    }
+                }
             }
-            return bluetoothConnectionManagerSettings;
+            catch { }
+            return result;
+        }
+
+        private static string JsonString(string value)
+        {
+            if (value == null) return "null";
+            return "\"" + value.Replace("\\", "\\\\").Replace("\"", "\\\"") + "\"";
+        }
+
+        private static string ReadJsonString(string json, string key)
+        {
+            var search = "\"" + key + "\"";
+            var idx = json.IndexOf(search, StringComparison.Ordinal);
+            if (idx < 0) return null;
+            idx = json.IndexOf(':', idx + search.Length);
+            if (idx < 0) return null;
+            idx = json.IndexOf('"', idx + 1);
+            if (idx < 0) return null;
+            var end = json.IndexOf('"', idx + 1);
+            if (end < 0) return null;
+            return json.Substring(idx + 1, end - idx - 1)
+                       .Replace("\\\"", "\"")
+                       .Replace("\\\\", "\\");
         }
     }
 }
