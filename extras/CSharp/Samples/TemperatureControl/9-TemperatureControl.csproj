@@ -6,6 +6,7 @@
     <RootNamespace>DataLogging</RootNamespace>
     <AssemblyName>DataLogging</AssemblyName>
     <LangVersion>latest</LangVersion>
+    <PlatformTarget>x64</PlatformTarget>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Nullable>annotations</Nullable>
     <NoWarn>$(NoWarn);CS8618;CS8625;CS8600;CS8601;CS8602;CS8603;CS8604;NU1701</NoWarn>
