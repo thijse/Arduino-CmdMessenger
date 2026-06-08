@@ -729,6 +729,23 @@ have context for why things are the way they are.
 **`netstandard2.0` runtime coverage**: .NET Framework 4.6.1+, .NET Core 2.0+, .NET 5–11, Mono, Unity.
 Includes Linux and macOS via .NET Core/.NET 5+ runtimes.
 
+### Phase 2 implemented (2026-06-08, commit 1ee3573)
+
+| File | Change |
+|------|--------|
+| `EventWaiter.cs` | `Thread.Monitor` → `SemaphoreSlim(0,1)`; adds `WaitOneAsync()` |
+| `AsyncWorker.cs` | Bare `Thread` → `async Task` drain loop + `CancellationTokenSource`; `AsyncWorkerJob` returns `Task<bool>` |
+| `ReceivedCommandSignal.cs` | Replaced with empty stub — ACK waiting moved to `CommunicationManager` |
+| `CommandQueue.cs` | `ProcessQueue()` abstract: `bool` → `Task<bool>` |
+| `SendCommandQueue.cs` | `ProcessQueue()` and `SendCommandsFromQueue()` async |
+| `ReceiveCommandQueue.cs` | `ProcessQueue()` returns `Task.FromResult()`; suspend/resume ACK mechanism removed; `PrepareForCmd`/`WaitForCmd` are noops |
+| `CommunicationManager.cs` | `ConcurrentDictionary<int, TCS>` for ACK waits; `ProcessLine` checks TCS before enqueueing; `ExecuteSendCommandAsync` added; no more queue suspension |
+| `CmdMessenger.cs` | `SendCommandAsync()` added; sync wrappers preserved |
+| `ConnectionManager.cs` | `DoWork()` → `async Task<bool>` with `await Task.Delay(100)` |
+| `SerialTransport.cs` | `Poll()` → `Task.FromResult(true)` |
+
+Added `System.Threading.Channels` NuGet (netstandard2.0 compatible).
+
 ### Phase 2 plan (async core rewrite — not yet implemented)
 
 Agreed design:
