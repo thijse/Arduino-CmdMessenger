@@ -28,3 +28,4 @@ coverage/
 
 # GitHub Copilot / local agent config
 .github/
+.claude/
