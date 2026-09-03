@@ -338,7 +338,7 @@ void setup()
   // Set command to PC to say we're ready
   //OnArduinoReady();
   
-  cmdMessenger.sendCmd(kAcknowledge,"Arduino has resetted!");
+  cmdMessenger.sendCmd(kAcknowledge,"Arduino has reset!");
 
   // set pin for blink LED
   pinMode(kBlinkLed, OUTPUT);

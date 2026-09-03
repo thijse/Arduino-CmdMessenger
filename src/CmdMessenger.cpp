@@ -34,7 +34,7 @@
   3.2  - Small fixes and sending long argument support
   3.1  - Added examples
   3.0  - Bugfixes on 2.2
-  - Wait for acknowlegde
+  - Wait for acknowledge
   - Sending of common type arguments (float, int, char)
   - Multi-argument commands
   - Escaping of special characters
@@ -226,7 +226,7 @@ bool CmdMessenger::blockedTillReply(unsigned int timeout, byte ackCmdId)
 bool CmdMessenger::checkForAck(byte ackCommand)
 {
 	while (comms->available()) {
-		//Processes a byte and determines if an acknowlegde has come in
+		//Processes a byte and determines if an acknowledge has come in
 		int messageState = processLine(comms->read());
 		if (messageState == kEndOfMessage) {
 			int id = readInt16Arg();
@@ -248,7 +248,7 @@ bool CmdMessenger::checkForAck(byte ackCommand)
 bool CmdMessenger::next()
 {
 	char * temppointer = NULL;
-	// Currently, cmd messenger only supports 1 char for the field seperator
+	// Currently, cmd messenger only supports 1 char for the field separator
 	switch (messageState) {
 	case kProccesingMessage:
 		return false;

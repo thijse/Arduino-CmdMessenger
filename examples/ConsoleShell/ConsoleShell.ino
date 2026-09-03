@@ -10,7 +10,7 @@
 //   Available commands
 //   0;                  - This command list
 //   1,<led state>;      - Set led. 0 = off, 1 = on
-//   2,<led brightness>; - Set led brighness. 0 - 1000
+//   2,<led brightness>; - Set led brightness. 0 - 1000
 //   3;                  - Show led state
 //  
 // Command> 3;
@@ -110,7 +110,7 @@ void ShowCommands()
   Serial.println("Available commands");
   Serial.println(" 0;                 - This command list");
   Serial.println(" 1,<led state>;     - Set led. 0 = off, 1 = on");
-  Serial.print  (" 2,<led brightness>; - Set led brighness. 0 - "); 
+  Serial.print  (" 2,<led brightness>; - Set led brightness. 0 - "); 
   Serial.println(PWMinterval);
   Serial.println(" 3;                  - Show led state");
 }
