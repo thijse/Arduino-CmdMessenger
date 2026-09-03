@@ -60,7 +60,7 @@ void OnSetLedFrequency()
   ledFrequency = cmdMessenger.readFloatArg();
   // Make sure the frequency is not zero (to prevent divide by zero)
   if (ledFrequency < 0.001) { ledFrequency = 0.001; }
-  // translate frequency in on and off times in miliseconds
+  // translate frequency in on and off times in milliseconds
   intervalOn  = (500.0/ledFrequency);
   intervalOff = (1000.0/ledFrequency);
   cmdMessenger.sendCmd(kAcknowledge,ledFrequency);

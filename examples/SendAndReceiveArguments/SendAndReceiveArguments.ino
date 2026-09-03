@@ -3,7 +3,7 @@
 // This example expands the previous SendandReceive example. The Arduino will now receive multiple 
 // and sent multiple float values. 
 // It adds a demonstration of how to:
-// - Return multiple types status; It can return an Acknowlegde and Error command
+// - Return multiple types status; It can return an Acknowledge and Error command
 // - Receive multiple parameters,
 // - Send multiple parameters
 // - Call a function periodically
@@ -56,10 +56,10 @@ void OnArduinoReady()
 // Callback function calculates the sum of the two received float values
 void OnFloatAddition()
 {
-  // Retreive first parameter as float
+  // Retrieve first parameter as float
   float a = cmdMessenger.readFloatArg();
   
-  // Retreive second parameter as float
+  // Retrieve second parameter as float
   float b = cmdMessenger.readFloatArg();
   
   // Send back the result of the addition

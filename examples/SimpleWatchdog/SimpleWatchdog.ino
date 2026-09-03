@@ -37,7 +37,7 @@ void onUnknownCommand()
 {
 }
 
-// Callback function to respond to indentify request. This is part of the 
+// Callback function to respond to identify request. This is part of the 
 // Auto connection handshake. 
 void onIdentifyRequest()
 {
